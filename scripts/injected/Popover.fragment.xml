@@ -1,0 +1,248 @@
+<core:FragmentDefinition xmlns="sap.m" 
+    xmlns:l="sap.ui.layout" 
+    xmlns:f="sap.ui.layout.form" 
+    xmlns:code="sap.ui.codeeditor" 
+    xmlns:u="sap.ui.unified" 
+    xmlns:core="sap.ui.core">
+    <Dialog resizable="true" contentWidth="80%" contentHeight="70%" title="{viewModel>/item/identifier/ui5Id}" id="popoverTestingDialog" class="sapUiSizeCompact" draggable="true" stretchOnPhone="true">
+        <content>
+            <Toolbar width="100%">
+                <ToolbarSpacer/>
+                <MenuButton text="Navigate" width="200px" buttonMode="Split" useDefaultActionOnly="true">
+                    <menu>
+                        <Menu itemSelected="onMenuAction">
+                            <items>
+                                <MenuItem text="Parent" items="{viewModel>/item/parents}">
+                                    <items>
+                                        <MenuItem text="{viewModel>identifier/ui5Id}" press="onSelectItem"/>
+                                    </items>
+                                </MenuItem>
+
+                                <MenuItem text="Aggregations" items="{ path: 'viewModel>/item/aggregation', filters: [{ path: 'length', operator: 'NE', value1: 0 }] }">
+                                    <items>
+                                        <MenuItem text="{viewModel>name}" items="{viewModel>rows}">
+                                            <items>
+                                                <MenuItem text="{viewModel>ui5Id}" press="onSelectItem"/>
+                                            </items>
+                                        </MenuItem>
+                                    </items>
+                                </MenuItem>
+                            </items>
+                        </Menu>
+                    </menu>
+                </MenuButton>
+            </Toolbar>
+            <IconTabBar select="onUpdatePreview" id="idIconTabBarNoIcons" expanded="{device>/isNoPhone}" class="sapUiResponsiveContentPadding">
+                <items>
+                    <IconTabFilter text="Target Element" visible="{viewModel>/showTargetElement}">
+                        <f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
+                            <f:content>
+                                <Label text="Type" />
+                                <Select id="tstType" change="onTypeChange" selectedKey="{viewModel>/type}">
+                                    <items>
+                                        <core:Item text="Select" key="SEL"/>
+                                        <core:Item text="Action" key="ACT"/>
+                                        <core:Item text="Assert" key="ASS"/>
+                                    </items>
+                                </Select>
+                                <Label text="Action" visible="{= ( ${viewModel>/type} === 'ACT' ) }" />
+                                <Select id="tstActType" visible="{= ( ${viewModel>/type} === 'ACT' ) }" selectedKey="{viewModel>/actKey}">
+                                    <items>
+                                        <core:Item text="Press" key="PRS"/>
+                                        <core:Item text="Open (Combo-Box)" key="OPT"/>
+                                        <core:Item text="Type-Text" key="TYP"/>
+                                    </items>
+                                </Select>
+
+
+                                <Label text="Assert-Type" visible="{= ( ${viewModel>/type} === 'ASS' ) }" />
+                                <Select id="tstAssType" visible="{= ( ${viewModel>/type} === 'ASS' ) }" selectedKey="{viewModel>/assKey}">
+                                    <items>
+                                        <core:Item text="Attributes" key="ATR"/>
+                                        <core:Item text="Exists" key="EXS"/>
+                                        <core:Item text="Matching Count" key="MTC"/>
+                                    </items>
+                                </Select>
+
+                                <Label text="Expect Element Count" visible="{= ( ${viewModel>/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/assKey} === 'MTC' ) }" />
+                                <Input change="onUpdatePreview" value="{viewModel>/assKeyMatchingCount}" visible="{= ( ${viewModel>/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/assKey} === 'MTC' ) }" />
+
+                                <Label text="Assert-Message" visible="{= ( ${viewModel>/type} === 'ASS' ) }" />
+                                <Input change="onUpdatePreview" placeholder="Optional Message for the Assertion" value="{viewModel>/assertMessage}" visible="{= ( ${viewModel>/type} === 'ASS' ) }" />
+
+                                <Label text="Type-Text" visible="{= ( ${viewModel>/actKey} === 'TYP' ) }" />
+                                <Input change="onUpdatePreview" value="{viewModel>/selectActInsert}" visible="{= ( ${viewModel>/actKey} === 'TYP' ) }"/>
+
+                                <Label text="Select-By" />
+                                <Select id="tstSelectedBy" change="onTypeChange" selectedKey="{viewModel>/selectItemBy}">
+                                    <items>
+                                        <core:Item text="DOM-Identifier" key="DOM"/>
+                                        <core:Item text="UI5-Identifier" key="UI5"/>
+                                        <core:Item text="Combination of Attributes" key="ATTR"/>
+                                    </items>
+                                </Select>
+                                <Label text="DOM-Id" visible="{= ( ${viewModel>/selectItemBy} === 'DOM' ) }" />
+                                <Input change="onUpdatePreview" editable="false" value="{viewModel>/item/identifier/domId}" valueState="{viewModel>/idQualityState}" valueStateText="{viewModel>/idQualityStateText}" visible="{= ( ${viewModel>/selectItemBy} === 'DOM' ) }"/>
+                                <Label text="UI5-Id" visible="{= ( ${viewModel>/selectItemBy} === 'UI5' ) }"/>
+                                <Input change="onUpdatePreview" value="{viewModel>/item/identifier/ui5Id}" valueState="{viewModel>/idQualityState}" valueStateText="{viewModel>/idQualityStateText}" visible="{= ( ${viewModel>/selectItemBy} === 'UI5' ) }"/>
+                            </f:content>
+                        </f:SimpleForm>
+                        <Table fixedLayout="false" id="idAttributeTable" mode="SingleSelectLeft" inset="false" items="{viewModel>/attributeFilter}" visible="{= ( ${viewModel>/selectItemBy} === 'ATTR' ) }">
+                            <headerToolbar>
+                                <Toolbar>
+                                    <content>
+                                        <Title text="Attributes" level="H2"/>
+                                        <ToolbarSpacer />
+                                        <Button press="onAddAttribute" text="Add"/>
+                                        <Button press="onRemoveAttribute" text="Remove"/>
+                                    </content>
+                                </Toolbar>
+                            </headerToolbar>
+
+                            <columns>
+                                <Column>
+                                    <Text text="Target" />
+                                </Column>
+                                <Column minScreenWidth="Tablet" demandPopin="true">
+                                    <Text text="Criteria" />
+                                </Column>
+                                <Column minScreenWidth="Tablet" demandPopin="true">
+                                    <Text text="Subcriteria" />
+                                </Column>
+                                <Column minScreenWidth="Tablet" demandPopin="true">
+                                    <Text text="Operator" />
+                                </Column>
+                                <Column minScreenWidth="Tablet" demandPopin="true" hAlign="End">
+                                    <Text text="Value" />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Select change="onAttributeTypeChanged" selectedKey="{viewModel>attributeType}">
+                                            <items>
+                                                <core:Item text="Own-Element" key="OWN"/>
+                                                <core:Item text="View" key="VIW"/>
+                                                <core:Item text="Parent-Element" key="PRT"/>
+                                                <core:Item text="Parent-Element (L2)" key="PRT2"/>
+                                                <core:Item text="Parent-Element (L3)" key="PRT3"/>
+                                                <core:Item text="Parent-Element (L4)" key="PRT4"/>
+                                                <core:Item text="Previous Label Element" key="PLBL"/>
+                                                <core:Item text="Previous Element" key="PEL"/>
+                                                <core:Item text="Next Element" key="NEL"/>
+                                            </items>
+                                        </Select>
+                                        <Select change="onCriteriaTypeChanged" selectedKey="{ path: 'viewModel>criteriaType'}" items="{ path:'viewModel>criteriaTypes', sorter: { path: 'criteriaText' }}">
+                                            <items>
+                                                <core:Item text="{viewModel>criteriaText}" key="{viewModel>criteriaKey}"/>
+                                            </items>
+                                        </Select>
+                                        <Select change="onSubCriteriaTypeChanged" selectedKey="{ path: 'viewModel>subCriteriaType' }" items="{ path: 'viewModel>subCriteriaTypes', sorter: { path: 'subCriteriaText' }}">
+                                            <items>
+                                                <core:Item text="{viewModel>subCriteriaText}" key="{viewModel>subCriteriaKey}"/>
+                                            </items>
+                                        </Select>
+                                        <Select change="onUpdatePreview" selectedKey="{viewModel>operatorType}">
+                                            <items>
+                                                <core:Item text="Equal" key="EQ"/>
+                                                <core:Item text="Not Equal" key="NE"/>
+                                                <core:Item text="Contains" key="CP"/>
+                                                <core:Item text="Not Contains" key="NP"/>
+                                            </items>
+                                        </Select>
+                                        <Input change="onUpdatePreview" width = "100%" value="{viewModel>criteriaValue}" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+
+                        <Table fixedLayout="false" id="idAssertionTable" mode="SingleSelectLeft" inset="false" items="{viewModel>/assertFilter}" visible="{= ( ${viewModel>/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/assKey} === 'ATR' ) }">
+                            <headerToolbar>
+                                <Toolbar>
+                                    <content>
+                                        <Title text="Assertions" level="H2"/>
+                                        <ToolbarSpacer />
+                                        <Button press="onAddAssertion" text="Add"/>
+                                        <Button press="onRemoveAssertion" text="Remove"/>
+                                    </content>
+                                </Toolbar>
+                            </headerToolbar>
+
+                            <columns>
+                                <Column>
+                                    <Text text="Target" />
+                                </Column>
+                                <Column minScreenWidth="Tablet" demandPopin="true">
+                                    <Text text="Criteria" />
+                                </Column>
+                                <Column minScreenWidth="Tablet" demandPopin="true">
+                                    <Text text="Subcriteria" />
+                                </Column>
+                                <Column minScreenWidth="Tablet" demandPopin="true">
+                                    <Text text="Operator" />
+                                </Column>
+                                <Column minScreenWidth="Tablet" demandPopin="true" hAlign="End">
+                                    <Text text="Value" />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Select change="onAttributeTypeChanged" selectedKey="{viewModel>attributeType}">
+                                            <items>
+                                                <core:Item text="Own-Element" key="OWN"/>
+                                                <core:Item text="View" key="VIW"/>
+                                                <core:Item text="Parent-Element" key="PRT"/>
+                                                <core:Item text="Parent-Element (L2)" key="PRT2"/>
+                                                <core:Item text="Parent-Element (L3)" key="PRT3"/>
+                                                <core:Item text="Parent-Element (L4)" key="PRT4"/>
+                                                <core:Item text="Previous Label Element" key="PLBL"/>
+                                                <core:Item text="Previous Element" key="PEL"/>
+                                                <core:Item text="Next Element" key="NEL"/>
+                                            </items>
+                                        </Select>
+                                        <Select change="onCriteriaTypeChanged" selectedKey="{viewModel>criteriaType}" items="{ path: 'viewModel>criteriaTypes' , sorter: { path: 'criteriaText' }}">
+                                            <items>
+                                                <core:Item text="{viewModel>criteriaText}" key="{viewModel>criteriaKey}"/>
+                                            </items>
+                                        </Select>
+                                        <Select change="onSubCriteriaTypeChanged" selectedKey="{viewModel>subCriteriaType}" items="{ path: 'viewModel>subCriteriaTypes', sorter: { path: 'subCriteriaText' } }">
+                                            <items>
+                                                <core:Item text="{viewModel>subCriteriaText}" key="{viewModel>subCriteriaKey}"/>
+                                            </items>
+                                        </Select>
+                                        <Select change="onUpdatePreview" selectedKey="{viewModel>operatorType}">
+                                            <items>
+                                                <core:Item text="Equal" key="EQ"/>
+                                                <core:Item text="Not Equal" key="NE"/>
+                                                <core:Item text="Contains Pattern" key="CP"/>
+                                                <core:Item text="Npt Contains Pattern" key="NP"/>
+                                            </items>
+                                        </Select>
+                                        <Input change="onUpdatePreview" width = "100%" value="{viewModel>criteriaValue}" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+
+                        <List headerText="Found Items ( {=${viewModel>/identifiedElements}.length} )" items="{ path: 'viewModel>/identifiedElements'}" noDataText="{i18n>notFoundTitle}">
+                            <items>
+                                <StandardListItem title="{viewModel>identifier/ui5Id}">
+                                </StandardListItem>
+                            </items>
+                        </List>
+                    </IconTabFilter>
+                    <IconTabFilter text="Code Preview">
+                        <code:CodeEditor value="{viewModel>/previewCode}" height="350px" editable="false" type="typescript" />
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </content>
+        <beginButton>
+            <Button id="btClose" text="Close" press="_onClose"/>
+        </beginButton>
+        <endButton>
+            <Button id="btSave" text="Save" press="_onSave" visible="{viewModel>/showTargetElement}"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
