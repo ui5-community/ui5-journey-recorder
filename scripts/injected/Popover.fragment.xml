@@ -4,11 +4,11 @@
     xmlns:code="sap.ui.codeeditor" 
     xmlns:u="sap.ui.unified" 
     xmlns:core="sap.ui.core">
-    <Dialog resizable="true" contentWidth="80%" contentHeight="70%" stretch="{viewModel>/isStretched}" id="popoverTestingDialog" class="sapUiSizeCompact" draggable="true" stretchOnPhone="true">
+    <Dialog resizable="true" contentWidth="50%" contentHeight="100%" stretch="{viewModel>/isStretched}" id="popoverTestingDialog" class="sapUiSizeCompact" draggable="true" stretchOnPhone="true">
         <customHeader>
             <Bar>
                 <contentMiddle>
-                    <Title text="{viewModel>/element/item/identifier/ui5Id}"/>
+                    <Title text="{= ( ${viewModel>/selectMode} === true ) ? ${viewModel>/element/item/identifier/ui5Id} : ${viewModel>/codeSettings/testName} }"/>
                 </contentMiddle>
                 <contentRight>
                     <ToggleButton icon="sap-icon://resize" pressed="{viewModel>/isStretched}"/>
@@ -42,7 +42,7 @@
         <content>
             <IconTabBar select="onUpdatePreview" id="idIconTabBarNoIcons" expanded="{device>/isNoPhone}" stretchContentHeight="true" backgroundDesign="Transparent" applyContentPadding="false">
                 <items>
-                    <IconTabFilter key="01" text="Current Step" visible="{viewModel>/showTargetElement}">
+                    <IconTabFilter key="01" text="Current Step" visible="{viewModel>/selectMode}">
                         <f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
                             <f:content>
                                 <Label text="Type" />
@@ -95,13 +95,23 @@
                                 <Input change="onUpdatePreview" editable="false" value="{viewModel>/element/item/identifier/domId}" valueState="{viewModel>/idQualityState}" valueStateText="{viewModel>/idQualityStateText}" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'DOM' ) }"/>
                                 <Label text="UI5-Id" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'UI5' ) }"/>
                                 <Input change="onUpdatePreview" value="{viewModel>/element/item/identifier/ui5Id}" valueState="{viewModel>/idQualityState}" valueStateText="{viewModel>/idQualityStateText}" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'UI5' ) }"/>
+                                <Label text="Rating"/>
+
+                                <HBox>
+                                    <RatingIndicator id="RIValue"  maxValue="5" enabled="false" class="sapUiSmallMarginBegin sapUiSmallMarginEnd" value="{viewModel>/element/ratingOfAttributes}" tooltip="Rating of selected Attributes" />
+                                    <Button press="onExplain" type="Transparent" icon="sap-icon://message-popup" text="{= ${viewModel>/element/messages}.length }" tooltip="Explain Rating"/>
+                                </HBox>
+
                             </f:content>
                         </f:SimpleForm>
-                        <Table fixedLayout="false" id="idAttributeTable" mode="SingleSelectLeft" inset="false" items="{viewModel>/element/attributeFilter}" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'ATTR' ) }">
+
+
+
+                        <Panel id="atrElementsPnl" expandable="true" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'ATTR' ) }" expanded="false" width="auto">
                             <headerToolbar>
-                                <Toolbar>
+                                <Toolbar height="3em" style="Clear">
                                     <content>
-                                        <Title text="Attributes" level="H2"/>
+                                        <ObjectStatus id="attrObjectStatus" text="Attributes ( {= ${viewModel>/element/attributeFilter}.length } )" state="{viewModel>/element/property/elementState}" />
                                         <ToolbarSpacer />
                                         <Button press="onFindAttribute" icon="sap-icon://activate" tooltip="Find"/>
                                         <Button press="onAddAttribute" icon="sap-icon://add" tooltip="Add"/>
@@ -109,58 +119,53 @@
                                     </content>
                                 </Toolbar>
                             </headerToolbar>
+                            <content>
+                                <Table fixedLayout="false" id="idAttributeTable" mode="SingleSelectLeft" inset="false" items="{viewModel>/element/attributeFilter}" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'ATTR' ) }">
+                                    <columns>
+                                        <Column>
+                                            <Text text="Target" />
+                                        </Column>
+                                        <Column minScreenWidth="Tablet" demandPopin="true">
+                                            <Text text="Criteria" />
+                                        </Column>
+                                        <Column minScreenWidth="Tablet" demandPopin="true">
+                                            <Text text="Subcriteria" />
+                                        </Column>
+                                        <Column minScreenWidth="Tablet" demandPopin="true" hAlign="End">
+                                            <Text text="Value" />
+                                        </Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <Select items="{viewModel>/dynamic/attrType}" change="onAttributeTypeChanged" selectedKey="{viewModel>attributeType}">
+                                                    <items>
+                                                        <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
+                                                    </items>
+                                                </Select>
+                                                <Select change="onCriteriaTypeChanged" selectedKey="{ path: 'viewModel>criteriaType'}" items="{ path:'viewModel>criteriaTypes', sorter: { path: 'criteriaText' }}">
+                                                    <items>
+                                                        <core:Item text="{viewModel>criteriaText}" key="{viewModel>criteriaKey}"/>
+                                                    </items>
+                                                </Select>
+                                                <Select change="onSubCriteriaTypeChanged" showSecondaryValues="true" width="13em" selectedKey="{ path: 'viewModel>subCriteriaType' }" items="{ path: 'viewModel>subCriteriaTypes', sorter: { path: 'subCriteriaText' }}">
+                                                    <items>
+                                                        <core:ListItem text="{viewModel>subCriteriaText}" key="{viewModel>subCriteriaType}" additionalText="{viewModel>calculatedValue}" tooltip="{viewModel>calculatedValueUnres}"/>
+                                                    </items>
+                                                </Select>
+                                                <Input change="onChangeCriteriaValue" width = "100%" value="{viewModel>criteriaValue}" />
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                            </content>
+                        </Panel>
 
-                            <columns>
-                                <Column>
-                                    <Text text="Target" />
-                                </Column>
-                                <Column minScreenWidth="Tablet" demandPopin="true">
-                                    <Text text="Criteria" />
-                                </Column>
-                                <Column minScreenWidth="Tablet" demandPopin="true">
-                                    <Text text="Subcriteria" />
-                                </Column>
-                                <Column minScreenWidth="Tablet" demandPopin="true">
-                                    <Text text="Operator" />
-                                </Column>
-                                <Column minScreenWidth="Tablet" demandPopin="true" hAlign="End">
-                                    <Text text="Value" />
-                                </Column>
-                            </columns>
-                            <items>
-                                <ColumnListItem>
-                                    <cells>
-                                        <Select items="{viewModel>/dynamic/attrType}" change="onAttributeTypeChanged" selectedKey="{viewModel>attributeType}">
-                                            <items>
-                                                <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
-                                            </items>
-                                        </Select>
-                                        <Select change="onCriteriaTypeChanged" selectedKey="{ path: 'viewModel>criteriaType'}" items="{ path:'viewModel>criteriaTypes', sorter: { path: 'criteriaText' }}">
-                                            <items>
-                                                <core:Item text="{viewModel>criteriaText}" key="{viewModel>criteriaKey}"/>
-                                            </items>
-                                        </Select>
-                                        <Select change="onSubCriteriaTypeChanged" selectedKey="{ path: 'viewModel>subCriteriaType' }" items="{ path: 'viewModel>subCriteriaTypes', sorter: { path: 'subCriteriaText' }}">
-                                            <items>
-                                                <core:Item text="{viewModel>subCriteriaText}" key="{viewModel>subCriteriaType}"/>
-                                            </items>
-                                        </Select>
-                                        <Select change="onUpdatePreview" items="{viewModel>/statics/operator}" selectedKey="{viewModel>operatorType}">
-                                            <items>
-                                                <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
-                                            </items>
-                                        </Select>
-                                        <Input change="onUpdatePreview" width = "100%" value="{viewModel>criteriaValue}" />
-                                    </cells>
-                                </ColumnListItem>
-                            </items>
-                        </Table>
-
-                        <Table fixedLayout="false" id="idAssertionTable" mode="SingleSelectLeft" inset="false" items="{viewModel>/element/assertFilter}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATR' ) }">
+                        <Panel visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATR' ) }" expandable="true" expanded="true" width="auto">
                             <headerToolbar>
-                                <Toolbar>
+                                <Toolbar height="3em" style="Clear">
                                     <content>
-                                        <Title text="Assertions" level="H2"/>
+                                        <ObjectStatus text="Assertions" state="{viewModel>/element/property/elementState}" />
                                         <ToolbarSpacer />
                                         <Button press="onFindAssertion" icon="sap-icon://activate" tooltip="Find"/>
                                         <Button press="onAddAssertion" icon="sap-icon://add" tooltip="Add"/>
@@ -169,51 +174,55 @@
                                 </Toolbar>
                             </headerToolbar>
 
-                            <columns>
-                                <Column>
-                                    <Text text="Target" />
-                                </Column>
-                                <Column minScreenWidth="Tablet" demandPopin="true">
-                                    <Text text="Criteria" />
-                                </Column>
-                                <Column minScreenWidth="Tablet" demandPopin="true">
-                                    <Text text="Subcriteria" />
-                                </Column>
-                                <Column minScreenWidth="Tablet" demandPopin="true">
-                                    <Text text="Operator" />
-                                </Column>
-                                <Column minScreenWidth="Tablet" demandPopin="true" hAlign="End">
-                                    <Text text="Value" />
-                                </Column>
-                            </columns>
-                            <items>
-                                <ColumnListItem>
-                                    <cells>
-                                        <Select change="onAttributeTypeChanged" items="{viewModel>/dynamic/attrType}" selectedKey="{viewModel>attributeType}">
-                                            <items>
-                                                <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
-                                            </items>
-                                        </Select>
-                                        <Select change="onCriteriaTypeChanged" selectedKey="{viewModel>criteriaType}" items="{ path: 'viewModel>criteriaTypes' , sorter: { path: 'criteriaText' }}">
-                                            <items>
-                                                <core:Item text="{viewModel>criteriaText}" key="{viewModel>criteriaKey}"/>
-                                            </items>
-                                        </Select>
-                                        <Select change="onSubCriteriaTypeChanged" selectedKey="{viewModel>subCriteriaType}" items="{ path: 'viewModel>subCriteriaTypes', sorter: { path: 'subCriteriaText' } }">
-                                            <items>
-                                                <core:Item text="{viewModel>subCriteriaText}" key="{viewModel>subCriteriaType}"/>
-                                            </items>
-                                        </Select>
-                                        <Select change="onUpdatePreview" items="{viewModel>/statics/operator}" selectedKey="{viewModel>operatorType}">
-                                            <items>
-                                                <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
-                                            </items>
-                                        </Select>
-                                        <Input change="onUpdatePreview" width = "100%" value="{viewModel>criteriaValue}" />
-                                    </cells>
-                                </ColumnListItem>
-                            </items>
-                        </Table>
+                            <content>
+                                <Table fixedLayout="false" id="idAssertionTable" mode="SingleSelectLeft" inset="false" items="{viewModel>/element/assertFilter}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATR' ) }">
+                                    <columns>
+                                        <Column>
+                                            <Text text="Target" />
+                                        </Column>
+                                        <Column minScreenWidth="Tablet" demandPopin="true">
+                                            <Text text="Criteria" />
+                                        </Column>
+                                        <Column minScreenWidth="Tablet" demandPopin="true">
+                                            <Text text="Subcriteria" />
+                                        </Column>
+                                        <Column minScreenWidth="Tablet" demandPopin="true">
+                                            <Text text="Operator" />
+                                        </Column>
+                                        <Column minScreenWidth="Tablet" demandPopin="true" hAlign="End">
+                                            <Text text="Value" />
+                                        </Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <Select change="onAttributeTypeChanged" items="{viewModel>/dynamic/attrType}" selectedKey="{viewModel>attributeType}">
+                                                    <items>
+                                                        <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
+                                                    </items>
+                                                </Select>
+                                                <Select change="onCriteriaTypeChanged" selectedKey="{viewModel>criteriaType}" items="{ path: 'viewModel>criteriaTypes' , sorter: { path: 'criteriaText' }}">
+                                                    <items>
+                                                        <core:Item text="{viewModel>criteriaText}" key="{viewModel>criteriaKey}"/>
+                                                    </items>
+                                                </Select>
+                                                <Select change="onSubCriteriaTypeChanged" selectedKey="{viewModel>subCriteriaType}" items="{ path: 'viewModel>subCriteriaTypes', sorter: { path: 'subCriteriaText' } }">
+                                                    <items>
+                                                        <core:Item text="{viewModel>subCriteriaText}" key="{viewModel>subCriteriaType}"/>
+                                                    </items>
+                                                </Select>
+                                                <Select change="onUpdatePreview" items="{viewModel>/statics/operator}" selectedKey="{viewModel>operatorType}">
+                                                    <items>
+                                                        <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
+                                                    </items>
+                                                </Select>
+                                                <Input change="onChangeCriteriaValue" width = "100%" value="{viewModel>criteriaValue}" />
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                            </content>
+                        </Panel>
 
                         <Panel expandable="true" expanded="false" width="auto">
                             <headerToolbar>
@@ -222,7 +231,7 @@
                                 </Toolbar>
                             </headerToolbar>
                             <content>
-                                <Table fixedLayout="false" inset="false" items="{viewModel>/element/identifiedElements}" noDataText="{i18n>notFoundTitle}">
+                                <Table fixedLayout="false" id="tblIdentifiedElements" inset="false" items="{viewModel>/element/identifiedElements}" noDataText="{i18n>notFoundTitle}">
                                     <columns>
                                         <Column>
                                             <Text text="UI5-Id" />
@@ -283,7 +292,7 @@
                                 </Toolbar>
                             </headerToolbar>
                             <content>
-                                <Table fixedLayout="false" inset="false" items="{viewModel>/elements}" noDataText="{i18n>notFoundTitle}">
+                                <Table fixedLayout="false" id="tblPerformedSteps" inset="false" items="{viewModel>/elements}" noDataText="{i18n>notFoundTitle}">
                                     <columns>
                                         <Column>
                                             <Text text="Type" />
@@ -370,7 +379,7 @@
             <Button id="btClose" text="Close" press="_onClose"/>
         </beginButton>
         <endButton>
-            <Button id="btSave" text="Save" press="_onSave" visible="{viewModel>/showTargetElement}"/>
+            <Button id="btSave" text="Save" press="_onSave" visible="{viewModel>/selectMode}"/>
         </endButton>
     </Dialog>
 </core:FragmentDefinition>
