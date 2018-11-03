@@ -11,10 +11,10 @@
                     <Title text="{= ( ${viewModel>/selectMode} === true ) ? ${viewModel>/element/item/identifier/ui5Id} : ${viewModel>/codeSettings/testName} }"/>
                 </contentMiddle>
                 <contentRight>
-                    <Button press="onShowItemGlobal" icon='sap-icon://display'/>
-                    <ToggleButton icon="sap-icon://resize" pressed="{viewModel>/isStretched}"/>
+                    <Button visible="{= ${viewModel>/selectMode} === true}" press="onShowItemGlobal" icon='sap-icon://display'/>
+                    <ToggleButton visible="{= ${viewModel>/selectMode} === true}" icon="sap-icon://resize" pressed="{viewModel>/isStretched}"/>
 
-                    <MenuButton text="Navigate from Item" buttonMode="Regular">
+                    <MenuButton visible="{= ${viewModel>/selectMode} === true}" text="Navigate from Item" buttonMode="Regular">
                         <menu>
                             <Menu itemSelected="onMenuAction">
                                 <items>
@@ -41,359 +41,349 @@
             </Bar>
         </customHeader>
         <content>
-            <IconTabBar select="onUpdatePreview" id="idIconTabBarNoIcons" expanded="{device>/isNoPhone}" stretchContentHeight="true" backgroundDesign="Transparent" applyContentPadding="false">
-                <items>
-                    <IconTabFilter key="01" text="Current Step" visible="{viewModel>/selectMode}">
-                        <f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
-                            <f:content>
-                                <Label text="Type" />
-                                <Select id="tstType" items="{viewModel>/statics/type}" change="onTypeChange" selectedKey="{viewModel>/element/property/type}">
+            <VBox>
+                <VBox visible="{= ${viewModel>/selectMode} === true}">
+                    <f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
+                        <f:content>
+                            <Label text="Type" />
+                            <Select id="tstType" items="{viewModel>/statics/type}" change="onTypeChange" selectedKey="{viewModel>/element/property/type}">
+                                <items>
+                                    <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
+                                </items>
+                            </Select>
+                            <Label text="Action" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) }" />
+                            <HBox visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) }">
+                                <Select id="tstActType" items="{viewModel>/statics/action}" width="100%" change="onUpdateAction" selectedKey="{viewModel>/element/property/actKey}">
                                     <items>
                                         <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
                                     </items>
-                                </Select>
-                                <Label text="Action" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) }" />
-                                <HBox visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) }">
-                                    <Select id="tstActType" items="{viewModel>/statics/action}" width="100%" change="onUpdateAction" selectedKey="{viewModel>/element/property/actKey}">
-                                        <items>
-                                            <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
-                                        </items>
-                                        <layoutData>
-                                            <FlexItemData growFactor="1"/>
-                                        </layoutData>
-                                    </Select>
-                                    <Select id="tstSubActType" items="{viewModel>/element/subActionTypes}" change="onUpdatePreview" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) &amp;&amp; ( ${viewModel>/element/subActionTypes}.length >= 1 ) }" selectedKey="{viewModel>/element/property/domChildWith}">
-                                        <items>
-                                            <core:Item text="{viewModel>text}" key="{viewModel>domChildWith}"/>
-                                        </items>
-                                    </Select>
-                                </HBox>
-
-
-                                <Label text="Assert-Type" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) }" />
-                                <Select id="tstAssType" items="{viewModel>/statics/assertType}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) }" selectedKey="{viewModel>/element/property/assKey}">
-                                    <items>
-                                        <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
-                                    </items>
-                                </Select>
-
-                                <Label text="Assert-Message" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) }" />
-                                <Input change="onUpdatePreview" placeholder="Optional Message for the Assertion" value="{viewModel>/element/property/assertMessage}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) }" />
-
-                                <Label text="Expect Element Count" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' ) }" />
-                                <Input change="onUpdatePreview" value="{ path: 'viewModel>/element/property/assKeyMatchingCount', type:'sap.ui.model.type.Integer'}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' ) }" />
-
-                                <Label text="Type-Text" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) &amp;&amp; ( ${viewModel>/element/property/actKey} === 'TYP' ) }" />
-                                <Input id="inpTypeText" change="onUpdatePreview" value="{viewModel>/element/property/selectActInsert}" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) &amp;&amp; ( ${viewModel>/element/property/actKey} === 'TYP' ) }"/>
-
-                                <Label text="Select-By" />
-                                <Select id="tstSelectedBy" items="{viewModel>/statics/selType}" change="onTypeChange" selectedKey="{viewModel>/element/property/selectItemBy}">
-                                    <items>
-                                        <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
-                                    </items>
-                                </Select>
-                                <Label text="DOM-Id" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'DOM' ) }" />
-                                <Input change="onUpdatePreview" editable="false" value="{viewModel>/element/item/identifier/domId}" valueState="{viewModel>/idQualityState}" valueStateText="{viewModel>/idQualityStateText}" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'DOM' ) }"/>
-                                <Label text="UI5-Id" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'UI5' ) }"/>
-                                <Input change="onUpdatePreview" value="{viewModel>/element/item/identifier/ui5Id}" valueState="{viewModel>/idQualityState}" valueStateText="{viewModel>/idQualityStateText}" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'UI5' ) }"/>
-                                <Label text="Rating"/>
-
-                                <HBox>
-                                    <RatingIndicator id="RIValue" maxValue="5" enabled="false" class="sapUiSmallMarginBegin sapUiSmallMarginEnd" value="{viewModel>/element/ratingOfAttributes}" tooltip="Rating of selected Attributes" />
-                                    <Button press="onExplain" type="Transparent" icon="sap-icon://message-popup" text="{= ${viewModel>/element/messages}.length }" tooltip="Explain Rating"/>
-                                </HBox>
-
-                            </f:content>
-                        </f:SimpleForm>
-
-
-
-                        <Panel id="atrElementsPnl" expandable="true" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'ATTR' ) }" expanded="false" width="auto">
-                            <headerToolbar>
-                                <Toolbar height="3em" style="Clear">
-                                    <content>
-                                        <ObjectStatus id="attrObjectStatus" text="Attributes ( {= ${viewModel>/element/attributeFilter}.length } )" state="{viewModel>/element/property/elementState}" />
-                                        <ToolbarSpacer />
-                                        <Button press="onFindAttribute" icon="sap-icon://activate" tooltip="Find"/>
-                                        <Button press="onAddAttribute" icon="sap-icon://add" tooltip="Add"/>
-                                        <Button press="onRemoveAttribute" icon="sap-icon://delete" tooltip="Remove"/>
-                                    </content>
-                                </Toolbar>
-                            </headerToolbar>
-                            <content>
-                                <Table fixedLayout="false" id="idAttributeTable" mode="SingleSelectLeft" inset="false" items="{viewModel>/element/attributeFilter}" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'ATTR' ) }">
-                                    <columns>
-                                        <Column>
-                                            <Text text="Target" />
-                                        </Column>
-                                        <Column minScreenWidth="Tablet" demandPopin="true">
-                                            <Text text="Criteria" />
-                                        </Column>
-                                        <Column minScreenWidth="Tablet" demandPopin="true">
-                                            <Text text="Subcriteria" />
-                                        </Column>
-                                        <Column minScreenWidth="Tablet" demandPopin="true" hAlign="End">
-                                            <Text text="Value" />
-                                        </Column>
-                                    </columns>
-                                    <items>
-                                        <ColumnListItem>
-                                            <cells>
-                                                <Select items="{viewModel>/dynamic/attrType}" change="onAttributeTypeChanged" selectedKey="{viewModel>attributeType}">
-                                                    <items>
-                                                        <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
-                                                    </items>
-                                                </Select>
-                                                <Select change="onCriteriaTypeChanged" selectedKey="{ path: 'viewModel>criteriaType'}" items="{ path:'viewModel>criteriaTypes', sorter: { path: 'criteriaText' }}">
-                                                    <items>
-                                                        <core:Item text="{viewModel>criteriaText}" key="{viewModel>criteriaKey}"/>
-                                                    </items>
-                                                </Select>
-                                                <Select change="onSubCriteriaTypeChanged" showSecondaryValues="true" width="13em" selectedKey="{ path: 'viewModel>subCriteriaType' }" items="{ path: 'viewModel>subCriteriaTypes', sorter: { path: 'subCriteriaText' }}">
-                                                    <items>
-                                                        <core:ListItem text="{viewModel>subCriteriaText}" key="{viewModel>subCriteriaType}" additionalText="{viewModel>calculatedValue}" tooltip="{viewModel>calculatedValueUnres}"/>
-                                                    </items>
-                                                </Select>
-                                                <Input change="onChangeCriteriaValue" width = "100%" value="{viewModel>criteriaValue}" />
-                                            </cells>
-                                        </ColumnListItem>
-                                    </items>
-                                </Table>
-                            </content>
-                        </Panel>
-
-                        <Panel visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' ) }" expandable="true" expanded="true" width="auto">
-                            <headerToolbar>
-                                <Toolbar height="3em" style="Clear">
-                                    <content>
-                                        <ObjectStatus text="Assertions" state="{viewModel>/element/property/elementState}" />
-                                        <ToolbarSpacer />
-                                        <Button press="onAddAssertion" icon="sap-icon://add" tooltip="Add"/>
-                                        <Button press="onRemoveAssertion" icon="sap-icon://delete" tooltip="Remove"/>
-                                    </content>
-                                </Toolbar>
-                            </headerToolbar>
-
-                            <content>
-                                <Table fixedLayout="false" id="idAssertionTable" mode="SingleSelectLeft" inset="false" items="{viewModel>/element/assertFilter}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' ) }">
-                                    <columns>
-                                        <Column>
-                                            <Text text="Target" />
-                                        </Column>
-                                        <Column minScreenWidth="Tablet" demandPopin="true">
-                                            <Text text="Criteria" />
-                                        </Column>
-                                        <Column minScreenWidth="Tablet" demandPopin="true">
-                                            <Text text="Subcriteria" />
-                                        </Column>
-                                        <Column minScreenWidth="Tablet" demandPopin="true">
-                                            <Text text="Operator" />
-                                        </Column>
-                                        <Column minScreenWidth="Tablet" demandPopin="true" hAlign="End">
-                                            <Text text="Value" />
-                                        </Column>
-                                    </columns>
-                                    <items>
-                                        <ColumnListItem>
-                                            <cells>
-                                                <Select change="onAttributeTypeChanged" items="{viewModel>/dynamic/attrType}" selectedKey="{viewModel>attributeType}">
-                                                    <items>
-                                                        <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
-                                                    </items>
-                                                </Select>
-                                                <Select change="onCriteriaTypeChanged" selectedKey="{viewModel>criteriaType}" items="{ path: 'viewModel>criteriaTypes' , sorter: { path: 'criteriaText' }}">
-                                                    <items>
-                                                        <core:Item text="{viewModel>criteriaText}" key="{viewModel>criteriaKey}"/>
-                                                    </items>
-                                                </Select>
-                                                <Select change="onSubCriteriaTypeChanged" selectedKey="{viewModel>subCriteriaType}" items="{ path: 'viewModel>subCriteriaTypes', sorter: { path: 'subCriteriaText' } }">
-                                                    <items>
-                                                        <core:Item text="{viewModel>subCriteriaText}" key="{viewModel>subCriteriaType}"/>
-                                                    </items>
-                                                </Select>
-                                                <Select change="onUpdatePreview" items="{viewModel>/statics/operator}" selectedKey="{viewModel>operatorType}">
-                                                    <items>
-                                                        <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
-                                                    </items>
-                                                </Select>
-                                                <Input change="onChangeCriteriaValue" width = "100%" value="{viewModel>criteriaValue}" />
-                                            </cells>
-                                        </ColumnListItem>
-                                    </items>
-                                </Table>
-                            </content>
-                        </Panel>
-
-                        <Panel expandable="true" id="pnlFoundElements" expanded="false" width="auto">
-                            <headerToolbar>
-                                <Toolbar height="3rem" style="Clear">
-                                    <ObjectStatus text="Found Items ( {=${viewModel>/element/identifiedElements}.length} )" state="{viewModel>/element/property/elementState}" />
-                                </Toolbar>
-                            </headerToolbar>
-                            <content>
-                                <Table fixedLayout="false" id="tblIdentifiedElements" inset="false" items="{viewModel>/element/identifiedElements}" noDataText="{i18n>notFoundTitle}">
-                                    <columns>
-                                        <Column>
-                                            <Text text="UI5-Id" />
-                                        </Column>
-                                        <Column minScreenWidth="Tablet" demandPopin="true">
-                                            <Text text="Type" />
-                                        </Column>
-                                        <Column minScreenWidth="Tablet" demandPopin="true" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' ) }">
-                                            <Text text="Assertion Status" />
-                                        </Column>
-                                    </columns>
-                                    <items>
-                                        <ColumnListItem>
-                                            <cells>
-                                                <HBox>
-                                                    <Button class="sapUiSmallMarginBegin sapUiSmallMarginEnd" press="onShowItem" icon='sap-icon://display' type="Transparent"/>
-                                                    <Text text="{viewModel>identifier/ui5Id}">
-                                                        <layoutData>
-                                                            <FlexItemData alignSelf="Center"/>
-                                                        </layoutData>
-                                                    </Text>
-                                                </HBox>
-                                                <Text text="{viewModel>metadata/elementName}"/>
-                                                <HBox visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' ) }">
-                                                    <core:Icon src='sap-icon://accept' color="Positive" visible="{viewModel>assertionOK}"/>
-                                                    <Button press="onShowAssertionIssue" icon='sap-icon://decline' type="Reject" visible="{= ${viewModel>assertionOK} === false}"/>
-                                                </HBox>
-                                            </cells>
-                                        </ColumnListItem>
-                                    </items>
-                                </Table>
-                            </content>
-                        </Panel>
-                    </IconTabFilter>
-                    <IconTabFilter text="Current Test">
-                        <Panel expandable="true" expanded="true" width="auto">
-                            <headerToolbar>
-                                <Toolbar height="3rem" style="Clear">
-                                    <Title text="Code-Generation Settings" />
-                                </Toolbar>
-                            </headerToolbar>
-                            <content>
-                                <f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
-                                    <f:content>
-                                        <Label text="Language" />
-                                        <Select id="tstLanguage" change="onUpdatePreview" selectedKey="{viewModel>/codeSettings/language}">
-                                            <items>
-                                                <core:Item text="Testcafe" key="TCF"/>
-                                                <core:Item text="Nightwatch" key="NGT"/>
-                                                <core:Item text="OPA5" key="OPA"/>
-                                            </items>
-                                        </Select>
-
-                                        <Label text="Test-Category"/>
-                                        <Input value="{viewModel>/codeSettings/testCategory}" change="onUpdatePreview"/>
-
-                                        <Label text="Test-Name"/>
-                                        <Input value="{viewModel>/codeSettings/testName}" change="onUpdatePreview"/>
-
-                                        <Label text="Test-Page"/>
-                                        <Input value="{viewModel>/codeSettings/testUrl}" change="onUpdatePreview"/>
-                                    </f:content>
-                                </f:SimpleForm>
-
-                            </content>
-                        </Panel>
-
-                        <Panel expandable="true" expanded="true" width="auto">
-                            <headerToolbar>
-                                <Toolbar height="3rem" style="Clear">
-                                    <Title text="Current Steps ({=${viewModel>/elements}.length})" />
-                                </Toolbar>
-                            </headerToolbar>
-                            <content>
-                                <Table fixedLayout="false" id="tblPerformedSteps" inset="false" items="{viewModel>/elements}" noDataText="{i18n>notFoundTitle}">
-                                    <columns>
-                                        <Column>
-                                            <Text text="Type" />
-                                        </Column>
-                                        <Column>
-                                            <Text text="Activity" />
-                                        </Column>
-                                        <Column>
-                                            <Text text="UI5-Id" />
-                                        </Column>
-                                        <Column minScreenWidth="Tablet" demandPopin="true">
-                                            <Text text="Type" />
-                                        </Column>
-                                        <Column minScreenWidth="Tablet" demandPopin="true">
-                                            <Text text="Action" />
-                                        </Column>
-                                    </columns>
-                                    <items>
-                                        <ColumnListItem>
-                                            <cells>
-                                                <Select items="{viewModel>/statics/type}" enabled="false" selectedKey="{viewModel>property/type}">
-                                                    <items>
-                                                        <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
-                                                    </items>
-                                                </Select>
-                                                <HBox width="100%">
-                                                    <HBox width="100%" visible="{= ( ${viewModel>property/type} === 'ACT' ) }">
-                                                        <Select enabled="false" items="{viewModel>/statics/action}" width="100%" selectedKey="{viewModel>property/actKey}">
-                                                            <items>
-                                                                <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
-                                                            </items>
-                                                            <layoutData>
-                                                                <FlexItemData growFactor="1"/>
-                                                            </layoutData>
-                                                        </Select>
-                                                        <Input editable="false" value="{viewModel>domChildWith}"/>
-                                                    </HBox>
-                                                    <HBox width="100%" visible="{= ( ${viewModel>property/type} === 'ASS' ) }">
-                                                        <Select items="{viewModel>/statics/assertType}" enabled="false" selectedKey="{viewModel>property/assKey}">
-                                                            <items>
-                                                                <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
-                                                            </items>
-                                                        </Select>
-                                                    </HBox>
-                                                </HBox>
-
-                                                <Text text="{viewModel>item/identifier/ui5Id}"/>
-                                                <Text text="{viewModel>item/metadata/elementName}"/>
-                                                <HBox>
-                                                    <Button icon="sap-icon://edit"/>
-                                                    <Button icon="sap-icon://delete"/>
-                                                </HBox>
-                                            </cells>
-                                        </ColumnListItem>
-                                    </items>
-                                </Table>
-                            </content>
-                        </Panel>
-                    </IconTabFilter>
-
-                    <IconTabFilter text="Code">
-                        <IconTabBar stretchContentHeight="true" backgroundDesign="Transparent" applyContentPadding="true" items="{ path:'viewModel>/codes', sorter: { path: 'order' }}">
-                            <items>
-                                <IconTabFilter text="{viewModel>codeName}">
-                                    <VBox>
-                                        <code:CodeEditor visible="{= ${viewModel>type} === 'CODE'}" value="{viewModel>code}" height="300px" editable="true" type="typescript">
-                                            <code:layoutData>
-                                                <FlexItemData growFactor="1"/>
-                                            </code:layoutData>
-                                        </code:CodeEditor>
-                                        <FormattedText visible="{= ${viewModel>type} === 'FTXT'}" htmlText="{viewModel>code}"/>
-                                    </VBox>
                                     <layoutData>
                                         <FlexItemData growFactor="1"/>
                                     </layoutData>
-                                </IconTabFilter>
-                            </items>
-                        </IconTabBar>
-                    </IconTabFilter>
-                </items>
-            </IconTabBar>
+                                </Select>
+                                <Select id="tstSubActType" items="{viewModel>/element/subActionTypes}" change="onUpdatePreview" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) &amp;&amp; ( ${viewModel>/element/subActionTypes}.length >= 1 ) }" selectedKey="{viewModel>/element/property/domChildWith}">
+                                    <items>
+                                        <core:Item text="{viewModel>text}" key="{viewModel>domChildWith}"/>
+                                    </items>
+                                </Select>
+                            </HBox>
+
+
+                            <Label text="Assert-Type" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) }" />
+                            <Select id="tstAssType" items="{viewModel>/statics/assertType}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) }" selectedKey="{viewModel>/element/property/assKey}">
+                                <items>
+                                    <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
+                                </items>
+                            </Select>
+
+                            <Label text="Assert-Message" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) }" />
+                            <Input change="onUpdatePreview" placeholder="Optional Message for the Assertion" value="{viewModel>/element/property/assertMessage}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) }" />
+
+                            <Label text="Expect Element Count" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' ) }" />
+                            <Input change="onUpdatePreview" value="{ path: 'viewModel>/element/property/assKeyMatchingCount', type:'sap.ui.model.type.Integer'}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' ) }" />
+
+                            <Label text="Type-Text" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) &amp;&amp; ( ${viewModel>/element/property/actKey} === 'TYP' ) }" />
+                            <Input id="inpTypeText" change="onUpdatePreview" value="{viewModel>/element/property/selectActInsert}" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) &amp;&amp; ( ${viewModel>/element/property/actKey} === 'TYP' ) }"/>
+
+                            <Label text="Select-By" />
+                            <Select id="tstSelectedBy" items="{viewModel>/statics/selType}" change="onTypeChange" selectedKey="{viewModel>/element/property/selectItemBy}">
+                                <items>
+                                    <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
+                                </items>
+                            </Select>
+                            <Label text="DOM-Id" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'DOM' ) }" />
+                            <Input change="onUpdatePreview" editable="false" value="{viewModel>/element/item/identifier/domId}" valueState="{viewModel>/idQualityState}" valueStateText="{viewModel>/idQualityStateText}" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'DOM' ) }"/>
+                            <Label text="UI5-Id" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'UI5' ) }"/>
+                            <Input change="onUpdatePreview" value="{viewModel>/element/item/identifier/ui5Id}" valueState="{viewModel>/idQualityState}" valueStateText="{viewModel>/idQualityStateText}" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'UI5' ) }"/>
+                            <Label text="Rating"/>
+
+                            <HBox>
+                                <RatingIndicator id="RIValue" maxValue="5" enabled="false" class="sapUiSmallMarginBegin sapUiSmallMarginEnd" value="{viewModel>/element/ratingOfAttributes}" tooltip="Rating of selected Attributes" />
+                                <Button press="onExplain" type="Transparent" icon="sap-icon://message-popup" text="{= ${viewModel>/element/messages}.length }" tooltip="Explain Rating"/>
+                            </HBox>
+
+                        </f:content>
+                    </f:SimpleForm>
+
+
+
+                    <Panel id="atrElementsPnl" expandable="true" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'ATTR' ) }" expanded="false" width="auto">
+                        <headerToolbar>
+                            <Toolbar height="3em" style="Clear">
+                                <content>
+                                    <ObjectStatus id="attrObjectStatus" text="Attributes ( {= ${viewModel>/element/attributeFilter}.length } )" state="{viewModel>/element/property/elementState}" />
+                                    <ToolbarSpacer />
+                                    <Button press="onFindAttribute" icon="sap-icon://activate" tooltip="Find"/>
+                                    <Button press="onAddAttribute" icon="sap-icon://add" tooltip="Add"/>
+                                    <Button press="onRemoveAttribute" icon="sap-icon://delete" tooltip="Remove"/>
+                                </content>
+                            </Toolbar>
+                        </headerToolbar>
+                        <content>
+                            <Table fixedLayout="false" id="idAttributeTable" mode="SingleSelectLeft" inset="false" items="{viewModel>/element/attributeFilter}" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'ATTR' ) }">
+                                <columns>
+                                    <Column>
+                                        <Text text="Target" />
+                                    </Column>
+                                    <Column minScreenWidth="Tablet" demandPopin="true">
+                                        <Text text="Criteria" />
+                                    </Column>
+                                    <Column minScreenWidth="Tablet" demandPopin="true">
+                                        <Text text="Subcriteria" />
+                                    </Column>
+                                    <Column minScreenWidth="Tablet" demandPopin="true" hAlign="End">
+                                        <Text text="Value" />
+                                    </Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Select items="{viewModel>/dynamic/attrType}" change="onAttributeTypeChanged" selectedKey="{viewModel>attributeType}">
+                                                <items>
+                                                    <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
+                                                </items>
+                                            </Select>
+                                            <Select change="onCriteriaTypeChanged" selectedKey="{ path: 'viewModel>criteriaType'}" items="{ path:'viewModel>criteriaTypes', sorter: { path: 'criteriaText' }}">
+                                                <items>
+                                                    <core:Item text="{viewModel>criteriaText}" key="{viewModel>criteriaKey}"/>
+                                                </items>
+                                            </Select>
+                                            <Select change="onSubCriteriaTypeChanged" showSecondaryValues="true" width="13em" selectedKey="{ path: 'viewModel>subCriteriaType' }" items="{ path: 'viewModel>subCriteriaTypes', sorter: { path: 'subCriteriaText' }}">
+                                                <items>
+                                                    <core:ListItem text="{viewModel>subCriteriaText}" key="{viewModel>subCriteriaType}" additionalText="{viewModel>calculatedValue}" tooltip="{viewModel>calculatedValueUnres}"/>
+                                                </items>
+                                            </Select>
+                                            <Input change="onChangeCriteriaValue" width = "100%" value="{viewModel>criteriaValue}" />
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </content>
+                    </Panel>
+
+                    <Panel visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' ) }" expandable="true" expanded="true" width="auto">
+                        <headerToolbar>
+                            <Toolbar height="3em" style="Clear">
+                                <content>
+                                    <ObjectStatus text="Assertions" state="{viewModel>/element/property/elementState}" />
+                                    <ToolbarSpacer />
+                                    <Button press="onAddAssertion" icon="sap-icon://add" tooltip="Add"/>
+                                    <Button press="onRemoveAssertion" icon="sap-icon://delete" tooltip="Remove"/>
+                                </content>
+                            </Toolbar>
+                        </headerToolbar>
+
+                        <content>
+                            <Table fixedLayout="false" id="idAssertionTable" mode="SingleSelectLeft" inset="false" items="{viewModel>/element/assertFilter}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' ) }">
+                                <columns>
+                                    <Column>
+                                        <Text text="Target" />
+                                    </Column>
+                                    <Column minScreenWidth="Tablet" demandPopin="true">
+                                        <Text text="Criteria" />
+                                    </Column>
+                                    <Column minScreenWidth="Tablet" demandPopin="true">
+                                        <Text text="Subcriteria" />
+                                    </Column>
+                                    <Column minScreenWidth="Tablet" demandPopin="true">
+                                        <Text text="Operator" />
+                                    </Column>
+                                    <Column minScreenWidth="Tablet" demandPopin="true" hAlign="End">
+                                        <Text text="Value" />
+                                    </Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Select change="onAttributeTypeChanged" items="{viewModel>/dynamic/attrType}" selectedKey="{viewModel>attributeType}">
+                                                <items>
+                                                    <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
+                                                </items>
+                                            </Select>
+                                            <Select change="onCriteriaTypeChanged" selectedKey="{viewModel>criteriaType}" items="{ path: 'viewModel>criteriaTypes' , sorter: { path: 'criteriaText' }}">
+                                                <items>
+                                                    <core:Item text="{viewModel>criteriaText}" key="{viewModel>criteriaKey}"/>
+                                                </items>
+                                            </Select>
+                                            <Select change="onSubCriteriaTypeChanged" selectedKey="{viewModel>subCriteriaType}" items="{ path: 'viewModel>subCriteriaTypes', sorter: { path: 'subCriteriaText' } }">
+                                                <items>
+                                                    <core:Item text="{viewModel>subCriteriaText}" key="{viewModel>subCriteriaType}"/>
+                                                </items>
+                                            </Select>
+                                            <Select change="onUpdatePreview" items="{viewModel>/statics/operator}" selectedKey="{viewModel>operatorType}">
+                                                <items>
+                                                    <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
+                                                </items>
+                                            </Select>
+                                            <Input change="onChangeCriteriaValue" width = "100%" value="{viewModel>criteriaValue}" />
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </content>
+                    </Panel>
+
+                    <Panel expandable="true" id="pnlFoundElements" expanded="false" width="auto">
+                        <headerToolbar>
+                            <Toolbar height="3rem" style="Clear">
+                                <ObjectStatus text="Found Items ( {=${viewModel>/element/identifiedElements}.length} )" state="{viewModel>/element/property/elementState}" />
+                            </Toolbar>
+                        </headerToolbar>
+                        <content>
+                            <Table fixedLayout="false" id="tblIdentifiedElements" inset="false" items="{viewModel>/element/identifiedElements}" noDataText="{i18n>notFoundTitle}">
+                                <columns>
+                                    <Column>
+                                        <Text text="UI5-Id" />
+                                    </Column>
+                                    <Column minScreenWidth="Tablet" demandPopin="true">
+                                        <Text text="Type" />
+                                    </Column>
+                                    <Column minScreenWidth="Tablet" demandPopin="true" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' ) }">
+                                        <Text text="Assertion Status" />
+                                    </Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <HBox>
+                                                <Button class="sapUiSmallMarginBegin sapUiSmallMarginEnd" press="onShowItem" icon='sap-icon://display' type="Transparent"/>
+                                                <Text text="{viewModel>identifier/ui5Id}">
+                                                    <layoutData>
+                                                        <FlexItemData alignSelf="Center"/>
+                                                    </layoutData>
+                                                </Text>
+                                            </HBox>
+                                            <Text text="{viewModel>metadata/elementName}"/>
+                                            <HBox visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' ) }">
+                                                <core:Icon src='sap-icon://accept' color="Positive" visible="{viewModel>assertionOK}"/>
+                                                <Button press="onShowAssertionIssue" icon='sap-icon://decline' type="Reject" visible="{= ${viewModel>assertionOK} === false}"/>
+                                            </HBox>
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </content>
+                    </Panel>
+                </VBox>
+                <IconTabBar visible="{= ${viewModel>/selectMode} === false}" id="idIconTabBarNoIcons" expanded="true" stretchContentHeight="true" applyContentPadding="false">
+                    <items>
+                        <IconTabFilter text="Test-Settings">
+                            <f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
+                                <f:content>
+                                    <Label text="Language" required="true"/>
+                                    <Select id="tstLanguage" change="onUpdatePreview" items="{viewModel>/codeLanguages}" selectedKey="{viewModel>/codeSettings/language}">
+                                        <items>
+                                            <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
+                                        </items>
+                                    </Select>
+
+                                    <Label required="true" text="Test-Category"/>
+                                    <Input value="{viewModel>/codeSettings/testCategory}" change="onUpdatePreview"/>
+
+                                    <Label required="true" text="Test-Name"/>
+                                    <Input value="{viewModel>/codeSettings/testName}" change="onUpdatePreview"/>
+
+                                    <Label text="Test-Page"/>
+                                    <Input value="{viewModel>/codeSettings/testUrl}" change="onUpdatePreview"/>
+                                </f:content>
+                            </f:SimpleForm>
+
+                            <Panel expandable="true" expanded="true" width="auto">
+                                <headerToolbar>
+                                    <Toolbar height="3rem" style="Clear">
+                                        <Title text="Steps ( {= ${viewModel>/elementLength} } )" />
+                                    </Toolbar>
+                                </headerToolbar>
+                                <content>
+                                    <Table fixedLayout="false" id="tblPerformedSteps" inset="false" items="{viewModel>/elements}" noDataText="{i18n>notFoundTitle}">
+                                        <columns>
+                                            <Column>
+                                                <Text text="Type" />
+                                            </Column>
+                                            <Column>
+                                                <Text text="Activity" />
+                                            </Column>
+                                            <Column>
+                                                <Text text="UI5-Id" />
+                                            </Column>
+                                            <Column minScreenWidth="Tablet" demandPopin="true">
+                                                <Text text="Type" />
+                                            </Column>
+                                            <Column minScreenWidth="Tablet" demandPopin="true">
+                                                <Text text="Action" />
+                                            </Column>
+                                        </columns>
+                                        <items>
+                                            <ColumnListItem>
+                                                <cells>
+                                                    <Select items="{viewModel>/statics/type}" enabled="false" selectedKey="{viewModel>property/type}">
+                                                        <items>
+                                                            <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
+                                                        </items>
+                                                    </Select>
+                                                    <HBox width="100%">
+                                                        <HBox width="100%" visible="{= ( ${viewModel>property/type} === 'ACT' ) }">
+                                                            <Select enabled="false" items="{viewModel>/statics/action}" width="100%" selectedKey="{viewModel>property/actKey}">
+                                                                <items>
+                                                                    <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
+                                                                </items>
+                                                                <layoutData>
+                                                                    <FlexItemData growFactor="1"/>
+                                                                </layoutData>
+                                                            </Select>
+                                                            <Input editable="false" value="{viewModel>domChildWith}"/>
+                                                        </HBox>
+                                                        <HBox width="100%" visible="{= ( ${viewModel>property/type} === 'ASS' ) }">
+                                                            <Select items="{viewModel>/statics/assertType}" enabled="false" selectedKey="{viewModel>property/assKey}">
+                                                                <items>
+                                                                    <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
+                                                                </items>
+                                                            </Select>
+                                                        </HBox>
+                                                    </HBox>
+
+                                                    <Text text="{viewModel>item/identifier/ui5Id}"/>
+                                                    <Text text="{viewModel>item/metadata/elementName}"/>
+                                                    <HBox>
+                                                        <Button icon="sap-icon://edit"/>
+                                                        <Button icon="sap-icon://delete"/>
+                                                    </HBox>
+                                                </cells>
+                                            </ColumnListItem>
+                                        </items>
+                                    </Table>
+                                </content>
+                            </Panel>
+                        </IconTabFilter>
+
+                        <IconTabFilter text="Code">
+                            <IconTabBar stretchContentHeight="true" backgroundDesign="Transparent" applyContentPadding="true" items="{ path:'viewModel>/codes', sorter: { path: 'order' }}">
+                                <items>
+                                    <IconTabFilter text="{viewModel>codeName}">
+                                        <VBox>
+                                            <code:CodeEditor visible="{= ${viewModel>type} === 'CODE'}" value="{viewModel>code}" height="300px" editable="true" type="typescript">
+                                                <code:layoutData>
+                                                    <FlexItemData growFactor="1"/>
+                                                </code:layoutData>
+                                            </code:CodeEditor>
+                                            <FormattedText visible="{= ${viewModel>type} === 'FTXT'}" htmlText="{viewModel>code}"/>
+                                        </VBox>
+                                        <layoutData>
+                                            <FlexItemData growFactor="1"/>
+                                        </layoutData>
+                                    </IconTabFilter>
+                                </items>
+                            </IconTabBar>
+                        </IconTabFilter>
+                    </items>
+                </IconTabBar>
+            </VBox>
         </content>
-        <beginButton>
-            <Button id="btClose" text="Close" press="_onClose"/>
-        </beginButton>
-        <endButton>
-            <Button id="btSave" text="Save" press="_onSave" visible="{viewModel>/selectMode}"/>
-        </endButton>
+        <buttons>
+            <Button id="btSaveAndRestart" visible="{= ${viewModel>/selectMode} === false }" type="Emphasized" text="Close and Restart" press="_onCloseAndRestart"/>
+            <Button id="btClose" type="Reject" text="Ignore &amp; Continue" press="_onClose"/>
+            <Button id="btSave" type="Accept" text="Save &amp; Continue" press="_onSave" visible="{viewModel>/selectMode}"/>
+            <Button id="btSaveAndFinish" type="Emphasized" text="Save &amp; Finish" press="_onSaveAndFinish" visible="{viewModel>/selectMode}"/>
+        </buttons>
     </Dialog>
 </core:FragmentDefinition>
