@@ -105,8 +105,6 @@
                         </f:content>
                     </f:SimpleForm>
 
-
-
                     <Panel id="atrElementsPnl" expandable="true" visible="{= ( ${viewModel>/element/property/selectItemBy} === 'ATTR' ) }" expanded="false" width="auto">
                         <headerToolbar>
                             <Toolbar height="3em" style="Clear">
@@ -160,6 +158,57 @@
                             </Table>
                         </content>
                     </Panel>
+
+                    <Panel visible="{= ( ${viewModel>/element/property/type} === 'SUP' ) }" id="pnlSupAssistantRule" expandable="true" expanded="false" width="auto">
+                        <headerToolbar>
+                            <Toolbar height="3em" style="Clear">
+                                <content>
+                                    <ObjectStatus text="Support-Assistant ( {viewModel>/element/supportAssistantResultLength} )" state="{viewModel>/element/property/elementState}" />
+                                    <ToolbarSpacer />
+                                    <Button press="onRunSupportAssistant" icon="sap-icon://media-play" tooltip="Run Support Assistant or selected component"/>
+                                </content>
+                            </Toolbar>
+                        </headerToolbar>
+                        <content>
+                            <f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
+                                <f:content>
+                                    <Label text="Ignore Global Context"/>
+                                    <CheckBox selected="{viewModel>/element/property/supportAssistant/ignoreGlobal}" select="onRunSupportAssistant"/>
+                                    <Label text="Exclude Rules"/>
+                                    <MultiComboBox selectedKeys="{viewModel>/element/supportAssistant/supportRules}" selectionFinish="onRunSupportAssistant" items="{
+                                                    path: 'viewModel>/statics/supportRules',
+                                                    sorter: { path: 'libName' }
+                                                }">
+                                        <core:Item key="{viewModel>libName}/{viewModel>ruleId}" text="{viewModel>libName} - {viewModel>ruleId}" />
+                                    </MultiComboBox>
+                                </f:content>
+                            </f:SimpleForm>
+
+                            <Table id="idSupportAssistantTable" inset="false" items="{viewModel>/element/supportAssistantResult}">
+                                <columns>
+                                    <Column width="4em">
+                                        <Text text="Severity"/>
+                                    </Column>
+                                    <Column minScreenWidth="Tablet" demandPopin="true">
+                                        <Text text="Details" />
+                                    </Column>
+                                    <Column minScreenWidth="Tablet" width="10em" demandPopin="true">
+                                        <Text text="Rule" />
+                                    </Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <ObjectStatus text="{viewModel>severity}" state="{viewModel>state}" />
+                                            <Text width="100%" text="{viewModel>details}"/>
+                                            <Text text="{viewModel>rule}" tooltip="{viewModel>ruleText}"/>
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </content>
+                    </Panel>
+
 
                     <Panel visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' ) }" expandable="true" expanded="true" width="auto">
                         <headerToolbar>
@@ -285,6 +334,9 @@
 
                                     <Label text="Test-Page"/>
                                     <Input value="{viewModel>/codeSettings/testUrl}" change="onUpdatePreview"/>
+
+                                    <Label visible="false" text="Support-Assistant" tooltip="Add Support-Assistant steps, before every navigation step"/>
+                                    <CheckBox visible="false" selected="{viewModel>/codeSettings/supportAssistant}" select="onUpdatePreview"/>
                                 </f:content>
                             </f:SimpleForm>
 
@@ -361,7 +413,7 @@
                                 <items>
                                     <IconTabFilter text="{viewModel>codeName}">
                                         <VBox>
-                                            <code:CodeEditor visible="{= ${viewModel>type} === 'CODE'}" value="{viewModel>code}" height="300px" editable="true" type="typescript">
+                                            <code:CodeEditor visible="{= ${viewModel>type} === 'CODE'}" value="{viewModel>code}" height="500px" editable="true" type="typescript">
                                                 <code:layoutData>
                                                     <FlexItemData growFactor="1"/>
                                                 </code:layoutData>
@@ -381,9 +433,10 @@
         </content>
         <buttons>
             <Button id="btSaveAndRestart" visible="{= ${viewModel>/selectMode} === false }" type="Emphasized" text="Close and Restart" press="_onCloseAndRestart"/>
-            <Button id="btClose" type="Reject" text="Ignore &amp; Continue" press="_onClose"/>
+            <Button id="btClose" type="Reject" visible="{= ${viewModel>/selectMode} === true }" text="Ignore &amp; Continue" press="_onClose"/>
+            <Button id="btCloseC" type="Reject" visible="{= ${viewModel>/selectMode} === false }" text="Close" press="_onClose"/>
             <Button id="btSave" type="Accept" text="Save &amp; Continue" press="_onSave" visible="{viewModel>/selectMode}"/>
-            <Button id="btSaveAndFinish" type="Emphasized" text="Save &amp; Finish" press="_onSaveAndFinish" visible="{viewModel>/selectMode}"/>
+            <Button id="btSaveAndFinish" type="Emphasized" text="Finish" press="_onSaveAndFinish" visible="{viewModel>/selectMode}"/>
         </buttons>
     </Dialog>
 </core:FragmentDefinition>
