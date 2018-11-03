@@ -11,6 +11,7 @@
                     <Title text="{= ( ${viewModel>/selectMode} === true ) ? ${viewModel>/element/item/identifier/ui5Id} : ${viewModel>/codeSettings/testName} }"/>
                 </contentMiddle>
                 <contentRight>
+                    <Button press="onShowItemGlobal" icon='sap-icon://display'/>
                     <ToggleButton icon="sap-icon://resize" pressed="{viewModel>/isStretched}"/>
 
                     <MenuButton text="Navigate from Item" buttonMode="Regular">
@@ -80,10 +81,10 @@
                                 <Input change="onUpdatePreview" placeholder="Optional Message for the Assertion" value="{viewModel>/element/property/assertMessage}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) }" />
 
                                 <Label text="Expect Element Count" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' ) }" />
-                                <Input change="onUpdatePreview" value="{viewModel>/element/property/assKeyMatchingCount}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' ) }" />
+                                <Input change="onUpdatePreview" value="{ path: 'viewModel>/element/property/assKeyMatchingCount', type:'sap.ui.model.type.Integer'}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' ) }" />
 
                                 <Label text="Type-Text" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) &amp;&amp; ( ${viewModel>/element/property/actKey} === 'TYP' ) }" />
-                                <Input change="onUpdatePreview" value="{viewModel>/element/property/selectActInsert}" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) &amp;&amp; ( ${viewModel>/element/property/actKey} === 'TYP' ) }"/>
+                                <Input id="inpTypeText" change="onUpdatePreview" value="{viewModel>/element/property/selectActInsert}" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) &amp;&amp; ( ${viewModel>/element/property/actKey} === 'TYP' ) }"/>
 
                                 <Label text="Select-By" />
                                 <Select id="tstSelectedBy" items="{viewModel>/statics/selType}" change="onTypeChange" selectedKey="{viewModel>/element/property/selectItemBy}">
@@ -98,7 +99,7 @@
                                 <Label text="Rating"/>
 
                                 <HBox>
-                                    <RatingIndicator id="RIValue"  maxValue="5" enabled="false" class="sapUiSmallMarginBegin sapUiSmallMarginEnd" value="{viewModel>/element/ratingOfAttributes}" tooltip="Rating of selected Attributes" />
+                                    <RatingIndicator id="RIValue" maxValue="5" enabled="false" class="sapUiSmallMarginBegin sapUiSmallMarginEnd" value="{viewModel>/element/ratingOfAttributes}" tooltip="Rating of selected Attributes" />
                                     <Button press="onExplain" type="Transparent" icon="sap-icon://message-popup" text="{= ${viewModel>/element/messages}.length }" tooltip="Explain Rating"/>
                                 </HBox>
 
@@ -161,13 +162,12 @@
                             </content>
                         </Panel>
 
-                        <Panel visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATR' ) }" expandable="true" expanded="true" width="auto">
+                        <Panel visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' ) }" expandable="true" expanded="true" width="auto">
                             <headerToolbar>
                                 <Toolbar height="3em" style="Clear">
                                     <content>
                                         <ObjectStatus text="Assertions" state="{viewModel>/element/property/elementState}" />
                                         <ToolbarSpacer />
-                                        <Button press="onFindAssertion" icon="sap-icon://activate" tooltip="Find"/>
                                         <Button press="onAddAssertion" icon="sap-icon://add" tooltip="Add"/>
                                         <Button press="onRemoveAssertion" icon="sap-icon://delete" tooltip="Remove"/>
                                     </content>
@@ -175,7 +175,7 @@
                             </headerToolbar>
 
                             <content>
-                                <Table fixedLayout="false" id="idAssertionTable" mode="SingleSelectLeft" inset="false" items="{viewModel>/element/assertFilter}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATR' ) }">
+                                <Table fixedLayout="false" id="idAssertionTable" mode="SingleSelectLeft" inset="false" items="{viewModel>/element/assertFilter}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' ) }">
                                     <columns>
                                         <Column>
                                             <Text text="Target" />
@@ -224,7 +224,7 @@
                             </content>
                         </Panel>
 
-                        <Panel expandable="true" expanded="false" width="auto">
+                        <Panel expandable="true" id="pnlFoundElements" expanded="false" width="auto">
                             <headerToolbar>
                                 <Toolbar height="3rem" style="Clear">
                                     <ObjectStatus text="Found Items ( {=${viewModel>/element/identifiedElements}.length} )" state="{viewModel>/element/property/elementState}" />
@@ -239,12 +239,26 @@
                                         <Column minScreenWidth="Tablet" demandPopin="true">
                                             <Text text="Type" />
                                         </Column>
+                                        <Column minScreenWidth="Tablet" demandPopin="true" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' ) }">
+                                            <Text text="Assertion Status" />
+                                        </Column>
                                     </columns>
                                     <items>
                                         <ColumnListItem>
                                             <cells>
-                                                <Text text="{viewModel>identifier/ui5Id}"/>
+                                                <HBox>
+                                                    <Button class="sapUiSmallMarginBegin sapUiSmallMarginEnd" press="onShowItem" icon='sap-icon://display' type="Transparent"/>
+                                                    <Text text="{viewModel>identifier/ui5Id}">
+                                                        <layoutData>
+                                                            <FlexItemData alignSelf="Center"/>
+                                                        </layoutData>
+                                                    </Text>
+                                                </HBox>
                                                 <Text text="{viewModel>metadata/elementName}"/>
+                                                <HBox visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' ) }">
+                                                    <core:Icon src='sap-icon://accept' color="Positive" visible="{viewModel>assertionOK}"/>
+                                                    <Button press="onShowAssertionIssue" icon='sap-icon://decline' type="Reject" visible="{= ${viewModel>assertionOK} === false}"/>
+                                                </HBox>
                                             </cells>
                                         </ColumnListItem>
                                     </items>
