@@ -46,11 +46,17 @@
                     <f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
                         <f:content>
                             <Label text="Type" />
-                            <Select id="tstType" items="{viewModel>/statics/type}" change="onTypeChange" selectedKey="{viewModel>/element/property/type}">
-                                <items>
-                                    <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
-                                </items>
-                            </Select>
+                            <HBox>
+                                <Select width="100%" id="tstType" items="{viewModel>/statics/type}" change="onTypeChange" selectedKey="{viewModel>/element/property/type}">
+                                    <items>
+                                        <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
+                                    </items>
+                                    <layoutData>
+                                        <FlexItemData growFactor="1"/>
+                                    </layoutData>
+                                </Select>
+                                <Button icon="sap-icon://settings" press="onShowActionSettings" />
+                            </HBox>
                             <Label text="Action" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) }" />
                             <HBox visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) }">
                                 <Select id="tstActType" items="{viewModel>/statics/action}" width="100%" change="onUpdateAction" selectedKey="{viewModel>/element/property/actKey}">
@@ -434,7 +440,7 @@
         <buttons>
             <Button id="btSaveAndRestart" visible="{= ${viewModel>/selectMode} === false }" type="Emphasized" text="Close and Restart" press="_onCloseAndRestart"/>
             <Button id="btClose" type="Reject" visible="{= ${viewModel>/selectMode} === true }" text="Ignore &amp; Continue" press="_onClose"/>
-            <Button id="btCloseC" type="Reject" visible="{= ${viewModel>/selectMode} === false }" text="Close" press="_onClose"/>
+            <Button id="btCloseC" type="Reject" visible="{= ${viewModel>/selectMode} === false }" text="Close" press="_onCloseAndStop"/>
             <Button id="btSave" type="Accept" text="Save &amp; Continue" press="_onSave" visible="{viewModel>/selectMode}"/>
             <Button id="btSaveAndFinish" type="Emphasized" text="Finish" press="_onSaveAndFinish" visible="{viewModel>/selectMode}"/>
         </buttons>

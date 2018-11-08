@@ -1,0 +1,54 @@
+<core:FragmentDefinition xmlns="sap.m" 
+    xmlns:l="sap.ui.layout" 
+    xmlns:f="sap.ui.layout.form" 
+    xmlns:code="sap.ui.codeeditor" 
+    xmlns:u="sap.ui.unified" 
+    xmlns:core="sap.ui.core">
+    <Popover class="sapUiResponsiveMargin sapUiSizeCompact" showHeader="true" title="Action Settings" contentWidth="400px" placement="Auto">
+        <VBox class="sapUiNoMargin" alignItems="Center" width="100%">
+            <f:Form maxContainerCols="4" editable="true" class="sapUiNoMargin">
+                <f:layout>
+                    <f:ResponsiveGridLayout columnsL="6" columnsM="6" singleContainerFullSize="true" labelSpanL="4" labelSpanM="4" labelSpanS="4" labelSpanXL="4"/>
+                </f:layout>
+                <f:formContainers class="sapUiNoMargin">
+                    <f:FormContainer>
+                        <f:formElements>
+                            <f:FormElement>
+                                <f:label>
+                                    <Label text="Replace Text "/>
+                                </f:label>
+                                <f:fields>
+                                    <Switch state="{viewModel>/element/property/actionSettings/replaceText}"/>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                                <f:label>
+                                    <Label text="Paste Text"/>
+                                </f:label>
+                                <f:fields>
+                                    <Switch state="{viewModel>/element/property/actionSettings/pasteText}"/>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                                <f:label>
+                                    <Label text="Blur after Action "/>
+                                </f:label>
+                                <f:fields>
+                                    <Switch state="{viewModel>/element/property/actionSettings/blur}"/>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                                <f:label>
+                                    <Label text="Execution Speed "/>
+                                </f:label>
+                                <f:fields>
+                                    <Input value="{viewModel>/element/property/actionSettings/testSpeed}"/>
+                                </f:fields>
+                            </f:FormElement>
+                        </f:formElements>
+                    </f:FormContainer>
+                </f:formContainers>
+            </f:Form>
+        </VBox>
+    </Popover>
+</core:FragmentDefinition>
