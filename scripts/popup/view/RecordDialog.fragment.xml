@@ -1,0 +1,31 @@
+<core:FragmentDefinition xmlns="sap.m" 
+    xmlns:l="sap.ui.layout" 
+    xmlns:f="sap.ui.layout.form" 
+    xmlns:code="sap.ui.codeeditor" 
+    xmlns:u="sap.ui.unified" 
+    xmlns:core="sap.ui.core">
+    <Dialog contentWidth="256px" contentHeight="256px" verticalScrolling="false" showHeader="true" draggable="true" title="Recording Information">
+        <content>
+            <VBox fitContainer="true" height="100%">
+                <HBox fitContainer="true" height="100%">
+                    <core:Icon visible="{= ${recordModel>/recording} === false}" size="128px" decorative="false" press="onRecord" color="red" src="sap-icon://record">
+                        <core:layoutData>
+                            <FlexItemData alignSelf="Center"/>
+                        </core:layoutData>
+                    </core:Icon>
+                    <core:Icon visible="{= ${recordModel>/recording} === true}" size="128px" decorative="false" press="onStopRecord" color="black" src="sap-icon://stop">
+                        <core:layoutData>
+                            <FlexItemData alignSelf="Center"/>
+                        </core:layoutData>
+                    </core:Icon>
+                    <layoutData>
+                        <FlexItemData alignSelf="Center"/>
+                    </layoutData>
+                </HBox>
+                <layoutData>
+                    <FlexItemData alignSelf="Center"/>
+                </layoutData>
+            </VBox>
+        </content>
+    </Dialog>
+</core:FragmentDefinition>

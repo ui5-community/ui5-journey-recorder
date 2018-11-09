@@ -78,27 +78,82 @@
             },
             "routes": [
                 {
-                    "pattern": "/element",
-                    "name": "ui5Testing",
-                    "target": "ui5Testing"
+                    "pattern": "/testDetails/{TestId}/elementCreate",
+                    "name": "elementCreate",
+                    "target": "elementCreate"
+                },
+                {
+                    "pattern": "/elementDisplay/{TestId}/{ElementId}",
+                    "name": "elementDisplay",
+                    "target": "elementDisplay"
+                },
+                {
+                    "pattern": "/testDetails/{TestId}",
+                    "name": "testDetails",
+                    "target": "testDetails"
+                },
+                {
+                    "pattern": "/testDetailsCreate",
+                    "name": "testDetailsCreate",
+                    "target": "testDetailsCreate"
                 },
                 {
                     "pattern": "",
                     "name": "start",
                     "target": "start"
+                },
+                {
+                    "pattern": "/settings",
+                    "name": "settings",
+                    "target": "settings"
+                },
+                {
+                    "pattern": "/overview",
+                    "name": "overview",
+                    "target": "overview"
                 }
             ],
             "targets": {
-                "ui5Testing": {
+                "elementCreate": {
                     "viewName": "ui5Testing",
                     "viewLevel": 1,
                     "viewId": "ui5Testing",
+                    "controlAggregation": "pages"
+                },
+                "elementDisplay": {
+                    "viewName": "ui5Testing",
+                    "viewLevel": 1,
+                    "viewId": "ui5Testing",
+                    "controlAggregation": "pages"
+                },
+                "testDetails": {
+                    "viewName": "testDetails",
+                    "viewLevel": 1,
+                    "viewId": "testDetails",
+                    "controlAggregation": "pages"
+                },
+                "testDetailsCreate": {
+                    "viewName": "testDetails",
+                    "viewLevel": 1,
+                    "viewId": "testDetails",
                     "controlAggregation": "pages"
                 },
                 "start": {
                     "viewName": "start",
                     "viewLevel": 1,
                     "viewId": "start",
+                    "controlAggregation": "pages"
+                },
+                "overview": {
+                    "viewName": "testOverview",
+                    "viewLevel": 1,
+                    "viewId": "testOverview",
+                    "controlAggregation": "pages"
+                },
+                "settings": {
+                    "viewName": "settings",
+                    "viewLevel": 1,
+                    "viewId": "settings",
                     "controlAggregation": "pages"
                 }
             }
