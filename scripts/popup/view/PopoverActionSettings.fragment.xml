@@ -6,7 +6,7 @@
     xmlns:core="sap.ui.core">
     <Popover class="sapUiResponsiveMargin sapUiSizeCompact" showHeader="true" title="Action Settings" contentWidth="400px" placement="Auto">
         <VBox class="sapUiNoMargin" alignItems="Center" width="100%">
-            <f:Form maxContainerCols="4" editable="true" class="sapUiNoMargin">
+            <f:Form editable="true" class="sapUiNoMargin">
                 <f:layout>
                     <f:ResponsiveGridLayout columnsL="6" columnsM="6" singleContainerFullSize="true" labelSpanL="4" labelSpanM="4" labelSpanS="4" labelSpanXL="4"/>
                 </f:layout>
