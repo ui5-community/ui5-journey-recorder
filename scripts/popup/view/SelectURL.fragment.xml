@@ -1,0 +1,8 @@
+<core:FragmentDefinition xmlns="sap.m" 
+    xmlns:core="sap.ui.core">
+    <SelectDialog class="sapUiSizeCompact" noDataText="No URL found" title="Select Tab" confirm="onHandleClose" cancel="onHandleClose" items="{
+			path: 'viewModel>/urls'
+		}">
+        <StandardListItem title="{viewModel>url}" type="Active" />
+    </SelectDialog>
+</core:FragmentDefinition>
