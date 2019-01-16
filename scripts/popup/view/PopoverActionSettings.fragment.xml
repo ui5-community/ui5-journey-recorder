@@ -18,7 +18,7 @@
                                     <Label text="Replace Text "/>
                                 </f:label>
                                 <f:fields>
-                                    <Switch state="{viewModel>/element/property/actionSettings/replaceText}"/>
+                                    <Switch change="onUpdatePreview" state="{viewModel>/element/property/actionSettings/replaceText}"/>
                                 </f:fields>
                             </f:FormElement>
                             <f:FormElement>
@@ -26,7 +26,7 @@
                                     <Label text="Paste Text"/>
                                 </f:label>
                                 <f:fields>
-                                    <Switch state="{viewModel>/element/property/actionSettings/pasteText}"/>
+                                    <Switch change="onUpdatePreview" state="{viewModel>/element/property/actionSettings/pasteText}"/>
                                 </f:fields>
                             </f:FormElement>
                             <f:FormElement>
@@ -34,7 +34,7 @@
                                     <Label text="Blur after Action "/>
                                 </f:label>
                                 <f:fields>
-                                    <Switch state="{viewModel>/element/property/actionSettings/blur}"/>
+                                    <Switch change="onUpdatePreview" state="{viewModel>/element/property/actionSettings/blur}"/>
                                 </f:fields>
                             </f:FormElement>
                             <f:FormElement>
@@ -42,7 +42,7 @@
                                     <Label text="Execution Speed "/>
                                 </f:label>
                                 <f:fields>
-                                    <Input value="{viewModel>/element/property/actionSettings/testSpeed}"/>
+                                    <Input change="onUpdatePreview" value="{viewModel>/element/property/actionSettings/testSpeed}"/>
                                 </f:fields>
                             </f:FormElement>
                         </f:formElements>

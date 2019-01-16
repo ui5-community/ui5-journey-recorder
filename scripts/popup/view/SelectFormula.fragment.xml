@@ -1,0 +1,14 @@
+<core:FragmentDefinition xmlns="sap.m" 
+    xmlns:f="sap.ui.layout.form" xmlns:code="sap.ui.codeeditor" 
+    xmlns:core="sap.ui.core">
+    <Dialog class="sapUiSizeCompact" title="Enter Formula" horizontalScrolling="false" verticalScrolling="false">
+        <content>
+            <Text text="Supported: +/-/COUNT and Column-Names (Including Associations)"/>
+            <code:CodeEditor value="{mockserver>readFormula}" height="500px" editable="true" type="javascript">
+            </code:CodeEditor>
+        </content>
+        <endButton>
+            <Button type="Accept" text="Close" press="onSaveFormula"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

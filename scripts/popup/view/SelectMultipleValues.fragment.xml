@@ -1,0 +1,39 @@
+<core:FragmentDefinition xmlns="sap.m" 
+    xmlns:f="sap.ui.layout.form" 
+    xmlns:core="sap.ui.core">
+    <Dialog class="sapUiSizeCompact" title="Enter Multiple Values" horizontalScrolling="false" verticalScrolling="false">
+        <content>
+            <Table id="tbl" fixedLayout="false" mode="SingleSelectLeft" inset="false" items="{ path:'mockserver>multipleValues'}">
+                <headerToolbar>
+                    <Toolbar>
+                        <content>
+                            <ToolbarSpacer/>
+                            <Button icon="sap-icon://add" press="onAddFixedValue" />
+                            <Button icon="sap-icon://delete" press="onDeleteFixedValues"/>
+                        </content>
+                    </Toolbar>
+                </headerToolbar>
+                <columns>
+                    <Column>
+                        <Text text="Fixed-Value" />
+                    </Column>
+                    <Column>
+                        <Text text="Weight (0..100)" />
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Input value="{mockserver>value}"/>
+                            <Input value="{mockserver>weight}"/>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+
+        <endButton>
+            <Button type="Accept" text="Close" press="onSaveMultipleValues"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

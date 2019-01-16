@@ -1,0 +1,8 @@
+<core:FragmentDefinition xmlns="sap.m" 
+    xmlns:core="sap.ui.core">
+    <SelectDialog noDataText="No Components Found" class="sapUiSizeCompact" title="Select Component" items="{
+			path: 'viewModel>/components'
+		}">
+        <StandardListItem title="{viewModel>name}" type="Active" />
+    </SelectDialog>
+</core:FragmentDefinition>

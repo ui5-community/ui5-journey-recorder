@@ -1,0 +1,8 @@
+<core:FragmentDefinition xmlns="sap.m" 
+    xmlns:core="sap.ui.core">
+    <ActionSheet title="Choose Value Source" showCancelButton="true" placement="Bottom">
+        <Button text="Faker" icon="sap-icon://widgets" press="onValueFromFaker" />
+        <Button text="Fixed Value" icon="sap-icon://technical-object" press="onValueFromFixed" />
+        <Button text="Multiple Values" icon="sap-icon://chain-link" press="onValueFromMultiple" />
+    </ActionSheet>
+</core:FragmentDefinition>
