@@ -1159,6 +1159,9 @@ else {
             "sap.m.List": {
                 defaultInteraction: "root"
             },
+            "sap.m.List": {
+                defaultInteraction: "root"
+            },
             "sap.m.ObjectListItem": {
                 cloned: true,
                 defaultInteraction: "root",
