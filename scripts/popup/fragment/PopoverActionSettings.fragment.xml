@@ -39,6 +39,14 @@
                             </f:FormElement>
                             <f:FormElement>
                                 <f:label>
+                                    <Label text="Confirm via Enter "/>
+                                </f:label>
+                                <f:fields>
+                                    <Switch change="onUpdatePreview" state="{viewModel>/element/property/actionSettings/enter}"/>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                                <f:label>
                                     <Label text="Execution Speed "/>
                                 </f:label>
                                 <f:fields>
