@@ -1,10 +1,10 @@
 sap.ui.define([
     "sap/ui/base/Object",
     "sap/m/MessageToast"
-], function (Object, MessageToast) {
+], function (UI5Object, MessageToast) {
     "use strict";
 
-    var ExportImport = Object.extend("com.ui5.testing.model.ExportImport", {
+    var ExportImport = UI5Object.extend("com.ui5.testing.model.ExportImport", {
         constructor: function () {
         }
     });
