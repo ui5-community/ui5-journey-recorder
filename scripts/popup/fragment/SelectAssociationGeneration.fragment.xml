@@ -1,0 +1,18 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:f="sap.ui.layout.form" 
+    xmlns:core="sap.ui.core">
+    <ResponsivePopover class="sapUiResponsiveMargin sapUiSizeCompact" modal="false" resizable="false" title="Association Rules" showHeader="false" placement="Auto">
+        <content>
+            <f:SimpleForm maxContainerCols="1" editable="true" layout="ResponsiveGridLayout">
+                <f:content>
+                    <Label text="Minimum"/>
+                    <Input value="{mockserver>gen/atLeast}"/>
+                    <Label text="Maximum (0 for Default)"/>
+                    <Input value="{mockserver>gen/atMost}"/>
+                </f:content>
+            </f:SimpleForm>
+        </content>
+        <endButton>
+            <Button id="btSave" type="Accept" text="Close" press="onSaveAssocGeneration"/>
+        </endButton>
+    </ResponsivePopover>
+</core:FragmentDefinition>

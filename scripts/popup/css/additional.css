@@ -1,0 +1,30 @@
+.btnCircle.btnFloat.sapMBtn.sapMBtnBase {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  width: 60px !important;
+  height: 60px !important;
+  background-color: #398dda;
+  border-radius: 100%;
+  margin-left: auto;
+  margin-top: -30px;
+  margin-right: 25px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 250ms ease;
+}
+
+.btnCircle.sapMBtn:hover>.sapMBtnTransparent.sapMBtnHoverable{
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.btnCircle.btnFloat.sapMBtn.sapMBtnBase>
+.sapMBtnHoverable.sapMBtnIconFirst.sapMBtnInner.sapMBtnTransparent.sapMFocusable>
+.sapMBtnCustomIcon.sapMBtnIcon.sapMBtnIconLeft.sapUiIcon.sapUiIconMirrorInRTL {
+	color: white;
+	/* width: 30px; */
+	/* height: 30px; */
+}

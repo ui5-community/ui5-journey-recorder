@@ -1,0 +1,8 @@
+<core:FragmentDefinition xmlns="sap.m" 
+    xmlns:core="sap.ui.core">
+    <SelectDialog liveChange="onFilterFaker" noDataText="No Possible Faker Found" class="sapUiSizeCompact" title="Select Faker" items="{
+			path: 'viewModel>/faker'
+		}">
+        <DisplayListItem label="{viewModel>name}" value="{viewModel>exampleValue}" type="Active" />
+    </SelectDialog>
+</core:FragmentDefinition>

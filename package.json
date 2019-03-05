@@ -1,0 +1,12 @@
+{
+    "name": "ui5TestAutomation",
+    "description": "Test-Automation for UI5",
+    "version": "0.1.1",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/timostark/ui5TestAutomation.git"
+    },
+    "devDependencies": {
+        "eslint": "^5.7.0"
+    }
+}
