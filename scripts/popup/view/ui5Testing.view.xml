@@ -537,6 +537,15 @@
                                 <core:Item text="{settings>text}" key="{settings>key}"/>
                             </items>
                         </Select>
+                        <Select id="natLanguage"
+                                change="onUpdatePreview"
+                                items="{settings>/naturalLanguages}"
+                                visible="{= ${settings>/settings/defaultLanguage} === 'NAT'}"
+                                selectedKey="{settings>/settings/defaultNatLanguage}">
+                            <items>
+                                <core:Item text="{settings>text}" key="{settings>key}"/>
+                            </items>
+                        </Select>
                     </Toolbar>
                 </headerToolbar>
                 <content>

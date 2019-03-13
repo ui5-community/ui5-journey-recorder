@@ -4,6 +4,7 @@ sap.ui.define([
 ], function (UI5Object, PageBuilder, CodeHelper) {
     "use strict";
     var OPA5CodeStrategy = UI5Object.extend("com.ui5.testing.model.OPA5CodeStrategy", {
+        jsonKeyRegex: /\"(\w+)\"\:/g,
         constructor: function () {
             this.__pages = {};
             this.__code = {
@@ -35,7 +36,11 @@ sap.ui.define([
 
         this.__createConstants(aElements);
 
-        this.__code.content.push('\n\n   QUnit.module("' + oCodeSettings.testCategory + '");\n\n');
+        this.__code.content.push('\n'
+            + Array(2).join('\t')
+            + 'QUnit.module("'
+            + oCodeSettings.testCategory
+            + '");\n\n');
 
         this.__createAppStartStep(oCodeSettings);
 
@@ -45,15 +50,15 @@ sap.ui.define([
 
         this.__code.content.push('});');
 
-        this.__code.code = this.__code.content.reduce((a,b) => a+b, '');
+        this.__code.code = this.__code.content.reduce((a, b) => a + b, '');
 
         aCodes.push(this.__code);
 
         var order = 1;
-        Object.keys(this.__pages).forEach(function(key) {
+        Object.keys(this.__pages).forEach(function (key) {
             order = order++;
             var oCode = {
-                codeName: key,
+                codeName: key + 'Page',
                 type: 'CODE',
                 order: order,
                 code: this.__pages[key].generate()
@@ -72,21 +77,22 @@ sap.ui.define([
     };
 
     OPA5CodeStrategy.prototype.__setupHeader = function () {
-        var sHeader = 'sap.ui.define([\n';
-        sHeader += '    "sap/ui/test/opaQunit"\n';
-        sHeader += '], function (opaTest) {\n';
-        sHeader += '    "use strict";\n\n';
-        this.__code.content.push(sHeader);
+        var aCode = ['sap.ui.define([\n'];
+        aCode.push(Array(2).join('\t') + '"sap/ui/test/Opa5",\n');
+        aCode.push(Array(2).join('\t') + '"sap/ui/test/opaQunit"\n');
+        aCode.push('], function (Opa5, opaTest) {\n');
+        aCode.push(Array(2).join('\t') + '"use strict";\n');
+        this.__code.content.push(aCode.reduce((a, b) => a + b, ''));
     };
 
-    OPA5CodeStrategy.prototype.__createConstants = function(aElements) {
-        aElements.forEach(function(el) {
-            for(var sK in el.selector.selectorUI5) {
+    OPA5CodeStrategy.prototype.__createConstants = function (aElements) {
+        aElements.forEach(function (el) {
+            for (var sK in el.selector.selectorUI5) {
                 var properties = el.selector.selectorUI5[sK];
                 for (var sPK in properties.properties) {
                     var sValue = Object.values(properties.properties[sPK])[0].trim();
                     var constant = this.__code.constants.filter(c => c.value === sValue)[0];
-                    if(constant) {
+                    if (constant) {
                         properties.properties[sPK]['constant'] = constant.symbol;
                     } else {
                         var newConstant = this.__createConstant(sValue);
@@ -96,77 +102,85 @@ sap.ui.define([
                 }
             }
         }.bind(this));
-        if(this.__code.constants.length > 0) {
-            var constants = Array(4).join(' ') + 'var ' + this.__code.constants.map(c => Array(9).join(' ') + c.symbol + ' = \"' + c.value + '\"').reduce((a, b) => a + ',\n' + b, '').substring(2) + ';';
+        if (this.__code.constants.length > 0) {
+            var constants = Array(2).join('\t')
+                + 'var '
+                + this.__code.constants
+                    .map(c => Array(9).join(' ') + c.symbol + ' = \"' + c.value + '\"')
+                    .reduce((a, b) => a + ',\n' + b, '')
+                    .substring(2)
+                + ';';
             this.__code.content.push(constants.replace(/var\s{9}/g, 'var  '));
         }
     };
 
-    OPA5CodeStrategy.prototype.__createConstant = function(sString) {
+    OPA5CodeStrategy.prototype.__createConstant = function (sString) {
         var constant = {value: sString};
         constant.symbol = 'C_' + sString.replace(/[\s\-\.\:\/]+/g, '_').toUpperCase();
         return constant;
     };
 
-    OPA5CodeStrategy.prototype.__createAppStartStep = function(oAppDetails) {
-        var aParts = [Array(4).join(' ') + 'opaTest('];
-        aParts.push('"'+ oAppDetails.testName +' App Start"');
-        aParts.push(', function(Given, When, Then) {\n');
-        aParts.push(Array(8).join(' ') + 'Given.iStartTheAppByUrl({fullUrl: \"' + oAppDetails.testUrl + '\"});\n')
-        aParts.push(Array(4).join(' ') + '});\n\n');
+    OPA5CodeStrategy.prototype.__createAppStartStep = function (oAppDetails) {
+        var aParts = [Array(2).join('\t') + 'opaTest('];
+        aParts.push('"' + oAppDetails.testName + ' App Start"');
+        aParts.push(', function(Given) {\n'); //When, Then not needed as parameter here
+        aParts.push(Array(3).join('\t') + 'Given.iStartTheAppByUrl({fullUrl: \"' + oAppDetails.testUrl + '\"});\n');
+        aParts.push(Array(3).join('\t') + 'Opa5.assert.expect(0);\n');
+        aParts.push(Array(2).join('\t') + '});\n\n');
 
-        this.__code.content.push(aParts.reduce((a,b) => a + b, ''));
+        this.__code.content.push(aParts.reduce((a, b) => a + b, ''));
     };
 
-    OPA5CodeStrategy.prototype.__createAppCloseStep = function(oAppDetails) {
-        var aParts = [Array(4).join(' ') + 'opaTest('];
-        aParts.push('"'+ oAppDetails.testName +' App Teardown"');
-        aParts.push(', function(Given, When, Then) {\n');
-        aParts.push(Array(8).join(' ') + 'Given.iTeardownTheApp();\n')
-        aParts.push(Array(4).join(' ') + '});\n');
+    OPA5CodeStrategy.prototype.__createAppCloseStep = function (oAppDetails) {
+        var aParts = [Array(2).join('\t') + 'opaTest('];
+        aParts.push('"' + oAppDetails.testName + ' App Teardown"');
+        aParts.push(', function(Given) {\n'); //When, Then not needed as parameter here
+        aParts.push(Array(3).join('\t') + 'Given.iTeardownTheApp();\n');
+        aParts.push(Array(3).join('\t') + 'Opa5.assert.expect(0);\n');
+        aParts.push(Array(2).join('\t') + '});\n');
 
-        this.__code.content.push(aParts.reduce((a,b) => a + b, ''));
+        this.__code.content.push(aParts.reduce((a, b) => a + b, ''));
     };
 
-    OPA5CodeStrategy.prototype.__createTestSteps = function(oAppDetails, aTestSteps) {
-        var aParts = [Array(4).join(' ') + 'opaTest('];
-        aParts.push('"'+ oAppDetails.testName +' Testing"');
+    OPA5CodeStrategy.prototype.__createTestSteps = function (oAppDetails, aTestSteps) {
+        var aParts = [Array(2).join('\t') + 'opaTest('];
+        aParts.push('"' + oAppDetails.testName + ' Testing"');
         aParts.push(', function(Given, When, Then) {\n');
 
         //from here starts the real testing
-        for(var step in aTestSteps) {
+        for (var step in aTestSteps) {
             var stepCode = this.createTestStep(aTestSteps[step]);
-            if(stepCode) {
+            if (stepCode) {
                 aParts.push(stepCode);
             }
         }
 
-        aParts.push(Array(4).join(' ') + '});\n\n');
+        aParts.push(Array(2).join('\t') + '});\n\n');
 
-        this.__code.content.push(aParts.reduce((a,b) => a + b, ''));
+        this.__code.content.push(aParts.reduce((a, b) => a + b, ''));
     };
 
-    OPA5CodeStrategy.prototype.createTestStep = function(oTestStep) {
-            var viewName = oTestStep.item.viewProperty.localViewName;
-            var namespace = oTestStep.item.viewProperty.viewName.replace('.view.' + oTestStep.item.viewProperty.localViewName, '');
+    OPA5CodeStrategy.prototype.createTestStep = function (oTestStep) {
+        var viewName = oTestStep.item.viewProperty.localViewName;
+        var namespace = oTestStep.item.viewProperty.viewName.replace('.view.' + oTestStep.item.viewProperty.localViewName, '');
 
-            if(!this.__pages[viewName]) {
-                this.__pages[viewName] = new PageBuilder(namespace, viewName);
-            }
+        if (!this.__pages[viewName]) {
+            this.__pages[viewName] = new PageBuilder(namespace, viewName);
+        }
 
-            switch(oTestStep.property.type) {
-                case "ACT":
-                    return this.__createActionStep(oTestStep) + '\n';
-                case "ASS":
-                    return this.__createExistStep(oTestStep) + '\n';
-                default:
-                    return ;
-            }
+        switch (oTestStep.property.type) {
+            case "ACT":
+                return this.__createActionStep(oTestStep) + '\n';
+            case "ASS":
+                return this.__createExistStep(oTestStep) + '\n';
+            default:
+                return;
+        }
     };
 
-    OPA5CodeStrategy.prototype.__createActionStep = function(oStep) {
+    OPA5CodeStrategy.prototype.__createActionStep = function (oStep) {
         var actionsType = oStep.property.actKey;
-        switch(actionsType) {
+        switch (actionsType) {
             case 'TYP':
                 return this.__createEnterTextAction(oStep);
                 break;
@@ -179,102 +193,127 @@ sap.ui.define([
         }
     };
 
-    OPA5CodeStrategy.prototype.__flattenProperties = function(aObjects) {
+    OPA5CodeStrategy.prototype.__flattenProperties = function (aObjects) {
         var tempArray = [];
-        if(typeof aObjects === 'object') {
-            if(!Array.isArray(aObjects)) {
-                if(Object.keys(aObjects).length == 1) {
+        if (typeof aObjects === 'object') {
+            if (!Array.isArray(aObjects)) {
+                if (Object.keys(aObjects).length == 1) {
                     tempArray = [aObjects];
                 } else {
-                    for(var key in aObjects) {
+                    for (var key in aObjects) {
                         tempArray = [...tempArray, ...this.__flattenProperties(aObjects[key])];
                     }
                 }
             } else {
-                for(var i = 0; i < aObjects.length; i++) {
+                for (var i = 0; i < aObjects.length; i++) {
                     tempArray = [...tempArray, ...this.__flattenProperties(aObjects[i])];
                 }
             }
-       }
-	   return tempArray;
+        }
+        return tempArray;
     };
 
-    OPA5CodeStrategy.prototype.__createSelectorProperties = function(aSelectors) {
+    OPA5CodeStrategy.prototype.__createSelectorProperties = function (aSelectors) {
         var endObject = {};
-        for(var key in aSelectors) {
-            switch(key) {
+        for (var key in aSelectors) {
+            switch (key) {
                 case 'id':
                     endObject[key] = {value: aSelectors[key].id, isRegex: aSelectors[key].__isRegex};
                     break;
                 case 'properties':
 
                     var newProperties = this.__flattenProperties(aSelectors[key].reduce(
-                        function(obj, item) {
-                                obj[Object.keys(item)[0]] = Object.values(item)[0];
-                                return obj;
+                        function (obj, item) {
+                            obj[Object.keys(item)[0]] = Object.values(item)[0];
+                            return obj;
                         }, {}));
                     newProperties = this.__flattenProperties(newProperties);
-                    endObject['attributes']  ?  endObject['attributes'] = [...endObject['attributes'],...newProperties ] :
-                                                endObject['attributes'] = newProperties;
+                    endObject['attributes'] ? endObject['attributes'] = [...endObject['attributes'], ...newProperties] :
+                        endObject['attributes'] = newProperties;
                     break;
                 default:
                     endObject[key] = aSelectors[key];
             }
         }
-        return JSON.stringify(endObject);
+
+        var sSelectorParts = JSON.stringify(endObject);
+        let m;
+        let repl = {};
+
+        while ((m = this.jsonKeyRegex.exec(sSelectorParts)) !== null) {
+            repl[m[1]] = m[0];
+        }
+        Object.keys(repl).forEach(key => {sSelectorParts = sSelectorParts.replace(repl[key], key + ': ')})
+        return sSelectorParts;
     };
 
-    OPA5CodeStrategy.prototype.__createEnterTextAction = function(oStep) {
+    OPA5CodeStrategy.prototype.__createEnterTextAction = function (oStep) {
         var selectors = oStep.selector.selectorUI5.own;
-        var actionInsert = oStep.property.selectActInsert;
-        var controlClass = oStep.item.metadata.elementName;
         var viewName = oStep.item.viewProperty.localViewName;
-        var controlID = oStep.item.identifier.ui5LocalId;
         this.__pages[viewName].addEnterTextFunction();
 
-        var aParts = [Array(8).join(' ') + 'When.'];
+        var aParts = [Array(3).join('\t') + 'When.'];
         aParts.push('on' + viewName);
         aParts.push('.enterText(');
 
-        var aSelectorParts = this.__createSelectorProperties(selectors);
+        //var sSelectorParts = this.__createSelectorProperties(selectors);
+        //aParts.push(sSelectorParts);
+        aParts.push('{');
+        this.__createObjectMatcherInfos(oStep, aParts);
+        aParts.push(', actionText: "' + oStep.property.selectActInsert + '"');
+        aParts.push('});');
 
-        aParts.push(aSelectorParts);
-        aParts.push(');');
-
-        return aParts.reduce((a,b) => a + b, '');
+        return aParts.reduce((a, b) => a + b, '');
     };
 
-    OPA5CodeStrategy.prototype.__createPressAction = function(oStep) {
+    OPA5CodeStrategy.prototype.__createPressAction = function (oStep) {
         var selectors = oStep.selector.selectorUI5.own;
-        var actionInsert = oStep.property.selectActInsert;
-        var controlClass = oStep.item.metadata.elementName;
         var viewName = oStep.item.viewProperty.localViewName;
-        var controlID = oStep.item.identifier.ui5LocalId;
         this.__pages[viewName].addPressFunction();
 
-        var aParts = [Array(8).join(' ') + 'When.'];
+        var aParts = [Array(3).join('\t') + 'When.'];
         aParts.push('on' + viewName);
         aParts.push('.press(');
 
-        var aSelectorParts = this.__createSelectorProperties(selectors);
+        //var sSelectorParts = this.__createSelectorProperties(selectors);
+        //aParts.push(sSelectorParts);
 
-        aParts.push(aSelectorParts);
-        aParts.push(');');
-        return aParts.reduce((a,b) => a + b, '');
+        aParts.push('{');
+        this.__createObjectMatcherInfos(oStep, aParts);
+
+        aParts.push('});');
+        return aParts.reduce((a, b) => a + b, '');
 
     };
 
-    OPA5CodeStrategy.prototype.__createExistStep = function(oStep) {
-        this.__pages[oStep.item.viewProperty.localViewName].addExistFunction();
-        var aParts = [Array(8).join(' ') + 'Then.'];
-        aParts.push('on' + oStep.item.viewProperty.localViewName);
-        aParts.push('.iShouldSeeTheProperty({');
+    OPA5CodeStrategy.prototype.__createExistStep = function (oStep) {
+        if(oStep.assertFilter && oStep.assertFilter.some(a => a.criteriaType == 'AGG')) {
+            return this.__createAggregationCheck(oStep);
+        } else {
+            this.__pages[oStep.item.viewProperty.localViewName].addExistFunction();
+            var aParts = [Array(3).join('\t') + 'Then.'];
+            aParts.push('on' + oStep.item.viewProperty.localViewName);
+            aParts.push('.iShouldSeeTheProperty(');
+
+            aParts.push('{');
+
+            this.__createObjectMatcherInfos(oStep, aParts);
+
+            aParts.push('});');
+
+            return aParts.reduce((a, b) => a + b, '');
+        }
+    };
+
+    OPA5CodeStrategy.prototype.__createObjectMatcherInfos = function(oStep, aParts) {
         var objectMatcher = {};
         var aToken = [...oStep.attributeFilter, ...oStep.assertFilter];
-        for(var id in aToken) {
+        for (var id in aToken) {
             //var statBindings = Object.keys(oStep.item.binding).filter(k => oStep.item.binding[k].static).map(i => ({attributeName: i, i18nLabel: oStep.item.binding[i].path}));
-            switch(aToken[id].criteriaType) {
-                case 'ID': objectMatcher['ID'] = 'id: \"' + aToken[id].criteriaValue + '\"'; break;
+            switch (aToken[id].criteriaType) {
+                case 'ID':
+                    objectMatcher['ID'] = 'id: {value: "'+ aToken[id].criteriaValue +'",isRegex: false}';
+                    break;
                 case 'ATTR':
                     this.__createAttrValue(aToken[id], objectMatcher);
                     break;
@@ -284,85 +323,125 @@ sap.ui.define([
                 case 'BNDG':
                     objectMatcher['BNDG'] = 'i18n: {property: \"' + aToken[id].subCriteriaType + '\", path: \"' + oStep.attributeFilter[id].criteriaValue + '\"}';
                     break;
+                case 'BDG':
+                    objectMatcher['BDG'] = "whatever";
+                    console.log('No property given for binding');
+                    break;
+                case 'AGG':
+                    break; //need to be because this are no relevant object infos
                 default:
                     console.log('Found a unknown class: ' + aToken[id].criteriaType);
             }
         }
 
-        for(var k in objectMatcher) {
-            if(k !== 'ATTR') {
+        for (var k in objectMatcher) {
+            if (k !== 'ATTR' && k !== 'BDG') {
                 aParts.push(objectMatcher[k] + ', ');
             }
         }
 
-        if(objectMatcher.ATTR) {
+        if (objectMatcher.ATTR) {
             objectMatcher.ATTR = [...new Set(objectMatcher.ATTR)];
-            aParts.push("attributes: [" + objectMatcher.ATTR.reduce((a,b) => a +', ' + b, '').substring(2) + "]");
+            aParts.push("attributes: [" + objectMatcher.ATTR.reduce((a, b) => a + ', ' + b, '').substring(2) + "]");
         }
-        aParts[aParts.length - 1] = aParts[aParts.length -1].replace(/,\s*$/, '');
-
-        aParts.push('});')
-
-        return aParts.reduce((a,b) => a + b, '');
+        aParts[aParts.length - 1] = aParts[aParts.length - 1].replace(/,\s*$/, '');
     };
 
-    OPA5CodeStrategy.prototype.__createAttrValue = function(oToken, objectMatcher) {
+    OPA5CodeStrategy.prototype.__createAttrValue = function (oToken, objectMatcher) {
         var value = this.__code.constants.filter(c => c.value === oToken.criteriaValue.trim())[0] ?
-                    this.__code.constants.filter(c => c.value === oToken.criteriaValue.trim())[0].symbol :
-                    this.__sanatize(oToken.criteriaValue.trim());
+            this.__code.constants.filter(c => c.value === oToken.criteriaValue.trim())[0].symbol :
+            this.__sanatize(oToken.criteriaValue.trim());
 
-        if(typeof value === 'object') {
+        if (typeof value === 'object') {
             console.log('stringify object')
         }
         objectMatcher['ATTR'] ?
-        objectMatcher['ATTR'].push('{' + oToken.subCriteriaType + ': ' + value + '}') :
-        objectMatcher['ATTR'] = ['{' + oToken.subCriteriaType + ': ' + value + '}'];
+            objectMatcher['ATTR'].push('{' + oToken.subCriteriaType + ': ' + value + '}') :
+            objectMatcher['ATTR'] = ['{' + oToken.subCriteriaType + ': ' + value + '}'];
     };
 
-    OPA5CodeStrategy.prototype.__sanatize = function(sString) {
-          return '"' + sString + '"';
+    OPA5CodeStrategy.prototype.__createAggregationCheck = function (oStep) {
+        var oAGGProp = oStep.assertFilter[0];
+        var aParts = [Array(8).join(' ') + 'Then.'];
+        aParts.push('on' + oStep.item.viewProperty.localViewName);
+
+        if(oAGGProp.criteriaValue === 0){
+            if(oAGGProp.operatorType === 'EQ') {
+                this.__pages[oStep.item.viewProperty.localViewName].addAggregationEmpty();
+                aParts.push('.iAggregationEmpty({');
+                aParts.push('objectProps: ')
+            }
+
+            if(oAGGProp.operatorType === 'GT') {
+                this.__pages[oStep.item.viewProperty.localViewName].addAggregationFilled();
+                aParts.push('.iAggregationFilled({');
+                aParts.push('objectProps: ')
+            }
+        } else {
+            this.__pages[oStep.item.viewProperty.localViewName].addAggregationCount();
+            aParts.push('.iAggregationCounts({');
+            aParts.push('objectProps: ');
+        }
+
+        this.__createObjectMatcherInfos(oStep, aParts);
+
+        aParts.push(', ');
+
+        if(oAGGProp.criteriaValue > 0){
+            aParts.push('count: ');
+            aParts.push(oAGGProp.criteriaValue + ', ');
+        }
+
+        var aggName = oAGGProp.subCriteriaType.substring(0, oAGGProp.subCriteriaType.indexOf('/'));
+        aParts.push('aggName: "' + aggName + '"});');
+
+        return aParts.reduce((a, b) => a + b, '');
     };
 
-    OPA5CodeStrategy.prototype.__generateCommonPage = function() {
+    OPA5CodeStrategy.prototype.__sanatize = function (sString) {
+        return '"' + sString + '"';
+    };
+
+    OPA5CodeStrategy.prototype.__generateCommonPage = function () {
         var aCode = [];
         aCode.push('sap.ui.define([\n');
-        aCode.push(Array(4).join(' ') + '"sap/ui/test/Opa5",\n');
-        aCode.push(Array(4).join(' ') + '"' + this.__namespace.replace(/\./g, '/') + "/MockServer" + '"\n');
+        aCode.push(Array(2).join('\t') + '"sap/ui/test/Opa5",\n');
+        aCode.push(Array(2).join('\t') + '"' + this.__namespace.replace(/\./g, '/') + "/<testPath>/MockServer" + '"\n');
         aCode.push('], function(Opa5, MockServer) {\n');
-        aCode.push(Array(4).join(' ') + '"use strict";\n\n');
-        aCode.push(Array(4).join(' ') + 'var bInOpaPage = location.toString().indexOf("opaTests.qunit.html") !== -1 &&\n');
-        aCode.push(Array(21).join(' ') + 'jQuery.sap.getUriParameters().get("component") !== "true";\n\n');
-        aCode.push(Array(4).join(' ') + 'function _wrapParameters(oParameters) {\n');
-        aCode.push(Array(8).join(' ') + 'return {\n');
-        aCode.push(Array(12).join(' ') + 'get: function(name) {\n');
-        aCode.push(Array(16).join(' ') + 'return (oParameters[name] || "").toString();\n');
-        aCode.push(Array(12).join(' ') + '}\n');
-        aCode.push(Array(8).join(' ') + '};\n');
-        aCode.push(Array(4).join(' ') + '}\n\n');
-        aCode.push(Array(4).join(' ') + 'return Opa5.extend("' + this.__namespace + '.test.integration.Common", {\n');
-        aCode.push(Array(8).join(' ') + 'iStartTheAppByUrl: function(oParameters) {\n');
-        aCode.push(Array(12).join(' ') + 'if (bInOpaPage || oParameters.fullUrl) {\n');
-        aCode.push(Array(16).join(' ') + 'this.iStartMyAppInAFrame(oParameters.fullUrl);\n');
-        aCode.push(Array(12).join(' ') + '} else {\n');
-        aCode.push(Array(16).join(' ') + 'MockServer.init(_wrapParameters(oParameters || {}));\n');
-        aCode.push(Array(16).join(' ') + 'this.iStartMyUIComponent({\n');
-        aCode.push(Array(20).join(' ') + 'componentConfig: {\n');
-        aCode.push(Array(24).join(' ') + 'name: "' + this.__namespace + '",\n');
-        aCode.push(Array(24).join(' ') + 'async: true\n');
-        aCode.push(Array(20).join(' ') + '}\n');
-        aCode.push(Array(16).join(' ') + '});\n');
-        aCode.push(Array(12).join(' ') + '}\n');
-        aCode.push(Array(8).join(' ') + '},\n');
-        aCode.push(Array(8).join(' ') + 'iTeardownTheApp: function() {\n');
-        aCode.push(Array(12).join(' ') + 'if (bInOpaPage) {\n');
-        aCode.push(Array(16).join(' ') + 'this.iTeardownMyAppFrame();\n');
-        aCode.push(Array(12).join(' ') + '} else {\n');
-        aCode.push(Array(16).join(' ') + 'this.iTeardownMyUIComponent();\n');
-        aCode.push(Array(12).join(' ') + '}\n');
-        aCode.push(Array(8).join(' ') + '}\n');
-        aCode.push(Array(4).join(' ') + '});\n');
+        aCode.push(Array(2).join('\t') + '"use strict";\n\n');
+//        aCode.push(Array(2).join('\t') + 'var bInOpaPage = location.toString().indexOf("opaTests.qunit.html") !== -1 &&\n');
+//        aCode.push(Array(6).join('\t') + 'jQuery.sap.getUriParameters().get("component") !== "true";\n\n');
+        aCode.push(Array(2).join('\t') + 'function _wrapParameters(oParameters) {\n');
+        aCode.push(Array(3).join('\t') + 'return {\n');
+        aCode.push(Array(4).join('\t') + 'get: function(name) {\n');
+        aCode.push(Array(5).join('\t') + 'return (oParameters[name] || "").toString();\n');
+        aCode.push(Array(4).join('\t') + '}\n');
+        aCode.push(Array(3).join('\t') + '};\n');
+        aCode.push(Array(2).join('\t') + '}\n\n');
+        aCode.push(Array(2).join('\t') + 'return Opa5.extend("' + this.__namespace + '.<testPath>.Common", {\n');
+        aCode.push(Array(3).join('\t') + 'iStartTheAppByUrl: function(oParameters) {\n');
+        // aCode.push(Array(4).join('\t') + 'if (bInOpaPage || oParameters.fullUrl) {\n');
+        // aCode.push(Array(5).join('\t') + 'this.iStartMyAppInAFrame(oParameters.fullUrl);\n');
+        // aCode.push(Array(4).join('\t') + '} else {\n');
+        aCode.push(Array(4).join('\t') + 'MockServer.init(_wrapParameters(oParameters || {}));\n');
+        aCode.push(Array(4).join('\t') + 'this.iStartMyUIComponent({\n');
+        aCode.push(Array(5).join('\t') + 'componentConfig: {\n');
+        aCode.push(Array(6).join('\t') + 'name: "' + this.__namespace + '",\n');
+        aCode.push(Array(6).join('\t') + 'async: true\n');
+        aCode.push(Array(5).join('\t') + '}\n');
+        aCode.push(Array(4).join('\t') + '});\n');
+        // aCode.push(Array(4).join('\t') + '}\n');
+        aCode.push(Array(3).join('\t') + '},\n');
+        aCode.push(Array(3).join('\t') + 'iTeardownTheApp: function() {\n');
+        // aCode.push(Array(4).join('\t') + 'if (bInOpaPage) {\n');
+        // aCode.push(Array(5).join('\t') + 'this.iTeardownMyAppFrame();\n');
+        // aCode.push(Array(4).join('\t') + '} else {\n');
+        aCode.push(Array(4).join('\t') + 'this.iTeardownMyUIComponent();\n');
+        // aCode.push(Array(4).join('\t') + '}\n');
+        aCode.push(Array(3).join('\t') + '}\n');
+        aCode.push(Array(2).join('\t') + '});\n');
         aCode.push('});');
-        return aCode.reduce((a,b) => a + b, '');
+        return aCode.reduce((a, b) => a + b, '');
     }
 
     return OPA5CodeStrategy;

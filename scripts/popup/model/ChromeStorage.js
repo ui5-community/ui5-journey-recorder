@@ -92,6 +92,10 @@ sap.ui.define([
                         chrome.storage.local.set({ "items": aExisting });
                     }
                     var oStore = {};
+
+                    //fix for cycling object
+                    delete oSave.codeSettings.execComponent;
+
                     oStore[oSave.test.uuid] = JSON.stringify(oSave);
                     chrome.storage.local.set(oStore, function () {
                         MessageToast.show("Saved in local Storage");

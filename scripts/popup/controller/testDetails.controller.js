@@ -9,6 +9,7 @@ sap.ui.define([
     "com/ui5/testing/model/GlobalSettings",
     "com/ui5/testing/model/CodeHelper",
     "com/ui5/testing/model/ChromeStorage",
+    "com/ui5/testing/model/Utils",
     "com/ui5/testing/libs/jszip.min",
     "com/ui5/testing/libs/FileSaver.min"
 ], function (Controller,
@@ -20,7 +21,8 @@ sap.ui.define([
              RecordController,
              GlobalSettings,
              CodeHelper,
-             ChromeStorage) {
+             ChromeStorage,
+             Utils) {
     "use strict";
 
     var TestDetails = Controller.extend("com.ui5.testing.controller.TestDetails", {
@@ -60,8 +62,8 @@ sap.ui.define([
             this.getOwnerComponent().getRouter().getRoute("testDetailsCreateQuick").attachPatternMatched(this._onTestCreateQuick, this);
             this.getOwnerComponent().getRouter().getRoute("testReplay").attachPatternMatched(this._onTestReplay, this);
 
-			//Why is this function subscribed?
-			//sap.ui.getCore().getEventBus().subscribe("RecordController", "windowFocusLost", this._recordStopped, this);
+            //Why is this function subscribed?
+            //sap.ui.getCore().getEventBus().subscribe("RecordController", "windowFocusLost", this._recordStopped, this);
         },
     });
 
@@ -202,7 +204,7 @@ sap.ui.define([
         var aExisting = [];
         ChromeStorage.get({
             key: "items",
-            success: function(items) {
+            success: function (items) {
                 if (items && items.items) {
                     aExisting = items.items;
                 }
@@ -217,21 +219,6 @@ sap.ui.define([
                 this.getRouter().navTo("start");
             }.bind(this)
         });
-        /* Left until final test of current approach is working
-        chrome.storage.local.get(["items"], function (items) {
-            if (items && items.items) {
-                aExisting = items.items;
-            }
-            //check if we are already existing (do not add twice to the array..)
-            var iIndex = aExisting.indexOf(sId);
-            if (iIndex === -1) {
-                return;
-            }
-            aExisting.splice(iIndex, 1);
-            chrome.storage.local.set({ "items": aExisting });
-            chrome.storage.local.remove(sId);
-            this.getRouter().navTo("start");
-        }.bind(this));*/
     };
 
     TestDetails.prototype.onNavBack = function () {
@@ -272,7 +259,7 @@ sap.ui.define([
             this._oModel.setProperty("/codeSettings/testCategory", oData.title);
             this._oModel.setProperty("/codeSettings/testUrl", oData.url);
             RecordController.startRecording(bImmediate);
-            if ( bImmediate === true ) {
+            if (bImmediate === true) {
                 this._oRecordDialog.close();
             }
 
@@ -306,7 +293,7 @@ sap.ui.define([
     TestDetails.prototype._onTestReplay = function (oEvent) {
         var sTargetUUID = oEvent.getParameter("arguments").TestId;
         var sCurrentUUID = this.getModel("navModel").getProperty("/test/uuid");
-        if (sTargetUUID == this._oTestId && this._oModel.getProperty("/replayMode") === true) {
+        if (sTargetUUID === this._oTestId && this._oModel.getProperty("/replayMode") === true) {
             if (this.getModel("navModel").getProperty("/elements/" + this._iCurrentStep + "/stepExecuted") === true) {
                 this.replayNextStep();
             }
@@ -320,7 +307,7 @@ sap.ui.define([
             //we have to read the current data..
             ChromeStorage.get({
                 key: sTargetUUID,
-                success: function(oSave) {
+                success: function (oSave) {
                     if (!oSave) {
                         this.getRouter().navTo("start");
                         return;
@@ -334,22 +321,7 @@ sap.ui.define([
                     this._updatePlayButton();
                     this._replay();
                 }.bind(this)
-            })
-            /*
-            chrome.storage.local.get(sTargetUUID, function (oSave) {
-                if (!oSave[sTargetUUID]) {
-                    this.getRouter().navTo("start");
-                    return;
-                }
-                oSave = JSON.parse(oSave[sTargetUUID]);
-                this._oModel.setProperty("/codeSettings", oSave.codeSettings);
-                this.getModel("navModel").setProperty("/elements", oSave.elements);
-                this.getModel("navModel").setProperty("/elementLength", oSave.elements.length);
-                this.getModel("navModel").setProperty("/test", oSave.test);
-                this._updatePreview();
-                this._updatePlayButton();
-                this._replay();
-            }.bind(this));*/
+            });
         } else {
             this._updatePreview();
             this._updatePlayButton();
@@ -365,7 +337,7 @@ sap.ui.define([
             //we have to read the current data..
             ChromeStorage.get({
                 key: sTargetUUID,
-                success: function(oSave) {
+                success: function (oSave) {
                     if (!oSave) {
                         this.getRouter().navTo("start");
                         return;
@@ -378,19 +350,6 @@ sap.ui.define([
                     this._updatePreview();
                 }.bind(this)
             });
-            /*
-            chrome.storage.local.get(sTargetUUID, function (oSave) {
-                if (!oSave[sTargetUUID]) {
-                    this.getRouter().navTo("start");
-                    return;
-                }
-                oSave = JSON.parse(oSave[sTargetUUID]);
-                this._oModel.setProperty("/codeSettings", oSave.codeSettings);
-                this.getModel("navModel").setProperty("/elements", oSave.elements);
-                this.getModel("navModel").setProperty("/elementLength", oSave.elements.length);
-                this.getModel("navModel").setProperty("/test", oSave.test);
-                this._updatePreview();
-            }.bind(this));*/
         } else if (this.getModel("recordModel").getProperty("/recording") === true && this._bQuickMode === false) {
             setTimeout(function () {
                 this._oRecordDialog.open();
@@ -403,6 +362,7 @@ sap.ui.define([
         var aStoredItems = this.getModel("navModel").getProperty("/elements");
         var codeSettings = this.getModel('viewModel').getProperty('/codeSettings');
         codeSettings.language = this.getModel('settings').getProperty('/settings/defaultLanguage');
+        codeSettings.execComponent = this.getOwnerComponent();
         this._oModel.setProperty("/codes", CodeHelper.getFullCode(codeSettings, aStoredItems));
     };
 
@@ -441,8 +401,12 @@ sap.ui.define([
             elements: this.getModel("navModel").getProperty("/elements"),
             test: this.getModel("navModel").getProperty("/test")
         };
+
+        //fix for cycling object
+        delete oSave.codeSettings.execComponent;
+
         var vLink = document.createElement('a'),
-            vBlob = new Blob([JSON.stringify(oSave, null, 2)], { type: "octet/stream" }),
+            vBlob = new Blob([JSON.stringify(oSave, null, 2)], {type: "octet/stream"}),
             vName = 'export.json',
             vUrl = window.URL.createObjectURL(vBlob);
         vLink.setAttribute('href', vUrl);
@@ -453,7 +417,7 @@ sap.ui.define([
     TestDetails.prototype.onEditStep = function (oEvent) {
         //set the current step on not activate..
         var iNumber = oEvent.getSource().getBindingContext("navModel").getPath().split("/");
-        this._iCurrentStep = parseInt(iNumber[iNumber.length - 1],10);
+        this._iCurrentStep = parseInt(iNumber[iNumber.length - 1], 10);
         this.getModel("navModel").setProperty("/elements/" + this._iCurrentStep + "/stepExecuted", false);
         this.getRouter().navTo("elementDisplay", {
             TestId: this.getModel("navModel").getProperty("/test/uuid"),
@@ -478,12 +442,11 @@ sap.ui.define([
         return "Success";
     };
 
-    TestDetails.prototype.downloadSource = function(oEvent) {
+    TestDetails.prototype.downloadSource = function (oEvent) {
         var sSourceCode = oEvent.getSource().getParent().getContent().filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue();
         var element = document.createElement('a');
-        element.setAttribute('href', 'data:text/javascript;charset=utf-8,'+encodeURIComponent(sSourceCode));
-        var fileName = oEvent.getSource().getParent().getText().replace(/\-/g, '_');
-        fileName = fileName.indexOf('.js') > -1 ? fileName : fileName + '.js';
+        element.setAttribute('href', 'data:text/javascript;charset=utf-8,' + encodeURIComponent(sSourceCode));
+        var fileName = Utils.replaceUnsupportedFileSigns(oEvent.getSource().getParent().getText(), '_') + '.js';
         element.setAttribute('download', fileName);
 
         element.style.display = 'none';
@@ -493,26 +456,27 @@ sap.ui.define([
         document.body.removeChild(element);
     };
 
-    TestDetails.prototype.onTabChange = function(oEvent) {
+    TestDetails.prototype.onTabChange = function (oEvent) {
         this._oModel.setProperty('/activeTab', oEvent.getSource().getSelectedKey());
     };
 
-    TestDetails.prototype.downloadAll = function(oEvent) {
+    TestDetails.prototype.downloadAll = function (oEvent) {
         var zip = new JSZip();
         //take all sources containing code no free text
         var aSources = this.getView()
-                        .byId('codeTab')
-                        .getItems()
-                        .filter(f => f.getContent().filter(c => c instanceof sap.m.FormattedText)[0].getVisible() === false)
-                        .map(t => ({ fileName: t.getText().indexOf('.js') > -1 ? t.getText().replace(/\-/g, '_') : t.getText().replace(/\-/g, '_') + '.js',
-                                     source: t.getContent()
-                                        .filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue()
-                                   }))
-                        .forEach(c => zip.file(c.fileName, c.source))
+            .byId('codeTab')
+            .getItems()
+            .filter(f => f.getContent().filter(c => c instanceof sap.m.FormattedText)[0].getVisible() === false)
+            .map(t => ({
+                fileName: Utils.replaceUnsupportedFileSigns(t.getText(), '_') + '.js',
+                source: t.getContent()
+                    .filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue()
+            }))
+            .forEach(c => zip.file(c.fileName, c.source))
         zip.generateAsync({
-                type: "blob"
-            })
-           .then(content => saveAs(content, "testCode.zip"));
+            type: "blob"
+        })
+            .then(content => saveAs(content, "testCode.zip"));
     };
 
     return TestDetails;

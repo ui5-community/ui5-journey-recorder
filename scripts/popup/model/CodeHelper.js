@@ -1,13 +1,17 @@
 sap.ui.define([
     "sap/ui/base/Object",
     "sap/ui/model/json/JSONModel",
-    "com/ui5/testing/model/OPA5CodeStrategy"
-], function (UI5Object, JSONModel, OPA5CodeStrategy) {
+    "com/ui5/testing/model/OPA5CodeStrategy",
+    "com/ui5/testing/model/NaturalCodeStrategy"
+], function (UI5Object, JSONModel, OPA5CodeStrategy, NaturalCodeStrategy) {
     "use strict";
 
     var CodeHelper = UI5Object.extend("com.ui5.testing.model.CodeHelper", {
+        /**
+         *  simple constructor
+         */
         constructor: function () {
-            this._oModel = new JSONModel();
+            this._oModel = new JSONModel({});
         }
     });
 
@@ -15,28 +19,36 @@ sap.ui.define([
         this._aNameStack = {};
 
         this._oModel.setProperty("/codeSettings", oCodeSettings);
-        if (oCodeSettings.language === "OPA") {
-            return this._opaGetCode(oCodeSettings, aElements);;
-        } else if (oCodeSettings.language === "TCF") {
-            return this._testCafeGetCode(aElements);
-        } else if (oCodeSettings.language === "UI5") {
-            return this._ui5GetCode(aElements, oCodeSettings);
+        switch(oCodeSettings.language) {
+            case 'OPA':
+                return this._opaGetCode(oCodeSettings, aElements);
+            case 'TCF':
+                return this._testCafeGetCode(aElements);
+            case 'UI5':
+                return this._ui5GetCode(aElements, oCodeSettings);
+            case 'NAT':
+                return this._natGetCode(oCodeSettings, aElements);
+            default:
+                return "";
         }
-        return "";
     };
 
-    CodeHelper.prototype.getItemCode = function (sCodeLanguage, oElement) {
+    CodeHelper.prototype.getItemCode = function (sCodeLanguage, oElement, oExecComponent) {
         this._aNameStack = {};
 
-        if (sCodeLanguage === "OPA") {
-            return this._getOPACodeFromItem(oElement);
-        } else if (sCodeLanguage === "TCF") {
-            return this._getCodeFromItem(oElement);
-        } else if (sCodeLanguage === "UI5") {
-            var oDef = this._getUI5CodeFromItem(oElement);
-            return oDef.definitons.concat(oDef.code);
+        switch (sCodeLanguage) {
+            case 'OPA':
+                return this._getOPACodeFromItem(oElement);
+            case 'TCF':
+                return this._getCodeFromItem(oElement);
+            case 'UI5':
+                var oDef = this._getUI5CodeFromItem(oElement);
+                return oDef.definitons.concat(oDef.code);
+            case 'NAT':
+                return this._getNatCodeFromItem(oElement, oExecComponent);
+            default:
+                return [];
         }
-        return [];
     };
 
     CodeHelper.prototype._ui5GetCode = function (aElements, oCodeSettings) {
@@ -71,7 +83,7 @@ sap.ui.define([
         };
         var sCodeConf = "exports.config = {\n";
         sCodeConf += "  profile: 'integration',\n";
-        sCodeConf += "  baseUrl: '" + oCodeSettings.testUrl + "'";
+        sCodeConf += "  baseUrl: '" + oCodeSettings.testUrl + "'\n";
         if (oCodeSettings.authentification === "FIORI" ) {
             sCodeConf += ",\n";
             sCodeConf += "  auth: {\n";
@@ -80,8 +92,6 @@ sap.ui.define([
             sCodeConf += "        pass: '${params.pass}'\n";
             sCodeConf += "     }\n";
             sCodeConf += "  }\n";
-        } else {
-            sCodeConf += "\n";
         }
         sCodeConf += "};";
         oCodeTest.code = sCodeConf;
@@ -98,49 +108,28 @@ sap.ui.define([
         var oCodeSettings = this._oModel.getProperty("/codeSettings");
         var aCluster = this._groupCodeByCluster(aElements);
 
-        sCode += "describe('" + oCodeSettings.testCategory + "' , function () {\n";
+        sCode += "describe('test' , function () {\n";
         sCode += "\n";
 
         //make the rest of the OPA calls..
         for (var i = 0; i < aCluster.length; i++) {
-            var aLinesDefCurrentHash = [];
+            var aLinesDef = [];
             var aLinesCode = [];
-            var aLinesCodeCurrentHash = [];
-            var sCurrentHash = null;
             this._aNameStack = {};
 
-            sCode += "    it( '" + oCodeSettings.testName + "', function () {\n";
+            sCode += "    it('Test " + i + "', function () {\n";
             for (var j = 0; j < aCluster[i].length; j++) {
                 var oElement = aCluster[i][j];
-
-                if (sCurrentHash === null || sCurrentHash !== oElement.hash) {
-                    if (sCurrentHash !== null) {
-                        //new hash - add the information
-                        aLinesCode = aLinesCode.concat(aLinesDefCurrentHash);
-                        aLinesCode.push("");
-                        aLinesCode = aLinesCode.concat(aLinesCodeCurrentHash);
-                        aLinesCode.push("");
-                        aLinesCode.push("/////////////////////////////////////////////////");
-                        aLinesCode.push("//new route:" + oElement.hash);
-                        aLinesDefCurrentHash = [];
-                        aLinesCodeCurrentHash = [];
-                    } else {
-                        aLinesCode.push("//route:" + oElement.hash);
-                    }
-
-                    sCurrentHash = oElement.hash;
-                }
 
                 if (oElement.property.type !== "SUP") {
                     var oRes = this._getUI5CodeFromItem(oElement);
                     if (oRes.definitons.length) {
-                        aLinesDefCurrentHash = aLinesDefCurrentHash.concat(oRes.definitons);
+                        aLinesDef.push(oRes.definitons);
                     }
-                    aLinesCodeCurrentHash = aLinesCodeCurrentHash.concat(oRes.code);
+                    aLinesCode = aLinesCode.concat(oRes.code);
                 }
             }
-            var aLines = aLinesCode.concat(aLinesDefCurrentHash);
-            aLines = aLines.concat(aLinesCodeCurrentHash);;
+            var aLines = aLinesDef.concat(aLinesCode);
             for (var x = 0; x < aLines.length; x++) {
                 sCode += "        " + aLines[x] + "\n";
             }
@@ -155,7 +144,6 @@ sap.ui.define([
         aCodes.push(oCodeSpec);
         return aCodes;
     };
-
 
     CodeHelper.prototype._getSelectorToJSONStringRec = function (oObject) {
         var sStringCurrent = "";
@@ -270,7 +258,7 @@ sap.ui.define([
             //syntax: element().element().element().all(target_element)
             var sOwnElement = "control( " + this._getSelectorToJSONString(oUI5Selector.own) + "))";
             if (sParents.length && bMulti == true) {
-                sElement = sParents + ".all(by." + sOwnElement;
+                sElement = sParents + ".all(" + sOwnElement + ")";
             } else if (bMulti === true) {
                 sElement = sElement + ".all(by." + sOwnElement;
             } else if (sParents.length) {
@@ -288,10 +276,17 @@ sap.ui.define([
         var aCode = [];
 
         //ui5-specific (1): for ui5, we must have a CONSISTENT parent handling (parentl4 is not possible without l3,l2 and l1) - we will simply add the controlType for those missing..
-        //just not true
-        //example:         var PlantIdInput2 = element(by.control({ id: /detail--ffFixFlexLayout$/ })).element(by.control({ id: /plantFormContainer--plantId_id$/, interaction: { idSuffix: "inner" } }));
-        //ffFixFlexLayout is 4 levels above plant-id - so there is certainly no issue
         var oSelector = oElement.selector;
+        if (oSelector.selectorUI5.parentL4 && !oSelector.selectorUI5.parentL3) {
+            oSelector.selectorUI5.parentL3 = { controlType: oElement.item.parentL3.metadata.elementName };
+        }
+        if (oSelector.selectorUI5.parentL3 && !oSelector.selectorUI5.parentL2) {
+            oSelector.selectorUI5.parentL2 = { controlType: oElement.item.parentL2.metadata.elementName };
+        }
+        if (oSelector.selectorUI5.parentL2 && !oSelector.selectorUI5.parent) {
+            oSelector.selectorUI5.parent = { controlType: oElement.item.parent.metadata.elementName };
+        }
+
         var sType = oElement.property.type; // SEL | ACT | ASS
         var sActType = oElement.property.actKey; //PRS|TYP
         var oUI5Selector = oSelector.selectorUI5;
@@ -416,9 +411,9 @@ sap.ui.define([
                             sCode += '"' + oAss.assertValue + '"';
                         }
                         if (oElement.property.assertMessage) {
-                            sCode += ",\"" + oElement.property.assertMessage + "\")";
+                            sCode += ",\"" + oElement.property.assertMessage + "\");";
                         } else {
-                            sCode += ")";
+                            sCode += ");";
                         }
                         sCode += ");"
                     } else {
@@ -464,75 +459,11 @@ sap.ui.define([
     };
 
     CodeHelper.prototype._getOPACodeFromItem = function (oElement) {
-        /*
-        var sCode = "";
-        var aCode = [];
-
-        var oSelector = oElement.selector;
-        var sType = oElement.property.type; // SEL | ACT | ASS
-        var sActType = oElement.property.actKey; //PRS|TYP
-
-        //(1) first: build up the actual selector
-        var sSelectorAttributes = "";
-
-        sSelectorAttributes = oSelector.selectorAttributesStringified;
-        var sSelectorFinal = sSelectorAttributes;
-        if (!oElement.item.viewProperty.localViewName) {
-            oElement.item.viewProperty.localViewName = "Unknown";
-        }
-        var sCurrentPage = oElement.item.viewProperty.localViewName;
-        sCurrentPage = "onThe" + sCurrentPage + "Page";
-
-        var sAction = "";
-        if (sType === 'ACT') {
-            sCode = "When." + sCurrentPage + ".";
-            switch (sActType) {
-                case "PRS":
-                    sAction = "iPressElement";
-                    break;
-                case "TYP":
-                    sAction = "iEnterText";
-                    break;
-                default:
-                    return "";
-            }
-
-            sCode = sCode + sAction + "(" + sSelectorFinal;
-            if (sActType == "TYP") {
-                sCode = sCode + ',"' + oElement.property.selectActInsert + '"';
-            }
-            sCode = sCode + ");";
-            aCode = [sCode];
-        } else if (sType === 'ASS') {
-            if (oElement.assertion.assertType === "ATTR") {
-                for (var i = 0; i < oElement.assertion.assertCode.length; i++) {
-                    var oAss = oElement.assertion.assertCode[i];
-
-                    // we could make 100 of mock methods here to make that more OPA style.. but...ya..
-                    sCode = "Then." + sCurrentPage + ".theExpactationIs(" + sSelectorFinal + ",'" + oAss.assertLocation + "','" + oAss.assertType + "',";
-
-                    if (typeof oAss.assertValue === "boolean") {
-                        sCode += oAss.assertValue;
-                    } else if (typeof oAss.assertValue === "number") {
-                        sCode += oAss.assertValue;
-                    } else {
-                        sCode += '"' + oAss.assertValue + '"';
-                    }
-                    sCode += ");"
-
-                    aCode.push(sCode);
-                }
-            } else if (oElement.assertion.assertType === "EXS") {
-                sCode = "Then." + sCurrentPage + ".theElementIsExisting(" + sSelectorFinal + ");"
-                aCode = [sCode];
-            } else if (oElement.assertion.assertType === "MTC") {
-                sCode = "Then." + sCurrentPage + ".theElementIsExistingNTimes(" + sSelectorFinal + "," + oElement.assertion.assertMatchingCount + ");"
-                aCode = [sCode];
-            }
-        }
-        */
         return [new OPA5CodeStrategy().createTestStep(oElement)];
-//        return aCode;
+    };
+
+    CodeHelper.prototype._getNatCodeFromItem = function (oElement) {
+        return [new NaturalCodeStrategy().createTestStep(oElement)];
     };
 
     CodeHelper.prototype._testCafeGetCode = function (aElements) {
@@ -727,6 +658,10 @@ sap.ui.define([
     CodeHelper.prototype._opaGetCode = function (oCodeSettings, aElements) {
         return new OPA5CodeStrategy().generate(oCodeSettings, aElements, this);
     };
+
+    CodeHelper.prototype._natGetCode = function (oCodeSettings, aElements) {
+        return new NaturalCodeStrategy().generate(oCodeSettings, aElements, this);
+    }
 
     return new CodeHelper();
 });

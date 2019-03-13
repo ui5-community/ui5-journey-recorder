@@ -21,6 +21,15 @@
                             <core:Item text="{settings>text}" key="{settings>key}"/>
                         </items>
                     </Select>
+                    <Select id="natLanguage"
+                            change="onUpdatePreview"
+                            items="{settings>/naturalLanguages}"
+                            visible="{= ${viewModel>/activeTab} === 'code' &amp;&amp; ${settings>/settings/defaultLanguage} === 'NAT'}"
+                            selectedKey="{settings>/settings/defaultNatLanguage}">
+                        <items>
+                            <core:Item text="{settings>text}" key="{settings>key}"/>
+                        </items>
+                    </Select>
                 </contentRight>
             </Bar>
         </semantic:subHeader>
@@ -48,6 +57,17 @@
                                       columnsM="1"
                                       singleContainerFullSize="false">
                             <f:content>
+                                <!--
+                                <Label text="Language" required="true"/>
+                                <Select id="tstLanguage"
+                                        change="onUpdatePreview"
+                                        items="{settings>/codeLanguages}"
+                                        selectedKey="{viewModel>/codeSettings/language}">
+                                    <items>
+                                        <core:Item text="{settings>text}" key="{settings>key}"/>
+                                    </items>
+                                </Select>
+                                -->
                                 <Label required="true" text="Test-Category"/>
                                 <Input value="{viewModel>/codeSettings/testCategory}" change="onUpdatePreview"/>
 
@@ -56,14 +76,7 @@
 
                                 <Label text="Test-Page"/>
                                 <Input value="{viewModel>/codeSettings/testUrl}" change="onUpdatePreview"/>
-                                <!--
-                                <Label text="Language" required="true"/>
-                                <Select id="tstLanguage" change="onUpdatePreview" items="{settings>/codeLanguages}" selectedKey="{viewModel>/codeSettings/language}">
-                                    <items>
-                                        <core:Item text="{settings>text}" key="{settings>key}"/>
-                                    </items>
-                                </Select>
-                                -->
+                                
                                 <Label text="Authentification"/>
                                 <Select id="tstAuthentication" change="onUpdatePreview" items="{settings>/authentification}" selectedKey="{viewModel>/codeSettings/authentification}">
                                     <items>
@@ -202,12 +215,14 @@
                                     </code:CodeEditor>
                                     <FormattedText visible="{= ${viewModel>type} === 'FTXT'}"
                                                    htmlText="{viewModel>code}"/>
+                                    <Text visible="{= ${viewModel>type} === 'CTXT'}"
+                                                   text="{viewModel>code}"/>
 									<Button id="downloadButton"
                                             type="Transparent"
                                             class="btnFloat btnCircle"
                                             icon="sap-icon://download"
                                             press="downloadSource"
-                                            visible="{= ${viewModel>type} === 'CODE'}"/>
+                                            visible="{= ${viewModel>type} === 'CODE' || ${settings>/settings/defaultLanguage} === 'NAT'}"/>
                                 </IconTabFilter>
                             </items>
                         </IconTabBar>
