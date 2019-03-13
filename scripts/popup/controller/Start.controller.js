@@ -215,10 +215,12 @@ sap.ui.define([
             },
 
             _importDone: function (oData) {
-                ChromeStorage.saveRecord(oData)
-                /*.then(function() {
-                     //this._loadData();
-                }.bind(this));*/
+                ChromeStorage.saveRecord(oData).then(function() {
+					ChromeStorage.getRecords({
+						path: '/items',
+						model: this._oModel
+					});
+                }.bind(this));
             },
 
             onImport: function () {

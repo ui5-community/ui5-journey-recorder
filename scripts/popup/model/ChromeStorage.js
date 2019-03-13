@@ -21,7 +21,7 @@ sap.ui.define([
             const failureCallback = oSettings.failure;
 
             chrome.storage.local.get(requestKey, function(obj) {
-                if(obj[requestKey]) {if(successCallback) successCallback(obj[requestKey])}
+                if(obj && obj[requestKey]) {if(successCallback) successCallback(obj[requestKey])}
                 else {if(failureCallback) failureCallback(chrome.runtime.lastError)}
             });
         },
@@ -31,7 +31,7 @@ sap.ui.define([
             const failureCallback = oSettings.failure;
 
             chrome.storage.local.remove(requestKey, function(obj) {
-                if(obj[requestKey]) {if(successCallback) successCallback(obj[requestKey])}
+                if(obj && obj[requestKey]) {if(successCallback) successCallback(obj[requestKey])}
                 else {if(failureCallback) failureCallback(chrome.runtime.lastError)}
             });
         },
