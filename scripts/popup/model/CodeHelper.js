@@ -2,8 +2,13 @@ sap.ui.define([
     "sap/ui/base/Object",
     "sap/ui/model/json/JSONModel",
     "com/ui5/testing/model/OPA5CodeStrategy",
-    "com/ui5/testing/model/NaturalCodeStrategy"
-], function (UI5Object, JSONModel, OPA5CodeStrategy, NaturalCodeStrategy) {
+    "com/ui5/testing/model/NaturalCodeStrategy",
+    "com/ui5/testing/model/TestCafeCodeStrategy"
+], function (UI5Object,
+             JSONModel,
+             OPA5CodeStrategy,
+             NaturalCodeStrategy,
+             TestCafeCodeStrategy) {
     "use strict";
 
     var CodeHelper = UI5Object.extend("com.ui5.testing.model.CodeHelper", {
@@ -21,31 +26,31 @@ sap.ui.define([
         this._oModel.setProperty("/codeSettings", oCodeSettings);
         switch(oCodeSettings.language) {
             case 'OPA':
-                return this._opaGetCode(oCodeSettings, aElements);
+                return new OPA5CodeStrategy().generate(oCodeSettings, aElements, this);
             case 'TCF':
-                return this._testCafeGetCode(aElements);
+                return new TestCafeCodeStrategy().generate(oCodeSettings, aElements, this);
             case 'UI5':
                 return this._ui5GetCode(aElements, oCodeSettings);
             case 'NAT':
-                return this._natGetCode(oCodeSettings, aElements);
+                return new NaturalCodeStrategy().generate(oCodeSettings, aElements, this);
             default:
                 return "";
         }
     };
 
-    CodeHelper.prototype.getItemCode = function (sCodeLanguage, oElement, oExecComponent) {
+    CodeHelper.prototype.getItemCode = function (sCodeLanguage, oElement) {
         this._aNameStack = {};
 
         switch (sCodeLanguage) {
             case 'OPA':
-                return this._getOPACodeFromItem(oElement);
+                return [new OPA5CodeStrategy().createTestStep(oElement)];
             case 'TCF':
-                return this._getCodeFromItem(oElement);
+                return new TestCafeCodeStrategy().createTestStep(oElement);
             case 'UI5':
                 var oDef = this._getUI5CodeFromItem(oElement);
                 return oDef.definitons.concat(oDef.code);
             case 'NAT':
-                return this._getNatCodeFromItem(oElement, oExecComponent);
+                return [new NaturalCodeStrategy().createTestStep(oElement)];
             default:
                 return [];
         }
@@ -458,6 +463,7 @@ sap.ui.define([
         };
     };
 
+    /*
     CodeHelper.prototype._getOPACodeFromItem = function (oElement) {
         return [new OPA5CodeStrategy().createTestStep(oElement)];
     };
@@ -466,7 +472,8 @@ sap.ui.define([
         return [new NaturalCodeStrategy().createTestStep(oElement)];
     };
 
-    CodeHelper.prototype._testCafeGetCode = function (aElements) {
+    CodeHelper.prototype._testCafeGetCode = function (oCodeSettings, aElements) {
+        /*
         var aCodes = [];
         var bSupportAssistant = this._oModel.getProperty("/codeSettings/supportAssistant");
 
@@ -520,7 +527,7 @@ sap.ui.define([
 
         if ( oCodeSettings.authentification === 'FIORI' ) {
             sCode += "  await utils.launchpadLogin(t, '<USER>', '<PASSWORD>');\n";
-        }   
+        }
         for (var i = 0; i < aElements.length; i++) {
             var aLines = [];
             if (aElements[i].property.type !== "SUP") {
@@ -549,9 +556,12 @@ sap.ui.define([
         oCodeTest.code = sCode;
         aCodes.push(oCodeTest);
         return aCodes;
-    };
+        return new TestCafeCodeStrategy().generate(oCodeSettings, aElements, this)
+    };*/
 
+    /*
     CodeHelper.prototype._getCodeFromItem = function (oElement) {
+        /*
         var sCode = "";
         var aCode = [];
         //get the actual element - this might seem a little bit superflicious, but is very helpful for exporting/importing (where the references are gone)
@@ -614,7 +624,8 @@ sap.ui.define([
         }
 
         return aCode;
-    };
+        return new TestCafeCodeStrategy().createTestStep(oElement);
+    };*/
 
     CodeHelper.prototype._getFirstComponent = function (aElements) {
         var sFirstPage = "";
@@ -654,14 +665,14 @@ sap.ui.define([
         }
         return aCluster;
     }
-
+    /*
     CodeHelper.prototype._opaGetCode = function (oCodeSettings, aElements) {
         return new OPA5CodeStrategy().generate(oCodeSettings, aElements, this);
     };
 
     CodeHelper.prototype._natGetCode = function (oCodeSettings, aElements) {
         return new NaturalCodeStrategy().generate(oCodeSettings, aElements, this);
-    }
+    }*/
 
     return new CodeHelper();
 });
