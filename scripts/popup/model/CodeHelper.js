@@ -279,7 +279,7 @@ sap.ui.define([
         return sElement;
     }*/
 
-    CodeHelper.prototype._getUI5CodeFromItem = function (oElement) {
+    CodeHelper.prototype._getUI5CodeFromItem = function (oCodeSettings, oElement) {
         /*
         var sCode = "";
         var aCode = [];
@@ -465,7 +465,7 @@ sap.ui.define([
             code: aCode,
             definitons: aDefinitions
         };*/
-        return new UIVeri5CodeStrategy().createTestStep(oElement);
+        return new UIVeri5CodeStrategy().createTestStep(oCodeSettings, oElement);
     };
 
     /*

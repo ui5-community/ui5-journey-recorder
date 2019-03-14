@@ -180,9 +180,9 @@ sap.ui.define([
         var oTemplateCtx = new sap.m.ColumnListItem({
             type: "Active",
             cells: [
-                new sap.m.ObjectIdentifier({ title: '{viewModel>typeTxt}' }),
-                new sap.m.ObjectIdentifier({ title: '{viewModel>attribute}' }),
-                new sap.m.Text({ text: '{viewModel>valueToString}' }),
+                new sap.m.ObjectIdentifier({title: '{viewModel>typeTxt}'}),
+                new sap.m.ObjectIdentifier({title: '{viewModel>attribute}'}),
+                new sap.m.Text({text: '{viewModel>valueToString}'}),
                 new sap.m.ObjectNumber({
                     visible: '{viewModel>/element/itemCloned}',
                     number: '{viewModel>importance}',
@@ -201,10 +201,13 @@ sap.ui.define([
                 }
             },
             columns: [
-                new sap.m.Column({ header: new sap.m.Text({ text: "Type" }) }),
-                new sap.m.Column({ header: new sap.m.Text({ text: "Name" }) }),
-                new sap.m.Column({ header: new sap.m.Text({ text: "Value" }) }),
-                new sap.m.Column({ visible: '{viewModel>/element/itemCloned}', header: new sap.m.Text({ text: "Expected Quality" }) }),
+                new sap.m.Column({header: new sap.m.Text({text: "Type"})}),
+                new sap.m.Column({header: new sap.m.Text({text: "Name"})}),
+                new sap.m.Column({header: new sap.m.Text({text: "Value"})}),
+                new sap.m.Column({
+                    visible: '{viewModel>/element/itemCloned}',
+                    header: new sap.m.Text({text: "Expected Quality"})
+                }),
             ],
             items: {
                 path: 'viewModel>/element/possibleContext',
@@ -265,7 +268,11 @@ sap.ui.define([
                     if (aItems && aItems.length) {
                         for (var j = 0; j < aItems.length; j++) {
                             var oBndgCtxObj = aItems[j].getBindingContext("viewModel").getObject();
-                            this._add("/element/attributeFilter", { attributeType: "OWN", criteriaType: oBndgCtxObj.type, subCriteriaType: oBndgCtxObj.bdgPath });
+                            this._add("/element/attributeFilter", {
+                                attributeType: "OWN",
+                                criteriaType: oBndgCtxObj.type,
+                                subCriteriaType: oBndgCtxObj.bdgPath
+                            });
                         }
                         this._updatePreview();
                     }
@@ -310,7 +317,6 @@ sap.ui.define([
                 } else if (oAssert.operatorType === 'NP') {
                     sAssertFunc = 'notContains'
                 }
-
 
 
                 var sAddCode = sBasisCode;
@@ -433,8 +439,7 @@ sap.ui.define([
     };
 
     TestHandler.prototype._onNewStepFromQuick = function () {
-        this.getRouter().navTo("testDetailsCreateQuick", {
-        }, true);
+        this.getRouter().navTo("testDetailsCreateQuick", {}, true);
     };
 
     TestHandler.prototype._onSave = function () {
@@ -513,7 +518,9 @@ sap.ui.define([
         for (var i = 0; i < aSubObjects.length; i++) {
             var sIdChild = aSubObjects[i].domChildWith;
             //check if sIdChild is part of our current "domChildWith"
-            if (aRows.filter(function (e) { return e.domChildWith === sIdChild; }).length === 0) {
+            if (aRows.filter(function (e) {
+                return e.domChildWith === sIdChild;
+            }).length === 0) {
                 aRows.push({
                     text: aSubObjects[i].isInput === true ? "In Input-Field" : sIdChild,
                     domChildWith: sIdChild,
@@ -521,10 +528,18 @@ sap.ui.define([
                 });
             }
         }
-        aRows = aRows.sort(function (a, b) { if (a.order > b.order) { return 1; } else { return -1; } });
+        aRows = aRows.sort(function (a, b) {
+            if (a.order > b.order) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
 
         //check if the current value is fine..
-        if (aRows.filter(function (e) { return e.domChildWith === sDomChildWith; }).length === 0) {
+        if (aRows.filter(function (e) {
+            return e.domChildWith === sDomChildWith;
+        }).length === 0) {
             sDomChildWith = aRows.length >= 0 ? aRows[0].domChildWith : "";
             this._oModel.setProperty("/element/property/domChildWith", sDomChildWith);
         }
@@ -588,7 +603,7 @@ sap.ui.define([
 
     TestHandler.prototype._updatePreview = function () {
         var oItem = this._oModel.getProperty("/element");
-        oItem = this._adjustBeforeSaving(oItem).then(function (oElementFinal) {
+        this._adjustBeforeSaving(oItem).then(function (oElementFinal) {
             this._getFoundElements().then(function (aElements) {
                 this._oModel.setProperty("/element/identifiedElements", aElements);
                 if (aElements.length !== 1) {
@@ -600,9 +615,10 @@ sap.ui.define([
                 this._checkElementNumber();
                 this._resumePerformanceBindings();
 
-                var sLanguage = this.getView().byId('tstLanguage').getSelectedKey();
-
-                this.getModel("viewModel").setProperty("/code", CodeHelper.getItemCode(sLanguage, oElementFinal, this.getOwnerComponent()).join("\n"));
+                var codeSettings = this.getModel('viewModel').getProperty('/codeSettings');
+                codeSettings.language = this.getModel('settings').getProperty('/settings/defaultLanguage');
+                codeSettings.execComponent = this.getOwnerComponent();
+                this.getModel("viewModel").setProperty("/code", CodeHelper.getItemCode(codeSettings, oElementFinal, this.getOwnerComponent()).join("\n"));
             }.bind(this));
         }.bind(this));
     };
@@ -750,12 +766,12 @@ sap.ui.define([
                 component: this._oModel.getProperty("/element/item/metadata/componentName"),
                 rules: this._oModel.getProperty("/element/property/supportAssistant")
             }).then(
-                function (oStoreIssue) {
-                    this._oModel.setProperty("/statics/supportRules", oStoreIssue.rules);
-                    this._oModel.setProperty("/element/supportAssistantResult", oStoreIssue.results);
-                    this._oModel.setProperty("/element/supportAssistantResultLength", oStoreIssue.results.length);
-                    this._updatePreview();
-                }.bind(this));
+            function (oStoreIssue) {
+                this._oModel.setProperty("/statics/supportRules", oStoreIssue.rules);
+                this._oModel.setProperty("/element/supportAssistantResult", oStoreIssue.results);
+                this._oModel.setProperty("/element/supportAssistantResultLength", oStoreIssue.results.length);
+                this._updatePreview();
+            }.bind(this));
     };
 
     TestHandler.prototype._convertValueSpecToUI5 = function (oSpec, oSelectorUI5, oAttribute, oItem) {
@@ -782,8 +798,7 @@ sap.ui.define([
         var sActType = oElement.property.actKey; //PRS|TYP
         var sSelectType = oElement.property.selectItemBy; //DOM | UI5 | ATTR
         var sSelectorExtension = oElement.property.domChildWith;
-        var oSelectorUI5 = {
-        };
+        var oSelectorUI5 = {};
 
         if (sSelectType === "DOM") {
             sSelector = "Selector";
@@ -984,7 +999,18 @@ sap.ui.define([
 
     TestHandler.prototype._getMergedClassArray = function (oItem) {
         var aClassArray = this._getClassArray(oItem);
-        var oReturn = { defaultAction: { "": "" }, preferredType: "ACT", askForBindingContext: false, preferredProperties: [], defaultInteraction: null, defaultBlur: false, defaultEnter: false, cloned: false, defaultAttributes: [], actions: {} };
+        var oReturn = {
+            defaultAction: {"": ""},
+            preferredType: "ACT",
+            askForBindingContext: false,
+            preferredProperties: [],
+            defaultInteraction: null,
+            defaultBlur: false,
+            defaultEnter: false,
+            cloned: false,
+            defaultAttributes: [],
+            actions: {}
+        };
         //merge from button to top (while higher elements are overwriting lower elements)
         for (var i = 0; i < aClassArray.length; i++) {
             var oClass = aClassArray[i];
@@ -1023,7 +1049,9 @@ sap.ui.define([
                 } else {
                     for (var j = 0; j < oClass.actions[sAction].length; j++) {
                         //remove all elements, with the same domChildWith, higher elements are more descriptive..
-                        var aExisting = oReturn.actions[sAction].filter(function (e) { return e.domChildWith === oClass.actions[sAction][j].domChildWith; });
+                        var aExisting = oReturn.actions[sAction].filter(function (e) {
+                            return e.domChildWith === oClass.actions[sAction][j].domChildWith;
+                        });
                         if (aExisting.length) {
                             aExisting[0] = oClass.actions[sAction][j];
                         } else {
@@ -1310,7 +1338,11 @@ sap.ui.define([
 
             //(2) add our LOCAL Id in case the local id is ok..
             if (oItem.identifier.ui5LocalId && oItem.identifier.localIdClonedOrGenerated === false) {
-                this._add("/element/attributeFilter", { attributeType: "OWN", criteriaType: "ID", subCriteriaType: "LID" });
+                this._add("/element/attributeFilter", {
+                    attributeType: "OWN",
+                    criteriaType: "ID",
+                    subCriteriaType: "LID"
+                });
                 bSufficientForStop = true;
             }
 
@@ -1321,16 +1353,32 @@ sap.ui.define([
                 }
                 //(3): we add the parent or the parent of the parent id in case the ID is unique..
                 if (oItem.parent.identifier.ui5Id.length && oItem.parent.identifier.idGenerated === false && oItem.parent.identifier.idCloned === false) {
-                    this._add("/element/attributeFilter", { attributeType: "PRT", criteriaType: "ID", subCriteriaType: "ID" });
+                    this._add("/element/attributeFilter", {
+                        attributeType: "PRT",
+                        criteriaType: "ID",
+                        subCriteriaType: "ID"
+                    });
                     bSufficientForStop = true;
                 } else if (oItem.parentL2.identifier.ui5Id.length && oItem.parentL2.identifier.idGenerated === false && oItem.parentL2.identifier.idCloned === false) {
-                    this._add("/element/attributeFilter", { attributeType: "PRT2", criteriaType: "ID", subCriteriaType: "ID" });
+                    this._add("/element/attributeFilter", {
+                        attributeType: "PRT2",
+                        criteriaType: "ID",
+                        subCriteriaType: "ID"
+                    });
                     bSufficientForStop = true;
                 } else if (oItem.parentL3.identifier.ui5Id.length && oItem.parentL3.identifier.idGenerated === false && oItem.parentL3.identifier.idCloned === false) {
-                    this._add("/element/attributeFilter", { attributeType: "PRT3", criteriaType: "ID", subCriteriaType: "ID" });
+                    this._add("/element/attributeFilter", {
+                        attributeType: "PRT3",
+                        criteriaType: "ID",
+                        subCriteriaType: "ID"
+                    });
                     bSufficientForStop = true;
                 } else if (oItem.parentL4.identifier.ui5Id.length && oItem.parentL4.identifier.idGenerated === false && oItem.parentL4.identifier.idCloned === false) {
-                    this._add("/element/attributeFilter", { attributeType: "PRT4", criteriaType: "ID", subCriteriaType: "ID" });
+                    this._add("/element/attributeFilter", {
+                        attributeType: "PRT4",
+                        criteriaType: "ID",
+                        subCriteriaType: "ID"
+                    });
                     bSufficientForStop = true;
                 }
                 var oMerged = this._getMergedClassArray(oItem);
@@ -1354,7 +1402,11 @@ sap.ui.define([
                     //(5): now add the label text if possible and static..
                     if (oItem.label &&
                         oItem.label.binding && oItem.label.binding.text && oItem.label.binding.text.static === true) {
-                        this._add("/element/attributeFilter", { attributeType: "PLBL", criteriaType: "BNDG", subCriteriaType: "text" });
+                        this._add("/element/attributeFilter", {
+                            attributeType: "PLBL",
+                            criteriaType: "BNDG",
+                            subCriteriaType: "text"
+                        });
                     }
                     resolve();
                 }.bind(this));
@@ -1398,7 +1450,7 @@ sap.ui.define([
 
     TestHandler.prototype.onAddAssertion = function (oEvent) {
         //most certainly we want to "overwach" an attribute.. nothing else make too much sense..
-        this._add("/element/assertFilter", { attributeType: "OWN", criteriaType: "ATTR", subCriteriaType: "" });
+        this._add("/element/assertFilter", {attributeType: "OWN", criteriaType: "ATTR", subCriteriaType: ""});
 
         this._updatePreview();
     };
@@ -1510,7 +1562,9 @@ sap.ui.define([
         oAttribute.criteriaTypes = oAttributeSettings.criteriaTypes;
 
         //check if the current criteraType value is valid - if yes, keep it, otherwise reset it..
-        if (oAttribute.criteriaTypes.filter(function (e) { return e.criteriaKey === oAttribute.criteriaType; }).length === 0) {
+        if (oAttribute.criteriaTypes.filter(function (e) {
+            return e.criteriaKey === oAttribute.criteriaType;
+        }).length === 0) {
             oAttribute.criteriaType = oAttribute.criteriaTypes[0].criteriaKey;
         }
 
@@ -1529,7 +1583,9 @@ sap.ui.define([
 
         oAttribute.subCriteriaTypes = aSubCriteriaSettings;
         if (oAttribute.subCriteriaTypes.length > 0) {
-            if (oAttribute.subCriteriaTypes.filter(function (e) { return e.subCriteriaType === oAttribute.subCriteriaType; }).length === 0) {
+            if (oAttribute.subCriteriaTypes.filter(function (e) {
+                return e.subCriteriaType === oAttribute.subCriteriaType;
+            }).length === 0) {
                 oAttribute.subCriteriaType = oAttribute.subCriteriaTypes[0].subCriteriaType;
             }
         } else {
