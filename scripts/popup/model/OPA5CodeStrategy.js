@@ -142,14 +142,14 @@ sap.ui.define([
         this.__code.content.push(aParts.reduce((a, b) => a + b, ''));
     };
 
-    OPA5CodeStrategy.prototype.__createTestSteps = function (oAppDetails, aTestSteps) {
+    OPA5CodeStrategy.prototype.__createTestSteps = function (oCodeSettings, aTestSteps) {
         var aParts = [Array(2).join('\t') + 'opaTest('];
-        aParts.push('"' + oAppDetails.testName + ' Testing"');
+        aParts.push('"' + oCodeSettings.testName + ' Testing"');
         aParts.push(', function(Given, When, Then) {\n');
 
         //from here starts the real testing
         for (var step in aTestSteps) {
-            var stepCode = this.createTestStep(aTestSteps[step]);
+            var stepCode = this.createTestStep(oCodeSettings, aTestSteps[step]);
             if (stepCode) {
                 aParts.push(stepCode);
             }
@@ -160,7 +160,7 @@ sap.ui.define([
         this.__code.content.push(aParts.reduce((a, b) => a + b, ''));
     };
 
-    OPA5CodeStrategy.prototype.createTestStep = function (oTestStep) {
+    OPA5CodeStrategy.prototype.createTestStep = function (oCodeSettings, oTestStep) {
         var viewName = oTestStep.item.viewProperty.localViewName;
         var namespace = oTestStep.item.viewProperty.viewName.replace('.view.' + oTestStep.item.viewProperty.localViewName, '');
 

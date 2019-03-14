@@ -40,11 +40,10 @@ sap.ui.define([
     };
 
     NaturalCodeStrategy.prototype.__createTestSteps = function (oCodeSettings, aElements) {
-        var component = oCodeSettings.execComponent;
         var aParts = [];
         //from here starts the real testing
         for (var step in aElements) {
-            var stepCode = this.createTestStep(aElements[step], component);
+            var stepCode = this.createTestStep(oCodeSettings, aElements[step]);
             if (stepCode) {
                 aParts.push(stepCode);
             }
@@ -52,8 +51,8 @@ sap.ui.define([
         return aParts.reduce((a, b) => a + b, '');
     };
 
-    NaturalCodeStrategy.prototype.createTestStep = function (oTestStep, oExecComponent) {
-        var langCode = oExecComponent.getModel('settings').getProperty('/settings/defaultNatLanguage');
+    NaturalCodeStrategy.prototype.createTestStep = function (oCodeSettings, oTestStep) {
+        var langCode = oCodeSettings.execComponent.getModel('settings').getProperty('/settings/defaultNatLanguage');
 
         switch (oTestStep.property.type) {
             case "ACT":

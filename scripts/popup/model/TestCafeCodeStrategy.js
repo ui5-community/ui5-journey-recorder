@@ -61,7 +61,7 @@ sap.ui.define([
         for (var i = 0; i < aElements.length; i++) {
             var aLines = [];
             if (aElements[i].property.type !== "SUP") {
-                aLines = this.createTestStep(aElements[i]);
+                aLines = this.createTestStep(oCodeSettings, aElements[i]);
             }
 
             if (sCurrentHash === null || sCurrentHash !== aElements[i].hash) {
@@ -88,7 +88,7 @@ sap.ui.define([
         return aCodes;
     };
 
-    TestCafeCodeStrategy.prototype.createTestStep = function (oElement) {
+    TestCafeCodeStrategy.prototype.createTestStep = function (oCodeSettings, oElement) {
         var sCode = "";
         var aCode = [];
         //get the actual element - this might seem a little bit superflicious,

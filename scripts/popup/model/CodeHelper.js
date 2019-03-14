@@ -3,12 +3,14 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "com/ui5/testing/model/OPA5CodeStrategy",
     "com/ui5/testing/model/NaturalCodeStrategy",
-    "com/ui5/testing/model/TestCafeCodeStrategy"
+    "com/ui5/testing/model/TestCafeCodeStrategy",
+    "com/ui5/testing/model/UIVeri5CodeStrategy"
 ], function (UI5Object,
              JSONModel,
              OPA5CodeStrategy,
              NaturalCodeStrategy,
-             TestCafeCodeStrategy) {
+             TestCafeCodeStrategy,
+             UIVeri5CodeStrategy) {
     "use strict";
 
     var CodeHelper = UI5Object.extend("com.ui5.testing.model.CodeHelper", {
@@ -21,8 +23,6 @@ sap.ui.define([
     });
 
     CodeHelper.prototype.getFullCode = function (oCodeSettings, aElements) {
-        this._aNameStack = {};
-
         this._oModel.setProperty("/codeSettings", oCodeSettings);
         switch(oCodeSettings.language) {
             case 'OPA':
@@ -38,25 +38,24 @@ sap.ui.define([
         }
     };
 
-    CodeHelper.prototype.getItemCode = function (sCodeLanguage, oElement) {
-        this._aNameStack = {};
-
-        switch (sCodeLanguage) {
+    CodeHelper.prototype.getItemCode = function (oCodeSettings, oElement) {
+        switch (oCodeSettings.language) {
             case 'OPA':
-                return [new OPA5CodeStrategy().createTestStep(oElement)];
+                return [new OPA5CodeStrategy().createTestStep(oCodeSettings, oElement)];
             case 'TCF':
-                return new TestCafeCodeStrategy().createTestStep(oElement);
+                return new TestCafeCodeStrategy().createTestStep(oCodeSettings, oElement);
             case 'UI5':
-                var oDef = this._getUI5CodeFromItem(oElement);
+                var oDef = this._getUI5CodeFromItem(oCodeSettings, oElement);
                 return oDef.definitons.concat(oDef.code);
             case 'NAT':
-                return [new NaturalCodeStrategy().createTestStep(oElement)];
+                return [new NaturalCodeStrategy().createTestStep(oCodeSettings, oElement)];
             default:
                 return [];
         }
     };
 
     CodeHelper.prototype._ui5GetCode = function (aElements, oCodeSettings) {
+        /*
         var aCodes = [];
         var bSupportAssistant = this._oModel.getProperty("/codeSettings/supportAssistant");
 
@@ -148,8 +147,11 @@ sap.ui.define([
         oCodeSpec.code = sCode;
         aCodes.push(oCodeSpec);
         return aCodes;
+        */
+        return new UIVeri5CodeStrategy().generate(oCodeSettings, aElements, this);
     };
 
+    //TODO: Extract to util class
     CodeHelper.prototype._getSelectorToJSONStringRec = function (oObject) {
         var sStringCurrent = "";
         var bFirst = true;
@@ -202,11 +204,12 @@ sap.ui.define([
         return sStringCurrent;
     };
 
+    //TODO: Extract to util class
     CodeHelper.prototype._getSelectorToJSONString = function (oObject) {
         this._oJSRegex = /^[_$a-zA-Z\xA0-\uFFFF][_$a-zA-Z0-9\xA0-\uFFFF]*$/; //this is not perfect - we are working with predefined names, which are not getting "any" syntax though
         return "{ " + this._getSelectorToJSONStringRec(oObject) + " }";
     };
-
+    /*
     CodeHelper.prototype._getUI5Element = function (oElement, oUI5Selector, oAssert) {
         var bMulti = false;
         //var sElementName = "";
@@ -274,9 +277,10 @@ sap.ui.define([
         }
 
         return sElement;
-    }
+    }*/
 
     CodeHelper.prototype._getUI5CodeFromItem = function (oElement) {
+        /*
         var sCode = "";
         var aCode = [];
 
@@ -460,7 +464,8 @@ sap.ui.define([
         return {
             code: aCode,
             definitons: aDefinitions
-        };
+        };*/
+        return new UIVeri5CodeStrategy().createTestStep(oElement);
     };
 
     /*
@@ -644,6 +649,7 @@ sap.ui.define([
         }
     };
 
+    /*
     CodeHelper.prototype._groupCodeByCluster = function (aElements) {
         var aCluster = [[]];
         var bNextIsBreak = false;
@@ -664,7 +670,7 @@ sap.ui.define([
             aCluster[aCluster.length - 1].push(aElements[i]);
         }
         return aCluster;
-    }
+    }*/
     /*
     CodeHelper.prototype._opaGetCode = function (oCodeSettings, aElements) {
         return new OPA5CodeStrategy().generate(oCodeSettings, aElements, this);
