@@ -618,7 +618,7 @@ sap.ui.define([
                 var codeSettings = this.getModel('viewModel').getProperty('/codeSettings');
                 codeSettings.language = this.getModel('settings').getProperty('/settings/defaultLanguage');
                 codeSettings.execComponent = this.getOwnerComponent();
-                this.getModel("viewModel").setProperty("/code", CodeHelper.getItemCode(codeSettings, oElementFinal, this.getOwnerComponent()).join("\n"));
+                this.getModel("viewModel").setProperty("/code", CodeHelper.getItemCode(codeSettings, oElementFinal, this.getOwnerComponent()).join("\n").trim());
             }.bind(this));
         }.bind(this));
     };
