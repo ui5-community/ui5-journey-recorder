@@ -1,6 +1,7 @@
 sap.ui.define([
-    "sap/ui/base/Object"
-], function (UI5Object) {
+    "sap/ui/base/Object",
+    "com/ui5/testing/model/Utils"
+], function (UI5Object, Utils) {
     "use strict";
     var UIVeri5CodeStrategy = UI5Object.extend("com.ui5.testing.model.UIVeri5CodeStrategy", {
         constructor: function() {
@@ -354,21 +355,21 @@ sap.ui.define([
             //go ahead by parentL4, L3, L2, L1 - for "cleaner" code, we will create seperate lines for every single one..
             var sParents = "";
             if (oUI5Selector.parentL4) {
-                sParents = sElement + "(by.control( " + this._getSelectorToJSONString(oUI5Selector.parentL4) + "))";
+                sParents = sElement + "(by.control( " + Utils.getSelectorToJSONString(oUI5Selector.parentL4) + "))";
             }
             if (oUI5Selector.parentL3) {
-                sParents += (sParents.length > 0 ? "." : "") + sElement + "(by.control( " + this._getSelectorToJSONString(oUI5Selector.parentL3) + "))";
+                sParents += (sParents.length > 0 ? "." : "") + sElement + "(by.control( " + Utils.getSelectorToJSONString(oUI5Selector.parentL3) + "))";
             }
             if (oUI5Selector.parentL2) {
-                sParents += (sParents.length > 0 ? "." : "") + sElement + "(by.control( " + this._getSelectorToJSONString(oUI5Selector.parentL2) + "))";
+                sParents += (sParents.length > 0 ? "." : "") + sElement + "(by.control( " + Utils.getSelectorToJSONString(oUI5Selector.parentL2) + "))";
             }
             if (oUI5Selector.parent) {
-                sParents += (sParents.length > 0 ? "." : "") + sElement + "(by.control( " + this._getSelectorToJSONString(oUI5Selector.parent) + "))";
+                sParents += (sParents.length > 0 ? "." : "") + sElement + "(by.control( " + Utils.getSelectorToJSONString(oUI5Selector.parent) + "))";
             }
 
             //syntax: element().element().element().all(target_element)
-            var sOwnElement = "control( " + this._getSelectorToJSONString(oUI5Selector.own) + "))";
-            if (sParents.length && bMulti == true) {
+            var sOwnElement = "control( " + Utils.getSelectorToJSONString(oUI5Selector.own) + "))";
+            if (sParents.length && bMulti === true) {
                 sElement = sParents + ".all(" + sOwnElement + ")";
             } else if (bMulti === true) {
                 sElement = sElement + ".all(by." + sOwnElement;
@@ -380,63 +381,6 @@ sap.ui.define([
         }
 
         return sElement;
-    };
-
-    UIVeri5CodeStrategy.prototype._getSelectorToJSONString = function (oObject) {
-        this._oJSRegex = /^[_$a-zA-Z\xA0-\uFFFF][_$a-zA-Z0-9\xA0-\uFFFF]*$/; //this is not perfect - we are working with predefined names, which are not getting "any" syntax though
-        return "{ " + this._getSelectorToJSONStringRec(oObject) + " }";
-    };
-
-    UIVeri5CodeStrategy.prototype._getSelectorToJSONStringRec = function (oObject) {
-        var sStringCurrent = "";
-        var bFirst = true;
-        var bIsRegex = false;
-        for (var s in oObject) {
-            var obj = oObject[s];
-            if (!bFirst) {
-                sStringCurrent += ", ";
-            }
-            bIsRegex = false;
-            bFirst = false;
-            if (obj && obj.__isRegex && obj.__isRegex === true) {
-                obj = obj.id;
-                bIsRegex = true;
-            }
-            if (Array.isArray(obj)) {
-                sStringCurrent += s + ":" + "[";
-                for (var i = 0; i < obj.length; i++) {
-                    if (i > 0) {
-                        sStringCurrent += ",";
-                    }
-                    if (typeof obj[i] === "object") {
-                        sStringCurrent += "{ ";
-                        sStringCurrent += this._getSelectorToJSONStringRec(obj[i]);
-                        sStringCurrent += " }";
-                    } else {
-                        sStringCurrent += this._getSelectorToJSONStringRec(obj[i]);
-                    }
-                }
-                sStringCurrent += "]";
-            } else if (typeof obj === "object") {
-                sStringCurrent += s + ": { ";
-                sStringCurrent += this._getSelectorToJSONStringRec(obj);
-                sStringCurrent += " }";
-            } else {
-                if (this._oJSRegex.test(s) === false && bIsRegex === false) {
-                    s = '"' + s + '"';
-                }
-                sStringCurrent += s;
-                sStringCurrent += " : ";
-                if (typeof obj === "boolean" || bIsRegex === true) {
-                    sStringCurrent += obj;
-                } else if (typeof obj === "number") {
-                    sStringCurrent += obj;
-                } else {
-                    sStringCurrent += '\"' + obj + '"';
-                }
-            }
-        }
-        return sStringCurrent;
     };
 
     return UIVeri5CodeStrategy;

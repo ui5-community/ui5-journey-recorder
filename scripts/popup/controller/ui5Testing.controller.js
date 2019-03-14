@@ -11,8 +11,22 @@ sap.ui.define([
     "com/ui5/testing/model/Navigation",
     "com/ui5/testing/model/Communication",
     "com/ui5/testing/model/RecordController",
-    "com/ui5/testing/model/CodeHelper"
-], function (Controller, Object, JSONModel, MessageToast, ValueState, MessagePopover, MessageItem, MessageBox, GlobalSettings, Navigation, Communication, RecordController, CodeHelper) {
+    "com/ui5/testing/model/CodeHelper",
+    "com/ui5/testing/model/Utils"
+], function (Controller,
+             Object,
+             JSONModel,
+             MessageToast,
+             ValueState,
+             MessagePopover,
+             MessageItem,
+             MessageBox,
+             GlobalSettings,
+             Navigation,
+             Communication,
+             RecordController,
+             CodeHelper,
+             Utils) {
     "use strict";
 
     var TestHandler = Controller.extend("com.ui5.testing.controller.ui5Testing", {
@@ -843,7 +857,7 @@ sap.ui.define([
 
 
             sSelectorAttributes = oScope;
-            sSelectorAttributesStringified = CodeHelper._getSelectorToJSONString(oScope); //JSON.stringify(oScope);
+            sSelectorAttributesStringified = Utils.getSelectorToJSONString(oScope); //JSON.stringify(oScope);
             sSelectorAttributesBtf = JSON.stringify(oScope, null, 2);
         }
 
