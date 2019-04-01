@@ -26,6 +26,9 @@ sap.ui.define([
                 aggFillFunction: false,
                 aggCntFunction: false
             };
+            this.__customMatcher = {
+                parent: false
+            };
             this.__dependencies.push({asyncDep: this.__namespace.replace(/\./g, '/') + '/<testPath>/' +this.__baseClass, paraDep: 'Common'})
         }
     });
@@ -46,6 +49,19 @@ sap.ui.define([
 
     PageBuilder.prototype.setBaseClass = function(sBaseClass) {
         this.__baseClass = sBaseClass ? sBaseClass : this.__baseClass;
+        return this;
+    };
+
+    PageBuilder.prototype.setCustomMatcher = function(sType, bActive) {
+        if(sType in this.__customMatcher) {
+            this.__customMatcher[sType] = bActive;
+        }
+
+        if(this.__customMatcher.parent) {
+            if(!this.__dependencies.some(dep => dep.paraDep === 'ParentMatcher')) {
+                this.__dependencies.push({asyncDep: this.__namespace.replace(/\./g, '/') + '/<testPath>/' + 'customMatcher/ParentMatcher', paraDep: 'ParentMatcher'});
+            }
+        }
         return this;
     };
 
@@ -201,6 +217,26 @@ sap.ui.define([
             aCode.push(Array(7).join('\t') + 'oMatchProperties.attributes.map(function(el) {\n');
             aCode.push(Array(8).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
             aCode.push(Array(7).join('\t') + '});\n');
+            if(this.__customMatcher.parent) {
+                aCode.push(Array(6).join('\t') + 'if (oActionProperties.parent) {\n');
+                aCode.push(Array(7).join('\t') + 'oActionProperties.parent.forEach(function (el) {\n');
+                aCode.push(Array(8).join('\t') + 'var oProps = {};\n');
+                aCode.push(Array(8).join('\t') + 'if (el.id) {\n');
+                aCode.push(Array(9).join('\t') + 'oProps.parentId = el.id.isRegex ? el.id.value : new RegExp(el.id.value);\n');
+                aCode.push(Array(8).join('\t') + '}\n');
+                aCode.push(Array(8).join('\t') + 'if (el.controlType) {\n');
+                aCode.push(Array(9).join('\t') + 'oProps.parentClass = el.controlType;\n');
+                aCode.push(Array(8).join('\t') + '}\n');
+                aCode.push(Array(8).join('\t') + 'if (el.attributes) {\n');
+                aCode.push(Array(9).join('\t') + 'oProps.parentAttributes = el.attributes;\n');
+                aCode.push(Array(8).join('\t') + '}\n');
+                aCode.push(Array(8).join('\t') + 'oProps.parentLevelAbove = el.levelAbove;\n');
+                aCode.push(Array(8).join('\t') + 'actionObject.matchers.push(\n');
+                aCode.push(Array(9).join('\t') + 'new ParentMatcher(oProps)\n');
+                aCode.push(Array(8).join('\t') + ');\n');
+                aCode.push(Array(7).join('\t') + '});\n');
+                aCode.push(Array(6).join('\t') + '}\n');
+            }
             aCode.push(Array(6).join('\t') + 'return this.waitFor(checkObject);\n');
             aCode.push(Array(5).join('\t') + '}\n');
     };
@@ -217,6 +253,26 @@ sap.ui.define([
         aCode.push(Array(7).join('\t') + 'oMatchProperties.attributes.map(function(el) {\n');
         aCode.push(Array(8).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
         aCode.push(Array(7).join('\t') + '});\n');
+        if(this.__customMatcher.parent) {
+            aCode.push(Array(6).join('\t') + 'if (oActionProperties.parent) {\n');
+            aCode.push(Array(7).join('\t') + 'oActionProperties.parent.forEach(function (el) {\n');
+            aCode.push(Array(8).join('\t') + 'var oProps = {};\n');
+            aCode.push(Array(8).join('\t') + 'if (el.id) {\n');
+            aCode.push(Array(9).join('\t') + 'oProps.parentId = el.id.isRegex ? el.id.value : new RegExp(el.id.value);\n');
+            aCode.push(Array(8).join('\t') + '}\n');
+            aCode.push(Array(8).join('\t') + 'if (el.controlType) {\n');
+            aCode.push(Array(9).join('\t') + 'oProps.parentClass = el.controlType;\n');
+            aCode.push(Array(8).join('\t') + '}\n');
+            aCode.push(Array(8).join('\t') + 'if (el.attributes) {\n');
+            aCode.push(Array(9).join('\t') + 'oProps.parentAttributes = el.attributes;\n');
+            aCode.push(Array(8).join('\t') + '}\n');
+            aCode.push(Array(8).join('\t') + 'oProps.parentLevelAbove = el.levelAbove;\n');
+            aCode.push(Array(8).join('\t') + 'actionObject.matchers.push(\n');
+            aCode.push(Array(9).join('\t') + 'new ParentMatcher(oProps)\n');
+            aCode.push(Array(8).join('\t') + ');\n');
+            aCode.push(Array(7).join('\t') + '});\n');
+            aCode.push(Array(6).join('\t') + '}\n');
+        }
         aCode.push(Array(6).join('\t') + 'checkObject.matchers.push(\n');
         aCode.push(Array(7).join('\t') + 'new AggregationEmpty({\n');
         aCode.push(Array(8).join('\t') + 'name: oAggProperties.aggName\n');
@@ -237,6 +293,26 @@ sap.ui.define([
         aCode.push(Array(7).join('\t') + 'oMatchProperties.attributes.map(function(el) {\n');
         aCode.push(Array(8).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
         aCode.push(Array(7).join('\t') + '});\n');
+        if(this.__customMatcher.parent) {
+            aCode.push(Array(6).join('\t') + 'if (oActionProperties.parent) {\n');
+            aCode.push(Array(7).join('\t') + 'oActionProperties.parent.forEach(function (el) {\n');
+            aCode.push(Array(8).join('\t') + 'var oProps = {};\n');
+            aCode.push(Array(8).join('\t') + 'if (el.id) {\n');
+            aCode.push(Array(9).join('\t') + 'oProps.parentId = el.id.isRegex ? el.id.value : new RegExp(el.id.value);\n');
+            aCode.push(Array(8).join('\t') + '}\n');
+            aCode.push(Array(8).join('\t') + 'if (el.controlType) {\n');
+            aCode.push(Array(9).join('\t') + 'oProps.parentClass = el.controlType;\n');
+            aCode.push(Array(8).join('\t') + '}\n');
+            aCode.push(Array(8).join('\t') + 'if (el.attributes) {\n');
+            aCode.push(Array(9).join('\t') + 'oProps.parentAttributes = el.attributes;\n');
+            aCode.push(Array(8).join('\t') + '}\n');
+            aCode.push(Array(8).join('\t') + 'oProps.parentLevelAbove = el.levelAbove;\n');
+            aCode.push(Array(8).join('\t') + 'actionObject.matchers.push(\n');
+            aCode.push(Array(9).join('\t') + 'new ParentMatcher(oProps)\n');
+            aCode.push(Array(8).join('\t') + ');\n');
+            aCode.push(Array(7).join('\t') + '});\n');
+            aCode.push(Array(6).join('\t') + '}\n');
+        }
         aCode.push(Array(6).join('\t') + 'checkObject.matchers.push(\n');
         aCode.push(Array(7).join('\t') + 'new AggregationFilled({\n');
         aCode.push(Array(8).join('\t') + 'name: oAggProperties.aggName\n');
@@ -257,6 +333,26 @@ sap.ui.define([
         aCode.push(Array(7).join('\t') + 'oMatchProperties.attributes.map(function(el) {\n');
         aCode.push(Array(8).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
         aCode.push(Array(7).join('\t') + '});\n');
+        if(this.__customMatcher.parent) {
+            aCode.push(Array(6).join('\t') + 'if (oActionProperties.parent) {\n');
+            aCode.push(Array(7).join('\t') + 'oActionProperties.parent.forEach(function (el) {\n');
+            aCode.push(Array(8).join('\t') + 'var oProps = {};\n');
+            aCode.push(Array(8).join('\t') + 'if (el.id) {\n');
+            aCode.push(Array(9).join('\t') + 'oProps.parentId = el.id.isRegex ? el.id.value : new RegExp(el.id.value);\n');
+            aCode.push(Array(8).join('\t') + '}\n');
+            aCode.push(Array(8).join('\t') + 'if (el.controlType) {\n');
+            aCode.push(Array(9).join('\t') + 'oProps.parentClass = el.controlType;\n');
+            aCode.push(Array(8).join('\t') + '}\n');
+            aCode.push(Array(8).join('\t') + 'if (el.attributes) {\n');
+            aCode.push(Array(9).join('\t') + 'oProps.parentAttributes = el.attributes;\n');
+            aCode.push(Array(8).join('\t') + '}\n');
+            aCode.push(Array(8).join('\t') + 'oProps.parentLevelAbove = el.levelAbove;\n');
+            aCode.push(Array(8).join('\t') + 'actionObject.matchers.push(\n');
+            aCode.push(Array(9).join('\t') + 'new ParentMatcher(oProps)\n');
+            aCode.push(Array(8).join('\t') + ');\n');
+            aCode.push(Array(7).join('\t') + '});\n');
+            aCode.push(Array(6).join('\t') + '}\n');
+        }
         aCode.push(Array(6).join('\t') + 'checkObject.matchers.push(\n');
         aCode.push(Array(7).join('\t') + 'new AggregationLengthEquals({\n');
         aCode.push(Array(8).join('\t') + 'name: oAggProperties.aggName,\n');
@@ -281,6 +377,26 @@ sap.ui.define([
         aCode.push(Array(9).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
         aCode.push(Array(8).join('\t') + '});\n');
         aCode.push(Array(6).join('\t') + '}\n');
+        if(this.__customMatcher.parent) {
+            aCode.push(Array(6).join('\t') + 'if (oActionProperties.parent) {\n');
+            aCode.push(Array(7).join('\t') + 'oActionProperties.parent.forEach(function (el) {\n');
+            aCode.push(Array(8).join('\t') + 'var oProps = {};\n');
+            aCode.push(Array(8).join('\t') + 'if (el.id) {\n');
+            aCode.push(Array(9).join('\t') + 'oProps.parentId = el.id.isRegex ? el.id.value : new RegExp(el.id.value);\n');
+            aCode.push(Array(8).join('\t') + '}\n');
+            aCode.push(Array(8).join('\t') + 'if (el.controlType) {\n');
+            aCode.push(Array(9).join('\t') + 'oProps.parentClass = el.controlType;\n');
+            aCode.push(Array(8).join('\t') + '}\n');
+            aCode.push(Array(8).join('\t') + 'if (el.attributes) {\n');
+            aCode.push(Array(9).join('\t') + 'oProps.parentAttributes = el.attributes;\n');
+            aCode.push(Array(8).join('\t') + '}\n');
+            aCode.push(Array(8).join('\t') + 'oProps.parentLevelAbove = el.levelAbove;\n');
+            aCode.push(Array(8).join('\t') + 'actionObject.matchers.push(\n');
+            aCode.push(Array(9).join('\t') + 'new ParentMatcher(oProps)\n');
+            aCode.push(Array(8).join('\t') + ');\n');
+            aCode.push(Array(7).join('\t') + '});\n');
+            aCode.push(Array(6).join('\t') + '}\n');
+        }
         aCode.push(Array(6).join('\t') + 'return this.waitFor(actionObject);\n');
         aCode.push(Array(5).join('\t') + '}\n');
     };
@@ -300,6 +416,26 @@ sap.ui.define([
         aCode.push(Array(9).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
         aCode.push(Array(8).join('\t') + '});\n');
         aCode.push(Array(6).join('\t') + '}\n');
+        if(this.__customMatcher.parent) {
+            aCode.push(Array(6).join('\t') + 'if (oActionProperties.parent) {\n');
+            aCode.push(Array(7).join('\t') + 'oActionProperties.parent.forEach(function (el) {\n');
+            aCode.push(Array(8).join('\t') + 'var oProps = {};\n');
+            aCode.push(Array(8).join('\t') + 'if (el.id) {\n');
+            aCode.push(Array(9).join('\t') + 'oProps.parentId = el.id.isRegex ? el.id.value : new RegExp(el.id.value);\n');
+            aCode.push(Array(8).join('\t') + '}\n');
+            aCode.push(Array(8).join('\t') + 'if (el.controlType) {\n');
+            aCode.push(Array(9).join('\t') + 'oProps.parentClass = el.controlType;\n');
+            aCode.push(Array(8).join('\t') + '}\n');
+            aCode.push(Array(8).join('\t') + 'if (el.attributes) {\n');
+            aCode.push(Array(9).join('\t') + 'oProps.parentAttributes = el.attributes;\n');
+            aCode.push(Array(8).join('\t') + '}\n');
+            aCode.push(Array(8).join('\t') + 'oProps.parentLevelAbove = el.levelAbove;\n');
+            aCode.push(Array(8).join('\t') + 'actionObject.matchers.push(\n');
+            aCode.push(Array(9).join('\t') + 'new ParentMatcher(oProps)\n');
+            aCode.push(Array(8).join('\t') + ');\n');
+            aCode.push(Array(7).join('\t') + '});\n');
+            aCode.push(Array(6).join('\t') + '}\n');
+        }
         aCode.push(Array(6).join('\t') + 'return this.waitFor(actionObject);\n');
         aCode.push(Array(5).join('\t') + '}\n');
     };

@@ -463,16 +463,53 @@ sap.ui.define([
     TestDetails.prototype.downloadAll = function (oEvent) {
         var zip = new JSZip();
         //take all sources containing code no free text
-        var aSources = this.getView()
-            .byId('codeTab')
-            .getItems()
-            .filter(f => f.getContent().filter(c => c instanceof sap.m.FormattedText)[0].getVisible() === false)
-            .map(t => ({
-                fileName: Utils.replaceUnsupportedFileSigns(t.getText(), '_') + '.js',
-                source: t.getContent()
-                    .filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue()
-            }))
-            .forEach(c => zip.file(c.fileName, c.source))
+
+        if (this._oModel.getProperty('/codeSettings/language') === "OPA") {
+            var aSources = this.getView()
+                .byId('codeTab')
+                .getItems()
+                .filter(f => f.getContent().filter(c => c instanceof sap.m.FormattedText)[0].getVisible() === false);
+            var test = zip.folder('test');
+            var integration = test.folder('integration');
+            var customMatcher = test.folder('customMatcher');
+            var pages = integration.folder('pages');
+
+            //get all pages
+            aSources.filter(t => t.getText().indexOf('Page') > -1)
+                .map(t => ({
+                    fileName: Utils.replaceUnsupportedFileSigns(t.getText(), '_') + '.js',
+                    source: t.getContent().filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue()
+                }))
+                .forEach(c => pages.file(c.fileName, c.source));
+
+            //get all matcher implementation
+            aSources.filter(t => t.getText().indexOf('Matcher') > -1)
+                .map(t => ({
+                    fileName: Utils.replaceUnsupportedFileSigns(t.getText(), '_') + '.js',
+                    source: t.getContent().filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue()
+                }))
+                .forEach(c => customMatcher.file(c.fileName, c.source));
+
+            //get all remaining except pages and matcher
+            aSources.filter(t => t.getText().indexOf('Matcher') === -1 && t.getText().indexOf('Page') === -1)
+                .map(t => ({
+                    fileName: Utils.replaceUnsupportedFileSigns(t.getText(), '_') + '.js',
+                    source: t.getContent().filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue()
+                }))
+                .forEach(c => integration.file(c.fileName, c.source));
+        } else {
+            this.getView()
+                .byId('codeTab')
+                .getItems()
+                .filter(f => f.getContent().filter(c => c instanceof sap.m.FormattedText)[0].getVisible() === false)
+                .map(t => ({
+                    fileName: Utils.replaceUnsupportedFileSigns(t.getText(), '_') + '.js',
+                    source: t.getContent()
+                        .filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue()
+                }))
+                .forEach(c => zip.file(c.fileName, c.source))
+        }
+
         zip.generateAsync({
             type: "blob"
         })
