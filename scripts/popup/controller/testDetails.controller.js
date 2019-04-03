@@ -73,26 +73,34 @@ sap.ui.define([
             url: sUrl,
             active: false
         }, function (tab) {
-            chrome.windows.create({
-                tabId: tab.id,
-                type: 'normal',
-                focused: true
-            }, function (fnWindow) {
-                //now inject into our window..
-                RecordController.injectScript(tab.id).then(function () {
-                    this._bReplayMode = true;
-                    this._startReplay();
-                }.bind(this));
+            var sCheckUrl = sUrl;
+            const fnListenerFunction = function (tabId, changeInfo, tab) {
+                if (tab.url.indexOf(sCheckUrl) > -1 && changeInfo.status === 'complete') {
+                    chrome.windows.create({
+                        tabId: tab.id,
+                        type: 'normal',
+                        focused: true,
+                        state: 'maximized'
+                    }, function (fnWindow) {
+                        //now inject into our window..
+                        RecordController.injectScript(tab.id).then(function () {
+                            this._bReplayMode = true;
+                            this._startReplay();
+                        }.bind(this));
 
-                chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-                    if (message.type === "HandshakeToWindow") {
-                        chrome.runtime.sendMessage({
-                            "type": "send-window-id",
-                        }, function (response) {
+                        chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+                            if (message.type === "HandshakeToWindow") {
+                                chrome.runtime.sendMessage({
+                                    "type": "send-window-id",
+                                }, function (response) {
+                                });
+                            }
                         });
-                    }
-                });
-            }.bind(this));
+                    }.bind(this));
+                    chrome.tabs.onUpdated.removeListener(fnListenerFunction);
+                }
+            };
+            chrome.tabs.onUpdated.addListener(fnListenerFunction.bind(this));
         }.bind(this));
     };
 

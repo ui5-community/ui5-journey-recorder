@@ -11,7 +11,7 @@
         <semantic:subHeader>
             <Bar>
                 <contentRight>
-                    <Label text="Language"  visible="{= ${viewModel>/activeTab} === 'code' }"/>
+                    <Label text="Language" visible="{= ${viewModel>/activeTab} === 'code' }"/>
                     <Select id="tstLanguage"
                             change="onUpdatePreview"
                             items="{settings>/codeLanguages}"
@@ -57,17 +57,6 @@
                                       columnsM="1"
                                       singleContainerFullSize="false">
                             <f:content>
-                                <!--
-                                <Label text="Language" required="true"/>
-                                <Select id="tstLanguage"
-                                        change="onUpdatePreview"
-                                        items="{settings>/codeLanguages}"
-                                        selectedKey="{viewModel>/codeSettings/language}">
-                                    <items>
-                                        <core:Item text="{settings>text}" key="{settings>key}"/>
-                                    </items>
-                                </Select>
-                                -->
                                 <Label required="true" text="Test-Category"/>
                                 <Input value="{viewModel>/codeSettings/testCategory}" change="onUpdatePreview"/>
 
@@ -76,30 +65,26 @@
 
                                 <Label text="Test-Page"/>
                                 <Input value="{viewModel>/codeSettings/testUrl}" change="onUpdatePreview"/>
-                                
+
                                 <Label text="Authentification"/>
-                                <Select id="tstAuthentication" change="onUpdatePreview" items="{settings>/authentification}" selectedKey="{viewModel>/codeSettings/authentification}">
+                                <Select id="tstAuthentication" change="onUpdatePreview"
+                                        items="{settings>/authentification}"
+                                        selectedKey="{viewModel>/codeSettings/authentification}">
                                     <items>
                                         <core:Item text="{settings>text}" key="{settings>key}"/>
                                     </items>
                                 </Select>
 
-                                <Label
-                                        visible="false"
-                                        text="Support-Assistant"
-                                        tooltip="Add Support-Assistant steps, before every navigation step"/>
-                                <CheckBox
-                                        visible="false"
-                                        selected="{viewModel>/codeSettings/supportAssistant}"
-                                        select="onUpdatePreview"/>
-                                <!--
-                                <Label text="Replay" tooltip="Replay.."/>
-                                <Button icon="sap-icon://play" press="onReplayAll"/>
-                                -->
+                                <Label visible="false"
+                                       text="Support-Assistant"
+                                       tooltip="Add Support-Assistant steps, before every navigation step"/>
+                                <CheckBox visible="false"
+                                          selected="{viewModel>/codeSettings/supportAssistant}"
+                                          select="onUpdatePreview"/>
                             </f:content>
                         </f:SimpleForm>
 
-                        <Panel expandable="true" expanded="true" width="auto">
+                        <Panel expandable="false" expanded="true" width="auto">
                             <headerToolbar>
                                 <Toolbar press="onExpandControl"
                                          height="3rem"
@@ -216,8 +201,8 @@
                                     <FormattedText visible="{= ${viewModel>type} === 'FTXT'}"
                                                    htmlText="{viewModel>code}"/>
                                     <Text visible="{= ${viewModel>type} === 'CTXT'}"
-                                                   text="{viewModel>code}"/>
-									<Button id="downloadButton"
+                                          text="{viewModel>code}"/>
+                                    <Button id="downloadButton"
                                             type="Transparent"
                                             class="btnFloat btnCircle"
                                             icon="sap-icon://download"
@@ -232,40 +217,40 @@
         </semantic:content>
         <semantic:customFooterContent>
             <Button
-                icon="sap-icon://record"
-                text="Record"
-                press="onContinueRecording"
-                visible="{= ${viewModel>/activeTab} === 'settings'}"/>
+                    icon="sap-icon://record"
+                    text="Record"
+                    press="onContinueRecording"
+                    visible="{= ${viewModel>/activeTab} === 'settings'}"/>
             <Button
-                id="beExport"
-                text="Export"
-                icon="sap-icon://action"
-                press="onExport"
-                visible="{= ${viewModel>/activeTab} === 'settings'}"/>
+                    id="beExport"
+                    text="Export"
+                    icon="sap-icon://action"
+                    press="onExport"
+                    visible="{= ${viewModel>/activeTab} === 'settings'}"/>
             <Button
-                id="beDelete"
-                type="Reject"
-                text="Delete"
-                press="onDelete"
-                visible="{= ${viewModel>/activeTab} === 'settings'}"/>
+                    id="beDelete"
+                    type="Reject"
+                    text="Delete"
+                    press="onDelete"
+                    visible="{= ${viewModel>/activeTab} === 'settings'}"/>
             <Button
-                id="btCancel"
-                type="Emphasized"
-                text="Cancel"
-                press="onNavBack"
-                visible="{= ${viewModel>/activeTab} === 'settings'}"/>
+                    id="btCancel"
+                    type="Emphasized"
+                    text="Cancel"
+                    press="onNavBack"
+                    visible="{= ${viewModel>/activeTab} === 'settings'}"/>
             <Button
-                id="btSave"
-                type="Accept"
-                text="Save"
-                press="onSave"
-                visible="{= ${viewModel>/activeTab} === 'settings'}"/>
+                    id="btSave"
+                    type="Accept"
+                    text="Save"
+                    press="onSave"
+                    visible="{= ${viewModel>/activeTab} === 'settings'}"/>
             <Button
-                id="btDownload"
-                icon="sap-icon://download-from-cloud"
-                text="Download Sources"
-                press="downloadAll"
-                visible="{= ${viewModel>/activeTab} === 'code'}"/>
+                    id="btDownload"
+                    icon="sap-icon://download-from-cloud"
+                    text="Download Sources"
+                    press="downloadAll"
+                    visible="{= ${viewModel>/activeTab} === 'code'}"/>
         </semantic:customFooterContent>
     </semantic:FullscreenPage>
 </mvc:View>
