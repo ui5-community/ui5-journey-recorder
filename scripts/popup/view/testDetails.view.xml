@@ -65,6 +65,7 @@
 
                                 <Label text="Test-Page"/>
                                 <Input value="{viewModel>/codeSettings/testUrl}" change="onUpdatePreview"/>
+                                <Text text="{recordModel>/targetUI5Version}"/>
 
                                 <Label text="Authentification"/>
                                 <Select id="tstAuthentication" change="onUpdatePreview"

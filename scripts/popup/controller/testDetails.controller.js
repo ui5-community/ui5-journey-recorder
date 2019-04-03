@@ -35,6 +35,7 @@ sap.ui.define([
                 testName: "",
                 testCategory: "",
                 testUrl: "",
+                ui5Version: "",
                 supportAssistant: false
             },
             dynamic: {
@@ -61,11 +62,18 @@ sap.ui.define([
             this.getOwnerComponent().getRouter().getRoute("testDetailsCreate").attachPatternMatched(this._onTestCreate, this);
             this.getOwnerComponent().getRouter().getRoute("testDetailsCreateQuick").attachPatternMatched(this._onTestCreateQuick, this);
             this.getOwnerComponent().getRouter().getRoute("testReplay").attachPatternMatched(this._onTestReplay, this);
+            Communication.registerEvent("loaded", this._onInjectionDone.bind(this));
 
             //Why is this function subscribed?
             //sap.ui.getCore().getEventBus().subscribe("RecordController", "windowFocusLost", this._recordStopped, this);
         },
     });
+
+    TestDetails.prototype._onInjectionDone = function(oData) {
+        if (oData.ok === true) {
+            this._oModel.setProperty('/ui5Version', oData.version);
+        }
+    };
 
     TestDetails.prototype._replay = function () {
         var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
@@ -83,9 +91,10 @@ sap.ui.define([
                         state: 'maximized'
                     }, function (fnWindow) {
                         //now inject into our window..
-                        RecordController.injectScript(tab.id).then(function () {
+                        RecordController.injectScript(tab.id).then(function (oData) {
                             this._bReplayMode = true;
                             this._startReplay();
+                            this._oModel.setProperty('/ui5Version', oData.version);
                         }.bind(this));
 
                         chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
