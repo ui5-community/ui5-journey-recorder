@@ -175,7 +175,10 @@ sap.ui.define([
 
     OPA5CodeStrategy.prototype.createTestStep = function (oCodeSettings, oTestStep) {
         var viewName = oTestStep.item.viewProperty.localViewName;
-        var namespace = oTestStep.item.viewProperty.viewName.replace('.view.' + oTestStep.item.viewProperty.localViewName, '');
+        var namespace = '<template>';
+        if(oTestStep.item.viewProperty.viewName) {
+            namespace = oTestStep.item.viewProperty.viewName.replace('.view.' + oTestStep.item.viewProperty.localViewName, '');
+        }
 
         if (!this.__pages[viewName]) {
             this.__pages[viewName] = new PageBuilder(namespace, viewName);
