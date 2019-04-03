@@ -199,26 +199,9 @@ sap.ui.define([
         ChromeStorage.saveRecord(oSave);
     };
 
-    TestDetails.prototype.onDelete = function (oEvent) {
+    TestDetails.prototype.onDelete = function () {
         var sId = this.getModel("navModel").getProperty("/test/uuid");
-        var aExisting = [];
-        ChromeStorage.get({
-            key: "items",
-            success: function (items) {
-                if (items && items.items) {
-                    aExisting = items.items;
-                }
-                //check if we are already existing (do not add twice to the array..)
-                var iIndex = aExisting.indexOf(sId);
-                if (iIndex === -1) {
-                    return;
-                }
-                aExisting.splice(iIndex, 1);
-                ChromeStorage.set({key: "items", data: aExisting});
-                ChromeStorage.remove(sId);
-                this.getRouter().navTo("start");
-            }.bind(this)
-        });
+        ChromeStorage.deleteTest(sId).then(this.getRouter().navTo("start"));
     };
 
     TestDetails.prototype.onNavBack = function () {
