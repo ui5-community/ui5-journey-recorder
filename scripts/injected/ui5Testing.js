@@ -235,7 +235,13 @@ else {
     };
 
     TestHandler.prototype._getControlFromDom = function (oDomNode) {
-        var oControls = jQuery(document.getElementById(oDomNode.id)).control();
+        var oControls = [];
+        if(oDomNode.id) {
+            oControls = jQuery(document.getElementById(oDomNode.id)).control();
+        } else {
+            oControls = jQuery(oDomNode).control()
+        }
+
         if (!oControls || !oControls.length) {
             return null;
         }
