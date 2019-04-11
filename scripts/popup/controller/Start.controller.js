@@ -123,8 +123,6 @@ sap.ui.define([
 
             /** view events **/
 
-
-
             /**
              * Sets the focus on the given Tab to easily find the correct tab to a given Url
              *

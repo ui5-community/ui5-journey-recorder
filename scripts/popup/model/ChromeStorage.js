@@ -54,6 +54,7 @@ sap.ui.define([
                             uuid: oData.test.uuid,
                             createdAt: new Date(oData.test.createdAt),
                             testName: oData.codeSettings.testName,
+                            testCategory: oData.codeSettings.testCategory,
                             testUrl: oData.codeSettings.testUrl
                         });
                     }

@@ -75,6 +75,9 @@
                                     <Text text="Test-Name"/>
                                 </Column>
                                 <Column>
+                                    <Text text="Test-Categorie"/>
+                                </Column>
+                                <Column>
                                     <Text text="Created At"/>
                                 </Column>
                                 <Column>
@@ -85,6 +88,7 @@
                                 <ColumnListItem type="Navigation" press="onNavigateToTest">
                                     <cells>
                                         <Text text="{viewModel>testName}"/>
+                                        <Text text="{viewModel>testCategory}"/>
                                         <Text text="{ path: 'viewModel>createdAt', type: 'sap.ui.model.type.DateTime' }"/>
                                         <Text text="{viewModel>testUrl}"/>
                                     </cells>
