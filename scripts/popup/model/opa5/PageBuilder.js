@@ -211,7 +211,7 @@ sap.ui.define([
             aCode.push(Array(6).join('\t') + 'if (oMatchProperties.id) {checkObject.id = new RegExp(oMatchProperties.id);}\n');
             aCode.push(Array(6).join('\t') + 'if (oMatchProperties.controlType) {checkObject.controlType = oMatchProperties.controlType;}\n');
             aCode.push(Array(6).join('\t') + 'checkObject.visible = true;\n');
-            aCode.push(Array(6).join('\t') + 'checkObject.success = function() {Opa5.assert.ok(true,"Found field matching all properties")};\n');
+            aCode.push(Array(6).join('\t') + 'checkObject.success = function() {Opa5.assert.ok(true,"Found field matching all properties");};\n');
             aCode.push(Array(6).join('\t') + 'checkObject.errorMessage = "Won\'t be able to find field with requirements: " + JSON.stringify(oMatchProperties);\n');
             aCode.push(Array(6).join('\t') + 'checkObject.matchers =\n');
             aCode.push(Array(7).join('\t') + 'oMatchProperties.attributes.map(function(el) {\n');
@@ -247,7 +247,7 @@ sap.ui.define([
         aCode.push(Array(6).join('\t') + 'if (oActionProperties.id) {actionObject.id = oActionProperties.id.isRegex ? oActionProperties.id.value : new RegExp(oActionProperties.id.value);}\n');
         aCode.push(Array(6).join('\t') + 'if (oAggProperties.controlType) {checkObject.controlType = oMatchProperties.controlType;}\n');
         aCode.push(Array(6).join('\t') + 'checkObject.visible = true;\n');
-        aCode.push(Array(6).join('\t') + 'checkObject.success = function() {Opa5.assert.ok(true,"Found aggregation empty.")};\n');
+        aCode.push(Array(6).join('\t') + 'checkObject.success = function() {Opa5.assert.ok(true,"Found aggregation empty.");};\n');
         aCode.push(Array(6).join('\t') + 'checkObject.errorMessage = "Won\'t be able to find aggregation with requirements: " + JSON.stringify(oAggProperties);\n');
         aCode.push(Array(6).join('\t') + 'checkObject.matchers =\n');
         aCode.push(Array(7).join('\t') + 'oMatchProperties.attributes.map(function(el) {\n');
@@ -287,7 +287,7 @@ sap.ui.define([
         aCode.push(Array(6).join('\t') + 'if (oActionProperties.id) {actionObject.id = oActionProperties.id.isRegex ? oActionProperties.id.value : new RegExp(oActionProperties.id.value);}\n');
         aCode.push(Array(6).join('\t') + 'if (oAggProperties.controlType) {checkObject.controlType = oMatchProperties.controlType;}\n');
         aCode.push(Array(6).join('\t') + 'checkObject.visible = true;\n');
-        aCode.push(Array(6).join('\t') + 'checkObject.success = function() {Opa5.assert.ok(true,"Found aggregation filled.")};\n');
+        aCode.push(Array(6).join('\t') + 'checkObject.success = function() {Opa5.assert.ok(true,"Found aggregation filled.");};\n');
         aCode.push(Array(6).join('\t') + 'checkObject.errorMessage = "Won\'t be able to find aggregation with requirements: " + JSON.stringify(oAggProperties);\n');
         aCode.push(Array(6).join('\t') + 'checkObject.matchers =\n');
         aCode.push(Array(7).join('\t') + 'oMatchProperties.attributes.map(function(el) {\n');
@@ -327,7 +327,7 @@ sap.ui.define([
         aCode.push(Array(6).join('\t') + 'if (oActionProperties.id) {actionObject.id = oActionProperties.id.isRegex ? oActionProperties.id.value : new RegExp(oActionProperties.id.value);}\n');
         aCode.push(Array(6).join('\t') + 'if (oAggProperties.controlType) {checkObject.controlType = oMatchProperties.controlType;}\n');
         aCode.push(Array(6).join('\t') + 'checkObject.visible = true;\n');
-        aCode.push(Array(6).join('\t') + 'checkObject.success = function() {Opa5.assert.ok(true,"Found aggregation matching count of " + oAggProperties.count)};\n');
+        aCode.push(Array(6).join('\t') + 'checkObject.success = function() {Opa5.assert.ok(true,"Found aggregation matching count of " + oAggProperties.count);};\n');
         aCode.push(Array(6).join('\t') + 'checkObject.errorMessage = "Won\'t be able to find aggregation with requirements: " + JSON.stringify(oAggProperties);\n');
         aCode.push(Array(6).join('\t') + 'checkObject.matchers =\n');
         aCode.push(Array(7).join('\t') + 'oMatchProperties.attributes.map(function(el) {\n');

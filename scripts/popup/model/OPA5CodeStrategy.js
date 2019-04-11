@@ -137,7 +137,11 @@ sap.ui.define([
         var aParts = [Array(2).join('\t') + 'opaTest('];
         aParts.push('"' + oAppDetails.testName + ' App Start"');
         aParts.push(', function(Given) {\n'); //When, Then not needed as parameter here
-        aParts.push(Array(3).join('\t') + 'Given.iStartTheAppByUrl({fullUrl: \"' + oAppDetails.testUrl + '\"});\n');
+        var sNavHash = "";
+        if(oAppDetails.testUrl.indexOf('#') > -1) {
+            sNavHash = oAppDetails.testUrl.substring(oAppDetails.testUrl.indexOf('#')+1);
+        }
+        aParts.push(Array(3).join('\t') + 'Given.iStartTheAppByHash({hash: \"' + sNavHash + '\"});\n');
         aParts.push(Array(3).join('\t') + 'Opa5.assert.expect(0);\n');
         aParts.push(Array(2).join('\t') + '});\n\n');
 
@@ -498,8 +502,6 @@ sap.ui.define([
         aCode.push(Array(2).join('\t') + '"' + this.__namespace.replace(/\./g, '/') + "/<testPath>/MockServer" + '"\n');
         aCode.push('], function(Opa5, MockServer) {\n');
         aCode.push(Array(2).join('\t') + '"use strict";\n\n');
-//        aCode.push(Array(2).join('\t') + 'var bInOpaPage = location.toString().indexOf("opaTests.qunit.html") !== -1 &&\n');
-//        aCode.push(Array(6).join('\t') + 'jQuery.sap.getUriParameters().get("component") !== "true";\n\n');
         aCode.push(Array(2).join('\t') + 'function _wrapParameters(oParameters) {\n');
         aCode.push(Array(3).join('\t') + 'return {\n');
         aCode.push(Array(4).join('\t') + 'get: function(name) {\n');
@@ -508,25 +510,18 @@ sap.ui.define([
         aCode.push(Array(3).join('\t') + '};\n');
         aCode.push(Array(2).join('\t') + '}\n\n');
         aCode.push(Array(2).join('\t') + 'return Opa5.extend("' + this.__namespace + '.<testPath>.Common", {\n');
-        aCode.push(Array(3).join('\t') + 'iStartTheAppByUrl: function(oParameters) {\n');
-        // aCode.push(Array(4).join('\t') + 'if (bInOpaPage || oParameters.fullUrl) {\n');
-        // aCode.push(Array(5).join('\t') + 'this.iStartMyAppInAFrame(oParameters.fullUrl);\n');
-        // aCode.push(Array(4).join('\t') + '} else {\n');
+        aCode.push(Array(3).join('\t') + 'iStartTheAppByHash: function(oParameters) {\n');
         aCode.push(Array(4).join('\t') + 'MockServer.init(_wrapParameters(oParameters || {}));\n');
         aCode.push(Array(4).join('\t') + 'this.iStartMyUIComponent({\n');
         aCode.push(Array(5).join('\t') + 'componentConfig: {\n');
         aCode.push(Array(6).join('\t') + 'name: "' + this.__namespace + '",\n');
         aCode.push(Array(6).join('\t') + 'async: true\n');
-        aCode.push(Array(5).join('\t') + '}\n');
+        aCode.push(Array(5).join('\t') + '},\n');
+        aCode.push(Array(5).join('\t') + 'hash: oParameters.hash\n');
         aCode.push(Array(4).join('\t') + '});\n');
-        // aCode.push(Array(4).join('\t') + '}\n');
         aCode.push(Array(3).join('\t') + '},\n');
         aCode.push(Array(3).join('\t') + 'iTeardownTheApp: function() {\n');
-        // aCode.push(Array(4).join('\t') + 'if (bInOpaPage) {\n');
-        // aCode.push(Array(5).join('\t') + 'this.iTeardownMyAppFrame();\n');
-        // aCode.push(Array(4).join('\t') + '} else {\n');
         aCode.push(Array(4).join('\t') + 'this.iTeardownMyUIComponent();\n');
-        // aCode.push(Array(4).join('\t') + '}\n');
         aCode.push(Array(3).join('\t') + '}\n');
         aCode.push(Array(2).join('\t') + '});\n');
         aCode.push('});');
