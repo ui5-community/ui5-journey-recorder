@@ -23,8 +23,8 @@ sap.ui.define([
         //setup page builder for each view used during the test
         aElements
             .map(el => ({
-                viewName: el.item.viewProperty.localViewName,
-                namespace: el.item.viewProperty.viewName.replace('.view.' + el.item.viewProperty.localViewName, '')
+                viewName: el.item.viewProperty.localViewName ? el.item.viewProperty.localViewName : "Detached",
+                namespace: el.item.viewProperty.viewName ? el.item.viewProperty.viewName.replace('.view.' + el.item.viewProperty.localViewName, '') : '<template>'
             }))
             .reduce((a, b) => a.every(c => b.viewName !== c.viewName) ? a.concat(b) : a, [])
             .forEach(el => this.__pages[el.viewName] = (new PageBuilder(el.namespace, el.viewName)));
@@ -117,19 +117,25 @@ sap.ui.define([
         }.bind(this));
         if (this.__code.constants.length > 0) {
             var constants = Array(2).join('\t')
-                + 'var '
+                + 'var'
                 + this.__code.constants
-                    .map(c => Array(9).join(' ') + c.symbol + ' = \"' + c.value + '\"')
+                    .map(c => Array(3).join('\t') + c.symbol + ' = \"' + c.value + '\"')
                     .reduce((a, b) => a + ',\n' + b, '')
                     .substring(2)
                 + ';';
-            this.__code.content.push(constants.replace(/var\s{9}/g, 'var  '));
+            this.__code.content.push(constants.replace(/var\t{2}/g, 'var '));
         }
     };
 
     OPA5CodeStrategy.prototype.__createConstant = function (sString) {
         var constant = {value: sString};
-        constant.symbol = typeof sString === "string" ? 'C_' + sString.replace(/[\s\-\.\:\/\%]+/g, '_').toUpperCase() : 'C_' + JSON.stringify(sString).toUpperCase();
+        constant.symbol = typeof sString === "string" ? 'C_' + sString.replace(/[\s\-\.\:\/\%]+/g, '_') : 'C_' + JSON.stringify(sString);
+        //check for ÜÄÖ
+        constant.symbol = constant.symbol.replace(/[äÄ]+/g, 'ae');
+        constant.symbol = constant.symbol.replace(/[öÖ]+/g, 'oe');
+        constant.symbol = constant.symbol.replace(/[üÜ]+/g, 'ue');
+
+        constant.symbol = constant.symbol.toUpperCase();
         return constant;
     };
 
@@ -455,25 +461,25 @@ sap.ui.define([
 
     OPA5CodeStrategy.prototype.__createAggregationCheck = function (oStep) {
         var oAGGProp = oStep.assertFilter[0];
-        var aParts = [Array(8).join(' ') + 'Then.'];
+        var aParts = [Array(3).join('\t') + 'Then.'];
         aParts.push('on' + oStep.item.viewProperty.localViewName);
 
         if (oAGGProp.criteriaValue === 0) {
             if (oAGGProp.operatorType === 'EQ') {
                 this.__pages[oStep.item.viewProperty.localViewName].addAggregationEmpty();
                 aParts.push('.iAggregationEmpty({');
-                aParts.push('objectProps: ')
+                //aParts.push('objectProps: ')
             }
 
             if (oAGGProp.operatorType === 'GT') {
                 this.__pages[oStep.item.viewProperty.localViewName].addAggregationFilled();
                 aParts.push('.iAggregationFilled({');
-                aParts.push('objectProps: ')
+                //aParts.push('objectProps: ')
             }
         } else {
             this.__pages[oStep.item.viewProperty.localViewName].addAggregationCount();
             aParts.push('.iAggregationCounts({');
-            aParts.push('objectProps: ');
+            //aParts.push('objectProps: ');
         }
 
         this.__createObjectMatcherInfos(oStep, aParts);
