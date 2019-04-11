@@ -19,7 +19,7 @@ sap.ui.define([
     });
 
     OPA5CodeStrategy.prototype.generate = function (oCodeSettings, aElements, codeHelper) {
-        var aCodes = [];
+        var aCodes =  [];
         //setup page builder for each view used during the test
         aElements
             .map(el => ({
@@ -48,7 +48,7 @@ sap.ui.define([
 
         this.__createTestSteps(oCodeSettings, aElements);
 
-        this.__createAppCloseStep(oCodeSettings);
+        this.__createAppCloseStep();
 
         this.__code.content.push('});');
 
@@ -57,7 +57,12 @@ sap.ui.define([
         aCodes.push(this.__code);
 
         var order = 1;
+        var namespace = [...new Set(Object.values(this.__pages).map(el => el.getNamespace()))].filter(nsp => nsp !== '<template>')[0];
+        namespace = namespace ? namespace : '<template>';
         Object.keys(this.__pages).forEach(function (key) {
+            if(this.__pages[key].getNamespace() === '<template>'){
+                this.__pages[key].setNamespace(namespace);
+            }
             order = order++;
             var oCode = {
                 codeName: key + 'Page',
@@ -141,35 +146,27 @@ sap.ui.define([
 
     OPA5CodeStrategy.prototype.__createAppStartStep = function (oAppDetails) {
         var aParts = [Array(2).join('\t') + 'opaTest('];
-        aParts.push('"' + oAppDetails.testName + ' App Start"');
-        aParts.push(', function(Given) {\n'); //When, Then not needed as parameter here
+        aParts.push('"' + oAppDetails.testName+'"');
+        aParts.push(', function(Given, When, Then) {\n');
         var sNavHash = "";
         if(oAppDetails.testUrl.indexOf('#') > -1) {
             sNavHash = oAppDetails.testUrl.substring(oAppDetails.testUrl.indexOf('#')+1);
         }
-        aParts.push(Array(3).join('\t') + 'Given.iStartTheAppByHash({hash: \"' + sNavHash + '\"});\n');
-        aParts.push(Array(3).join('\t') + 'Opa5.assert.expect(0);\n');
-        aParts.push(Array(2).join('\t') + '});\n\n');
+        aParts.push(Array(3).join('\t') + 'Given.iStartTheAppByHash({hash: \"' + sNavHash + '\"});\n\n');
 
         this.__code.content.push(aParts.reduce((a, b) => a + b, ''));
     };
 
-    OPA5CodeStrategy.prototype.__createAppCloseStep = function (oAppDetails) {
-        var aParts = [Array(2).join('\t') + 'opaTest('];
-        aParts.push('"' + oAppDetails.testName + ' App Teardown"');
-        aParts.push(', function(Given) {\n'); //When, Then not needed as parameter here
-        aParts.push(Array(3).join('\t') + 'Given.iTeardownTheApp();\n');
-        aParts.push(Array(3).join('\t') + 'Opa5.assert.expect(0);\n');
+    OPA5CodeStrategy.prototype.__createAppCloseStep = function () {
+        var aParts = [];
+        aParts.push('\n' + Array(3).join('\t') + 'Given.iTeardownTheApp();\n');
         aParts.push(Array(2).join('\t') + '});\n');
 
         this.__code.content.push(aParts.reduce((a, b) => a + b, ''));
     };
 
     OPA5CodeStrategy.prototype.__createTestSteps = function (oCodeSettings, aTestSteps) {
-        var aParts = [Array(2).join('\t') + 'opaTest('];
-        aParts.push('"' + oCodeSettings.testName + ' Testing"');
-        aParts.push(', function(Given, When, Then) {\n');
-
+        var aParts = [];
         //from here starts the real testing
         for (var step in aTestSteps) {
             var stepCode = this.createTestStep(oCodeSettings, aTestSteps[step]);
@@ -177,8 +174,6 @@ sap.ui.define([
                 aParts.push(stepCode);
             }
         }
-
-        aParts.push(Array(2).join('\t') + '});\n\n');
 
         this.__code.content.push(aParts.reduce((a, b) => a + b, ''));
     };
@@ -324,7 +319,7 @@ sap.ui.define([
 
     };
 
-    OPA5CodeStrategy.prototype.__createExistStep = function (oStep) {        
+    OPA5CodeStrategy.prototype.__createExistStep = function (oStep) {
         var viewName = oStep.item.viewProperty.localViewName ? oStep.item.viewProperty.localViewName : "Detached";
         if (oStep.assertFilter && oStep.assertFilter.some(a => a.criteriaType == 'AGG')) {
             return this.__createAggregationCheck(oStep);
@@ -460,7 +455,7 @@ sap.ui.define([
             objectMatcher['ATTR'] = ['{' + oToken.subCriteriaType + ': ' + value + '}'];
     };
 
-    OPA5CodeStrategy.prototype.__createAggregationCheck = function (oStep) {        
+    OPA5CodeStrategy.prototype.__createAggregationCheck = function (oStep) {
         var viewName = oStep.item.viewProperty.localViewName ? oStep.item.viewProperty.localViewName : "Detached";
         var oAGGProp = oStep.assertFilter[0];
         var aParts = [Array(3).join('\t') + 'Then.'];

@@ -29,11 +29,10 @@ sap.ui.define([
             this.__customMatcher = {
                 parent: false
             };
-            this.__dependencies.push({asyncDep: this.__namespace.replace(/\./g, '/') + '/<testPath>/' +this.__baseClass, paraDep: 'Common'})
         }
     });
 
-    PageBuilder.prototype.setNameSpace = function(sNamespace) {
+    PageBuilder.prototype.setNamespace = function(sNamespace) {
         this.__namespace = sNamespace ? sNamespace : this.__namespace;
         return this;
     };
@@ -120,6 +119,9 @@ sap.ui.define([
     };
 
     PageBuilder.prototype.generate = function() {
+        //add the common page as general dependency
+        this.__dependencies.unshift({asyncDep: this.__namespace.replace(/\./g, '/') + '/<testPath>/' +this.__baseClass, paraDep: 'Common'});
+
         var aCode = ['sap.ui.define([\n'];
 
         this.__generateDependencies(aCode);
@@ -133,10 +135,10 @@ sap.ui.define([
     };
 
     PageBuilder.prototype.__generateDependencies = function(aCode) {
-        this.__dependencies.forEach(dep => aCode.push(Array(2).join('\t') + '\"' + dep.asyncDep + '\",\n'))
+        this.__dependencies.forEach(dep => aCode.push(Array(2).join('\t') + '\"' + dep.asyncDep + '\",\n'));
         aCode[aCode.length-1] = aCode[aCode.length-1].replace(',', '');
         aCode.push('], function (');
-        this.__dependencies.forEach(dep => aCode.push(dep.paraDep + ', '))
+        this.__dependencies.forEach(dep => aCode.push(dep.paraDep + ', '));
         aCode[aCode.length-1] = aCode[aCode.length-1].replace(',', '');
         aCode.push(') {\n');
     };
@@ -146,7 +148,9 @@ sap.ui.define([
           aCode.push(Array(2).join('\t') + opa5Dependency + '.createPageObjects({\n');
           aCode.push(Array(3).join('\t') + 'on' + this.__viewName + ': {\n');
           aCode.push(Array(4).join('\t') + 'baseClass: ' + this.__baseClass + ',\n');
-          aCode.push(Array(4).join('\t') + 'viewName: "' + this.__viewName + '",\n');
+          if(this.__viewName !== 'Detached') {
+              aCode.push(Array(4).join('\t') + 'viewName: "' + this.__viewName + '",\n');
+          }
 
           if (Object.values(this.__actions).filter(el=>el).length > 0) {
               aCode.push(Array(4).join('\t')  + 'actions: {\n');
@@ -171,7 +175,7 @@ sap.ui.define([
           }
 
           if (Object.values(this.__assertions).filter(el => el).length > 0) {
-              aCode.push(Array(4).join('\t') + 'assertions: {\n')
+              aCode.push(Array(4).join('\t') + 'assertions: {\n');
               if(this.__assertions.existFunction) {
                   this.__generateExistFunction(aCode);
               }
