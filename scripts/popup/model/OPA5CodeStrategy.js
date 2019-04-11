@@ -123,7 +123,7 @@ sap.ui.define([
                     .reduce((a, b) => a + ',\n' + b, '')
                     .substring(2)
                 + ';';
-            this.__code.content.push(constants.replace(/var\t{2}/g, 'var '));
+            this.__code.content.push(constants.replace(/var\t{2}/g, 'var ') + '\n');
         }
     };
 
@@ -184,7 +184,7 @@ sap.ui.define([
     };
 
     OPA5CodeStrategy.prototype.createTestStep = function (oCodeSettings, oTestStep) {
-        var viewName = oTestStep.item.viewProperty.localViewName;
+        var viewName = oTestStep.item.viewProperty.localViewName ? oTestStep.item.viewProperty.localViewName : "Detached";
         var namespace = '<template>';
         if(oTestStep.item.viewProperty.viewName) {
             namespace = oTestStep.item.viewProperty.viewName.replace('.view.' + oTestStep.item.viewProperty.localViewName, '');
@@ -287,7 +287,7 @@ sap.ui.define([
 
     OPA5CodeStrategy.prototype.__createEnterTextAction = function (oStep) {
         var selectors = oStep.selector.selectorUI5.own;
-        var viewName = oStep.item.viewProperty.localViewName;
+        var viewName = oStep.item.viewProperty.localViewName ? oStep.item.viewProperty.localViewName : "Detached";
         this.__pages[viewName].addEnterTextFunction();
 
         var aParts = [Array(3).join('\t') + 'When.'];
@@ -306,7 +306,7 @@ sap.ui.define([
 
     OPA5CodeStrategy.prototype.__createPressAction = function (oStep) {
         var selectors = oStep.selector.selectorUI5.own;
-        var viewName = oStep.item.viewProperty.localViewName;
+        var viewName = oStep.item.viewProperty.localViewName ? oStep.item.viewProperty.localViewName : "Detached";
         this.__pages[viewName].addPressFunction();
 
         var aParts = [Array(3).join('\t') + 'When.'];
@@ -324,13 +324,14 @@ sap.ui.define([
 
     };
 
-    OPA5CodeStrategy.prototype.__createExistStep = function (oStep) {
+    OPA5CodeStrategy.prototype.__createExistStep = function (oStep) {        
+        var viewName = oStep.item.viewProperty.localViewName ? oStep.item.viewProperty.localViewName : "Detached";
         if (oStep.assertFilter && oStep.assertFilter.some(a => a.criteriaType == 'AGG')) {
             return this.__createAggregationCheck(oStep);
         } else {
-            this.__pages[oStep.item.viewProperty.localViewName].addExistFunction();
+            this.__pages[viewName].addExistFunction();
             var aParts = [Array(3).join('\t') + 'Then.'];
-            aParts.push('on' + oStep.item.viewProperty.localViewName);
+            aParts.push('on' + viewName);
             aParts.push('.iShouldSeeTheProperty(');
 
             aParts.push('{');
@@ -459,25 +460,26 @@ sap.ui.define([
             objectMatcher['ATTR'] = ['{' + oToken.subCriteriaType + ': ' + value + '}'];
     };
 
-    OPA5CodeStrategy.prototype.__createAggregationCheck = function (oStep) {
+    OPA5CodeStrategy.prototype.__createAggregationCheck = function (oStep) {        
+        var viewName = oStep.item.viewProperty.localViewName ? oStep.item.viewProperty.localViewName : "Detached";
         var oAGGProp = oStep.assertFilter[0];
         var aParts = [Array(3).join('\t') + 'Then.'];
-        aParts.push('on' + oStep.item.viewProperty.localViewName);
+        aParts.push('on' + viewName);
 
         if (oAGGProp.criteriaValue === 0) {
             if (oAGGProp.operatorType === 'EQ') {
-                this.__pages[oStep.item.viewProperty.localViewName].addAggregationEmpty();
+                this.__pages[viewName].addAggregationEmpty();
                 aParts.push('.iAggregationEmpty({');
                 //aParts.push('objectProps: ')
             }
 
             if (oAGGProp.operatorType === 'GT') {
-                this.__pages[oStep.item.viewProperty.localViewName].addAggregationFilled();
+                this.__pages[viewName].addAggregationFilled();
                 aParts.push('.iAggregationFilled({');
                 //aParts.push('objectProps: ')
             }
         } else {
-            this.__pages[oStep.item.viewProperty.localViewName].addAggregationCount();
+            this.__pages[viewName].addAggregationCount();
             aParts.push('.iAggregationCounts({');
             //aParts.push('objectProps: ');
         }

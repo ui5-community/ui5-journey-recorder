@@ -52,7 +52,7 @@ sap.ui.define([
             aLines.push(Array(4).join('\t') + 'if (this.getParentClass() && oParent.getMetadata().getName() !== this.getParentClass()) {\n');
             aLines.push(Array(5).join('\t') + 'return false;\n');
             aLines.push(Array(4).join('\t') + '}\n');
-            aLines.push(Array(4).join('\t') + 'if (this.getParentId() && !this.getParentId().test(oParent.getMetadata().getId())) {\n');
+            aLines.push(Array(4).join('\t') + 'if (this.getParentId() && !this.getParentId().test(oParent.getId())) {\n');
             aLines.push(Array(5).join('\t') + '//oParent.getMetadata().getId() !== this.getParentId()) {\n');
             aLines.push(Array(5).join('\t') + 'return false;\n');
             aLines.push(Array(4).join('\t') + '}\n\n');

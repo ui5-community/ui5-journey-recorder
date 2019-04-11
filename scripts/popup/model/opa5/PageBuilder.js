@@ -214,9 +214,10 @@ sap.ui.define([
             aCode.push(Array(6).join('\t') + 'checkObject.success = function() {Opa5.assert.ok(true,"Found field matching all properties");};\n');
             aCode.push(Array(6).join('\t') + 'checkObject.errorMessage = "Won\'t be able to find field with requirements: " + JSON.stringify(oMatchProperties);\n');
             aCode.push(Array(6).join('\t') + 'checkObject.matchers =\n');
+            aCode.push(Array(6).join('\t') + 'oMatchProperties.attributes ?\n');
             aCode.push(Array(7).join('\t') + 'oMatchProperties.attributes.map(function(el) {\n');
             aCode.push(Array(8).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
-            aCode.push(Array(7).join('\t') + '});\n');
+            aCode.push(Array(7).join('\t') + '}) : [];\n');
             if(this.__customMatcher.parent) {
                 aCode.push(Array(6).join('\t') + 'if (oActionProperties.parent) {\n');
                 aCode.push(Array(7).join('\t') + 'oActionProperties.parent.forEach(function (el) {\n');
@@ -244,18 +245,19 @@ sap.ui.define([
     PageBuilder.prototype.__generateEmptyAggFunction = function(aCode) {
         aCode.push(Array(5).join('\t') + 'iAggregationEmpty: function(oAggProperties) {\n');
         aCode.push(Array(6).join('\t') + 'var checkObject = {};\n');
-        aCode.push(Array(6).join('\t') + 'if (oActionProperties.id) {actionObject.id = oActionProperties.id.isRegex ? oActionProperties.id.value : new RegExp(oActionProperties.id.value);}\n');
-        aCode.push(Array(6).join('\t') + 'if (oAggProperties.controlType) {checkObject.controlType = oMatchProperties.controlType;}\n');
+        aCode.push(Array(6).join('\t') + 'if (oAggProperties.id) {checkObject.id = oAggProperties.id.isRegex ? oAggProperties.id.value : new RegExp(oAggProperties.id.value);}\n');
+        aCode.push(Array(6).join('\t') + 'if (oAggProperties.controlType) {checkObject.controlType = oAggProperties.controlType;}\n');
         aCode.push(Array(6).join('\t') + 'checkObject.visible = true;\n');
         aCode.push(Array(6).join('\t') + 'checkObject.success = function() {Opa5.assert.ok(true,"Found aggregation empty.");};\n');
         aCode.push(Array(6).join('\t') + 'checkObject.errorMessage = "Won\'t be able to find aggregation with requirements: " + JSON.stringify(oAggProperties);\n');
         aCode.push(Array(6).join('\t') + 'checkObject.matchers =\n');
-        aCode.push(Array(7).join('\t') + 'oMatchProperties.attributes.map(function(el) {\n');
+        aCode.push(Array(6).join('\t') + 'oAggProperties.attributes ?\n');
+        aCode.push(Array(7).join('\t') + 'oAggProperties.attributes.map(function(el) {\n');
         aCode.push(Array(8).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
-        aCode.push(Array(7).join('\t') + '});\n');
+        aCode.push(Array(7).join('\t') + '}) : [];\n');
         if(this.__customMatcher.parent) {
-            aCode.push(Array(6).join('\t') + 'if (oActionProperties.parent) {\n');
-            aCode.push(Array(7).join('\t') + 'oActionProperties.parent.forEach(function (el) {\n');
+            aCode.push(Array(6).join('\t') + 'if (oAggProperties.parent) {\n');
+            aCode.push(Array(7).join('\t') + 'oAggProperties.parent.forEach(function (el) {\n');
             aCode.push(Array(8).join('\t') + 'var oProps = {};\n');
             aCode.push(Array(8).join('\t') + 'if (el.id) {\n');
             aCode.push(Array(9).join('\t') + 'oProps.parentId = el.id.isRegex ? el.id.value : new RegExp(el.id.value);\n');
@@ -267,7 +269,7 @@ sap.ui.define([
             aCode.push(Array(9).join('\t') + 'oProps.parentAttributes = el.attributes;\n');
             aCode.push(Array(8).join('\t') + '}\n');
             aCode.push(Array(8).join('\t') + 'oProps.parentLevelAbove = el.levelAbove;\n');
-            aCode.push(Array(8).join('\t') + 'actionObject.matchers.push(\n');
+            aCode.push(Array(8).join('\t') + 'checkObject.matchers.push(\n');
             aCode.push(Array(9).join('\t') + 'new ParentMatcher(oProps)\n');
             aCode.push(Array(8).join('\t') + ');\n');
             aCode.push(Array(7).join('\t') + '});\n');
@@ -284,18 +286,19 @@ sap.ui.define([
     PageBuilder.prototype.__generateFilledAggFunction = function(aCode) {
         aCode.push(Array(5).join('\t') + 'iAggregationFilled: function(oAggProperties) {\n');
         aCode.push(Array(6).join('\t') + 'var checkObject = {};\n');
-        aCode.push(Array(6).join('\t') + 'if (oActionProperties.id) {actionObject.id = oActionProperties.id.isRegex ? oActionProperties.id.value : new RegExp(oActionProperties.id.value);}\n');
-        aCode.push(Array(6).join('\t') + 'if (oAggProperties.controlType) {checkObject.controlType = oMatchProperties.controlType;}\n');
+        aCode.push(Array(6).join('\t') + 'if (oAggProperties.id) {checkObject.id = oAggProperties.id.isRegex ? oAggProperties.id.value : new RegExp(oAggProperties.id.value);}\n');
+        aCode.push(Array(6).join('\t') + 'if (oAggProperties.controlType) {checkObject.controlType = oAggProperties.controlType;}\n');
         aCode.push(Array(6).join('\t') + 'checkObject.visible = true;\n');
         aCode.push(Array(6).join('\t') + 'checkObject.success = function() {Opa5.assert.ok(true,"Found aggregation filled.");};\n');
         aCode.push(Array(6).join('\t') + 'checkObject.errorMessage = "Won\'t be able to find aggregation with requirements: " + JSON.stringify(oAggProperties);\n');
         aCode.push(Array(6).join('\t') + 'checkObject.matchers =\n');
-        aCode.push(Array(7).join('\t') + 'oMatchProperties.attributes.map(function(el) {\n');
+        aCode.push(Array(6).join('\t') + 'oAggProperties.attributes ?\n');
+        aCode.push(Array(7).join('\t') + 'oAggProperties.attributes.map(function(el) {\n');
         aCode.push(Array(8).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
-        aCode.push(Array(7).join('\t') + '});\n');
+        aCode.push(Array(7).join('\t') + '}) : [];\n');
         if(this.__customMatcher.parent) {
-            aCode.push(Array(6).join('\t') + 'if (oActionProperties.parent) {\n');
-            aCode.push(Array(7).join('\t') + 'oActionProperties.parent.forEach(function (el) {\n');
+            aCode.push(Array(6).join('\t') + 'if (oAggProperties.parent) {\n');
+            aCode.push(Array(7).join('\t') + 'oAggProperties.parent.forEach(function (el) {\n');
             aCode.push(Array(8).join('\t') + 'var oProps = {};\n');
             aCode.push(Array(8).join('\t') + 'if (el.id) {\n');
             aCode.push(Array(9).join('\t') + 'oProps.parentId = el.id.isRegex ? el.id.value : new RegExp(el.id.value);\n');
@@ -307,7 +310,7 @@ sap.ui.define([
             aCode.push(Array(9).join('\t') + 'oProps.parentAttributes = el.attributes;\n');
             aCode.push(Array(8).join('\t') + '}\n');
             aCode.push(Array(8).join('\t') + 'oProps.parentLevelAbove = el.levelAbove;\n');
-            aCode.push(Array(8).join('\t') + 'actionObject.matchers.push(\n');
+            aCode.push(Array(8).join('\t') + 'checkObject.matchers.push(\n');
             aCode.push(Array(9).join('\t') + 'new ParentMatcher(oProps)\n');
             aCode.push(Array(8).join('\t') + ');\n');
             aCode.push(Array(7).join('\t') + '});\n');
@@ -324,18 +327,19 @@ sap.ui.define([
     PageBuilder.prototype.__generateCountAggFunction = function(aCode) {
         aCode.push(Array(5).join('\t') + 'iAggregationCounts: function(oAggProperties) {\n');
         aCode.push(Array(6).join('\t') + 'var checkObject = {};\n');
-        aCode.push(Array(6).join('\t') + 'if (oActionProperties.id) {actionObject.id = oActionProperties.id.isRegex ? oActionProperties.id.value : new RegExp(oActionProperties.id.value);}\n');
-        aCode.push(Array(6).join('\t') + 'if (oAggProperties.controlType) {checkObject.controlType = oMatchProperties.controlType;}\n');
+        aCode.push(Array(6).join('\t') + 'if (oAggProperties.id) {checkObject.id = oAggProperties.id.isRegex ? oAggProperties.id.value : new RegExp(oAggProperties.id.value);}\n');
+        aCode.push(Array(6).join('\t') + 'if (oAggProperties.controlType) {checkObject.controlType = oAggProperties.controlType;}\n');
         aCode.push(Array(6).join('\t') + 'checkObject.visible = true;\n');
         aCode.push(Array(6).join('\t') + 'checkObject.success = function() {Opa5.assert.ok(true,"Found aggregation matching count of " + oAggProperties.count);};\n');
         aCode.push(Array(6).join('\t') + 'checkObject.errorMessage = "Won\'t be able to find aggregation with requirements: " + JSON.stringify(oAggProperties);\n');
         aCode.push(Array(6).join('\t') + 'checkObject.matchers =\n');
-        aCode.push(Array(7).join('\t') + 'oMatchProperties.attributes.map(function(el) {\n');
+        aCode.push(Array(6).join('\t') + 'oAggProperties.attributes ?\n');
+        aCode.push(Array(7).join('\t') + 'oAggProperties.attributes.map(function(el) {\n');
         aCode.push(Array(8).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
-        aCode.push(Array(7).join('\t') + '});\n');
+        aCode.push(Array(7).join('\t') + '}) : [];\n');
         if(this.__customMatcher.parent) {
-            aCode.push(Array(6).join('\t') + 'if (oActionProperties.parent) {\n');
-            aCode.push(Array(7).join('\t') + 'oActionProperties.parent.forEach(function (el) {\n');
+            aCode.push(Array(6).join('\t') + 'if (oAggProperties.parent) {\n');
+            aCode.push(Array(7).join('\t') + 'oAggProperties.parent.forEach(function (el) {\n');
             aCode.push(Array(8).join('\t') + 'var oProps = {};\n');
             aCode.push(Array(8).join('\t') + 'if (el.id) {\n');
             aCode.push(Array(9).join('\t') + 'oProps.parentId = el.id.isRegex ? el.id.value : new RegExp(el.id.value);\n');
@@ -347,7 +351,7 @@ sap.ui.define([
             aCode.push(Array(9).join('\t') + 'oProps.parentAttributes = el.attributes;\n');
             aCode.push(Array(8).join('\t') + '}\n');
             aCode.push(Array(8).join('\t') + 'oProps.parentLevelAbove = el.levelAbove;\n');
-            aCode.push(Array(8).join('\t') + 'actionObject.matchers.push(\n');
+            aCode.push(Array(8).join('\t') + 'checkObject.matchers.push(\n');
             aCode.push(Array(9).join('\t') + 'new ParentMatcher(oProps)\n');
             aCode.push(Array(8).join('\t') + ');\n');
             aCode.push(Array(7).join('\t') + '});\n');
@@ -371,12 +375,11 @@ sap.ui.define([
         aCode.push(Array(6).join('\t') + 'actionObject.actions = [new EnterText({text: oActionProperties.actionText})];\n');
         aCode.push(Array(6).join('\t') + 'actionObject.success = function() {Opa5.assert.ok(true, "Text: " + oActionProperties.actionText + ", successfully inserted.")};\n');
         aCode.push(Array(6).join('\t') + 'actionObject.errorMessage = "Failed to insert " + oActionProperties.actionText;\n');
-        aCode.push(Array(6).join('\t') + 'if (oActionProperties.attributes) {\n');
-        aCode.push(Array(7).join('\t') + 'actionObject.matchers =\n');
-        aCode.push(Array(8).join('\t') + 'oActionProperties.attributes.map(function(el) {\n');
-        aCode.push(Array(9).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
-        aCode.push(Array(8).join('\t') + '});\n');
-        aCode.push(Array(6).join('\t') + '}\n');
+        aCode.push(Array(6).join('\t') + 'actionObject.matchers =\n');
+        aCode.push(Array(6).join('\t') + 'oActionProperties.attributes ?\n');
+        aCode.push(Array(7).join('\t') + 'oActionProperties.attributes.map(function(el) {\n');
+        aCode.push(Array(8).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
+        aCode.push(Array(7).join('\t') + '}) : [];\n');
         if(this.__customMatcher.parent) {
             aCode.push(Array(6).join('\t') + 'if (oActionProperties.parent) {\n');
             aCode.push(Array(7).join('\t') + 'oActionProperties.parent.forEach(function (el) {\n');
@@ -410,12 +413,11 @@ sap.ui.define([
         aCode.push(Array(6).join('\t') + 'actionObject.actions = [new Press()];\n');
         aCode.push(Array(6).join('\t') + 'actionObject.success = function() {Opa5.assert.ok(true, "Press successful.")};\n');
         aCode.push(Array(6).join('\t') + 'actionObject.errorMessage = "Failed to click";\n');
-        aCode.push(Array(6).join('\t') + 'if (oActionProperties.attributes) {\n');
-        aCode.push(Array(7).join('\t') + 'actionObject.matchers =\n');
-        aCode.push(Array(8).join('\t') + 'oActionProperties.attributes.map(function(el) {\n');
-        aCode.push(Array(9).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
-        aCode.push(Array(8).join('\t') + '});\n');
-        aCode.push(Array(6).join('\t') + '}\n');
+        aCode.push(Array(6).join('\t') + 'actionObject.matchers =\n');
+        aCode.push(Array(6).join('\t') + 'oActionProperties.attributes ?\n');
+        aCode.push(Array(7).join('\t') + 'oActionProperties.attributes.map(function(el) {\n');
+        aCode.push(Array(8).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
+        aCode.push(Array(7).join('\t') + '}) : [];\n');
         if(this.__customMatcher.parent) {
             aCode.push(Array(6).join('\t') + 'if (oActionProperties.parent) {\n');
             aCode.push(Array(7).join('\t') + 'oActionProperties.parent.forEach(function (el) {\n');
