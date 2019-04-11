@@ -169,10 +169,6 @@ sap.ui.define([
                 });
             },
 
-            onOpenOverview: function () {
-                this.getRouter().navTo("overview");
-            },
-
             onOpenSettings: function () {
                 this.getRouter().navTo("settings");
             },
