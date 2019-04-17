@@ -21,9 +21,9 @@
         "default_icon": "bilder/Logo_active.png"
     },
     "icons": {
-        "16": "bilder/Logo_inactive.png",
-        "48": "bilder/Logo_inactive.png",
-        "128": "bilder/Logo_inactive.png"
+        "16": "bilder/Logo_active.png",
+        "48": "bilder/Logo_active.png",
+        "128": "bilder/Logo_active.png"
     },
     "optional_permissions": [
         "tabs",
