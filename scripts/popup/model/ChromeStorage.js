@@ -21,7 +21,7 @@ sap.ui.define([
             const failureCallback = oSettings.failure;
 
             chrome.storage.local.get(requestKey, function(obj) {
-                if(obj[requestKey]) {if(successCallback) successCallback(obj[requestKey])}
+                if(obj && obj[requestKey]) {if(successCallback) successCallback(obj[requestKey])}
                 else {if(failureCallback) failureCallback(chrome.runtime.lastError)}
             });
         },
@@ -31,7 +31,7 @@ sap.ui.define([
             const failureCallback = oSettings.failure;
 
             chrome.storage.local.remove(requestKey, function(obj) {
-                if(obj[requestKey]) {if(successCallback) successCallback(obj[requestKey])}
+                if(obj && obj[requestKey]) {if(successCallback) successCallback(obj[requestKey])}
                 else {if(failureCallback) failureCallback(chrome.runtime.lastError)}
             });
         },
@@ -54,6 +54,7 @@ sap.ui.define([
                             uuid: oData.test.uuid,
                             createdAt: new Date(oData.test.createdAt),
                             testName: oData.codeSettings.testName,
+                            testCategory: oData.codeSettings.testCategory,
                             testUrl: oData.codeSettings.testUrl
                         });
                     }
@@ -62,23 +63,27 @@ sap.ui.define([
                 });
             });
         },
+
         deleteTest: function(sTestId) {
-            var aExisting = [];
-            chrome.storage.local.get(["items"], function (items) {
-                if (items && items.items) {
-                    aExisting = items.items;
-                }
-                //check if we are already existing (do not add twice to the array..)
-                var iIndex = aExisting.indexOf(sId);
-                if (iIndex === -1) {
-                    return;
-                }
-                aExisting.splice(iIndex, 1);
-                chrome.storage.local.set({ "items": aExisting });
-                chrome.storage.local.remove(sId);
-                this.getRouter().navTo("start");
+            return new Promise(function(resolve, reject){
+                var aExisting = [];
+                chrome.storage.local.get(["items"], function (items) {
+                    if (items && items.items) {
+                        aExisting = items.items;
+                    }
+                    //check if we are already existing (do not add twice to the array..)
+                    var iIndex = aExisting.indexOf(sTestId);
+                    if (iIndex === -1) {
+                        return;
+                    }
+                    aExisting.splice(iIndex, 1);
+                    chrome.storage.local.set({ "items": aExisting });
+                    chrome.storage.local.remove(sTestId);
+                    resolve();
+                });
             });
         },
+
         saveRecord: function (oSave) {
             return new Promise(function (resolve, reject) {
                 var aExisting = [];
@@ -87,11 +92,15 @@ sap.ui.define([
                         aExisting = items.items;
                     }
                     //check if we are already existing (do not add twice to the array..)
-                    if (aExisting.filter(function (obj) { if (obj == oSave.test.uuid) { return true; } return false }).length === 0) {
+                    if (aExisting.filter(function (obj) { return obj === oSave.test.uuid;  }).length === 0) {
                         aExisting.push(oSave.test.uuid);
                         chrome.storage.local.set({ "items": aExisting });
                     }
                     var oStore = {};
+
+                    //fix for cycling object
+                    delete oSave.codeSettings.execComponent;
+
                     oStore[oSave.test.uuid] = JSON.stringify(oSave);
                     chrome.storage.local.set(oStore, function () {
                         MessageToast.show("Saved in local Storage");

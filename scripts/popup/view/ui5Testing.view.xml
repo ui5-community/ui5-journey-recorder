@@ -264,7 +264,7 @@
                             <Column minScreenWidth="Tablet" demandPopin="true">
                                 <Text text="Subcriteria"/>
                             </Column>
-                            <Column minScreenWidth="Tablet" demandPopin="true" hAlign="End">
+                            <Column minScreenWidth="Tablet" demandPopin="true">
                                 <Text text="Value"/>
                             </Column>
                         </columns>
@@ -533,6 +533,15 @@
                                 change="onUpdatePreview"
                                 items="{settings>/codeLanguages}"
                                 selectedKey="{settings>/settings/defaultLanguage}">
+                            <items>
+                                <core:Item text="{settings>text}" key="{settings>key}"/>
+                            </items>
+                        </Select>
+                        <Select id="natLanguage"
+                                change="onUpdatePreview"
+                                items="{settings>/naturalLanguages}"
+                                visible="{= ${settings>/settings/defaultLanguage} === 'NAT'}"
+                                selectedKey="{settings>/settings/defaultNatLanguage}">
                             <items>
                                 <core:Item text="{settings>text}" key="{settings>key}"/>
                             </items>

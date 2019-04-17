@@ -8,10 +8,12 @@ sap.ui.define([
         constructor: function () {
             var oJSON = {
                 settings: {
-                    defaultLanguage: "UI5"
+                    defaultLanguage: "UI5",
+                    defaultNatLanguage: "EN"
                 },
                 settingsDefault: {
                     defaultLanguage: "UI5",
+                    defaultNatLanguage: "EN",
                     defaultAuthentification: "NONE"
                 },
                 authentification: [{
@@ -24,7 +26,7 @@ sap.ui.define([
                 codeLanguages: [
                     {
                         key: "UI5",
-                        text: "ui5-uiveri5"
+                        text: "UIVeri5"
                     },
                     {
                         key: "TCF",
@@ -33,8 +35,22 @@ sap.ui.define([
                     {
                         key: "OPA",
                         text: "OPA5 (Beta)"
+                    },
+                    {
+                        key: "NAT",
+                        text: "Natural (Experimental)"
                     }
                 ],
+                naturalLanguages: [
+                    {
+                        key: "EN",
+                        text: "English"
+                    },
+                    {
+                        key: "DE",
+                        text: "German"
+                    }
+                ]
             };
             this._oModel = new JSONModel(oJSON);
             this._initSettings();
@@ -189,7 +205,6 @@ sap.ui.define([
                             return { viewProperty: { viewName: sValue } }
                         },
                         getUi5Spec: function (oAdjust, oItem, iValue) {
-                            iValue = typeof iValue === "undefined" ? this.value(oItem) : iValue;
                             oAdjust.viewName = iValue;
                         },
                         assert: function () {
@@ -269,7 +284,46 @@ sap.ui.define([
                     }
                     return aReturn;
                 }.bind(this)
-            },/*
+            },
+            "BDG": {
+                criteriaKey: "BDG",
+                criteriaText: "Binding-Context",
+                criteriaSpec: function (oItem) {
+                    var aReturn = [];
+                    for (var sModel in oItem.context) {
+                        for (var sProperty in oItem.context[sModel]) {
+                            if (sProperty === "__metadata") {
+                                continue;
+                            }
+                            aReturn.push({
+                                subCriteriaType: sModel + "/" + sProperty,
+                                subCriteriaText: sModel + "/" + sProperty,
+                                code: function (sModel, sProperty, sValue) {
+                                    var oReturn = { context: {} };
+                                    oReturn.context[sModel] = {};
+                                    oReturn.context[sModel][sProperty] = sValue;
+                                    return oReturn;
+                                }.bind(this, sModel, sProperty),
+                                value: function (sModel, sProperty, oItem) {
+                                    return oItem.context[sModel][sProperty];
+                                }.bind(this, sModel, sProperty),
+                                getUi5Spec: function (oAdjust, oItem, iValue) {
+                                    return ""; //not really possible right?
+                                },
+                                assert: function (sModel, sProperty) {
+                                    return "context." + sModel + "." + sProperty;
+                                }.bind(this, sModel, sProperty),
+                                assertField: function (sValue) {
+                                    return {
+                                        type: "context"
+                                    }
+                                }
+                            });
+                        }
+                    }
+                    return aReturn;
+                }.bind(this)
+            },
             "MODL": {
                 criteriaKey: "MODL",
                 criteriaText: "Model-Keys (Specific)",
@@ -323,11 +377,11 @@ sap.ui.define([
                                     });
                                 }
                             }
-                        }
+                        }*/
                     }
                     return aReturn;
                 }.bind(this)
-            },*/
+            },
             "BNDG": {
                 criteriaKey: "BNDG",
                 criteriaText: "Binding Path",
@@ -358,21 +412,10 @@ sap.ui.define([
                                 } else {
                                     oAdjust.bindingPath = typeof oAdjust.bindingPath != "undefined" ? oAdjust.bindingPath : {};
                                     oAdjust.bindingPath = {
-                                        propertyPath: this.bindingRef.relativePath
+                                        propertyPath: this.subCriteriaType,
+                                        path: iValue,
+                                        model: this.bindingRef.model
                                     };
-                                    if ( this.bindingRef.contextPath ) {
-                                        oAdjust.bindingPath.path = this.bindingRef.contextPath;
-                                        if ( oAdjust.bindingPath.path.endsWith("/") ) {
-                                            oAdjust.bindingPath.path = oAdjust.bindingPath.path.substr(0, oAdjust.bindingPath.path.length-1);
-                                        }
-                                    }
-
-                                    if (this.bindingRef.model) {
-                                        oAdjust.bindingPath.modelName = this.bindingRef.model;
-                                        if (oAdjust.bindingPath.propertyPath.charAt(0) === "/") { // this seems to be a bug for me - in case a model name is supplied, we have to provide a double slash
-                                            oAdjust.bindingPath.propertyPath = "/" + oAdjust.bindingPath.propertyPath;
-                                        }
-                                    }
                                 }
                             },
                             value: function (subCriteriaType, oItem) {
@@ -390,86 +433,6 @@ sap.ui.define([
                     }
                     return aReturn;
                 }
-            },
-            "BNDX": {
-                criteriaKey: "BNDX",
-                criteriaText: "Binding Context",
-                criteriaSpec: function (oItem) {
-                    var aReturn = [];
-                    for (var sBinding in oItem.bindingContext) {
-                        aReturn.push({
-                            subCriteriaType: sBinding,
-                            subCriteriaText: sBinding,
-                            bindingRef: oItem.bindingContext[sBinding],
-                            code: function (sBinding, sValue) {
-                                var oReturn = { bindingContext: {} };
-                                oReturn.bindingContext[sBinding] = sValue;
-                                return oReturn;
-                            }.bind(this, sBinding),
-                            getUi5Spec: function (oAdjust, oItem, iValue) {
-                                oAdjust.bindingPath = typeof oAdjust.bindingPath != "undefined" ? oAdjust.bindingPath : {};
-                                oAdjust.bindingPath = {
-                                    path: this.bindingRef
-                                };
-
-                                if (this.subCriteriaType !== "undefined") {
-                                    oAdjust.bindingPath.model = this.subCriteriaType;
-                                }
-                            },
-                            value: function (subCriteriaType, oItem) {
-                                return oItem.bindingContext[subCriteriaType];
-                            }.bind(this, sBinding),
-                            assert: function (subCriteriaType) {
-                                return "bindingContext." + subCriteriaType;
-                            }.bind(this, sBinding),
-                            assertField: function (sValue) {
-                                return {
-                                    type: "bindingContext"
-                                }
-                            }
-                        });
-                    }
-                    return aReturn;
-                }
-            },
-            "BDG": {
-                criteriaKey: "BDG",
-                criteriaText: "Model-Context Values",
-                criteriaSpec: function (oItem) {
-                    var aReturn = [];
-                    for (var sModel in oItem.context) {
-                        for (var sProperty in oItem.context[sModel]) {
-                            if (sProperty === "__metadata") {
-                                continue;
-                            }
-                            aReturn.push({
-                                subCriteriaType: sModel + "/" + sProperty,
-                                subCriteriaText: sModel + "/" + sProperty,
-                                code: function (sModel, sProperty, sValue) {
-                                    var oReturn = { context: {} };
-                                    oReturn.context[sModel] = {};
-                                    oReturn.context[sModel][sProperty] = sValue;
-                                    return oReturn;
-                                }.bind(this, sModel, sProperty),
-                                value: function (sModel, sProperty, oItem) {
-                                    return oItem.context[sModel][sProperty];
-                                }.bind(this, sModel, sProperty),
-                                getUi5Spec: function (oAdjust, oItem, iValue) {
-                                    return ""; //not really possible right?
-                                },
-                                assert: function (sModel, sProperty) {
-                                    return "context." + sModel + "." + sProperty;
-                                }.bind(this, sModel, sProperty),
-                                assertField: function (sValue) {
-                                    return {
-                                        type: "context"
-                                    }
-                                }
-                            });
-                        }
-                    }
-                    return aReturn;
-                }.bind(this)
             },
             "ATTR": {
                 criteriaKey: "ATTR",
@@ -519,43 +482,43 @@ sap.ui.define([
                 getItem: function (oItem) { return oItem; },
                 getScope: function (oScope) { return oScope; },
                 getAssertScope: function () { return "" },
-                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
+                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["MODL"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
             },
             "VIW": {
                 getItem: function (oItem) { return oItem.view; }.bind(this),
                 getScope: function (oScope) { oScope.view = oScope.view ? oScope.view : {}; return oScope.view; },
                 getAssertScope: function () { return "view." },
-                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
+                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
             },
             "PRT": {
                 getItem: function (oItem) { return oItem.parent; }.bind(this),
                 getAssertScope: function () { return "parent." },
                 getScope: function (oScope) { oScope.parent = oScope.parent ? oScope.parent : {}; return oScope.parent; },
-                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
+                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MODL"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
             },
             "PRT2": {
                 getItem: function (oItem) { return oItem.parentL2; }.bind(this),
                 getAssertScope: function () { return "parentL2." },
                 getScope: function (oScope) { oScope.parentL2 = oScope.parentL2 ? oScope.parentL2 : {}; return oScope.parentL2; },
-                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
+                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MODL"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
             },
             "PRT3": {
                 getItem: function (oItem) { return oItem.parentL3; }.bind(this),
                 getAssertScope: function () { return "parentL3." },
                 getScope: function (oScope) { oScope.parentL3 = oScope.parentL3 ? oScope.parentL3 : {}; return oScope.parentL3; },
-                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
+                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MODL"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
             },
             "PRT4": {
                 getItem: function (oItem) { return oItem.parentL4; }.bind(this),
                 getAssertScope: function () { return "parentL4." },
                 getScope: function (oScope) { oScope.parentL4 = oScope.parentL4 ? oScope.parentL4 : {}; return oScope.parentL4; },
-                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
+                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MODL"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
             },
             "PLBL": {
                 getItem: function (oItem) { return oItem.label; }.bind(this),
                 getAssertScope: function () { return "label." },
                 getScope: function (oScope) { oScope.label = oScope.label ? oScope.label : {}; return oScope.label; },
-                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
+                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MODL"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
             },
             "MCMB": {
                 getItem: function (oItem) {
@@ -563,16 +526,13 @@ sap.ui.define([
                 }.bind(this),
                 getScope: function (oScope) { oScope.itemdata = oScope.itemdata ? oScope.itemdata : {}; return oScope.itemdata; },
                 getAssertScope: function () { return "itemdata." },
-                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
+                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
             },
         };
 
         this._oElementMix = {
             "sap.m.StandardListItem": {
                 defaultAttributes: function (oItem) {
-                    if (!oItem.itemdata || !oItem.itemdata.identifier || !oItem.itemdata.identifier.ui5Id) {
-                        return [];
-                    }
                     if (!oItem.itemdata.identifier.ui5Id.length) {
                         return [];
                     }
@@ -628,17 +588,8 @@ sap.ui.define([
             },
             "sap.ui.core.Item": {
                 cloned: true,
-
                 defaultAttributes: function (oItem) {
-                    //the KEY attribute is better in case the item is bound against a JSON list binding..
-                    var bPropertyIsBetter = true;
-                    if (oItem.binding.key) {
-                        //for odata we will access the actual key...
-                        if (oItem.binding.key.jsonBinding === false ) {
-                            bPropertyIsBetter = false;
-                        }
-                    }
-                    return [{ attributeType: "OWN", criteriaType: bPropertyIsBetter ? "ATTR" : "BNDG", subCriteriaType: "key" }];
+                    return [{ attributeType: "OWN", criteriaType: "ATTR", subCriteriaType: "key" }];
                 }
             },
             "sap.m.Link": {
@@ -664,7 +615,7 @@ sap.ui.define([
             "sap.m.GenericTile": {
                 defaultAction: "PRS",
                 defaultAttributes: [{ attributeType: "PRT2", criteriaType: "ATTR", subCriteriaType: "target" },
-                { attributeType: "PRT2", criteriaType: "MTA", subCriteriaType: "ELM" }]
+                    { attributeType: "PRT2", criteriaType: "MTA", subCriteriaType: "ELM" }]
             },
             "sap.m.MultiComboBox": {
                 defaultAction: "PRS",

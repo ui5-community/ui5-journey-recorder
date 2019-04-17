@@ -1,6 +1,6 @@
 sap.ui.define([
 ], function(){
-    return {
+    var Utils = {
         statics: {
             stepTypes: [
                 {key: "ACT", text: "Action"},
@@ -69,6 +69,65 @@ sap.ui.define([
             }) + vGlobal;
             oCaller.getModel('settings').setProperty('/globalInt', vGlobal + 1);
             return sStr;
+        },
+
+        _getSelectorToJSONStringRec: function (oObject) {
+            var sStringCurrent = "";
+            var bFirst = true;
+            var bIsRegex = false;
+            for (var s in oObject) {
+                var obj = oObject[s];
+                if (!bFirst) {
+                    sStringCurrent += ", ";
+                }
+                bIsRegex = false;
+                bFirst = false;
+                if (obj && obj.__isRegex && obj.__isRegex === true) {
+                    obj = obj.id;
+                    bIsRegex = true;
+                }
+                if (Array.isArray(obj)) {
+                    sStringCurrent += s + ":" + "[";
+                    for (var i = 0; i < obj.length; i++) {
+                        if (i > 0) {
+                            sStringCurrent += ",";
+                        }
+                        if (typeof obj[i] === "object") {
+                            sStringCurrent += "{ ";
+                            sStringCurrent += Utils._getSelectorToJSONStringRec(obj[i]);
+                            sStringCurrent += " }";
+                        } else {
+                            sStringCurrent += Utils._getSelectorToJSONStringRec(obj[i]);
+                        }
+                    }
+                    sStringCurrent += "]";
+                } else if (typeof obj === "object") {
+                    sStringCurrent += s + ": { ";
+                    sStringCurrent += Utils._getSelectorToJSONStringRec(obj);
+                    sStringCurrent += " }";
+                } else {
+                    if (this._oJSRegex.test(s) === false && bIsRegex === false) {
+                        s = '"' + s + '"';
+                    }
+                    sStringCurrent += s;
+                    sStringCurrent += " : ";
+                    if (typeof obj === "boolean" || bIsRegex === true) {
+                        sStringCurrent += obj;
+                    } else if (typeof obj === "number") {
+                        sStringCurrent += obj;
+                    } else {
+                        sStringCurrent += '\"' + obj + '"';
+                    }
+                }
+            }
+            return sStringCurrent;
+        },
+
+        getSelectorToJSONString: function (oObject) {
+            this._oJSRegex = /^[_$a-zA-Z\xA0-\uFFFF][_$a-zA-Z0-9\xA0-\uFFFF]*$/; //this is not perfect - we are working with predefined names, which are not getting "any" syntax though
+            return "{ " + Utils._getSelectorToJSONStringRec(oObject) + " }";
         }
     };
+
+    return Utils;
 });

@@ -59,12 +59,11 @@ sap.ui.define([
                 chrome.tabs.query({currentWindow: false}, function (tabs) {
                     var aData = [];
                     for (var i = 0; i < tabs.length; i++) {
-                        if (tabs[i].url) {
+                        if (tabs[i].url && tabs[i].url.indexOf('chrome:') < 0) {
                             function checkUI5() {
                                 return [].slice.call(document.head.getElementsByTagName('script')).filter(function (s) {
-                                    return s.src.indexOf('sap-ui-core.js') > -1 ||
-                                           s.src.indexOf('core-min-1.js') > -1; //fiori
-                                }).length >= 1;
+                                    return s.src.indexOf('sap-ui-core.js') > -1;
+                                }).length == 1;
                             };
 
                             function callback(tabId, tabUrl) {
@@ -124,8 +123,6 @@ sap.ui.define([
 
             /** view events **/
 
-
-
             /**
              * Sets the focus on the given Tab to easily find the correct tab to a given Url
              *
@@ -172,10 +169,6 @@ sap.ui.define([
                 });
             },
 
-            onOpenOverview: function () {
-                this.getRouter().navTo("overview");
-            },
-
             onOpenSettings: function () {
                 this.getRouter().navTo("settings");
             },
@@ -216,10 +209,12 @@ sap.ui.define([
             },
 
             _importDone: function (oData) {
-                ChromeStorage.saveRecord(oData)
-                /*.then(function() {
-                     //this._loadData();
-                }.bind(this));*/
+                ChromeStorage.saveRecord(oData).then(function() {
+					ChromeStorage.getRecords({
+						path: '/items',
+						model: this._oModel
+					});
+                }.bind(this));
             },
 
             onImport: function () {

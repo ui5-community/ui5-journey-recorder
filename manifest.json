@@ -1,6 +1,6 @@
 {
     "name": "UI5 Test-Recorder",
-    "version": "0.3.8",
+    "version": "0.3.9",
     "manifest_version": 2,
     "description": "UI5 Test-Recorder",
     "homepage_url": "https://github.com/timostark/ui5TestAutomation",
@@ -18,12 +18,12 @@
     ],
     "browser_action": {
         "default_title": "UI5 Test-Recorder",
-        "default_icon": "/target_bright.png"
+        "default_icon": "bilder/Logo_active.png"
     },
     "icons": {
-        "16": "/target_black.png",
-        "48": "/target_black.png",
-        "128": "/target_black.png"
+        "16": "bilder/Logo_inactive.png",
+        "48": "bilder/Logo_inactive.png",
+        "128": "bilder/Logo_inactive.png"
     },
     "optional_permissions": [
         "tabs",

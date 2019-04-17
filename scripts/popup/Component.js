@@ -128,11 +128,6 @@ sap.ui.define([
                                 pattern: "/settings",
                                 name: "settings",
                                 target: "settings"
-                            },
-                            {
-                                pattern: "/overview",
-                                name: "overview",
-                                target: "overview"
                             }
                         ],
                         targets: {
@@ -188,12 +183,6 @@ sap.ui.define([
                                 viewName: "start",
                                 viewLevel: 1,
                                 viewId: "start",
-                                controlAggregation: "pages"
-                            },
-                            overview: {
-                                viewName: "testOverview",
-                                viewLevel: 1,
-                                viewId: "testOverview",
                                 controlAggregation: "pages"
                             },
                             settings: {
