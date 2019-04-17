@@ -120,7 +120,7 @@ else {
     };
 
     TestHandler.prototype._doReplaySteps = function () {
-        //go over all steps 
+        //go over all steps
     };
 
     TestHandler.prototype._getDataModelInformation = function () {
@@ -184,28 +184,37 @@ else {
     };
 
     TestHandler.prototype.handleEvent = function (sEventType, oEventData) {
-        if (sEventType === "start") {
-            this._start(oEventData);
-        } else if (sEventType === "stop") {
-            this._stop();
-        } else if (sEventType === "unlock") {
-            this.unlockScreen();
-        } else if (sEventType === "find") {
-            return this._getFoundElements(oEventData);
-        } else if (sEventType === "mockserver") {
-            return this._getDataModelInformation();
-        } else if (sEventType === "replay-steps") {
-            return this._doReplaySteps(oEventData);
-        } else if (sEventType === "execute") {
-            this._executeAction(oEventData);
-        } else if (sEventType === "setWindowLocation") {
-            this._setWindowLocation(oEventData);
-        } else if (sEventType === "selectItem") {
-            this._selectItem(oEventData);
-        } else if (sEventType === "runSupportAsssistant") {
-            return this._runSupportAssistant(oEventData);
-        } else if (sEventType === "getwindowinfo") {
-            return this._getWindowInfo();
+        switch (sEventType) {
+            case "start":
+                this._start(oEventData);
+                break;
+            case "stop":
+                this._stop();
+                break;
+            case "unlock":
+                this.unlockScreen();
+                break;
+            case "find":
+                return this._getFoundElements(oEventData);
+            case "mockserver":
+                return this._getDataModelInformation();
+            case "replay-steps":
+                return this._doReplaySteps(oEventData);
+            case "execute":
+                this._executeAction(oEventData);
+                break;
+            case "setWindowLocation":
+                this._setWindowLocation(oEventData);
+                break;
+            case "selectItem":
+                this._selectItem(oEventData);
+                break;
+            case "runSupportAsssistant":
+                return this._runSupportAssistant(oEventData);
+            case "getwindowinfo":
+                return this._getWindowInfo();
+            default:
+                break;
         }
     };
 
@@ -885,7 +894,7 @@ else {
         this._bStarted = true;
         $(".HVRReveal").removeClass('HVRReveal');
         this.lockScreen(); //we are locked until the next step occurs, or the overall test is stopped..
-        
+
         if (oData && oData.startImmediate === true) {
             if (!oLastDom && oData.domId) {
                 oLastDom = document.getElementById(oData.domId);
@@ -893,7 +902,7 @@ else {
             if ( !oLastDom ) {
                 oLastDom = document.activeElement;
             }
-            
+
             //Directly select again (woop)
             setTimeout(function () {
                 this.onClick(oLastDom);

@@ -69,7 +69,7 @@ sap.ui.define([
         },
     });
 
-    TestDetails.prototype._onInjectionDone = function(oData) {
+    TestDetails.prototype._onInjectionDone = function (oData) {
         if (oData.ok === true) {
             this._oModel.setProperty('/ui5Version', oData.version);
         }
@@ -94,7 +94,9 @@ sap.ui.define([
                         RecordController.injectScript(tab.id).then(function (oData) {
                             this._bReplayMode = true;
                             this._startReplay();
-                            this._oModel.setProperty('/ui5Version', oData.version);
+                            if (oData) {
+                                this._oModel.setProperty('/ui5Version', oData.version);
+                            }
                         }.bind(this));
 
                         chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
