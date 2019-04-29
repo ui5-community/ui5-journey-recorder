@@ -1,6 +1,7 @@
 var TestHandlerSingleton = null;
 
 document.addEventListener('do-ui5-init', function (oXMLEvent) {
+    console.log("Handle event 'do-ui5-init'")
     if (TestHandlerSingleton) {
         TestHandlerSingleton.init();
     }
@@ -18,6 +19,8 @@ document.addEventListener("do-ui5-from-extension-to-inject", function (oXMLEvent
     if (uuid) {
         delete oXMLEvent.detail.uuid;
     }
+
+    console.log(`Handling event with uuid: ${uuid} and type: ${oXMLEvent.detail.type}`);
 
     if (oXMLEvent.detail.type === "navigate") {
         //early exit, as TestHandlerSingleton is maybe not even existing.
@@ -38,14 +41,17 @@ document.addEventListener("do-ui5-from-extension-to-inject", function (oXMLEvent
 
     if (oReturn instanceof Promise) {
         oReturn.then(function (oData) {
+            console.log(`Dispatch event with uuid: ${uuid} 'do-ui5-from-inject-to-async'`);
             document.dispatchEvent(new CustomEvent('do-ui5-from-inject-to-async', { detail: { type: "answer", uuid: uuid, data: oData } }));
         });
     } else {
+        console.log(`Dispatch event with uuid: ${uuid} 'do-ui5-from-inject-to-async'`);
         document.dispatchEvent(new CustomEvent('do-ui5-from-inject-to-async', { detail: { type: "answer", uuid: uuid, data: oReturn } }));
     }
 });
 
 document.addEventListener('do-ui5-start', function (oXMLEvent) {
+    console.log(`Handling event with uuid: ${uuid} and type: ${oXMLEvent.detail.type}`);
     if (oXMLEvent.detail && oXMLEvent.detail.domId) {
         TestHandlerSingleton.startFor(oXMLEvent.detail.domId);
     } else {
@@ -115,6 +121,7 @@ else {
     TestHandler.prototype.lockScreen = function () {
         this._bScreenLocked = true;
     };
+
     TestHandler.prototype.unlockScreen = function () {
         this._bScreenLocked = false;
     };
@@ -184,6 +191,7 @@ else {
     };
 
     TestHandler.prototype.handleEvent = function (sEventType, oEventData) {
+        jQuery.sap.log.info(`Handle event ${sEventType} at the 'TestHandler'.`);
         switch (sEventType) {
             case "start":
                 this._start(oEventData);
@@ -427,7 +435,6 @@ else {
         });
     };
 
-
     TestHandler.prototype._runSupportAssistant = function (oComponent) {
         return new Promise(function (resolve, reject) {
             var oSupSettings = oComponent.rules;
@@ -546,7 +553,6 @@ else {
         }
         return sId;
     };
-
 
     TestHandler.prototype._getPropertiesInArray = function (oObj) {
         var i = 0;
@@ -911,6 +917,7 @@ else {
             }.bind(this), 10);
         }
     };
+
     TestHandler.prototype._stop = function () {
         this._bActive = false;
         this._bStarted = false;
@@ -1378,6 +1385,7 @@ else {
         }
         return null;
     };
+
     var _getUi5LocalId = function (oItem) {
         var sId = oItem.getId();
         if (sId.lastIndexOf("-") !== -1) {
@@ -1431,7 +1439,6 @@ else {
         var aItems = _getAllLabels();
         return (aItems && aItems[oItem.getId()]) ? aItems[oItem.getId()] : null;
     };
-
 
     var _getUi5Id = function (oItem) {
         //remove all component information from the control
@@ -1843,7 +1850,6 @@ else {
         oTestGlobalBuffer["fnGetElement"][bFull][oItem.getId()] = oReturn;
         return oReturn;
     };
-
 
     //missing: get elements with same parent, to get elements "right next", "left" and on same level
     var fnGetContexts = function (oItem) {

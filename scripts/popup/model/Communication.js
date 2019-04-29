@@ -55,6 +55,7 @@ sap.ui.define([
     };
 
     Messaging.prototype.fireEventToExtension = function (oEvent) {
+        jQuery.sap.log.info(`handling event of Type: ${oEvent.type}, with uuid: ${oEvent.uuid}`);
         var sEventType = oEvent.type;
         var oResponse = {};
         if (sEventType === "answer-async") {
@@ -70,6 +71,7 @@ sap.ui.define([
     };
 
     Messaging.prototype._handleAsyncAnswer = function (oData) {
+        jQuery.sap.log.info(`handling async answer with uuid: ${oData.uuid}`);
         if (!this._oUUIDs[oData.uuid]) {
             return;
         }
@@ -98,6 +100,8 @@ sap.ui.define([
                 data: oData,
                 uuid: uuidv4()
             };
+
+            jQuery.sap.log.info(`sending event of Type: ${oEvent.type}, with uuid: ${oEvent.uuid}`);
             this._oUUIDs[oEvent.uuid] = {};
             this._oUUIDs[oEvent.uuid].resolveFn = resolve;
 
