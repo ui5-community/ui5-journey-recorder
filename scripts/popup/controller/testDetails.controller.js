@@ -10,6 +10,7 @@ sap.ui.define([
     "com/ui5/testing/model/CodeHelper",
     "com/ui5/testing/model/ChromeStorage",
     "com/ui5/testing/model/Utils",
+    "sap/m/MessageToast",
     "com/ui5/testing/libs/jszip.min",
     "com/ui5/testing/libs/FileSaver.min"
 ], function (Controller,
@@ -22,7 +23,8 @@ sap.ui.define([
              GlobalSettings,
              CodeHelper,
              ChromeStorage,
-             Utils) {
+             Utils,
+             MessageToast) {
     "use strict";
 
     var TestDetails = Controller.extend("com.ui5.testing.controller.TestDetails", {
@@ -94,6 +96,9 @@ sap.ui.define([
                         RecordController.injectScript(tab.id).then(function (oData) {
                             if (!RecordController.isInjected()) {
                                 this._bReplayMode = true;
+                                this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
+                                    oStep.setHighlight(sap.ui.core.MessageType.None);
+                                });
                                 this._startReplay();
                             }
                             if (oData) {
@@ -125,10 +130,45 @@ sap.ui.define([
         this._updatePlayButton();
     };
 
-    TestDetails.prototype.onReplaySingleStep = function () {
+    TestDetails.prototype.onReplaySingleStep = function (oEvent) {
+        var oLine = oEvent.getSource().getParent();
         RecordController.focusTargetWindow();
-        this._executeAction().then(function () {
-            this.replayNextStep();
+        this._executeAction().then(function (oResult) {
+            var performedStep = oLine;
+            //this is our custom object
+            if (oResult.type && oResult.type === "ASS") {
+                switch (oResult.result) {
+                    case "success":
+                        performedStep.setHighlight(sap.ui.core.MessageType.Success);
+                        this.replayNextStep();
+                        break;
+                    case "warning":
+                        performedStep.setHighlight(sap.ui.core.MessageType.Warning);
+                        this.replayNextStep();
+                        break;
+                    case "error":
+                        this.getModel("viewModel").setProperty("/replayMode", false);
+                        MessageToast.show('Assertion not met, check your setup!');
+                        performedStep.setHighlight(sap.ui.core.MessageType.Error);
+                        break;
+                    default:
+                        jQuery.sap.log.info(`No handling for no event`);
+                }
+                //This is the object back from the Communication object.
+            } else if (oResult.uuid) {
+                if (oResult.processed) {
+                    performedStep.setHighlight(sap.ui.core.MessageType.Success);
+                    this.replayNextStep();
+                } else {
+                    this.getModel("viewModel").setProperty("/replayMode", false);
+                    MessageToast.show('Action can not be performed, check your setup!');
+                    performedStep.setHighlight(sap.ui.core.MessageType.Error);
+                }
+            } else if (oResult.type && oResult.type === "ACT" && oResult.result === "error") {
+                this.getModel("viewModel").setProperty("/replayMode", false);
+                MessageToast.show('Action can not be performed, check your setup!');
+                performedStep.setHighlight(sap.ui.core.MessageType.Error);
+            }
         }.bind(this));
     };
 
@@ -137,20 +177,31 @@ sap.ui.define([
         var oElement = aEvent[this._iCurrentStep];
 
         return new Promise(function (resolve) {
-            if (oElement.property.type !== "ACT") {
+            if (oElement.property.type === "ACT") {
+                this._getFoundElements(oElement).then(function (aElements) {
+                    if (aElements.length === 0) {
+                        resolve({result: "error", type: "ACT"});
+                        return;
+                    }
+                    oElement.item.identifier = aElements[0].identifier;
+                    Communication.fireEvent("execute", {
+                        element: oElement
+                    }).then(resolve);
+                });
+            } else if (oElement.property.type === "ASS") {
+                this._getFoundElements(oElement).then(function (aElements) {
+                    if (aElements.length === 1) {
+                        resolve({result: "success", type: "ASS"});
+                    } else if (aElements.length > 1) {
+                        resolve({result: "warning", type: "ASS"});
+                    } else {
+                        resolve({result: "error", type: "ASS"});
+                    }
+                });
+            } else {
                 resolve();
                 return false;
             }
-            this._getFoundElements(oElement).then(function (aElements) {
-                if (aElements.length === 0) {
-                    resolve();
-                    return;
-                }
-                oElement.item.identifier = aElements[0].identifier;
-                Communication.fireEvent("execute", {
-                    element: oElement
-                }).then(resolve);
-            });
         }.bind(this));
     };
 
@@ -184,6 +235,9 @@ sap.ui.define([
     };
 
     TestDetails.prototype._updatePlayButton = function () {
+        if (!this._oModel.getProperty("/replayMode")) {
+            this._oModel.setProperty("/replayMode", true);
+        }
         var aElement = this.getModel("navModel").getProperty("/elements");
         for (var i = 0; i < aElement.length; i++) {
             aElement[i].showPlay = i === this._iCurrentStep;
@@ -306,7 +360,6 @@ sap.ui.define([
             }
             return;
         }
-        this._oModel.setProperty("/replayMode", true);
 
         this._oTestId = sTargetUUID;
         this._iCurrentStep = 0;
@@ -389,6 +442,9 @@ sap.ui.define([
 
     TestDetails.prototype.onReplayAll = function (oEvent) {
         var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
+        this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
+            oStep.setHighlight(sap.ui.core.MessageType.None);
+        });
         chrome.permissions.request({
             permissions: ['tabs'],
             origins: [sUrl]

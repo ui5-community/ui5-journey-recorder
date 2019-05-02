@@ -66,10 +66,11 @@ sap.ui.define([
         if (this._oModel.getProperty("/recording") === true) {
             Communication.fireEvent("stop");
             Communication.fireEvent("unlock");
+            this._onStopped();
         }
     };
 
-    RecordController.prototype._onStopped = function (oData) {
+    RecordController.prototype._onStopped = function () {
         this._oModel.setProperty("/recording", false);
     };
 
