@@ -92,21 +92,26 @@ sap.ui.define([
                     }, function (fnWindow) {
                         //now inject into our window..
                         RecordController.injectScript(tab.id).then(function (oData) {
-                            this._bReplayMode = true;
-                            this._startReplay();
+                            if (!RecordController.isInjected()) {
+                                this._bReplayMode = true;
+                                this._startReplay();
+                            }
                             if (oData) {
                                 this._oModel.setProperty('/ui5Version', oData.version);
                             }
                         }.bind(this));
 
-                        chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+                        const fnListenHandshake = function (message, sender, sendResponse) {
                             if (message.type === "HandshakeToWindow") {
                                 chrome.runtime.sendMessage({
                                     "type": "send-window-id",
                                 }, function (response) {
                                 });
+                                chrome.runtime.onMessage.removeListener(fnListenerFunction());
                             }
-                        });
+                        };
+
+                        chrome.runtime.onMessage.addListener(fnListenHandshake());
                     }.bind(this));
                     chrome.tabs.onUpdated.removeListener(fnListenerFunction);
                 }

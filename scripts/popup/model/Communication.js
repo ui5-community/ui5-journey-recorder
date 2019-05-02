@@ -22,7 +22,7 @@ sap.ui.define([
                         }
                     }.bind(this)
                 );
-                chrome.runtime.sendMessage({ type: "HandshakeToWindow" }, function (response) {
+                chrome.runtime.sendMessage({type: "HandshakeToWindow"}, function (response) {
                     //ask to get our window id
                 }.bind(this));
             }.bind(this))
@@ -50,17 +50,17 @@ sap.ui.define([
         chrome.runtime.onMessage.addListener(
             function (request, sender, sendResponse) {
                 this.fireEventToExtension(request);
-                sendResponse({ ok: true });
+                sendResponse({ok: true});
             }.bind(this));
     };
 
     Messaging.prototype.fireEventToExtension = function (oEvent) {
-        jQuery.sap.log.info(`handling event of Type: ${oEvent.type}, with uuid: ${oEvent.uuid}`);
         var sEventType = oEvent.type;
-        var oResponse = {};
         if (sEventType === "answer-async") {
             this._handleAsyncAnswer(oEvent.data);
             return;
+        } else {
+            //jQuery.sap.log.info(`handling event of Type: ${oEvent.type}, with uuid: ${oEvent.uuid}`);
         }
 
         if (this._aEvents[sEventType]) {
@@ -71,11 +71,14 @@ sap.ui.define([
     };
 
     Messaging.prototype._handleAsyncAnswer = function (oData) {
-        jQuery.sap.log.info(`handling async answer with uuid: ${oData.uuid}`);
-        if (!this._oUUIDs[oData.uuid]) {
-            return;
+        //jQuery.sap.log.info(`handling event of Type: answer-async, with uuid: ${oData.uuid}`);
+        if (this._oUUIDs[oData.uuid]) {
+            const fnResolve = this._oUUIDs[oData.uuid].resolveFn;
+            delete this._oUUIDs[oData.uuid];
+            if (fnResolve) {
+                fnResolve(oData.data);
+            }
         }
-        this._oUUIDs[oData.uuid].resolveFn(oData.data);
     };
 
     Messaging.prototype.registerEvent = function (sEvent, fnListener) {
@@ -101,7 +104,7 @@ sap.ui.define([
                 uuid: uuidv4()
             };
 
-            jQuery.sap.log.info(`sending event of Type: ${oEvent.type}, with uuid: ${oEvent.uuid}`);
+            //jQuery.sap.log.info(`sending event of Type: ${oEvent.type}, with uuid: ${oEvent.uuid}`);
             this._oUUIDs[oEvent.uuid] = {};
             this._oUUIDs[oEvent.uuid].resolveFn = resolve;
 

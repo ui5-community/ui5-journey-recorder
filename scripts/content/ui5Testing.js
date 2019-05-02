@@ -10,7 +10,7 @@
 
             // Inject a script file in the current page
             var script = document.createElement('script');
-            script.src = chrome.extension.getURL('/scripts/injected/ui5Testing.js');
+            script.src = chrome.extension.getURL('/scripts/injected/ui5RecorderInject.js');
             document.head.appendChild(script);
 
             var head = document.getElementsByTagName('head')[0];
@@ -24,6 +24,7 @@
 
             var oInitializedPromise = new Promise(function (resolve, reject) {
                 document.addEventListener('do-ui5-ok', function (oXMLEvent) {
+                    //console.log(`ui5Testing: Handling event with uuid: ${oXMLEvent.detail.uuid} and type: ${oXMLEvent.detail.type} - do-ui5-ok`);
                     if (!oXMLEvent.detail.ok) {
                         reject();
                     }
@@ -50,14 +51,17 @@
 
                 var oLastAnswer = {};
                 document.addEventListener('do-ui5-from-inject-to-extension', function (oXMLEvent) {
+                    //console.log(`ui5Testing: Handling event with uuid: ${oXMLEvent.detail.uuid} and type: ${oXMLEvent.detail.type} - inject-to-extension`);
                     chrome.runtime.sendMessage(oXMLEvent.detail, function (response) {
                     });
                 });
                 document.addEventListener('do-ui5-from-inject-to-answer', function (oXMLEvent) {
+                    //console.log(`ui5Testing: Handling event with uuid: ${oXMLEvent.detail.uuid} and type: ${oXMLEvent.detail.type} - inject-to-answer`);
                     oLastAnswer[oXMLEvent.detail.uuid].data = oXMLEvent.detail;
                 });
                 document.addEventListener('do-ui5-from-inject-to-async', function (oXMLEvent) {
                     oLastAnswer[oXMLEvent.detail.uuid].data = oXMLEvent.detail;
+                    //console.log(`ui5Testing: Handling event with uuid: ${oXMLEvent.detail.uuid} and type: ${oXMLEvent.detail.type} - inject-to-async`);
 
                     chrome.runtime.sendMessage({ type: "answer-async", data: oXMLEvent.detail }, function (response) {
                     });
