@@ -30,11 +30,11 @@ sap.ui.define([
                     },
                     {
                         key: "TCF",
-                        text: "Testcafe (Beta)"
+                        text: "Testcafe"
                     },
                     {
                         key: "OPA",
-                        text: "OPA5 (Beta)"
+                        text: "OPA5"
                     },
                     {
                         key: "NAT",
