@@ -1,6 +1,6 @@
 {
     "name": "UI5 Test-Recorder",
-    "version": "0.3.9",
+    "version": "0.4.0",
     "manifest_version": 2,
     "description": "UI5 Test-Recorder",
     "homepage_url": "https://github.com/timostark/ui5TestAutomation",
