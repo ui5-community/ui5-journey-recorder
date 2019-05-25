@@ -1,8 +1,9 @@
 sap.ui.define([
     "sap/ui/base/Object",
     "com/ui5/testing/model/opa5/PageBuilder",
-    "com/ui5/testing/model/opa5/ParentMatcherBuilder"
-], function (UI5Object, PageBuilder, ParentMatcherBuilder) {
+    "com/ui5/testing/model/opa5/ParentMatcherBuilder",
+    "com/ui5/testing/model/Utils"
+], function (UI5Object, PageBuilder, ParentMatcherBuilder, Utils) {
     "use strict";
     var OPA5CodeStrategy = UI5Object.extend("com.ui5.testing.model.OPA5CodeStrategy", {
         jsonKeyRegex: /\"(\w+)\"\:/g,
@@ -19,7 +20,7 @@ sap.ui.define([
     });
 
     OPA5CodeStrategy.prototype.generate = function (oCodeSettings, aElements, codeHelper) {
-        var aCodes =  [];
+        var aCodes = [];
         //setup page builder for each view used during the test
         aElements
             .map(el => ({
@@ -60,7 +61,7 @@ sap.ui.define([
         var namespace = [...new Set(Object.values(this.__pages).map(el => el.getNamespace()))].filter(nsp => nsp !== '<template>')[0];
         namespace = namespace ? namespace : '<template>';
         Object.keys(this.__pages).forEach(function (key) {
-            if(this.__pages[key].getNamespace() === '<template>'){
+            if (this.__pages[key].getNamespace() === '<template>') {
                 this.__pages[key].setNamespace(namespace);
             }
             order = order++;
@@ -146,11 +147,11 @@ sap.ui.define([
 
     OPA5CodeStrategy.prototype.__createAppStartStep = function (oAppDetails) {
         var aParts = [Array(2).join('\t') + 'opaTest('];
-        aParts.push('"' + oAppDetails.testName+'"');
+        aParts.push('"' + oAppDetails.testName + '"');
         aParts.push(', function(Given, When, Then) {\n');
         var sNavHash = "";
-        if(oAppDetails.testUrl.indexOf('#') > -1) {
-            sNavHash = oAppDetails.testUrl.substring(oAppDetails.testUrl.indexOf('#')+1);
+        if (oAppDetails.testUrl.indexOf('#') > -1) {
+            sNavHash = oAppDetails.testUrl.substring(oAppDetails.testUrl.indexOf('#') + 1);
         }
         aParts.push(Array(3).join('\t') + 'Given.iStartTheAppByHash({hash: \"' + sNavHash + '\"});\n\n');
 
@@ -181,7 +182,7 @@ sap.ui.define([
     OPA5CodeStrategy.prototype.createTestStep = function (oCodeSettings, oTestStep) {
         var viewName = oTestStep.item.viewProperty.localViewName ? oTestStep.item.viewProperty.localViewName : "Detached";
         var namespace = '<template>';
-        if(oTestStep.item.viewProperty.viewName) {
+        if (oTestStep.item.viewProperty.viewName) {
             namespace = oTestStep.item.viewProperty.viewName.replace('.view.' + oTestStep.item.viewProperty.localViewName, '');
         }
 
@@ -199,6 +200,10 @@ sap.ui.define([
             }
         }
 
+        if (aMatching.some(a => a.criteriaType === 'BDG' || a.attributeType.indexOf('BDG') > -1)) {
+            this.__pages[viewName].addBindingFunction();
+        }
+
         switch (oTestStep.property.type) {
             case "ACT":
                 return this.__createActionStep(oTestStep) + '\n';
@@ -214,10 +219,8 @@ sap.ui.define([
         switch (actionsType) {
             case 'TYP':
                 return this.__createEnterTextAction(oStep);
-                break;
             case 'PRS':
                 return this.__createPressAction(oStep);
-                break;
             default:
                 console.log('Found a unknown action type: ' + actionsType);
                 return "";
@@ -228,7 +231,7 @@ sap.ui.define([
         var tempArray = [];
         if (typeof aObjects === 'object') {
             if (!Array.isArray(aObjects)) {
-                if (Object.keys(aObjects).length == 1) {
+                if (Object.keys(aObjects).length === 1) {
                     tempArray = [aObjects];
                 } else {
                     for (var key in aObjects) {
@@ -321,7 +324,7 @@ sap.ui.define([
 
     OPA5CodeStrategy.prototype.__createExistStep = function (oStep) {
         var viewName = oStep.item.viewProperty.localViewName ? oStep.item.viewProperty.localViewName : "Detached";
-        if (oStep.assertFilter && oStep.assertFilter.some(a => a.criteriaType == 'AGG')) {
+        if (oStep.assertFilter && oStep.assertFilter.some(a => a.criteriaType === 'AGG')) {
             return this.__createAggregationCheck(oStep);
         } else {
             this.__pages[viewName].addExistFunction();
@@ -347,7 +350,7 @@ sap.ui.define([
             //var statBindings = Object.keys(oStep.item.binding).filter(k => oStep.item.binding[k].static).map(i => ({attributeName: i, i18nLabel: oStep.item.binding[i].path}));
             if (aToken[id].attributeType !== "OWN") {
                 if (!parentMatcher[aToken[id].attributeType]) {
-                    parentMatcher[aToken[id].attributeType] = {}
+                    parentMatcher[aToken[id].attributeType] = {};
                 }
             }
             switch (aToken[id].criteriaType) {
@@ -380,8 +383,20 @@ sap.ui.define([
                     }
                     break;
                 case 'BDG':
-                    objectMatcher['BDG'] = "whatever";
-                    console.log('No property given for binding');
+                    if (!objectMatcher.BDG) {
+                        objectMatcher['BDG'] = [];
+                    }
+                    var sSubCritCntnt = aToken[id].subCriteriaType;
+                    var contextName = sSubCritCntnt.substring(0, sSubCritCntnt.lastIndexOf('/'));
+                    var contextAttribute = sSubCritCntnt.substring(sSubCritCntnt.indexOf('/') + 1);
+                    var infos = {
+                        //opType: aToken[id].operatorType,
+                        targetValue: aToken[id].criteriaValue,
+                        contextName: contextName,
+                        contextAttr: contextAttribute
+                    };
+                    objectMatcher['BDG'].push(infos);
+                    console.log('Created binding information: ' + JSON.stringify(infos));
                     break;
                 case 'AGG':
                     break; //need to be because this are no relevant object infos
@@ -402,6 +417,11 @@ sap.ui.define([
             aParts.push(", attributes: [" + objectMatcher.ATTR.reduce((a, b) => a + ', ' + b, '').substring(2) + "]");
         }
 
+        if (objectMatcher.BDG) {
+            objectMatcher.BDG = [...new Set(objectMatcher.BDG)];
+            aParts.push(", bndg_cntxt: [" + objectMatcher.BDG.reduce((a, b) => a + ', ' + Utils.stringifyAttributes(b).replace(/\"undefined\"/gm, 'undefined'), '').substring(2) + "]");
+        }
+
         if (Object.keys(parentMatcher).length > 0) {
             aParts.push(", parent: [");
             for (var key in parentMatcher) {
@@ -413,7 +433,7 @@ sap.ui.define([
                 }
 
                 if (key === 'PRT') {
-                    aParts.push('levelAbove: 1')
+                    aParts.push('levelAbove: 1');
                 } else {
                     aParts.push('levelAbove: ' + key.replace('PRT', ''));
                 }
@@ -425,7 +445,7 @@ sap.ui.define([
                 aParts.push('}, ');
             }
             aParts[aParts.length - 1] = aParts[aParts.length - 1].replace(/,\s*$/, '');
-            aParts.push("]")
+            aParts.push("]");
         }
         aParts[aParts.length - 1] = aParts[aParts.length - 1].replace(/,\s*$/, '');
     };
@@ -433,22 +453,22 @@ sap.ui.define([
     OPA5CodeStrategy.prototype.__createAttrValue = function (oToken, objectMatcher) {
         var value = this.__code.constants.filter(function (c) {
             if (typeof oToken.criteriaValue === "boolean") {
-                return c.value === oToken.criteriaValue
+                return c.value === oToken.criteriaValue;
             } else {
-                return c.value === oToken.criteriaValue.trim()
+                return c.value === oToken.criteriaValue.trim();
             }
         })[0] ? this.__code.constants.filter(function (c) {
             if (typeof oToken.criteriaValue === "boolean") {
-                return c.value === oToken.criteriaValue
+                return c.value === oToken.criteriaValue;
             } else {
-                return c.value === oToken.criteriaValue.trim()
+                return c.value === oToken.criteriaValue.trim();
             }
         })[0].symbol : typeof oToken.criteriaValue === "boolean" ?
             oToken.criteriaValue :
             this.__sanatize(oToken.criteriaValue.trim());
 
         if (typeof value === 'object') {
-            console.log('stringify object')
+            console.log('stringify object');
         }
         objectMatcher['ATTR'] ?
             objectMatcher['ATTR'].push('{' + oToken.subCriteriaType + ': ' + value + '}') :
@@ -459,6 +479,7 @@ sap.ui.define([
         var viewName = oStep.item.viewProperty.localViewName ? oStep.item.viewProperty.localViewName : "Detached";
         var oAGGProp = oStep.assertFilter[0];
         var aParts = [Array(3).join('\t') + 'Then.'];
+
         aParts.push('on' + viewName);
 
         if (oAGGProp.criteriaValue === 0) {

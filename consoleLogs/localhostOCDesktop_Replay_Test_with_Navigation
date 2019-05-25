@@ -1,0 +1,35 @@
+Device-dbg.js:80 2019-04-30 15:48:55 Device API logging initialized - DEVICE
+jquery.sap.global-dbg.js:1060 2019-04-30 15:48:55.853415 registerResourcePath ('aok/no/ocdesktop/responsive', './') -  sap.ui.ModuleSystem
+jquery.sap.global-dbg.js:1060 2019-04-30 15:48:55.853625 URL prefixes set to: -  sap.ui.ModuleSystem
+jquery.sap.global-dbg.js:1060 2019-04-30 15:48:55.853689   (default) : resources/ -  sap.ui.ModuleSystem
+jquery.sap.global-dbg.js:1060 2019-04-30 15:48:55.853735   'aok/no/ocdesktop/responsive' : ./ -  sap.ui.ModuleSystem
+jquery.sap.global-dbg.js:1060 2019-04-30 15:48:58.091370 registerResourcePath ('custom/library', 'z_oc_custom/') -  sap.ui.ModuleSystem
+ui5Testing.js:27 ui5Testing: Handling event with uuid: undefined and type: undefined - do-ui5-ok
+ui5RecorderInject.js:4 Handle event 'do-ui5-init'
+ui5RecorderInject.js:23 ui5RecorderInject: Handling event with uuid: 91c30c9e-173c-47de-b2dc-09b78a5636ad and type: find
+ui5RecorderInject.js:48 ui5RecorderInject: Dispatch event with uuid: 91c30c9e-173c-47de-b2dc-09b78a5636ad 'do-ui5-from-inject-to-async' else-case
+ui5Testing.js:64 ui5Testing: Handling event with uuid: 91c30c9e-173c-47de-b2dc-09b78a5636ad and type: answer - inject-to-async
+ui5RecorderInject.js:23 ui5RecorderInject: Handling event with uuid: 113ea25c-1da1-435d-bc74-e24b16061060 and type: execute
+ui5RecorderInject.js:48 ui5RecorderInject: Dispatch event with uuid: 113ea25c-1da1-435d-bc74-e24b16061060 'do-ui5-from-inject-to-async' else-case
+ui5Testing.js:64 ui5Testing: Handling event with uuid: 113ea25c-1da1-435d-bc74-e24b16061060 and type: answer - inject-to-async
+ui5RecorderInject.js:23 ui5RecorderInject: Handling event with uuid: 6574d411-c8f0-4ea7-b8d7-ead8ede6b3a1 and type: find
+ui5RecorderInject.js:48 ui5RecorderInject: Dispatch event with uuid: 6574d411-c8f0-4ea7-b8d7-ead8ede6b3a1 'do-ui5-from-inject-to-async' else-case
+ui5Testing.js:64 ui5Testing: Handling event with uuid: 6574d411-c8f0-4ea7-b8d7-ead8ede6b3a1 and type: answer - inject-to-async
+ui5RecorderInject.js:23 ui5RecorderInject: Handling event with uuid: 99c9236a-dac0-43bf-8542-6f66ed81bbd7 and type: execute
+ui5RecorderInject.js:48 ui5RecorderInject: Dispatch event with uuid: 99c9236a-dac0-43bf-8542-6f66ed81bbd7 'do-ui5-from-inject-to-async' else-case
+ui5Testing.js:64 ui5Testing: Handling event with uuid: 99c9236a-dac0-43bf-8542-6f66ed81bbd7 and type: answer - inject-to-async
+ui5RecorderInject.js:23 ui5RecorderInject: Handling event with uuid: undefined and type: ui5-check-if-injected
+ui5RecorderInject.js:48 ui5RecorderInject: Dispatch event with uuid: undefined 'do-ui5-from-inject-to-async' else-case
+ui5Testing.js:64 ui5Testing: Handling event with uuid: undefined and type: answer - inject-to-async
+ui5RecorderInject.js:23 ui5RecorderInject: Handling event with uuid: undefined and type: ui5-check-if-injected
+ui5RecorderInject.js:48 ui5RecorderInject: Dispatch event with uuid: undefined 'do-ui5-from-inject-to-async' else-case
+ui5Testing.js:64 ui5Testing: Handling event with uuid: undefined and type: answer - inject-to-async
+ui5RecorderInject.js:23 ui5RecorderInject: Handling event with uuid: undefined and type: ui5-check-if-injected
+ui5RecorderInject.js:48 ui5RecorderInject: Dispatch event with uuid: undefined 'do-ui5-from-inject-to-async' else-case
+ui5Testing.js:64 ui5Testing: Handling event with uuid: undefined and type: answer - inject-to-async
+ui5RecorderInject.js:23 ui5RecorderInject: Handling event with uuid: undefined and type: ui5-check-if-injected
+ui5RecorderInject.js:48 ui5RecorderInject: Dispatch event with uuid: undefined 'do-ui5-from-inject-to-async' else-case
+ui5Testing.js:64 ui5Testing: Handling event with uuid: undefined and type: answer - inject-to-async
+ui5RecorderInject.js:23 ui5RecorderInject: Handling event with uuid: undefined and type: ui5-check-if-injected
+ui5RecorderInject.js:48 ui5RecorderInject: Dispatch event with uuid: undefined 'do-ui5-from-inject-to-async' else-case
+ui5Testing.js:64 ui5Testing: Handling event with uuid: undefined and type: answer - inject-to-async

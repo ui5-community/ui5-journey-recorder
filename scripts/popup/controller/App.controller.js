@@ -22,6 +22,8 @@ sap.ui.define([
             if(!this.getOwnerComponent().getModel('settings')) {
                 this.getOwnerComponent().setModel(GlobalSettings.getModel(), 'settings');
             }
+
+            jQuery.sap.log.setLevel(jQuery.sap.log.Level.INFO);
         }
     });
 });
