@@ -1,0 +1,63 @@
+sap-ui-core.js:1953 2019-04-30 15:48:49 Device API logging initialized - DEVICE
+sap-ui-core.js:179 2019-04-30 15:48:49.945655 URL prefixes set to: -  sap.ui.ModuleSystem
+sap-ui-core.js:179 2019-04-30 15:48:49.945834   (default) : /ui5/resources/ -  sap.ui.ModuleSystem
+sap-ui-core.js:179 2019-04-30 15:48:49.945959   'com/ui5/testing' : ./ -  sap.ui.ModuleSystem
+sap-ui-core.js:179 2019-04-30 15:48:50.506804 Changing log level to INFO -  sap.base.log
+sap-ui-core.js:179 2019-04-30 15:48:50.521429 Component instance Id = __component0 -  
+sap-ui-core.js:179 2019-04-30 15:48:50.559094 Do not use deprecated factory function 'sap.ui.controller(com.ui5.testing.controller.Start)'. Use 'sap.ui.core.mvc.Controller.create(...)' instead. - sap.ui.controller 
+sap-ui-core.js:179 2019-04-30 15:48:50.596725 Do not use deprecated factory function 'sap.ui.xmlfragment'. Require 'sap/ui/core/Fragment' and use 'load()' instead - sap.ui.xmlfragment 
+sap-ui-core.js:179 2019-04-30 15:48:50.630324 The font face style of standard icon font was already inserted. -  
+sap-ui-core.js:179 2019-04-30 15:48:50.632409 The font face style of standard icon font was already inserted. -  
+sap-ui-core.js:179 2019-04-30 15:48:50.687929 The font face style of standard icon font was already inserted. -  
+sap-ui-core.js:179 2019-04-30 15:48:50.750719 Did place the view 'com.ui5.testing.view.start' with the id '__component0---start' into the aggregation 'pages' of a control with the id '__component0---app--idAppControl' - EventProvider sap.m.routing.Target 
+sap-ui-core.js:179 2019-04-30 15:48:50.807080 The route named 'start' did match with its pattern - EventProvider sap.ui.core.routing.Route 
+sap-ui-core.js:179 2019-04-30 15:48:50.808475 navigation to view with id: __component0---start is skipped since it already is displayed by its targetControl - sap.m.routing.TargetHandler 
+sap-ui-core.js:179 2019-04-30 15:48:52.401655 FocusItem: 1 iFocusedIndex: -1 - focusItem ItemNavigation
+sap-ui-core.js:179 2019-04-30 15:48:52.406959 Set Focus on ID: __filter1 - focusItem ItemNavigation
+sap-ui-core.js:179 2019-04-30 15:48:53.015824 FocusItem: 1 iFocusedIndex: 1 - focusItem ItemNavigation
+sap-ui-core.js:179 2019-04-30 15:48:53.016409 Set Focus on ID: __item2-__component0---start--recordList-0 - focusItem ItemNavigation
+sap-ui-core.js:179 2019-04-30 15:48:53.109280 Do not use deprecated factory function 'sap.ui.controller(com.ui5.testing.controller.testDetails)'. Use 'sap.ui.core.mvc.Controller.create(...)' instead. - sap.ui.controller 
+sap-ui-core.js:179 2019-04-30 15:48:53.197544 The font face style of standard icon font was already inserted. -  
+sap-ui-core.js:179 2019-04-30 15:48:53.215830 The font face style of standard icon font was already inserted. -  
+sap-ui-core.js:179 2019-04-30 15:48:53.217804 The font face style of standard icon font was already inserted. -  
+sap-ui-core.js:179 2019-04-30 15:48:53.226889 The font face style of standard icon font was already inserted. -  
+sap-ui-core.js:179 2019-04-30 15:48:53.381264 Do not use deprecated factory function 'sap.ui.xmlfragment'. Require 'sap/ui/core/Fragment' and use 'load()' instead - sap.ui.xmlfragment 
+sap-ui-core.js:179 2019-04-30 15:48:53.391995 Did place the view 'com.ui5.testing.view.testDetails' with the id '__component0---testDetails' into the aggregation 'pages' of a control with the id '__component0---app--idAppControl' - EventProvider sap.m.routing.Target 
+sap-ui-core.js:179 2019-04-30 15:48:53.401185 The route named 'testDetails' did match with its pattern - EventProvider sap.ui.core.routing.Route 
+sap-ui-core.js:179 2019-04-30 15:48:53.426040 navigation to view with id: __component0---testDetails the targetControl is __component0---app--idAppControl backwards is false -  
+sap-ui-core.js:179 2019-04-30 15:48:53.427000 Element sap.m.App#__component0---app--idAppControl: navigating to page '__component0---testDetails': Element sap.ui.core.mvc.XMLView#__component0---testDetails -  
+sap-ui-core.js:179 2019-04-30 15:48:54.037725 Element sap.m.App#__component0---app--idAppControl: _afterTransitionCallback called, to: __component0---testDetails -  
+sap-ui-core.js:179 2019-04-30 15:48:55.134719 Did place the view 'com.ui5.testing.view.testDetails' with the id '__component0---testDetails' into the aggregation 'pages' of a control with the id '__component0---app--idAppControl' - EventProvider sap.m.routing.Target 
+sap-ui-core.js:179 2019-04-30 15:48:55.135610 The route named 'testReplay' did match with its pattern - EventProvider sap.ui.core.routing.Route 
+sap-ui-core.js:179 2019-04-30 15:48:55.168455 navigation to view with id: __component0---testDetails is skipped since it already is displayed by its targetControl - sap.m.routing.TargetHandler 
+sap-ui-core.js:179 2019-04-30 15:49:00.048320 handling event of Type: loaded, with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:52.559364 sending event of Type: find, with uuid: 91c30c9e-173c-47de-b2dc-09b78a5636ad -  
+sap-ui-core.js:179 2019-04-30 15:49:52.613370 handling event of Type: answer-async, with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:52.613889 handling async answer with uuid: 91c30c9e-173c-47de-b2dc-09b78a5636ad -  
+sap-ui-core.js:179 2019-04-30 15:49:52.614725 sending event of Type: execute, with uuid: 113ea25c-1da1-435d-bc74-e24b16061060 -  
+sap-ui-core.js:179 2019-04-30 15:49:53.146574 handling event of Type: answer-async, with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:53.146840 handling async answer with uuid: 113ea25c-1da1-435d-bc74-e24b16061060 -  
+sap-ui-core.js:179 2019-04-30 15:49:56.283340 sending event of Type: find, with uuid: 6574d411-c8f0-4ea7-b8d7-ead8ede6b3a1 -  
+sap-ui-core.js:179 2019-04-30 15:49:56.368340 handling event of Type: answer-async, with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:56.368735 handling async answer with uuid: 6574d411-c8f0-4ea7-b8d7-ead8ede6b3a1 -  
+sap-ui-core.js:179 2019-04-30 15:49:56.369635 sending event of Type: execute, with uuid: 99c9236a-dac0-43bf-8542-6f66ed81bbd7 -  
+sap-ui-core.js:179 2019-04-30 15:49:56.407804 handling event of Type: answer-async, with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:56.408084 handling async answer with uuid: 99c9236a-dac0-43bf-8542-6f66ed81bbd7 -  
+sap-ui-core.js:179 2019-04-30 15:49:58.469705 handling event of Type: answer-async, with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:58.470044 handling async answer with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:58.951495 handling event of Type: answer-async, with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:58.951790 handling async answer with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:58.952044 handling event of Type: answer-async, with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:58.952360 handling async answer with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:58.953770 handling event of Type: answer-async, with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:58.954100 handling async answer with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:58.954500 handling event of Type: answer-async, with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:58.954794 handling async answer with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:59.565909 handling event of Type: answer-async, with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:59.566459 handling async answer with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:59.568840 handling event of Type: answer-async, with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:59.570129 handling async answer with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:59.586870 handling event of Type: answer-async, with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:59.587235 handling async answer with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:59.587580 handling event of Type: answer-async, with uuid: undefined -  
+sap-ui-core.js:179 2019-04-30 15:49:59.587860 handling async answer with uuid: undefined -  

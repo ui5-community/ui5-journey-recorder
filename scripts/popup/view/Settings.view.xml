@@ -33,6 +33,14 @@
                             <core:Item text="{settings>text}" key="{settings>key}"/>
                         </items>
                     </Select>
+                    <Label text="Default Replay Type"/>
+                    <Select id="tstReplayType"
+                            items="{settings>/replayModes}"
+                            selectedKey="{settings>/settings/defaultReplayType}">
+                        <items>
+                            <core:Item text="{settings>mode}" key="{settings>key}"/>
+                        </items>
+                    </Select>
 
                     <Label text="Clear Settings"/>
                     <Button id="btDel" type="Reject" text="Delete" press="onClearSettings"/>

@@ -5,13 +5,19 @@ sap.ui.define([
     "use strict";
 
     var GlobalSettings = UI5Object.extend("com.ui5.testing.model.GlobalSettings", {
+        /**
+         * Constructor
+         */
         constructor: function () {
             var oJSON = {
                 settings: {
+                    defaultReplayType: 0,
                     defaultLanguage: "UI5",
-                    defaultNatLanguage: "EN"
+                    defaultNatLanguage: "EN",
+                    defaultAuthentification: "NONE"
                 },
                 settingsDefault: {
+                    replayType: 0,
                     defaultLanguage: "UI5",
                     defaultNatLanguage: "EN",
                     defaultAuthentification: "NONE"
@@ -50,6 +56,24 @@ sap.ui.define([
                         key: "DE",
                         text: "German"
                     }
+                ],
+                replayModes: [
+                    {
+                        key: 0,
+                        mode: "Manual"
+                    },
+                    {
+                        key: 4,
+                        mode: "Slow (2 sec.)"
+                    },
+                    {
+                        key: 2,
+                        mode: "Medium (1 sec.)"
+                    },
+                    {
+                        key: 1,
+                        mode: "Fast (0.5 sec.)"
+                    }
                 ]
             };
             this._oModel = new JSONModel(oJSON);
@@ -66,7 +90,9 @@ sap.ui.define([
         chrome.storage.local.get(["settings"], function (data) {
             this._oModel.setProperty("/settings", JSON.parse(JSON.stringify(this._oModel.getProperty("/settingsDefault"))));
             if (data && data.settings) {
+                this._oModel.setProperty("/settings/defaultLanguage", data.settings.defaultReplayType);
                 this._oModel.setProperty("/settings/defaultLanguage", data.settings.defaultLanguage);
+                this._oModel.setProperty("/settings/defaultLanguage", data.settings.defaultNatLanguage);
             }
         }.bind(this));
     };
@@ -74,7 +100,7 @@ sap.ui.define([
     GlobalSettings.prototype.save = function () {
         var oData = this._oModel.getProperty("/settings");
         chrome.storage.local.set({ "settings": oData }, function (data) {
-        }.bind(this));
+        });
     };
 
     GlobalSettings.prototype.getCriteriaTypes = function () {
@@ -101,46 +127,46 @@ sap.ui.define([
                         subCriteriaText: "Global-Id",
                         value: function (oItem) {
                             return oItem.identifier.ui5Id;
-                        }.bind(this),
+                        },
                         code: function (sValue) {
-                            return { identifier: { ui5Id: sValue } }
+                            return { identifier: { ui5Id: sValue } };
                         },
                         getUi5Spec: function (oAdjust, oItem, iValue) {
                             iValue = typeof iValue === "undefined" ? this.value(oItem) : iValue;
                             oAdjust.id = {
                                 id: new RegExp(iValue + "$").toString(),
                                 __isRegex: true
-                            }
+                            };
                         },
                         assert: function (sValue) {
-                            return "identifier.ui5Id"
+                            return "identifier.ui5Id";
                         }
                     }, {
                         subCriteriaType: "LID",
                         subCriteriaText: "Local-Id",
                         value: function (oItem) {
                             return oItem.identifier.ui5LocalId;
-                        }.bind(this),
+                        },
                         code: function (sValue) {
-                            return { identifier: { ui5LocalId: sValue } }
+                            return { identifier: { ui5LocalId: sValue } };
                         },
                         getUi5Spec: function (oAdjust, oItem, iValue) {
                             iValue = typeof iValue === "undefined" ? this.value(oItem) : iValue;
                             oAdjust.id = {
                                 id: new RegExp(iValue + "$").toString(),
                                 __isRegex: true
-                            }
+                            };
                         },
                         assert: function (sValue) {
-                            return "identifier.ui5LocalId"
+                            return "identifier.ui5LocalId";
                         },
                         assertField: function (sValue) {
                             return {
                                 type: "id"
-                            }
+                            };
                         }
                     }];
-                }.bind(this)
+                }
             },
             "MTA": {
                 criteriaKey: "MTA",
@@ -151,9 +177,9 @@ sap.ui.define([
                         subCriteriaText: "Element-Name",
                         value: function (oItem) {
                             return oItem.metadata.elementName;
-                        }.bind(this),
+                        },
                         code: function (sValue) {
-                            return { metadata: { elementName: sValue } }
+                            return { metadata: { elementName: sValue } };
                         },
 
                         getUi5Spec: function (oAdjust, oItem, iValue) {
@@ -161,35 +187,35 @@ sap.ui.define([
                             oAdjust.controlType = iValue;
                         },
                         assert: function () {
-                            return "metadata.elementName"
+                            return "metadata.elementName";
                         },
                         assertField: function (sValue) {
                             return {
                                 type: "elementName"
-                            }
+                            };
                         }
                     }, {
                         subCriteriaType: "CMP",
                         subCriteriaText: "Component-Name",
                         value: function (oItem) {
                             return oItem.metadata.componentName;
-                        }.bind(this),
+                        },
                         code: function (sValue) {
-                            return { metadata: { componentName: sValue } }
+                            return { metadata: { componentName: sValue } };
                         },
                         getUi5Spec: function (oAdjust, oItem, iValue) {
                             //not possible..
                         },
                         assert: function () {
-                            return "metadata.componentName"
+                            return "metadata.componentName";
                         },
                         assertField: function (sValue) {
                             return {
                                 type: "componentName"
-                            }
+                            };
                         }
                     }];
-                }.bind(this)
+                }
             },
             "VIW": {
                 criteriaKey: "VIW",
@@ -200,44 +226,44 @@ sap.ui.define([
                         subCriteriaText: "View-Name",
                         value: function (oItem) {
                             return oItem.viewProperty.viewName;
-                        }.bind(this),
+                        },
                         code: function (sValue) {
-                            return { viewProperty: { viewName: sValue } }
+                            return { viewProperty: { viewName: sValue } };
                         },
                         getUi5Spec: function (oAdjust, oItem, iValue) {
                             oAdjust.viewName = iValue;
                         },
                         assert: function () {
-                            return "viewProperty.viewName"
+                            return "viewProperty.viewName";
                         },
                         assertField: function (sValue) {
                             return {
                                 type: "viewName"
-                            }
+                            };
                         }
                     }, {
                         subCriteriaType: "VIWLNM",
                         subCriteriaText: "Local-View-Name",
                         value: function (oItem) {
                             return oItem.viewProperty.localViewName;
-                        }.bind(this),
+                        },
                         code: function (sValue) {
-                            return { viewProperty: { localViewName: sValue } }
+                            return { viewProperty: { localViewName: sValue } };
                         },
                         getUi5Spec: function (oAdjust, oItem, iValue) {
                             iValue = typeof iValue === "undefined" ? this.value(oItem) : iValue;
                             oAdjust.viewName = new RegExp(iValue + "$").toString();
                         },
                         assert: function () {
-                            return "viewProperty.localViewName"
+                            return "viewProperty.localViewName";
                         },
                         assertField: function (sValue) {
                             return {
                                 type: "localViewName"
-                            }
+                            };
                         }
                     }];
-                }.bind(this)
+                }
             },
             "AGG": {
                 criteriaKey: "AGG",
@@ -264,7 +290,7 @@ sap.ui.define([
                                 if (iValue === 0) {
                                     oAdjust.aggregationEmpty = {
                                         name: this.aggregationName
-                                    }
+                                    };
                                 } else {
                                     oAdjust.aggregationLengthEquals = {
                                         name: this.aggregationName,
@@ -278,7 +304,7 @@ sap.ui.define([
                             assertField: function (sValue) {
                                 return {
                                     type: "aggregation"
-                                }
+                                };
                             }
                         });
                     }
@@ -316,7 +342,7 @@ sap.ui.define([
                                 assertField: function (sValue) {
                                     return {
                                         type: "context"
-                                    }
+                                    };
                                 }
                             });
                         }
@@ -380,7 +406,7 @@ sap.ui.define([
                         }*/
                     }
                     return aReturn;
-                }.bind(this)
+                }
             },
             "BNDG": {
                 criteriaKey: "BNDG",
@@ -427,7 +453,7 @@ sap.ui.define([
                             assertField: function (sValue) {
                                 return {
                                     type: "binding"
-                                }
+                                };
                             }
                         });
                     }
@@ -467,7 +493,7 @@ sap.ui.define([
                                 return {
                                     type: "property",
                                     value: this.subCriteriaType
-                                }
+                                };
                             }
                         });
                     }
@@ -481,53 +507,53 @@ sap.ui.define([
             "OWN": {
                 getItem: function (oItem) { return oItem; },
                 getScope: function (oScope) { return oScope; },
-                getAssertScope: function () { return "" },
+                getAssertScope: function () { return ""; },
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["MODL"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
             },
             "VIW": {
-                getItem: function (oItem) { return oItem.view; }.bind(this),
+                getItem: function (oItem) { return oItem.view; },
                 getScope: function (oScope) { oScope.view = oScope.view ? oScope.view : {}; return oScope.view; },
-                getAssertScope: function () { return "view." },
+                getAssertScope: function () { return "view."; },
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
             },
             "PRT": {
-                getItem: function (oItem) { return oItem.parent; }.bind(this),
-                getAssertScope: function () { return "parent." },
+                getItem: function (oItem) { return oItem.parent; },
+                getAssertScope: function () { return "parent."; },
                 getScope: function (oScope) { oScope.parent = oScope.parent ? oScope.parent : {}; return oScope.parent; },
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MODL"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
             },
             "PRT2": {
-                getItem: function (oItem) { return oItem.parentL2; }.bind(this),
-                getAssertScope: function () { return "parentL2." },
+                getItem: function (oItem) { return oItem.parentL2; },
+                getAssertScope: function () { return "parentL2."; },
                 getScope: function (oScope) { oScope.parentL2 = oScope.parentL2 ? oScope.parentL2 : {}; return oScope.parentL2; },
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MODL"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
             },
             "PRT3": {
-                getItem: function (oItem) { return oItem.parentL3; }.bind(this),
-                getAssertScope: function () { return "parentL3." },
+                getItem: function (oItem) { return oItem.parentL3; },
+                getAssertScope: function () { return "parentL3."; },
                 getScope: function (oScope) { oScope.parentL3 = oScope.parentL3 ? oScope.parentL3 : {}; return oScope.parentL3; },
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MODL"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
             },
             "PRT4": {
-                getItem: function (oItem) { return oItem.parentL4; }.bind(this),
-                getAssertScope: function () { return "parentL4." },
+                getItem: function (oItem) { return oItem.parentL4; },
+                getAssertScope: function () { return "parentL4."; },
                 getScope: function (oScope) { oScope.parentL4 = oScope.parentL4 ? oScope.parentL4 : {}; return oScope.parentL4; },
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MODL"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
             },
             "PLBL": {
-                getItem: function (oItem) { return oItem.label; }.bind(this),
-                getAssertScope: function () { return "label." },
+                getItem: function (oItem) { return oItem.label; },
+                getAssertScope: function () { return "label."; },
                 getScope: function (oScope) { oScope.label = oScope.label ? oScope.label : {}; return oScope.label; },
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MODL"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
             },
             "MCMB": {
                 getItem: function (oItem) {
                     return oItem.itemdata;
-                }.bind(this),
+                },
                 getScope: function (oScope) { oScope.itemdata = oScope.itemdata ? oScope.itemdata : {}; return oScope.itemdata; },
-                getAssertScope: function () { return "itemdata." },
+                getAssertScope: function () { return "itemdata."; },
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
-            },
+            }
         };
 
         this._oElementMix = {
@@ -652,7 +678,7 @@ sap.ui.define([
                 { domChildWith: "", action: "TYP" }]
             }
         };
-    }
+    };
 
     return new GlobalSettings();
 });

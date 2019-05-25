@@ -11,20 +11,26 @@ sap.ui.define([
     "com/ui5/testing/model/ChromeStorage",
     "com/ui5/testing/model/Utils",
     "sap/m/MessageToast",
+    "sap/m/Dialog",
+    "sap/m/Button",
+    "sap/m/Text",
     "com/ui5/testing/libs/jszip.min",
     "com/ui5/testing/libs/FileSaver.min"
 ], function (Controller,
-             JSONModel,
-             MessagePopover,
-             MessageItem,
-             Navigation,
-             Communication,
-             RecordController,
-             GlobalSettings,
-             CodeHelper,
-             ChromeStorage,
-             Utils,
-             MessageToast) {
+    JSONModel,
+    MessagePopover,
+    MessageItem,
+    Navigation,
+    Communication,
+    RecordController,
+    GlobalSettings,
+    CodeHelper,
+    ChromeStorage,
+    Utils,
+    MessageToast,
+    Dialog,
+    Button,
+    Text) {
     "use strict";
 
     var TestDetails = Controller.extend("com.ui5.testing.controller.TestDetails", {
@@ -32,6 +38,7 @@ sap.ui.define([
             codes: [],
             test: {},
             replayMode: false,
+            replayType: 0,
             codeSettings: {
                 language: "UI5",
                 testName: "",
@@ -53,6 +60,9 @@ sap.ui.define([
         _bStarted: false,
         _bReplayMode: false,
 
+        /**
+         *
+         */
         onInit: function () {
             Communication.registerEvent("itemSelected", this._onItemSelected.bind(this));
 
@@ -68,7 +78,7 @@ sap.ui.define([
 
             //Why is this function subscribed?
             //sap.ui.getCore().getEventBus().subscribe("RecordController", "windowFocusLost", this._recordStopped, this);
-        },
+        }
     });
 
     TestDetails.prototype._onInjectionDone = function (oData) {
@@ -81,43 +91,51 @@ sap.ui.define([
         var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
         chrome.tabs.create({
             url: sUrl,
-            active: false
+            active: true
         }, function (tab) {
             var sCheckUrl = sUrl;
+
+            /**
+             *
+             * @param {*} tabId
+             * @param {*} changeInfo
+             * @param {*} tab
+             */
             const fnListenerFunction = function (tabId, changeInfo, tab) {
                 if (tab.url.indexOf(sCheckUrl) > -1 && changeInfo.status === 'complete') {
-                    chrome.windows.create({
-                        tabId: tab.id,
-                        type: 'normal',
-                        focused: true,
-                        state: 'maximized'
-                    }, function (fnWindow) {
-                        //now inject into our window..
-                        RecordController.injectScript(tab.id).then(function (oData) {
-                            if (!RecordController.isInjected()) {
-                                this._bReplayMode = true;
-                                this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                                    oStep.setHighlight(sap.ui.core.MessageType.None);
-                                });
-                                this._startReplay();
-                            }
-                            if (oData) {
-                                this._oModel.setProperty('/ui5Version', oData.version);
-                            }
-                        }.bind(this));
-
-                        const fnListenHandshake = function (message, sender, sendResponse) {
-                            if (message.type === "HandshakeToWindow") {
-                                chrome.runtime.sendMessage({
-                                    "type": "send-window-id",
-                                }, function (response) {
-                                });
-                                chrome.runtime.onMessage.removeListener(fnListenerFunction());
-                            }
-                        };
-
-                        chrome.runtime.onMessage.addListener(fnListenHandshake());
+                    /*                     chrome.windows.create({
+                                            tabId: tab.id,
+                                            type: 'normal',
+                                            focused: true
+                                            //state: 'maximized'
+                                        }, function (fnWindow) {
+                                            //now inject into our window..
+                     */
+                    RecordController.injectScript(tab.id).then(function (oData) {
+                        //check here
+                        if (RecordController.isInjected() && !this._bReplayMode) {
+                            this._bReplayMode = true;
+                            this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
+                                oStep.setHighlight(sap.ui.core.MessageType.None);
+                            });
+                            this._startReplay();
+                        }
+                        if (oData) {
+                            this._oModel.setProperty('/ui5Version', oData.version);
+                        }
                     }.bind(this));
+                    /*
+                    const fnListenHandshake = function (message, sender, sendResponse) {
+                        if (message.type === "HandshakeToWindow") {
+                            chrome.runtime.sendMessage({
+                                "type": "send-window-id",
+                            }, function (response) {});
+                            chrome.runtime.onMessage.removeListener(fnListenerFunction());
+                        }
+                    };
+
+                    chrome.runtime.onMessage.addListener(fnListenHandshake());*/
+                    //}.bind(this));
                     chrome.tabs.onUpdated.removeListener(fnListenerFunction);
                 }
             };
@@ -131,8 +149,9 @@ sap.ui.define([
     };
 
     TestDetails.prototype.onReplaySingleStep = function (oEvent) {
-        var oLine = oEvent.getSource().getParent();
+        //var oLine = oEvent.getSource().getParent();
         RecordController.focusTargetWindow();
+        var oLine = this.getView().byId('tblPerformedSteps').getItems()[this._iCurrentStep];
         this._executeAction().then(function (oResult) {
             var performedStep = oLine;
             //this is our custom object
@@ -150,6 +169,12 @@ sap.ui.define([
                         this.getModel("viewModel").setProperty("/replayMode", false);
                         MessageToast.show('Assertion not met, check your setup!');
                         performedStep.setHighlight(sap.ui.core.MessageType.Error);
+                        this._bReplayMode = false;
+                        this.getModel("viewModel").setProperty("/replayMode", false);
+                        RecordController.stopRecording();
+                        this.getRouter().navTo("testDetails", {
+                            TestId: this.getModel("navModel").getProperty("/test/uuid")
+                        });
                         break;
                     default:
                         jQuery.sap.log.info(`No handling for no event`);
@@ -180,7 +205,10 @@ sap.ui.define([
             if (oElement.property.type === "ACT") {
                 this._getFoundElements(oElement).then(function (aElements) {
                     if (aElements.length === 0) {
-                        resolve({result: "error", type: "ACT"});
+                        resolve({
+                            result: "error",
+                            type: "ACT"
+                        });
                         return;
                     }
                     oElement.item.identifier = aElements[0].identifier;
@@ -191,11 +219,20 @@ sap.ui.define([
             } else if (oElement.property.type === "ASS") {
                 this._getFoundElements(oElement).then(function (aElements) {
                     if (aElements.length === 1) {
-                        resolve({result: "success", type: "ASS"});
+                        resolve({
+                            result: "success",
+                            type: "ASS"
+                        });
                     } else if (aElements.length > 1) {
-                        resolve({result: "warning", type: "ASS"});
+                        resolve({
+                            result: "warning",
+                            type: "ASS"
+                        });
                     } else {
-                        resolve({result: "error", type: "ASS"});
+                        resolve({
+                            result: "error",
+                            type: "ASS"
+                        });
                     }
                 });
             } else {
@@ -212,13 +249,13 @@ sap.ui.define([
             this._findItemAndExclude(oDefinition.selectorAttributes).then(function (aItemsEnhanced) {
                 //make an assert check..
                 resolve(aItemsEnhanced);
-            }.bind(this));
+            });
         }.bind(this));
     };
 
     TestDetails.prototype._findItemAndExclude = function (oSelector) {
         return Communication.fireEvent("find", oSelector);
-    }
+    };
 
     TestDetails.prototype.replayNextStep = function () {
         var aEvent = this.getModel("navModel").getProperty("/elements");
@@ -227,11 +264,44 @@ sap.ui.define([
         if (this._iCurrentStep >= aEvent.length) {
             this._bReplayMode = false;
             this.getModel("viewModel").setProperty("/replayMode", false);
-            RecordController.startRecording();
+            RecordController.stopRecording();
+            //RecordController.startRecording();
+            this.checkRecordContinuing();
             this.getRouter().navTo("testDetails", {
                 TestId: this.getModel("navModel").getProperty("/test/uuid")
             });
         }
+    };
+
+    TestDetails.prototype.checkRecordContinuing = function() {
+        	var dialog = new Dialog({
+				title: 'Start Recording?',
+				type: 'Message',
+				content: new Text({ text: 'Do you want to add additional test steps?' }),
+				beginButton: new Button({
+					text: 'Yes',
+					tooltip: 'Starts the recording process',
+					press: function () {
+					   RecordController.startRecording();
+					   this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
+                                oStep.setHighlight(sap.ui.core.MessageType.None);
+                       });
+					dialog.close();
+					}.bind(this)
+				}),
+				endButton: new Button({
+					text: 'No',
+					tooltip: 'No further actions',
+					press: function () {
+						dialog.close();
+					}
+				}),
+				afterClose: function() {
+					dialog.destroy();
+				}
+			});
+
+			dialog.open();
     };
 
     TestDetails.prototype._updatePlayButton = function () {
@@ -243,11 +313,18 @@ sap.ui.define([
             aElement[i].showPlay = i === this._iCurrentStep;
         }
         this.getModel("navModel").setProperty("/elements", aElement);
+        //Here the test should work automatically
+        var iReplayType = this.getModel('settings').getProperty('/settings/defaultReplayType');
+        if (iReplayType !== 0) {
+            const timeout = 500 * iReplayType;
+            setTimeout(this.onReplaySingleStep.bind(this), timeout, {});
+        }
     };
 
     TestDetails.prototype.uuidv4 = function () {
         var sStr = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            var r = Math.random() * 16 | 0,
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         }) + this._iGlobal;
         this._iGlobal = this._iGlobal + 1;
@@ -328,7 +405,7 @@ sap.ui.define([
                 TestId: this.getModel("navModel").getProperty("/test/uuid")
             });
         }.bind(this));
-    }
+    };
 
     TestDetails.prototype._onItemSelected = function (oData) {
         if (this._bReplayMode === true) {
@@ -378,13 +455,13 @@ sap.ui.define([
                     this.getModel("navModel").setProperty("/elementLength", oSave.elements.length);
                     this.getModel("navModel").setProperty("/test", oSave.test);
                     this._updatePreview();
-                    this._updatePlayButton();
+                    //this._updatePlayButton();
                     this._replay();
                 }.bind(this)
             });
         } else {
             this._updatePreview();
-            this._updatePlayButton();
+            //this._updatePlayButton();
             this._replay();
         }
     };
@@ -440,6 +517,12 @@ sap.ui.define([
         this._updatePlayButton();
     };
 
+    /*
+    TestDetails.prototype.onReplayAutomatic = function (oEvent) {
+        this._oModel.setProperty('/autoReplay', true);
+        this.onReplayAll(oEvent);
+    };*/
+
     TestDetails.prototype.onReplayAll = function (oEvent) {
         var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
         this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
@@ -469,7 +552,9 @@ sap.ui.define([
         delete oSave.codeSettings.execComponent;
 
         var vLink = document.createElement('a'),
-            vBlob = new Blob([JSON.stringify(oSave, null, 2)], {type: "octet/stream"}),
+            vBlob = new Blob([JSON.stringify(oSave, null, 2)], {
+                type: "octet/stream"
+            }),
             vName = 'export.json',
             vUrl = window.URL.createObjectURL(vBlob);
         vLink.setAttribute('href', vUrl);
@@ -570,12 +655,12 @@ sap.ui.define([
                     source: t.getContent()
                         .filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue()
                 }))
-                .forEach(c => zip.file(c.fileName, c.source))
+                .forEach(c => zip.file(c.fileName, c.source));
         }
 
         zip.generateAsync({
-            type: "blob"
-        })
+                type: "blob"
+            })
             .then(content => saveAs(content, "testCode.zip"));
     };
 
