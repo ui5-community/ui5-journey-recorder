@@ -13,7 +13,7 @@ sap.ui.define([
             onInit: function () {
                 this._oModel = new JSONModel({
                     recording: false,
-                    currentUrl: "",
+                    currentUrl: ""
                 });
                 this.getView().setModel(this._oModel, "viewModel");
                 this.getView().setModel(RecordController.getModel(), "recordModel");
@@ -61,23 +61,26 @@ sap.ui.define([
                     for (var i = 0; i < tabs.length; i++) {
                         if (tabs[i].url && tabs[i].url.indexOf('chrome:') < 0) {
                             function checkUI5() {
-                                return [].slice.call(document.head.getElementsByTagName('script')).filter(function (s) {
+                                var normal = [].slice.call(document.head.getElementsByTagName('script')).filter(function (s) {
                                     return s.src.indexOf('sap-ui-core.js') > -1;
                                 }).length == 1;
-                            };
+                                var onPremise = [].slice.call(document.head.getElementsByTagName('script')).filter(function (s) {
+                                    return s.src.indexOf('/sap/bc/ui5_ui5/') > -1;
+                                }).length >= 1;
+
+                                return normal || onPremise;
+                            }
 
                             function callback(tabId, tabUrl) {
                                 return function (results) {
                                     if (chrome.runtime.lastError) {
                                         //console.log(chrome.runtime.lastError.message);
-                                    } else {
-                                        if (results[0]) {
+                                    } else if (results[0]) {
                                             this._oModel.getProperty('/urls').push({url: tabUrl, id: tabId});
                                             this._oModel.updateBindings(true);
                                         }
-                                    }
-                                }
-                            };
+                                };
+                            }
                             chrome.tabs.executeScript(tabs[i].id, {
                                     code: '(' + checkUI5 + ')();'
                                 }, callback(tabs[i].id, tabs[i].url).bind(this)
@@ -100,8 +103,7 @@ sap.ui.define([
                 }, function (result) {
                     if (!bRequestUI5) {
                         this._getTabsForAll();
-                    } else {
-                        if (result) {
+                    } else if (result) {
                             this._getTabsForUI5();
                         } else {
                             chrome.permissions.request({
@@ -117,7 +119,6 @@ sap.ui.define([
                                 }
                             }.bind(this));
                         }
-                    }
                 }.bind(this));
             },
 
@@ -143,7 +144,7 @@ sap.ui.define([
 
             onStartNewRecording: function (oEvent) {
                 var iId, sUrl;
-                if(oEvent.getSource().getBindingContext('viewModel') && oEvent.getSource().getBindingContext('viewModel').getObject()) {
+                if (oEvent.getSource().getBindingContext('viewModel') && oEvent.getSource().getBindingContext('viewModel').getObject()) {
                     iId = oEvent.getSource().getBindingContext('viewModel').getObject().id;
                     sUrl = oEvent.getSource().getBindingContext('viewModel').getObject().url;
                 }
@@ -158,7 +159,7 @@ sap.ui.define([
 
             onMockserver: function (oEvent) {
                 var iId, sUrl;
-                if(oEvent.getSource().getBindingContext('viewModel') && oEvent.getSource().getBindingContext('viewModel').getObject()) {
+                if (oEvent.getSource().getBindingContext('viewModel') && oEvent.getSource().getBindingContext('viewModel').getObject()) {
                     iId = oEvent.getSource().getBindingContext('viewModel').getObject().id;
                     sUrl = oEvent.getSource().getBindingContext('viewModel').getObject().url;
                 }
@@ -180,7 +181,7 @@ sap.ui.define([
                     permissions: ['tabs'],
                     origins: ["https://*/*", "http://*/*"]
                 }, function (result) {
-                    if(result) {
+                    if (result) {
                         this.getView().byId('ui5Switch').setState(true);
                     }
                     this._getUI5Urls();
