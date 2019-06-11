@@ -28,7 +28,8 @@ sap.ui.define([
                 aggCntFunction: false
             };
             this.__customMatcher = {
-                parent: false
+                parent: false,
+                itemBinding: false
             };
         }
     });
@@ -65,14 +66,16 @@ sap.ui.define([
                 });
             }
         }
-        return this;
-    };
 
-    PageBuilder.prototype.addBindingFunction = function () {
-        if (!this.__dependencies.some(dep => dep.paraDep === 'BindingPath')) {
-            this.__dependencies.push({asyncDep: 'sap/ui/test/matchers/BindingPath', paraDep: 'BindingPath'});
+        if (this.__customMatcher.itemBinding) {
+            if (!this.__dependencies.some(dep => dep.paraDep === 'ItemBindingMatcher')) {
+                this.__dependencies.push({
+                    asyncDep: this.__namespace.replace(/\./g, '/') + '/<testPath>/' + 'customMatcher/ItemBindingMatcher',
+                    paraDep: 'ItemBindingMatcher'
+                });
+                this.__assertions.bindingFunction = true;
+            }
         }
-        this.__assertions.bindingFunction = true;
         return this;
     };
 
@@ -190,7 +193,7 @@ sap.ui.define([
             }
 
             if (this.__actions.press && this.__actions.enterText) {
-                aCode[aCode.length - 1] = Array(5).join('\t') + '},\n'
+                aCode[aCode.length - 1] = Array(5).join('\t') + '},\n';
             }
 
             if (this.__actions.enterText) {
@@ -198,9 +201,9 @@ sap.ui.define([
             }
 
             if (Object.values(this.__assertions).filter(el => el).length > 0) {
-                aCode.push(Array(4).join('\t') + '},\n')
+                aCode.push(Array(4).join('\t') + '},\n');
             } else {
-                aCode.push(Array(4).join('\t') + '}\n')
+                aCode.push(Array(4).join('\t') + '}\n');
             }
         }
 
@@ -233,7 +236,7 @@ sap.ui.define([
 
             aCode[aCode.length - 1] = aCode[aCode.length - 1].replace(/,\n\s*$/, '');
 
-            aCode.push(Array(4).join('\t') + '}\n')
+            aCode.push(Array(4).join('\t') + '}\n');
         }
         aCode.push(Array(3).join('\t') + '}\n');
         aCode.push(Array(2).join('\t') + '});\n');
@@ -255,7 +258,8 @@ sap.ui.define([
         if (this.__assertions.bindingFunction) {
             aCode.push(Array(6).join('\t') + 'if (oMatchProperties.bndg_cntxt && oMatchProperties.bndg_cntxt.length > 0) {\n');
             aCode.push(Array(7).join('\t') + 'oMatchProperties.bndg_cntxt.forEach(function(el) {\n');
-            aCode.push(Array(8).join('\t') + ' checkObject.matchers.push(new BindingPath({modelName: el.contextName, propertyPath: el.contextAttr}));\n');
+            aCode.push(Array(8).join('\t') + ' checkObject.matchers.push(new ItemBindingMatcher({modelName: el.contextName, propertyName: el.contextAttr, propertyValue: el.targetValue}));\n');
+            aCode.push(Array(7).join('\t') + '});\n');
             aCode.push(Array(6).join('\t') + '}\n');
         }
         if (this.__customMatcher.parent) {
@@ -298,7 +302,8 @@ sap.ui.define([
         if (this.__assertions.bindingFunction) {
             aCode.push(Array(6).join('\t') + 'if (oAggProperties.bndg_cntxt && oAggProperties.bndg_cntxt.length > 0) {\n');
             aCode.push(Array(7).join('\t') + 'oAggProperties.bndg_cntxt.forEach(function(el) {\n');
-            aCode.push(Array(8).join('\t') + ' checkObject.matchers.push(new BindingPath({modelName: el.contextName, propertyPath: el.contextAttr}));\n');
+            aCode.push(Array(8).join('\t') + ' checkObject.matchers.push(new ItemBindingMatcher({modelName: el.contextName, propertyName: el.contextAttr, propertyValue: el.targetValue}));\n');
+            aCode.push(Array(7).join('\t') + '});\n');
             aCode.push(Array(6).join('\t') + '}\n');
         }
         if (this.__customMatcher.parent) {
@@ -345,7 +350,8 @@ sap.ui.define([
         if (this.__assertions.bindingFunction) {
             aCode.push(Array(6).join('\t') + 'if (oAggProperties.bndg_cntxt && oAggProperties.bndg_cntxt.length > 0) {\n');
             aCode.push(Array(7).join('\t') + 'oAggProperties.bndg_cntxt.forEach(function(el) {\n');
-            aCode.push(Array(8).join('\t') + ' checkObject.matchers.push(new BindingPath({modelName: el.contextName, propertyPath: el.contextAttr}));\n');
+            aCode.push(Array(8).join('\t') + ' checkObject.matchers.push(new ItemBindingMatcher({modelName: el.contextName, propertyName: el.contextAttr, propertyValue: el.targetValue}));\n');
+            aCode.push(Array(7).join('\t') + '});\n');
             aCode.push(Array(6).join('\t') + '}\n');
         }
         if (this.__customMatcher.parent) {
@@ -392,7 +398,8 @@ sap.ui.define([
         if (this.__assertions.bindingFunction) {
             aCode.push(Array(6).join('\t') + 'if (oAggProperties.bndg_cntxt && oAggPropertiess.bndg_cntxt.length > 0) {\n');
             aCode.push(Array(7).join('\t') + 'oAggProperties.bndg_cntxt.forEach(function(el) {\n');
-            aCode.push(Array(8).join('\t') + ' checkObject.matchers.push(new BindingPath({modelName: el.contextName, propertyPath: el.contextAttr}));\n');
+            aCode.push(Array(8).join('\t') + ' checkObject.matchers.push(new ItemBindingMatcher({modelName: el.contextName, propertyName: el.contextAttr, propertyValue: el.targetValue}));\n');
+            aCode.push(Array(7).join('\t') + '});\n');
             aCode.push(Array(6).join('\t') + '}\n');
         }
         if (this.__customMatcher.parent) {
@@ -431,7 +438,7 @@ sap.ui.define([
         aCode.push(Array(6).join('\t') + 'if (oActionProperties.controlType) {actionObject.controlType = oActionProperties.controlType;}\n');
         aCode.push(Array(6).join('\t') + 'actionObject.visible = true;\n');
         aCode.push(Array(6).join('\t') + 'actionObject.actions = [new EnterText({text: oActionProperties.actionText})];\n');
-        aCode.push(Array(6).join('\t') + 'actionObject.success = function() {Opa5.assert.ok(true, "Text: " + oActionProperties.actionText + ", successfully inserted.")};\n');
+        aCode.push(Array(6).join('\t') + 'actionObject.success = function() {Opa5.assert.ok(true, "Text: " + oActionProperties.actionText + ", successfully inserted.");};\n');
         aCode.push(Array(6).join('\t') + 'actionObject.errorMessage = "Failed to insert " + oActionProperties.actionText;\n');
         aCode.push(Array(6).join('\t') + 'actionObject.matchers =\n');
         aCode.push(Array(6).join('\t') + 'oActionProperties.attributes ?\n');
@@ -441,7 +448,8 @@ sap.ui.define([
         if (this.__assertions.bindingFunction) {
             aCode.push(Array(6).join('\t') + 'if (oActionProperties.bndg_cntxt && oActionProperties.bndg_cntxt.length > 0) {\n');
             aCode.push(Array(7).join('\t') + 'oActionProperties.bndg_cntxt.forEach(function(el) {\n');
-            aCode.push(Array(8).join('\t') + ' actionObject.matchers.push(new BindingPath({modelName: el.contextName, propertyPath: el.contextAttr}));\n');
+            aCode.push(Array(8).join('\t') + 'actionObject.matchers.push(new ItemBindingMatcher({modelName: el.contextName, propertyName: el.contextAttr, propertyValue: el.targetValue}));\n');
+            aCode.push(Array(7).join('\t') + '});\n');
             aCode.push(Array(6).join('\t') + '}\n');
         }
         if (this.__customMatcher.parent) {
@@ -485,7 +493,8 @@ sap.ui.define([
         if (this.__assertions.bindingFunction) {
             aCode.push(Array(6).join('\t') + 'if (oActionProperties.bndg_cntxt && oActionProperties.bndg_cntxt.length > 0) {\n');
             aCode.push(Array(7).join('\t') + 'oActionProperties.bndg_cntxt.forEach(function(el) {\n');
-            aCode.push(Array(8).join('\t') + ' actionObject.matchers.push(new BindingPath({modelName: el.contextName, propertyPath: el.contextAttr}));\n');
+            aCode.push(Array(8).join('\t') + 'actionObject.matchers.push(new ItemBindingMatcher({modelName: el.contextName, propertyName: el.contextAttr, propertyValue: el.targetValue}));\n');
+            aCode.push(Array(7).join('\t') + '});\n');
             aCode.push(Array(6).join('\t') + '}\n');
         }
         if (this.__customMatcher.parent) {
