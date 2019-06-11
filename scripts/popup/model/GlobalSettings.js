@@ -90,9 +90,9 @@ sap.ui.define([
         chrome.storage.local.get(["settings"], function (data) {
             this._oModel.setProperty("/settings", JSON.parse(JSON.stringify(this._oModel.getProperty("/settingsDefault"))));
             if (data && data.settings) {
-                this._oModel.setProperty("/settings/defaultLanguage", data.settings.defaultReplayType);
+                this._oModel.setProperty("/settings/defaultReplayType", data.settings.defaultReplayType);
                 this._oModel.setProperty("/settings/defaultLanguage", data.settings.defaultLanguage);
-                this._oModel.setProperty("/settings/defaultLanguage", data.settings.defaultNatLanguage);
+                this._oModel.setProperty("/settings/defaultNatLanguage", data.settings.defaultNatLanguage);
             }
         }.bind(this));
     };

@@ -314,7 +314,7 @@ sap.ui.define([
         }
         this.getModel("navModel").setProperty("/elements", aElement);
         //Here the test should work automatically
-        var iReplayType = this.getModel('settings').getProperty('/settings/defaultReplayType');
+        var iReplayType = this.getModel('settings').getProperty('/settings/replayType');
         if (iReplayType !== 0) {
             const timeout = 500 * iReplayType;
             setTimeout(this.onReplaySingleStep.bind(this), timeout, {});
