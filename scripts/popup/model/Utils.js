@@ -1,5 +1,8 @@
+/* eslint-disable require-jsdoc */
 sap.ui.define([
 ], function(){
+    "use strict";
+
     var Utils = {
         statics: {
             stepTypes: [
@@ -14,7 +17,7 @@ sap.ui.define([
             assertTypes: [
                 {key: "ATTR", text: "Attributes"},
                 {key: "EXS", text: "Exists"},
-                {key: "MTC", text: "Matching Count"},
+                {key: "MTC", text: "Matching Count"}
             ],
             selTypes: [
                 {key: "UI5", text: "UI5-Identifier"},
@@ -42,7 +45,7 @@ sap.ui.define([
             ]
         },
         stringifyAttributes: function (script) {
-            'use strict';
+
             var sScript = JSON.stringify(script);
             const regex = /\"(\w+)(\s+)?\":/gm;
             let m;
@@ -130,4 +133,4 @@ sap.ui.define([
     };
 
     return Utils;
-});
+}, /* bExport */ true);

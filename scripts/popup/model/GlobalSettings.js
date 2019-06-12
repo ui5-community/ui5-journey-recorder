@@ -41,11 +41,11 @@ sap.ui.define([
                     {
                         key: "OPA",
                         text: "OPA5"
-                    },
+                    }/*,
                     {
                         key: "NAT",
                         text: "Natural (Experimental)"
-                    }
+                    }*/
                 ],
                 naturalLanguages: [
                     {

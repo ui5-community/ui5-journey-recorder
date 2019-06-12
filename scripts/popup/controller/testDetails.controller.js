@@ -34,6 +34,7 @@ sap.ui.define([
     "use strict";
 
     var TestDetails = Controller.extend("com.ui5.testing.controller.TestDetails", {
+        utils: Utils,
         _oModel: new JSONModel({
             codes: [],
             test: {},
@@ -202,7 +203,7 @@ sap.ui.define([
         var oElement = aEvent[this._iCurrentStep];
 
         return new Promise(function (resolve) {
-            if (oElement.property.type === "ACT") {
+            if (oElement && oElement.property.type === "ACT") {
                 this._getFoundElements(oElement).then(function (aElements) {
                     if (aElements.length === 0) {
                         resolve({
@@ -216,7 +217,7 @@ sap.ui.define([
                         element: oElement
                     }).then(resolve);
                 });
-            } else if (oElement.property.type === "ASS") {
+            } else if (oElement && oElement.property.type === "ASS") {
                 this._getFoundElements(oElement).then(function (aElements) {
                     if (aElements.length === 1) {
                         resolve({
@@ -274,7 +275,7 @@ sap.ui.define([
     };
 
     TestDetails.prototype.checkRecordContinuing = function() {
-        	var dialog = new Dialog({
+            var dialog = new Dialog({
 				title: 'Start Recording?',
 				type: 'Message',
 				content: new Text({ text: 'Do you want to add additional test steps?' }),
@@ -292,10 +293,12 @@ sap.ui.define([
 				endButton: new Button({
 					text: 'No',
 					tooltip: 'No further actions',
+					// eslint-disable-next-line require-jsdoc
 					press: function () {
 						dialog.close();
 					}
 				}),
+				// eslint-disable-next-line require-jsdoc
 				afterClose: function() {
 					dialog.destroy();
 				}
@@ -315,7 +318,7 @@ sap.ui.define([
         this.getModel("navModel").setProperty("/elements", aElement);
         //Here the test should work automatically
         var iReplayType = this.getModel('settings').getProperty('/settings/defaultReplayType');
-        if (iReplayType !== 0) {
+        if (iReplayType !== "0") {
             const timeout = 500 * iReplayType;
             setTimeout(this.onReplaySingleStep.bind(this), timeout, {});
         }
@@ -555,7 +558,7 @@ sap.ui.define([
             vBlob = new Blob([JSON.stringify(oSave, null, 2)], {
                 type: "octet/stream"
             }),
-            vName = 'export.json',
+            vName = Utils.replaceUnsupportedFileSigns(this._oModel.getProperty('/codeSettings/testName'), '_') + '.json',
             vUrl = window.URL.createObjectURL(vBlob);
         vLink.setAttribute('href', vUrl);
         vLink.setAttribute('download', vName);

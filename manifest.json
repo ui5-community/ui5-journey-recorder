@@ -18,12 +18,12 @@
     ],
     "browser_action": {
         "default_title": "UI5 Test-Recorder",
-        "default_icon": "bilder/Logo_active.png"
+        "default_icon": "bilder/rework45.png"
     },
     "icons": {
-        "16": "bilder/Logo_active.png",
-        "48": "bilder/Logo_active.png",
-        "128": "bilder/Logo_active.png"
+        "16": "bilder/rework45.png",
+        "48": "bilder/rework45.png",
+        "128": "bilder/rework45.png"
     },
     "optional_permissions": [
         "tabs",
