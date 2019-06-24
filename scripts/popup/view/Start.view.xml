@@ -20,7 +20,7 @@
                                    design="Horizontal">
                         <Table id="tabList"
                                noDataText="{i18n>noUI5ItemFound}"
-                               items="{path: 'viewModel>/urls', templateShareable: true}">
+                               items="{path: 'viewModel>/urls', templateShareable: false}">
                             <headerToolbar>
                                 <Toolbar>
                                     <Title text="Tabs with UI5 applications ready for recording"/>
@@ -63,7 +63,7 @@
                                    text="{i18n>replayTest}"
                                    design="Horizontal">
                         <Table id="recordList"
-                               items="{ path: 'viewModel>/items', sorter: { path: 'createdAt', descending: true  }, templateShareable: true }">
+                               items="{ path: 'viewModel>/items', sorter: { path: 'createdAt', descending: true  }, templateShareable: false }">
                             <headerToolbar>
                                 <Toolbar>
                                     <Title text="Latest records for replay"/>

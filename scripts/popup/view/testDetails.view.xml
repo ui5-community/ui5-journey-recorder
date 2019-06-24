@@ -62,7 +62,7 @@
                                 </Toolbar>
                             </headerToolbar>
                             <content>
-                                <Table fixedLayout="false" id="tblPerformedSteps" inset="false" items="{path: 'navModel>/elements', templateShareable: true}" noDataText="{i18n>notFoundTitle}">
+                                <Table fixedLayout="false" id="tblPerformedSteps" inset="false" items="{path: 'navModel>/elements', templateShareable: false}" noDataText="{i18n>notFoundTitle}">
                                     <columns>
                                         <Column visible="{viewModel>/replayMode}">
                                             <Text text="Play" />
@@ -87,14 +87,14 @@
                                         <ColumnListItem>
                                             <cells>
                                                 <Button visible="{= ${navModel>showPlay} &amp;&amp; ${viewModel>/replayMode}}" icon="sap-icon://play" type="Accept" press="onReplaySingleStep" />
-                                                <Select items="{path: 'constants>/stepTypes', templateShareable: true}" enabled="false" selectedKey="{navModel>property/type}">
+                                                <Select items="{path: 'constants>/stepTypes', templateShareable: false}" enabled="false" selectedKey="{navModel>property/type}">
                                                     <items>
                                                         <core:Item text="{constants>text}" key="{constants>key}" />
                                                     </items>
                                                 </Select>
                                                 <HBox width="100%">
                                                     <HBox width="100%" visible="{= ( ${viewModel>property/type} === 'ACT' ) }">
-                                                        <Select enabled="false" items="{path: 'constants>/stepActions', templateShareable: true}" width="100%" selectedKey="{navModel>property/actKey}">
+                                                        <Select enabled="false" items="{path: 'constants>/stepActions', templateShareable: false}" width="100%" selectedKey="{navModel>property/actKey}">
                                                             <items>
                                                                 <core:Item text="{constants>text}" key="{constants>key}" />
                                                             </items>
@@ -105,7 +105,7 @@
                                                         <Input editable="false" value="{viewModel>domChildWith}" />
                                                     </HBox>
                                                     <HBox width="100%" visible="{= ( ${viewModel>property/type} === 'ASS' ) }">
-                                                        <Select items="{path: 'constants>/assertTypes', templateShareable: true}" enabled="false" selectedKey="{navModel>property/assKey}">
+                                                        <Select items="{path: 'constants>/assertTypes', templateShareable: false}" enabled="false" selectedKey="{navModel>property/assKey}">
                                                             <items>
                                                                 <core:Item text="{constants>text}" key="{constants>key}" />
                                                             </items>
