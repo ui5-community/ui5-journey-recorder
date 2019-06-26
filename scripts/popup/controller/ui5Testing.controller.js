@@ -937,11 +937,16 @@ sap.ui.define([
 
     TestHandler.prototype.onTypeChange = function () {
         this.byId("atrElementsPnl").setExpanded(false);
+		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+		//keep the filter attributes selected before and reapply them afterwards..
+        var aFilter = this._oModel.getProperty("/element/attributeFilter");
         this._adjustAttributeDefaultSetting(this._oModel.getProperty("/element/item")).then(function (resolve, reject) {
             //if we are within support assistant mode, run it at least once..
             if (this._oModel.getProperty("/element/property/type") === "SUP") {
                 this._runSupportAssistantForSelElement();
             }
+			//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+            this._oModel.setProperty("/element/attributeFilter", aFilter);
 
             //update preview
             this._updatePreview();
@@ -1131,6 +1136,9 @@ sap.ui.define([
             }
             sName = sName.substr(0, 1).toLowerCase() + sName.substr(1);
 
+			//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+			//replace everything, which is not so nice...
+            sName = sName.replace(/[^0-9a-zA-Z_]/g, "");
             //check if the technical name is already given
             this._oModel.setProperty("/element/property/technicalName", sName);
 
@@ -1173,6 +1181,24 @@ sap.ui.define([
                             }
                         }
                     }
+					//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+					/*@Adrian - Start*/
+					if (!jQuery.isEmptyObject(oItem.bindingContext)) {
+                        for (var sAttr in oItem.bindingContext) {
+                            if (typeof oItem.bindingContext[sAttr] !== "object") {
+                                aList.push({
+                                    type: "BNDX",
+                                    typeTxt: "Binding-Context",
+                                    bdgPath: sAttr,
+                                    attribute: sAttr,
+                                    importance: oItem.uniquness.bindingContext[sAttr],
+                                    value: oItem.bindingContext[sAttr],
+                                    valueToString: oItem.bindingContext[sAttr]
+                                });
+                            }
+                        }
+                    }
+					/*@Adrian - End*/
                     if (!jQuery.isEmptyObject(oItem.property)) {
                         for (var sAttr in oItem.property) {
                             if (typeof oItem.property[sAttr] !== "object") {
@@ -1188,6 +1214,9 @@ sap.ui.define([
                             }
                         }
                     }
+	
+					//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+					/*Timo will uncomment this stuff, i will need it for OPA5*/
                     if (!jQuery.isEmptyObject(oItem.context)) {
                         for (var sModel in oItem.context) {
                             for (var sAttribute in oItem.context[sModel]) {

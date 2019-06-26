@@ -311,45 +311,8 @@ sap.ui.define([
                     return aReturn;
                 }.bind(this)
             },
-            "BDG": {
-                criteriaKey: "BDG",
-                criteriaText: "Binding-Context",
-                criteriaSpec: function (oItem) {
-                    var aReturn = [];
-                    for (var sModel in oItem.context) {
-                        for (var sProperty in oItem.context[sModel]) {
-                            if (sProperty === "__metadata") {
-                                continue;
-                            }
-                            aReturn.push({
-                                subCriteriaType: sModel + "/" + sProperty,
-                                subCriteriaText: sModel + "/" + sProperty,
-                                code: function (sModel, sProperty, sValue) {
-                                    var oReturn = { context: {} };
-                                    oReturn.context[sModel] = {};
-                                    oReturn.context[sModel][sProperty] = sValue;
-                                    return oReturn;
-                                }.bind(this, sModel, sProperty),
-                                value: function (sModel, sProperty, oItem) {
-                                    return oItem.context[sModel][sProperty];
-                                }.bind(this, sModel, sProperty),
-                                getUi5Spec: function (oAdjust, oItem, iValue) {
-                                    return ""; //not really possible right?
-                                },
-                                assert: function (sModel, sProperty) {
-                                    return "context." + sModel + "." + sProperty;
-                                }.bind(this, sModel, sProperty),
-                                assertField: function (sValue) {
-                                    return {
-                                        type: "context"
-                                    };
-                                }
-                            });
-                        }
-                    }
-                    return aReturn;
-                }.bind(this)
-            },
+			//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+			/*@Adrian - Start
             "MODL": {
                 criteriaKey: "MODL",
                 criteriaText: "Model-Keys (Specific)",
@@ -403,63 +366,96 @@ sap.ui.define([
                                     });
                                 }
                             }
-                        }*/
+                        }//
                     }
                     return aReturn;
                 }
             },
-            "BNDG": {
-                criteriaKey: "BNDG",
+            @Adrian - End*/            
+            
+            "BNDX": {
+                criteriaKey: "BNDX",
+                //criteriaText: "Binding Context",
                 criteriaText: "Binding Path",
                 criteriaSpec: function (oItem) {
                     var aReturn = [];
-                    for (var sBinding in oItem.binding) {
+                    for (var sBinding in oItem.bindingContext) {
                         aReturn.push({
                             subCriteriaType: sBinding,
                             subCriteriaText: sBinding,
-                            bindingRef: oItem.binding[sBinding],
+                            bindingRef: oItem.bindingContext[sBinding],
                             code: function (sBinding, sValue) {
-                                var oReturn = { binding: {} };
-                                oReturn.binding[sBinding] = {
-                                    path: sValue
-                                };
+                                var oReturn = { bindingContext: {} };
+                                oReturn.bindingContext[sBinding] = sValue;
                                 return oReturn;
                             }.bind(this, sBinding),
                             getUi5Spec: function (oAdjust, oItem, iValue) {
-                                //restriction: maximum one binding path apperently?
-                                iValue = typeof iValue === "undefined" ? this.value(oItem) : iValue;
+                                oAdjust.bindingPath = typeof oAdjust.bindingPath != "undefined" ? oAdjust.bindingPath : {};
+                                oAdjust.bindingPath = {
+                                    path: this.bindingRef
+                                };
 
-                                if (this.bindingRef.model === "i18n") {
-                                    oAdjust.I18NText = typeof oAdjust.I18NText != "undefined" ? oAdjust.I18NText : {};
-                                    oAdjust.I18NText = {
-                                        propertyName: this.subCriteriaType,
-                                        key: iValue
-                                    };
-                                } else {
-                                    oAdjust.bindingPath = typeof oAdjust.bindingPath != "undefined" ? oAdjust.bindingPath : {};
-                                    oAdjust.bindingPath = {
-                                        propertyPath: this.subCriteriaType,
-                                        path: iValue,
-                                        model: this.bindingRef.model
-                                    };
+                                if (this.subCriteriaType !== "undefined") {
+                                    oAdjust.bindingPath.model = this.subCriteriaType;
                                 }
                             },
                             value: function (subCriteriaType, oItem) {
-                                return oItem.binding[subCriteriaType].path;
+                                return oItem.bindingContext[subCriteriaType];
                             }.bind(this, sBinding),
                             assert: function (subCriteriaType) {
-                                return "binding." + subCriteriaType + ".path";
+                                return "bindingContext." + subCriteriaType;
                             }.bind(this, sBinding),
                             assertField: function (sValue) {
                                 return {
-                                    type: "binding"
-                                };
+                                    type: "bindingContext"
+                                }
                             }
                         });
                     }
                     return aReturn;
                 }
             },
+            "BDG": {
+                criteriaKey: "BDG",
+                //criteriaText: "Model-Context Values",
+                criteriaText: "Binding Context",
+                criteriaSpec: function (oItem) {
+                    var aReturn = [];
+                    for (var sModel in oItem.context) {
+                        for (var sProperty in oItem.context[sModel]) {
+                            if (sProperty === "__metadata") {
+                                continue;
+                            }
+                            aReturn.push({
+                                subCriteriaType: sModel + "/" + sProperty,
+                                subCriteriaText: sModel + "/" + sProperty,
+                                code: function (sModel, sProperty, sValue) {
+                                    var oReturn = { context: {} };
+                                    oReturn.context[sModel] = {};
+                                    oReturn.context[sModel][sProperty] = sValue;
+                                    return oReturn;
+                                }.bind(this, sModel, sProperty),
+                                value: function (sModel, sProperty, oItem) {
+                                    return oItem.context[sModel][sProperty];
+                                }.bind(this, sModel, sProperty),
+                                getUi5Spec: function (oAdjust, oItem, iValue) {
+                                    return ""; //not really possible right?
+                                },
+                                assert: function (sModel, sProperty) {
+                                    return "context." + sModel + "." + sProperty;
+                                }.bind(this, sModel, sProperty),
+                                assertField: function (sValue) {
+                                    return {
+                                        type: "context"
+                                    }
+                                }
+                            });
+                        }
+                    }
+                    return aReturn;
+                }.bind(this)
+            },
+            
             "ATTR": {
                 criteriaKey: "ATTR",
                 criteriaText: "Attributes",
@@ -508,43 +504,62 @@ sap.ui.define([
                 getItem: function (oItem) { return oItem; },
                 getScope: function (oScope) { return oScope; },
                 getAssertScope: function () { return ""; },
-                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["MODL"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
+            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["MODL"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
+                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["VIW"]]
             },
             "VIW": {
                 getItem: function (oItem) { return oItem.view; },
                 getScope: function (oScope) { oScope.view = oScope.view ? oScope.view : {}; return oScope.view; },
                 getAssertScope: function () { return "view."; },
-                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
+            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
+                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
             "PRT": {
                 getItem: function (oItem) { return oItem.parent; },
                 getAssertScope: function () { return "parent."; },
                 getScope: function (oScope) { oScope.parent = oScope.parent ? oScope.parent : {}; return oScope.parent; },
-                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MODL"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
+                
+            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
+                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
             "PRT2": {
                 getItem: function (oItem) { return oItem.parentL2; },
                 getAssertScope: function () { return "parentL2."; },
                 getScope: function (oScope) { oScope.parentL2 = oScope.parentL2 ? oScope.parentL2 : {}; return oScope.parentL2; },
-                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MODL"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
+                
+            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
+                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
             "PRT3": {
                 getItem: function (oItem) { return oItem.parentL3; },
                 getAssertScope: function () { return "parentL3."; },
                 getScope: function (oScope) { oScope.parentL3 = oScope.parentL3 ? oScope.parentL3 : {}; return oScope.parentL3; },
-                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MODL"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
+                
+            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
+                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
             "PRT4": {
                 getItem: function (oItem) { return oItem.parentL4; },
                 getAssertScope: function () { return "parentL4."; },
                 getScope: function (oScope) { oScope.parentL4 = oScope.parentL4 ? oScope.parentL4 : {}; return oScope.parentL4; },
-                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MODL"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
+                
+            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
+                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
             "PLBL": {
                 getItem: function (oItem) { return oItem.label; },
                 getAssertScope: function () { return "label."; },
                 getScope: function (oScope) { oScope.label = oScope.label ? oScope.label : {}; return oScope.label; },
-                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MODL"], this._criteriaTypes["MTA"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
+                
+            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
+                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
             "MCMB": {
                 getItem: function (oItem) {
@@ -552,13 +567,20 @@ sap.ui.define([
                 },
                 getScope: function (oScope) { oScope.itemdata = oScope.itemdata ? oScope.itemdata : {}; return oScope.itemdata; },
                 getAssertScope: function () { return "itemdata."; },
-                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
+                
+            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
+                criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             }
         };
 
         this._oElementMix = {
             "sap.m.StandardListItem": {
                 defaultAttributes: function (oItem) {
+	            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                    if (!oItem.itemdata || !oItem.itemdata.identifier || !oItem.itemdata.identifier.ui5Id) {
+                        return [];
+                    }
                     if (!oItem.itemdata.identifier.ui5Id.length) {
                         return [];
                     }
@@ -595,15 +617,15 @@ sap.ui.define([
                 defaultAttributes: function (oItem) {
                     var aReturn = [];
                     if (oItem.binding.text) {
-                        aReturn.push({ attributeType: "OWN", criteriaType: "BNDG", subCriteriaType: "text" });
+                        aReturn.push({ attributeType: "OWN", criteriaType: "BDG", subCriteriaType: "text" });
                     }
                     if (oItem.binding.icon) {
-                        aReturn.push({ attributeType: "OWN", criteriaType: "BNDG", subCriteriaType: "icon" });
+                        aReturn.push({ attributeType: "OWN", criteriaType: "BDG", subCriteriaType: "icon" });
                     } else if (oItem.property.icon) {
                         aReturn.push({ attributeType: "OWN", criteriaType: "ATTR", subCriteriaType: "icon" });
                     }
                     if (oItem.binding.tooltip) {
-                        aReturn.push({ attributeType: "OWN", criteriaType: "BNDG", subCriteriaType: "tooltip" });
+                        aReturn.push({ attributeType: "OWN", criteriaType: "BDG", subCriteriaType: "tooltip" });
                     }
                     return aReturn;
                 }
@@ -615,14 +637,24 @@ sap.ui.define([
             "sap.ui.core.Item": {
                 cloned: true,
                 defaultAttributes: function (oItem) {
-                    return [{ attributeType: "OWN", criteriaType: "ATTR", subCriteriaType: "key" }];
+	            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                    //return [{ attributeType: "OWN", criteriaType: "ATTR", subCriteriaType: "key" }];
+                    //the KEY attribute is better in case the item is bound against a JSON list binding..
+                    var bPropertyIsBetter = true;
+                    if (oItem.binding.key) {
+                        //for odata we will access the actual key...
+                        if (oItem.binding.key.jsonBinding === false ) {
+                            bPropertyIsBetter = false;
+                        }
+                    }
+                    return [{ attributeType: "OWN", criteriaType: bPropertyIsBetter ? "ATTR" : "BDG", subCriteriaType: "key" }];
                 }
             },
             "sap.m.Link": {
                 defaultAttributes: function (oItem) {
                     //if the text is static --> take the binding with priority..
                     if (oItem.binding && oItem.binding["text"] && oItem.binding["text"].static === true) {
-                        return [{ attributeType: "OWN", criteriaType: "BNDG", subCriteriaType: "text" }];
+                        return [{ attributeType: "OWN", criteriaType: "BDG", subCriteriaType: "text" }];
                     } else if (oItem.property.text && oItem.property.text.length > 0) {
                         return [{ attributeType: "OWN", criteriaType: "ATTR", subCriteriaType: "text" }];
                     } else if (oItem.property.text && oItem.property.text.length > 0) {

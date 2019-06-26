@@ -408,7 +408,6 @@ sap.ui.define([
                         contextAttr: contextAttribute
                     };
                     objectMatcher['BDG'].push(infos);
-                    console.log('Created binding information: ' + JSON.stringify(infos));
                     break;
                 case 'AGG':
                     break; //need to be because this are no relevant object infos
