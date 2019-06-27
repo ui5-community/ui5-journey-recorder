@@ -84,9 +84,9 @@ sap.ui.define([
                 attrType: []
             },
             statics: {
-                supportRules: [],
+                supportRules: []
             },
-            selectMode: true, //are we within selection or within code check
+            selectMode: true, //are we witshin selection or within code check
             completeCode: "",
             completeCodeSaved: "",
             ratingOfAttributes: 3,
@@ -100,6 +100,9 @@ sap.ui.define([
         _bStarted: false,
         _sTestId: "",
 
+        /**
+         * 
+         */
         onInit: function () {
             this._getCriteriaTypes();
             this._initMessagePopover();
@@ -202,11 +205,15 @@ sap.ui.define([
                     number: '{viewModel>importance}',
                     state: '{viewModel>numberState}',
                     unit: '%'
-                }),
+                })
             ]
         });
         this._oTableContext = new sap.m.Table({
             mode: "MultiSelect",
+            /**
+             * 
+             * @param {*} oEvent 
+             */
             itemPress: function (oEvent) {
                 if (oEvent.getSource().setSelected) {
                     oEvent.getSource().setSelected(oEvent.getSource().getSelected() === false);
@@ -221,7 +228,7 @@ sap.ui.define([
                 new sap.m.Column({
                     visible: '{viewModel>/element/itemCloned}',
                     header: new sap.m.Text({text: "Expected Quality"})
-                }),
+                })
             ],
             items: {
                 path: 'viewModel>/element/possibleContext',
@@ -323,13 +330,13 @@ sap.ui.define([
 
                 var sAssertFunc = "";
                 if (oAssert.operatorType == 'EQ') {
-                    sAssertFunc = 'eql'
+                    sAssertFunc = 'eql';
                 } else if (oAssert.operatorType === 'NE') {
-                    sAssertFunc = 'notEql'
+                    sAssertFunc = 'notEql';
                 } else if (oAssert.operatorType === 'CP') {
-                    sAssertFunc = 'contains'
+                    sAssertFunc = 'contains';
                 } else if (oAssert.operatorType === 'NP') {
-                    sAssertFunc = 'notContains'
+                    sAssertFunc = 'notContains';
                 }
 
 
@@ -338,7 +345,7 @@ sap.ui.define([
                 sAddCode += sAssertCode;
 
                 var oUI5Spec = {};
-                oAssertSpec.getUi5Spec(oUI5Spec, oElement.item, oAssert.criteriaValue)
+                oAssertSpec.getUi5Spec(oUI5Spec, oElement.item, oAssert.criteriaValue);
 
                 aReturnCodeSimple.push({
                     assertType: oAssert.operatorType,
@@ -380,7 +387,7 @@ sap.ui.define([
             assertCode: aReturnCodeSimple,
             assertMatchingCount: sAssertCount,
             assertScope: oAssertLocalScope
-        }
+        };
     };
 
     TestHandler.prototype._adjustBeforeSaving = function (oElement) {
@@ -532,6 +539,7 @@ sap.ui.define([
         for (var i = 0; i < aSubObjects.length; i++) {
             var sIdChild = aSubObjects[i].domChildWith;
             //check if sIdChild is part of our current "domChildWith"
+            // eslint-disable-next-line no-loop-func
             if (aRows.filter(function (e) {
                 return e.domChildWith === sIdChild;
             }).length === 0) {
@@ -570,7 +578,7 @@ sap.ui.define([
                     message: oReturn.messages.length ? oReturn.messages[0].description : "",
                     messages: oReturn.messages
                 });
-            }.bind(this));
+            });
         }.bind(this));
     };
 
@@ -588,7 +596,7 @@ sap.ui.define([
 
     TestHandler.prototype.onExplain = function (oEvent) {
         this._oMessagePopover.toggle(oEvent.getSource());
-    }
+    };
 
     //check if the data entered seems to be valid.. following checks are performed
     //(1) ID is used and generated
@@ -603,6 +611,10 @@ sap.ui.define([
                     icon: MessageBox.Icon.WARNING,
                     title: "There are open issues - Are you sure you want to save?",
                     actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+                    /**
+                     * 
+                     * @param {*} oAction 
+                     */
                     onClose: function (oAction) {
                         if (oAction === MessageBox.Action.OK) {
                             fnCallback();
@@ -612,7 +624,7 @@ sap.ui.define([
             } else {
                 fnCallback();
             }
-        }.bind(this))
+        });
     };
 
     TestHandler.prototype._updatePreview = function () {
@@ -650,11 +662,13 @@ sap.ui.define([
                     }
                 }
                 resolve(aItemsEnhanced);
-            }.bind(this))
-        }.bind(this));
+            });
+        });
     };
 
     TestHandler.prototype._getFoundElements = function () {
+        // Wieso das??
+        // eslint-disable-next-line no-undef
         var oDefinition = this._getSelectorDefinition(typeof oElement === "undefined" ? this._oModel.getProperty("/element") : oElement);
 
         return new Promise(function (resolve, reject) {
@@ -809,7 +823,6 @@ sap.ui.define([
         var sSelectorAttributesStringified = null;
         var sSelectorAttributesBtf = "";
         var oItem = oElement.item;
-        var sActType = oElement.property.actKey; //PRS|TYP
         var sSelectType = oElement.property.selectItemBy; //DOM | UI5 | ATTR
         var sSelectorExtension = oElement.property.domChildWith;
         var oSelectorUI5 = {};
@@ -937,11 +950,16 @@ sap.ui.define([
 
     TestHandler.prototype.onTypeChange = function () {
         this.byId("atrElementsPnl").setExpanded(false);
+		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+		//keep the filter attributes selected before and reapply them afterwards..
+        var aFilter = this._oModel.getProperty("/element/attributeFilter");
         this._adjustAttributeDefaultSetting(this._oModel.getProperty("/element/item")).then(function (resolve, reject) {
             //if we are within support assistant mode, run it at least once..
             if (this._oModel.getProperty("/element/property/type") === "SUP") {
                 this._runSupportAssistantForSelElement();
             }
+			//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+            this._oModel.setProperty("/element/attributeFilter", aFilter);
 
             //update preview
             this._updatePreview();
@@ -1131,6 +1149,9 @@ sap.ui.define([
             }
             sName = sName.substr(0, 1).toLowerCase() + sName.substr(1);
 
+			//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+			//replace everything, which is not so nice...
+            sName = sName.replace(/[^0-9a-zA-Z_]/g, "");
             //check if the technical name is already given
             this._oModel.setProperty("/element/property/technicalName", sName);
 
@@ -1173,6 +1194,24 @@ sap.ui.define([
                             }
                         }
                     }
+					//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+					/*@Adrian - Start*/
+					if (!jQuery.isEmptyObject(oItem.bindingContext)) {
+                        for (var sAttr in oItem.bindingContext) {
+                            if (typeof oItem.bindingContext[sAttr] !== "object") {
+                                aList.push({
+                                    type: "BNDX",
+                                    typeTxt: "Binding-Context",
+                                    bdgPath: sAttr,
+                                    attribute: sAttr,
+                                    importance: oItem.uniquness.bindingContext[sAttr],
+                                    value: oItem.bindingContext[sAttr],
+                                    valueToString: oItem.bindingContext[sAttr]
+                                });
+                            }
+                        }
+                    }
+					/*@Adrian - End*/
                     if (!jQuery.isEmptyObject(oItem.property)) {
                         for (var sAttr in oItem.property) {
                             if (typeof oItem.property[sAttr] !== "object") {
@@ -1188,6 +1227,9 @@ sap.ui.define([
                             }
                         }
                     }
+	
+					//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+					/*Timo will uncomment this stuff, i will need it for OPA5*/
                     if (!jQuery.isEmptyObject(oItem.context)) {
                         for (var sModel in oItem.context) {
                             for (var sAttribute in oItem.context[sModel]) {

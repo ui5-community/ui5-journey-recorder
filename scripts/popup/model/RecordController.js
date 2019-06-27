@@ -31,14 +31,20 @@ sap.ui.define([
 
     RecordController.prototype.focusPopup = function () {
         if (Communication.getOwnWindowId()) {
-            chrome.windows.update(Communication.getOwnWindowId(), { focused: true });
+            chrome.windows.update(Communication.getOwnWindowId(), {
+                focused: true
+            });
         }
     };
 
     RecordController.prototype.focusTargetWindow = function () {
-        chrome.tabs.update(this._sTabId, { "active": true }, function (tab) { });
+        chrome.tabs.update(this._sTabId, {
+            "active": true
+        }, function (tab) {});
         chrome.tabs.get(this._sTabId, function (tab) {
-            chrome.windows.update(tab.windowId, { focused: true });
+            chrome.windows.update(tab.windowId, {
+                focused: true
+            });
         });
     };
 
@@ -94,7 +100,9 @@ sap.ui.define([
             if (tabid === this._sTabId) {
                 //check if we are still injected..
                 if (this._bIsInjected === true) {
-                    chrome.tabs.sendMessage(this._sTabId, { type: "ui5-check-if-injected" }, function (response) {
+                    chrome.tabs.sendMessage(this._sTabId, {
+                        type: "ui5-check-if-injected"
+                    }, function (response) {
                         if (this._bIsInjected === true && (typeof response === "undefined" || typeof response.injected === "undefined")) {
                             this._bIsInjected = false;
                             //ok - we are not.. reset our promise, we have to inject again..
@@ -111,7 +119,9 @@ sap.ui.define([
     };
 
     RecordController.prototype._injectIntoTab = function (sTabId, sUrl) {
-        chrome.tabs.sendMessage(sTabId, { type: "ui5-check-if-injected" }, function (response) {
+        chrome.tabs.sendMessage(sTabId, {
+            type: "ui5-check-if-injected"
+        }, function (response) {
             this._sTabId = sTabId;
             this._sLastTabId = this._sTabId;
             this._sCurrentURL = sUrl;
@@ -155,10 +165,13 @@ sap.ui.define([
             this._oInitializedPromise = new Promise(function (resolve, reject) {
                 this._oInitPromiseResolve = resolve;
                 this._oInitPromiseReject = reject;
-                if(iId && sUrl) {
+                if (iId && sUrl) {
                     this._injectIntoTab(iId, sUrl);
                 } else {
-                    chrome.tabs.query({active: true, currentWindow: false}, function (tabs) {
+                    chrome.tabs.query({
+                        active: true,
+                        currentWindow: false
+                    }, function (tabs) {
                         var aData = [];
                         for (var i = 0; i < tabs.length; i++) {
                             if (iId && iId !== tabs[i].id) {

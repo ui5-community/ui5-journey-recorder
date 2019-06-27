@@ -20,7 +20,7 @@
                                    design="Horizontal">
                         <Table id="tabList"
                                noDataText="{i18n>noUI5ItemFound}"
-                               items="{path: 'viewModel>/urls'}">
+                               items="{path: 'viewModel>/urls', templateShareable: false}">
                             <headerToolbar>
                                 <Toolbar>
                                     <Title text="Tabs with UI5 applications ready for recording"/>
@@ -41,9 +41,11 @@
                                 <Column width="5rem" hAlign="Center">
                                     <Title text="{i18n>showTab}"/>
                                 </Column>
+                                <!--
                                 <Column width="5rem" hAlign="Center">
                                     <Title text="{i18n>recordMockdata}"/>
                                 </Column>
+                                -->
                             </columns>
                             <items>
                                 <ColumnListItem type="Navigation" press="onStartNewRecording">
@@ -51,7 +53,7 @@
                                         <core:Icon src="sap-icon://record" color="red"/>
                                         <Text text="{viewModel>url}"/>
                                         <Button icon="sap-icon://display" press="onDisplayPage"/>
-                                        <Button icon="sap-icon://database" press="onMockserver"/>
+                                        <!--<Button icon="sap-icon://database" press="onMockserver"/>-->
                                     </cells>
                                 </ColumnListItem>
                             </items>
@@ -61,7 +63,7 @@
                                    text="{i18n>replayTest}"
                                    design="Horizontal">
                         <Table id="recordList"
-                               items="{ path: 'viewModel>/items', sorter: { path: 'createdAt', descending: true  } }">
+                               items="{ path: 'viewModel>/items', sorter: { path: 'createdAt', descending: true  }, templateShareable: false }">
                             <headerToolbar>
                                 <Toolbar>
                                     <Title text="Latest records for replay"/>

@@ -2,11 +2,15 @@ sap.ui.define([
     "sap/ui/base/Object",
     "com/ui5/testing/model/opa5/PageBuilder",
     "com/ui5/testing/model/opa5/ParentMatcherBuilder",
+    "com/ui5/testing/model/opa5/ItemBindingMatcherBuilder",
     "com/ui5/testing/model/Utils"
-], function (UI5Object, PageBuilder, ParentMatcherBuilder, Utils) {
+], function (UI5Object, PageBuilder, ParentMatcherBuilder, ItemBindingMatcherBuilder, Utils) {
     "use strict";
     var OPA5CodeStrategy = UI5Object.extend("com.ui5.testing.model.OPA5CodeStrategy", {
         jsonKeyRegex: /\"(\w+)\"\:/g,
+        /**
+         *
+         */
         constructor: function () {
             this.__pages = {};
             this.__code = {
@@ -39,11 +43,11 @@ sap.ui.define([
 
         this.__createConstants(aElements);
 
-        this.__code.content.push('\n'
-            + Array(2).join('\t')
-            + 'QUnit.module("'
-            + oCodeSettings.testCategory
-            + '");\n\n');
+        this.__code.content.push('\n' +
+            Array(2).join('\t') +
+            'QUnit.module("' +
+            oCodeSettings.testCategory +
+            '");\n\n');
 
         this.__createAppStartStep(oCodeSettings);
 
@@ -70,7 +74,7 @@ sap.ui.define([
                 type: 'CODE',
                 order: order,
                 code: this.__pages[key].generate()
-            }
+            };
             aCodes.push(oCode);
         }.bind(this));
 
@@ -81,7 +85,7 @@ sap.ui.define([
                 type: 'CODE',
                 order: order,
                 code: this.__customMatcher[key].generate()
-            }
+            };
             aCodes.push(oCode);
         }.bind(this));
 
@@ -115,26 +119,28 @@ sap.ui.define([
                         properties.properties[sPK]['constant'] = constant.symbol;
                     } else {
                         var newConstant = this.__createConstant(sValue);
-                        this.__code.constants.push(newConstant)
+                        this.__code.constants.push(newConstant);
                         properties.properties[sPK]['constant'] = newConstant.symbol;
                     }
                 }
             }
         }.bind(this));
         if (this.__code.constants.length > 0) {
-            var constants = Array(2).join('\t')
-                + 'var'
-                + this.__code.constants
-                    .map(c => Array(3).join('\t') + c.symbol + ' = \"' + c.value + '\"')
-                    .reduce((a, b) => a + ',\n' + b, '')
-                    .substring(2)
-                + ';';
+            var constants = Array(2).join('\t') +
+                'var' +
+                this.__code.constants
+                .map(c => Array(3).join('\t') + c.symbol + ' = \"' + c.value + '\"')
+                .reduce((a, b) => a + ',\n' + b, '')
+                .substring(2) +
+                ';';
             this.__code.content.push(constants.replace(/var\t{2}/g, 'var ') + '\n');
         }
     };
 
     OPA5CodeStrategy.prototype.__createConstant = function (sString) {
-        var constant = {value: sString};
+        var constant = {
+            value: sString
+        };
         constant.symbol = typeof sString === "string" ? 'C_' + sString.replace(/[\s\-\.\:\/\%]+/g, '_') : 'C_' + JSON.stringify(sString);
         //check for ÜÄÖ
         constant.symbol = constant.symbol.replace(/[äÄ]+/g, 'ae');
@@ -201,7 +207,10 @@ sap.ui.define([
         }
 
         if (aMatching.some(a => a.criteriaType === 'BDG' || a.attributeType.indexOf('BDG') > -1)) {
-            this.__pages[viewName].addBindingFunction();
+            if (!this.__customMatcher.itemBinding) {
+                this.__pages[viewName].setCustomMatcher('itemBinding', true);
+                this.__customMatcher.itemBinding = new ItemBindingMatcherBuilder(namespace);
+            }
         }
 
         switch (oTestStep.property.type) {
@@ -252,7 +261,10 @@ sap.ui.define([
         for (var key in aSelectors) {
             switch (key) {
                 case 'id':
-                    endObject[key] = {value: aSelectors[key].id, isRegex: aSelectors[key].__isRegex};
+                    endObject[key] = {
+                        value: aSelectors[key].id,
+                        isRegex: aSelectors[key].__isRegex
+                    };
                     break;
                 case 'properties':
 
@@ -278,8 +290,8 @@ sap.ui.define([
             repl[m[1]] = m[0];
         }
         Object.keys(repl).forEach(key => {
-            sSelectorParts = sSelectorParts.replace(repl[key], key + ': ')
-        })
+            sSelectorParts = sSelectorParts.replace(repl[key], key + ': ');
+        });
         return sSelectorParts;
     };
 
@@ -396,7 +408,6 @@ sap.ui.define([
                         contextAttr: contextAttribute
                     };
                     objectMatcher['BDG'].push(infos);
-                    console.log('Created binding information: ' + JSON.stringify(infos));
                     break;
                 case 'AGG':
                     break; //need to be because this are no relevant object infos
@@ -452,18 +463,18 @@ sap.ui.define([
 
     OPA5CodeStrategy.prototype.__createAttrValue = function (oToken, objectMatcher) {
         var value = this.__code.constants.filter(function (c) {
-            if (typeof oToken.criteriaValue === "boolean") {
-                return c.value === oToken.criteriaValue;
-            } else {
-                return c.value === oToken.criteriaValue.trim();
-            }
-        })[0] ? this.__code.constants.filter(function (c) {
-            if (typeof oToken.criteriaValue === "boolean") {
-                return c.value === oToken.criteriaValue;
-            } else {
-                return c.value === oToken.criteriaValue.trim();
-            }
-        })[0].symbol : typeof oToken.criteriaValue === "boolean" ?
+                if (typeof oToken.criteriaValue === "boolean") {
+                    return c.value === oToken.criteriaValue;
+                } else {
+                    return c.value === oToken.criteriaValue.trim();
+                }
+            })[0] ? this.__code.constants.filter(function (c) {
+                if (typeof oToken.criteriaValue === "boolean") {
+                    return c.value === oToken.criteriaValue;
+                } else {
+                    return c.value === oToken.criteriaValue.trim();
+                }
+            })[0].symbol : typeof oToken.criteriaValue === "boolean" ?
             oToken.criteriaValue :
             this.__sanatize(oToken.criteriaValue.trim());
 
@@ -553,7 +564,9 @@ sap.ui.define([
     };
 
     OPA5CodeStrategy.prototype.__capitalize = function (sString) {
-        if (typeof sString !== 'string') return '';
+        if (typeof sString !== 'string') {
+            return '';
+        }
         return sString.charAt(0).toUpperCase() + sString.slice(1);
     };
 

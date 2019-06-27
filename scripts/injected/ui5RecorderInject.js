@@ -1,7 +1,7 @@
 var TestHandlerSingleton = null;
 
 document.addEventListener('do-ui5-init', function (oXMLEvent) {
-    //console.log("Handle event 'do-ui5-init'")
+    console.log("Handle event 'do-ui5-init'")
     if (TestHandlerSingleton) {
         TestHandlerSingleton.init();
     }
@@ -20,7 +20,7 @@ document.addEventListener("do-ui5-from-extension-to-inject", function (oXMLEvent
         delete oXMLEvent.detail.uuid;
     }
 
-    //console.log(`ui5RecorderInject: Handling event with uuid: ${uuid} and type: ${oXMLEvent.detail.type}`);
+    console.log(`ui5RecorderInject: Handling event with uuid: ${uuid} and type: ${oXMLEvent.detail.type}`);
 
     if (oXMLEvent.detail.type === "navigate") {
         //early exit, as TestHandlerSingleton is maybe not even existing.
@@ -41,17 +41,17 @@ document.addEventListener("do-ui5-from-extension-to-inject", function (oXMLEvent
 
     if (oReturn instanceof Promise) {
         oReturn.then(function (oData) {
-            //console.log(`ui5RecorderInject: Dispatch event with uuid: ${uuid} 'do-ui5-from-inject-to-async' then-case`);
+            console.log(`ui5RecorderInject: Dispatch event with uuid: ${uuid} 'do-ui5-from-inject-to-async' then-case`);
             document.dispatchEvent(new CustomEvent('do-ui5-from-inject-to-async', { detail: { type: "answer", uuid: uuid, data: oData } }));
         });
     } else {
-        //console.log(`ui5RecorderInject: Dispatch event with uuid: ${uuid} 'do-ui5-from-inject-to-async' else-case`);
+        console.log(`ui5RecorderInject: Dispatch event with uuid: ${uuid} 'do-ui5-from-inject-to-async' else-case`);
         document.dispatchEvent(new CustomEvent('do-ui5-from-inject-to-async', { detail: { type: "answer", uuid: uuid, data: oReturn } }));
     }
 });
 
 document.addEventListener('do-ui5-start', function (oXMLEvent) {
-    //console.log(`ui5RecorderInject: Handling event with uuid: ${uuid} and type: ${oXMLEvent.detail.type} - do-ui5-start`);
+    console.log(`ui5RecorderInject: Handling event with uuid: ${uuid} and type: ${oXMLEvent.detail.type} - do-ui5-start`);
     if (oXMLEvent.detail && oXMLEvent.detail.domId) {
         TestHandlerSingleton.startFor(oXMLEvent.detail.domId);
     } else {
@@ -571,12 +571,18 @@ else {
         oItem.uniquness = {
             property: {},
             context: {},
-            binding: {}
+            binding: {},
+			//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+            bindingContext: {}
         };
 
         //create uniquness for properties..
         var oObjectProps = {};
+		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+        var oObjectBndngs = {};
         var oObjectCtx = {};
+		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+        var oObjectBndngContexts = {};
         if (oItem.parent && oItem.parent.control && oItem.control.sParentAggregationName && oItem.control.sParentAggregationName.length > 0) {
             //we are an item..get all children of my current level, to search for identical items..
             var aItems = oItem.parent.control.getAggregation(oItem.control.sParentAggregationName);
@@ -616,6 +622,46 @@ else {
                         oObjectCtx[sModel][sCtx]._differentValues = this._getPropertiesInArray(oObjectCtx[sModel][sCtx]);
                     }
                 }
+
+				//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+				/*@Adrian - Start*/
+				for (var sProperty in oItem.bindingContext) {
+                    if (!oObjectBndngContexts[sProperty]) {
+                        oObjectBndngContexts[sProperty] = {
+                            _totalAmount: 0
+                        };
+                    }
+
+                    var sValue = fnGetBindingContextInformation(aItems[i], sProperty);
+                    if (!oObjectBndngContexts[sProperty][sValue]) {
+                        oObjectBndngContexts[sProperty][sValue] = 0;
+                    }
+                    oObjectBndngContexts[sProperty][sValue] = oObjectBndngContexts[sProperty][sValue] + 1;
+                    oObjectBndngContexts[sProperty]._totalAmount = oObjectBndngContexts[sProperty]._totalAmount + 1;
+                }
+                for (var sProperty in oItem.bindingContext) {
+                    oObjectBndngContexts[sProperty]._differentValues = this._getPropertiesInArray(oObjectBndngContexts[sProperty]);
+                }
+
+                for (var sProperty in oItem.binding) {
+                    if (!oObjectBndngs[sProperty]) {
+                        oObjectBndngs[sProperty] = {
+                            _totalAmount: 0
+                        };
+                    }
+
+                    var sValue = fnGetBindingInformation(aItems[i], sProperty).path;
+                    if (!oObjectBndngs[sProperty][sValue]) {
+                        oObjectBndngs[sProperty][sValue] = 0;
+                    }
+                    oObjectBndngs[sProperty][sValue] = oObjectBndngs[sProperty][sValue] + 1;
+                    oObjectBndngs[sProperty]._totalAmount = oObjectBndngs[sProperty]._totalAmount + 1;
+                }
+                for (var sProperty in oItem.binding) {
+                    oObjectBndngs[sProperty]._differentValues = this._getPropertiesInArray(oObjectBndngs[sProperty]);
+                }
+
+				/*@Adrian - End*/
                 for (var sProperty in oItem.property) {
                     var sGetter = "get" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1);
                     if (!oObjectProps[sProperty]) {
@@ -669,8 +715,20 @@ else {
         for (var sAttr in oItem.binding) {
             iUniqueness = 0;
             if (oMerged.cloned === true) {
+            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+				/*@Adrian - Start				
                 //we are > 0 - our uniquness is 0, as bindings as MOST CERTAINLY not done per item (but globally)
                 iUniqueness = 0;
+				  @Adrian - End */
+				/*@Adrian - Start*/				
+                //we are > 0 - our uniquness is 0, our binding will contain a primary key for the list binding
+                if (oObjectBndngs[sAttr]._totalAmount === oObjectBndngs[sAttr]._differentValues) {
+                    //seems to be a key field.. great
+                    iUniqueness = 100;
+                } else {
+                    iUniqueness = ((oObjectBndngs[sAttr]._totalAmount + 1 - oObjectBndngs[sAttr][oItem.binding[sAttr].path]) / oObjectBndngs[sAttr]._totalAmount) * 90;
+                }
+                /*@Adrian - End*/
             } else {
                 //check if the binding is a preferred one (e.g. for label and similar)
                 iUniqueness = oItem.uniquness.property[sAttr];
@@ -682,6 +740,24 @@ else {
             oItem.uniquness.binding[sAttr] = parseInt(iUniqueness, 10);
         }
 
+        //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+		/*@Adrian - Start*/
+		for (var sAttr in oItem.bindingContext) {
+            iUniqueness = 0;
+            if (oMerged.cloned === true) {
+                //we are > 0 - our uniquness is 0, our binding will contain a primary key for the list binding
+                if (oObjectBndngContexts[sAttr]._totalAmount === oObjectBndngContexts[sAttr]._differentValues) {
+                    //seems to be a key field.. great
+                    iUniqueness = 100;
+                } else {
+                    iUniqueness = ((oObjectBndngContexts[sAttr]._totalAmount + 1 - oObjectBndngContexts[sAttr][oItem.bindingContext[sAttr]]) / oObjectBndngContexts[sAttr]._totalAmount) * 90;
+                }
+            } else {
+                iUniqueness = 0; //not cloned - probably not good..
+            }
+            oItem.uniquness.bindingContext[sAttr] = parseInt(iUniqueness, 10);
+        }
+		/*@Adrian - End*/
         for (var sModel in oItem.context) {
             oItem.uniquness.context[sModel] = {};
             for (var sAttr in oItem.context[sModel]) {
@@ -719,7 +795,25 @@ else {
         return oItem;
     }
 
+    //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+	/*@Adrian - Start*/
+
+    TestHandler.prototype._navigateToListItem = function(oItem) {
+        //in case we are actually part of a list item (means of a multi-combobox as an example), we should move to another place
+        //we should directly pretend that we are selecting the list item, otherwise this will just make troubles...
+        /*if (oItem.getMetadata().getElementName() === "sap.m.StandardListItem" ) {
+            var oControl = _getItemForItem(oItem);
+            if ( oControl ) {
+                return oControl;
+            }
+        }*/
+        return oItem;
+    };
+
+	/*@Adrian - End*/
     TestHandler.prototype._setItem = function (oControl, oDomNode, oOriginalDomNode) {
+		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+        oControl = this._navigateToListItem(oControl);
         var oItem = this._getElementInformation(oControl, oDomNode);
         oItem = this._setUniqunessInformation(oItem);
         oOriginalDomNode = oOriginalDomNode ? oOriginalDomNode : oDomNode;
@@ -1355,6 +1449,8 @@ else {
 
         //(2) no custom data? search for special cases
         //2.1: Multi-Combo-Box
+		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+		/*@Adrian - Start
         var oPrt = _getParentWithDom(oItem, 3);
         if (oPrt && oPrt.getMetadata().getElementName() === "sap.m.MultiComboBox") {
             if (oPrt._getItemByListItem) {
@@ -1364,6 +1460,27 @@ else {
                 }
             }
         }
+		  @Adrian - End*/
+		/*@Adrian - Start*/
+		var iIndex = 1;
+        var oPrt = oItem;
+        while (oPrt) {
+            oPrt = _getParentWithDom(oItem, iIndex);
+            iIndex += 1;
+            if ( iIndex > 100 ) {  //avoid endless loop..
+                return null;
+            }
+            if (oPrt && oPrt.getMetadata().getElementName() === "sap.m.MultiComboBox") {
+                if (oPrt._getItemByListItem) {
+                    var oCtrl = oPrt._getItemByListItem(oItem);
+                    if (oCtrl) {
+                        return oCtrl;
+                    }
+                }
+            }
+        }
+        return null;
+		/*@Adrian - End*/
     };
 
     //on purpose implemented as local methods
@@ -1542,11 +1659,35 @@ else {
             }
         }
 
+		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+		/*@Adrian - Start*/
+        if (id.bindingContext) {
+            for (var sModel in id.bindingContext) {
+                var oCtx = oItem.getBindingContext(sModel === "undefined" ? undefined : sModel);
+                if (!oCtx) {
+                    return false;
+                }
+
+                if (oCtx.getPath() !== id.bindingContext[sModel]) {
+                    return false;
+                }
+            }
+        }
+		/*@Adrian - End*/
         if (id.binding) {
             for (var sBinding in id.binding) {
-                var oAggrInfo = oItem.getBindingInfo(sBinding);
+                //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+				/*@Adrian - Start
+        		var oAggrInfo = oItem.getBindingInfo(sBinding);
                 if (!oAggrInfo) {
                     //SPECIAL CASE for sap.m.Label in Forms, where the label is actually bound against the parent element (yay)
+                  @Adrian - End*/
+                    /*@Adrian - Start*/
+                    
+                var oBndgInfo = fnGetBindingInformation(oItem, sBinding);
+
+                if (oBndgInfo.path !== id.binding[sBinding].path) {
+                    /*@Adrian - End*/
                     if (oItem.getMetadata().getElementName() === "sap.m.Label") {
                         if (oItem.getParent() && oItem.getParent().getMetadata()._sClassName === "sap.ui.layout.form.FormElement") {
                             var oParentBndg = oItem.getParent().getBinding("label");
@@ -1559,7 +1700,9 @@ else {
                     } else {
                         return false;
                     }
-                } else {
+                //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+				/*@Adrian - Start
+        		} else {
                     var oBinding = oItem.getBinding(sBinding);
                     if (!oBinding) {
                         if (oAggrInfo.path !== id.binding[sBinding].path) {
@@ -1570,6 +1713,7 @@ else {
                             return false;
                         }
                     }
+                  @Adrian - End*/
                 }
             }
         }
@@ -1628,13 +1772,66 @@ else {
         }
         return true;
     };
+	
+    //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+	/*@Adrian - Start*/
+	var fnGetBindingContextInformation = function (oItem, sModel) {
+        var oCtx = oItem.getBindingContext(sModel === "undefined" ? undefined : sModel);
+        if (!oCtx) {
+            return null;
+        }
+        return oCtx.getPath();
+    };
 
+    var fnGetBindingInformation = function (oItem, sBinding) {
+        var oBindingInfo = oItem.getBindingInfo(sBinding);
+        var oBinding = oItem.getBinding(sBinding);
+        var oReturn = {};
+        if (!oBindingInfo) {
+            return oReturn;
+        }
+
+        //not really perfect for composite bindings (what we are doing here) - we are just returning the first for that..
+        //in case of a real use case --> enhance
+        var oRelevantPart = oBindingInfo;
+
+        if (oBindingInfo.parts && oBindingInfo.parts.length > 0) {
+            oRelevantPart = oBindingInfo.parts[0];
+        }
+
+        //get the binding context we are relevant for..
+        var oBndgContext = oItem.getBindingContext(oRelevantPart.model);
+        var sPathPre = oBndgContext ? oBndgContext.getPath() + "/" : "";
+
+        if (oBinding) {
+            oReturn = {
+                model: oRelevantPart.model,
+                path: oBinding.sPath && oBinding.getPath(),
+                relativePath: oBinding.sPath && oBinding.getPath(), //relative path..
+                contextPath: sPathPre,
+                static: oBinding.oModel && oBinding.getModel() instanceof sap.ui.model.resource.ResourceModel,
+                jsonBinding: oBinding.oModel && oBinding.getModel() instanceof sap.ui.model.json.JSONModel
+            };
+
+            oReturn.path = sPathPre + oReturn.path;
+        } else {
+            oReturn = {
+                path: oBindingInfo.path,
+                model: oRelevantPart.model,
+                static: true
+            };
+        }
+        return oReturn;
+    };
+	/*@Adrian - End*/
     var fnGetElementInformation = function (oItem, oDomNode, bFull) {
         var oReturn = {
             property: {},
             aggregation: [],
             association: {},
             binding: {},
+		    //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+            bindingContext: {},
             context: {},
             model: {},
             metadata: {},
@@ -1752,6 +1949,9 @@ else {
 
         //bindings..
         for (var sBinding in oItem.mBindingInfos) {
+		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+        oReturn.binding[sBinding] = fnGetBindingInformation(oItem, sBinding);
+		/*@Adrian - Start
             var oBindingInfo = oItem.getBindingInfo(sBinding);
             var oBinding = oItem.getBinding(sBinding);
             if (!oBindingInfo) {
@@ -1777,7 +1977,7 @@ else {
                     model: oRelevantPart.model,
                     static: true
                 };
-                /*if (oBindingInfo.parts && oBindingInfo.parts.length > 0) {
+                //if (oBindingInfo.parts && oBindingInfo.parts.length > 0) {
                     for (var i = 0; i < oBindingInfo.parts.length; i++) {
                         if (!oBindingInfo.parts[i].path) {
                             continue;
@@ -1788,8 +1988,9 @@ else {
                             oReturn.binding[sBinding].path += ";" + oBindingInfo.parts[i].path;
                         }
                     }
-                }*/
+                }//
             }
+            @Adrian - End*/
         }
 
         //very special for "sap.m.Label"..
@@ -1805,6 +2006,18 @@ else {
             }
         }
 
+		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+		/*@Adrian - Start*/
+		//binding context
+        var aModels = fnGetContextModels(oItem);
+        for (var sModel in aModels) {
+            var oBndg = fnGetBindingContextInformation(oItem, sModel);
+            if (!oBndg) {
+                continue;
+            }
+            oReturn.bindingContext[sModel] = oBndg;
+        }
+		/*@Adrian - End*/
 
         //return all simple properties
         for (var sProperty in oItem.mProperties) {
@@ -1849,6 +2062,23 @@ else {
 
         oTestGlobalBuffer["fnGetElement"][bFull][oItem.getId()] = oReturn;
         return oReturn;
+
+		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+		/*@Adrian - Start*/
+	};
+
+    var fnGetContextModels = function (oItem) {
+        var oReturn = {};
+
+        if (!oItem) {
+            return oReturn;
+        }
+
+        var oModel = {};
+        oModel = $.extend(true, oModel, oItem.oModels);
+        oModel = $.extend(true, oModel, oItem.oPropagatedProperties.oModels);
+        return oModel;
+		/*@Adrian - End*/
     };
 
     //missing: get elements with same parent, to get elements "right next", "left" and on same level

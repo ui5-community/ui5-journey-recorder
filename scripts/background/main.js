@@ -5,6 +5,7 @@ chrome.contextMenus.create({
 	title: "Create Element Selector",
 	contexts: ["selection", "page", "link", "editable", "image"],
 	onclick: function (e) {
+		"use strict";
 		chrome.tabs.getSelected(null, function (tab) {
 			createAndStart(tab, true);
 		});
@@ -13,19 +14,23 @@ chrome.contextMenus.create({
 
 
 chrome.browserAction.onClicked.addListener(function (tab) {
+	"use strict";
 	createAndStart(tab, false);
 });
 
 function createAndStart(tab, bStartSelectImmediate) {
-	var sOurTabId = tab.id;
-	var sOurWindowId = 0;
+	"use strict";
+	//var sOurTabId = tab.id;
+	//var sOurWindowId = 0;
 	bNextImmediateStart = bStartSelectImmediate;
 
+	/*
 	chrome.tabs.onRemoved.addListener(function (tabId, info) {
 		if (tabId === sOurTabId) {
 			chrome.windows.remove(sOurWindowId);
 		}
 	}.bind(this));
+	*/
 
 	chrome.tabs.create({
 		url: chrome.extension.getURL('/scripts/popup/index.html'),
