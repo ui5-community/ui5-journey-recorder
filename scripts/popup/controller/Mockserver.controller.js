@@ -98,10 +98,6 @@ sap.ui.define([
                 this._loadMockServer();
                 return;
             }
-
-            RecordController.injectScript().then(function () {
-                this._loadMockServer();
-            }.bind(this));
         },
 
         _loadMockServer: function () {

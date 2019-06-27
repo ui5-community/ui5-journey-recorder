@@ -4,7 +4,7 @@
     "version": "0.1.1",
     "repository": {
         "type": "git",
-        "url": "https://github.com/timostark/ui5TestAutomation.git"
+        "url": "https://github.com/msg-systems/ui5-testrecorder.git"
     },
     "devDependencies": {
         "eslint": "^5.7.0"

@@ -20,18 +20,6 @@ sap.ui.define([
                 RecordController.init(this.getOwnerComponent());
                 this.getView().setModel(Navigation.getModel(), "navModel");
                 this._getCurrentURL();
-
-                Communication.isInitialized().then(function () {
-                    if (Communication.isStartImmediate()) {
-                        RecordController.injectScript().then(function () {
-                            this.getModel("navModel").setProperty("/elements", []);
-                            this.getModel("navModel").setProperty("/elementLength", 0);
-                            this.getRouter().navTo("testDetailsCreateQuick");
-                        }.bind(this), function () {
-                            return;
-                        });
-                    }
-                }.bind(this));
                 this.getRouter().getRoute("start").attachPatternMatched(this._loadTableItems, this);
             },
 
