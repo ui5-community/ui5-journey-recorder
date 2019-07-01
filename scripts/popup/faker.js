@@ -691,7 +691,7 @@ function Fake (faker) {
    * __Example:__
    *
    * ```
-   * console.log(faker.fake('{{name.lastName}}, {{name.firstName}} {{name.suffix}}'));
+   * //console.log(faker.fake('{{name.lastName}}, {{name.firstName}} {{name.suffix}}'));
    * //outputs: "Marks, Dean Sr."
    * ```
    *
@@ -721,14 +721,14 @@ function Fake (faker) {
       return str;
     }
 
-    // console.log('attempting to parse', str);
+    // //console.log('attempting to parse', str);
 
     // extract method name from between the {{ }} that we found
     // for example: {{name.firstName}}
     var token = str.substr(start + 2,  end - start - 2);
     var method = token.replace('}}', '').replace('{{', '');
 
-    // console.log('method', method)
+    // //console.log('method', method)
 
     // extract method parameters
     var regExp = /\(([^)]+)\)/;

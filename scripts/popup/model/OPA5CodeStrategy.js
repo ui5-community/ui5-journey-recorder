@@ -231,7 +231,7 @@ sap.ui.define([
             case 'PRS':
                 return this.__createPressAction(oStep);
             default:
-                console.log('Found a unknown action type: ' + actionsType);
+                //console.log('Found a unknown action type: ' + actionsType);
                 return "";
         }
     };
@@ -412,7 +412,7 @@ sap.ui.define([
                 case 'AGG':
                     break; //need to be because this are no relevant object infos
                 default:
-                    console.log('Found a unknown class: ' + aToken[id].criteriaType);
+                    //console.log('Found a unknown class: ' + aToken[id].criteriaType);
             }
         }
 
@@ -479,7 +479,7 @@ sap.ui.define([
             this.__sanatize(oToken.criteriaValue.trim());
 
         if (typeof value === 'object') {
-            console.log('stringify object');
+            //console.log('stringify object');
         }
         objectMatcher['ATTR'] ?
             objectMatcher['ATTR'].push('{' + oToken.subCriteriaType + ': ' + value + '}') :

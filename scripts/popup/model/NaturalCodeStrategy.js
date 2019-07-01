@@ -72,7 +72,7 @@ sap.ui.define([
             case 'PRS':
                 return this.__createPressAction(oStep, textToken);
             default:
-                console.log('Found a unknown action type: ' + actionsType);
+                //console.log('Found a unknown action type: ' + actionsType);
                 return "";
         }
     };

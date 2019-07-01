@@ -62,7 +62,7 @@ sap.ui.define([
                             function callback(tabId, tabUrl) {
                                 return function (results) {
                                     if (chrome.runtime.lastError) {
-                                        //console.log(chrome.runtime.lastError.message);
+                                        ////console.log(chrome.runtime.lastError.message);
                                     } else if (results[0]) {
                                             this._oModel.getProperty('/urls').push({url: tabUrl, id: tabId});
                                             this._oModel.updateBindings(true);
@@ -76,7 +76,7 @@ sap.ui.define([
                         }
                     }
                     if (chrome.runtime.lastError) {
-                        //console.log(chrome.runtime.lastError);
+                        ////console.log(chrome.runtime.lastError);
                     }
                     this._oModel.setProperty('/urls', aData);
                 }.bind(this));
