@@ -1,5 +1,0 @@
-Fiori Login:
-
-- document.getElementById('USERNAME_FIELD-inner').value = "ADMARTE"
-- document.getElementById('PASSWORD_FIELD-inner').value = "y3oWhOu3gN#"
-- document.getElementById('LOGIN_LINK').click()
