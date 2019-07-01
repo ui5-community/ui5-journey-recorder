@@ -10,7 +10,7 @@ The chrome plugin is published in Google-Webstore under https://chrome.google.co
 The tool has support for the following test-frameworks:
 - uiveri5
 - testcafe
-- OPA5 (in Development)
+- OPA5
 
 The following Screenshots are showing the capabilities of the recorder.
 
