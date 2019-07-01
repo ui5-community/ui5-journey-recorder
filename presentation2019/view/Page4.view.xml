@@ -1,0 +1,75 @@
+<mvc:View   
+        xmlns:mvc="sap.ui.core.mvc" 
+        xmlns:core="sap.ui.core" 
+        xmlns:form="sap.ui.layout.form"
+        xmlns="sap.m" 
+        controllerName="sap.ui.demo.todo.controller.Page4">
+    <Page enableScrolling="false">
+        <customHeader>
+            <Bar class="topBar">
+                <contentLeft>
+                    <Image src="assets/msgLogo.png" height="100%" />
+                </contentLeft>
+                <contentMiddle>
+                    <Label text="{mainData>Title}" class="headerTitle" />
+                </contentMiddle>
+                <contentRight>
+                    <Image src="assets/testrecorder_ico.svg" height="100%"/>
+                    <Label text="{i18n>presTitle}"/>
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <content>
+			<ObjectHeader
+					id="objectHeader"
+					title="{mainData>Title}"
+					number="{
+						path: 'mainData>Price',
+						formatter: '.formatter.numberUnit'
+					}"
+					numberUnit="{mainData>Currency}"
+					backgroundDesign="Translucent">
+			</ObjectHeader>
+			<IconTabBar id="iconTabBar"
+						expanded="{=! ${device>/system/phone}}"
+						class="sapUiNoContentPadding">
+				<items>
+					<IconTabFilter icon="sap-icon://hint" key="info">
+						<form:SimpleForm layout="ResponsiveGridLayout">
+							<form:content>
+								<Label text="{i18n>postDateLabel}"/>
+								<Text id="descriptionTimestamp" text="{
+									path: 'mainData>Timestamp',
+									formatter: '.formatter.date'
+								}"/>
+								<Label text="{i18n>postDescriptionLabel}"/>
+								<Text id="descriptionText" text="{mainData>Description}"/>
+							</form:content>
+						</form:SimpleForm>
+					</IconTabFilter>
+					<IconTabFilter icon="sap-icon://inspection" key="statistics">
+						<Text text="Viewed 55555 times" id="viewCounter"/>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+        </content>
+        <footer>
+            <Bar>
+                <contentLeft>
+                    <Text text="{i18n>copyright}" />
+                </contentLeft>
+                <contentMiddle>
+                    <Button id="left4" icon="sap-icon://arrow-left" press="priorSlide" enabled="{= ${/siteNum} &gt; 0 }" />
+                    <Button id="up4" icon="sap-icon://arrow-top" press="_slideUp" enabled="{= ${page4View>/subNav} &gt; 0 }" visible="{page4View>/subActive}"/>
+                    <Button id="down4" icon="sap-icon://arrow-bottom" press="_slideDown" enabled="{= ${page4View>/subNav} &lt; ${page4View>/maxSub} }"  visible="{page4View>/subActive}"/>  
+                    <Button id="right4" icon="sap-icon://arrow-right" press="nextSlide" enabled="{= ${/siteNum} &lt; (${/slideSequence}.length -1) }" />
+                </contentMiddle>
+                <contentRight>
+                    <Text text="{parts: [{path: '/siteNum'}, 
+                                         {path: '/slideSequence'}], 
+                                 formatter: '.formatter.setSlideNumber'}" />
+                </contentRight>
+            </Bar>
+        </footer>
+    </Page>
+</mvc:View>

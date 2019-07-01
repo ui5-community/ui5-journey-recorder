@@ -1,0 +1,127 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.ui.demo.todo",
+		"type": "application",
+		"i18n": "webapp/i18n/i18n.properties",
+		"dataSources": {
+			"mainService": {
+				"uri": "/presentation/data_srv/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/metadata.xml"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://task"
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": "sap.ui.demo.todo.view.App",
+		"dependencies": {
+			"minUI5Version": "1.60.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.demo.todo.i18n.i18n"
+				}
+			},
+			"mainData": {
+				"dataSource": "mainService",
+				"settings": {
+					"metadataUrlParams":  {
+						"sap-documentation": "heading"
+					}
+				}
+			}
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.demo.todo.view",
+				"controlId": "idAppControl",
+				"controlAggregation": "pages",
+				"async": true
+			},
+			"routes": [{
+					"pattern": "",
+					"name": "start",
+					"target": "opening"
+				},
+				{
+					"pattern": "p1",
+					"name": "page1",
+					"target": "page1"
+				},
+				{
+					"pattern": "p2",
+					"name": "page2",
+					"target": "page2"
+				},
+				{
+					"pattern": "p3",
+					"name": "page3",
+					"target": "page3"
+				},
+				{
+					"pattern": "p4/{postId}",
+					"name": "page4",
+					"target": "page4"
+				},
+				{
+					"pattern": "end",
+					"name": "end",
+					"target": "end"
+				}
+			],
+			"targets": {
+				"opening": {
+					"viewName": "Opener",
+					"viewLevel": 0
+				},
+				"page1": {
+					"viewName": "Page1",
+					"viewLevel": 1
+				},
+				"page2": {
+					"viewName": "Page2",
+					"viewLevel": 1
+				},
+				"page3": {
+					"viewName": "Page3",
+					"viewLevel": 1
+				},
+				"page4": {
+					"viewName": "Page4",
+					"viewLevel": 1
+				},
+				"end": {
+					"viewName": "End",
+					"viewLevel": 2
+				}
+			}
+		},
+		"resources": {
+			"css": [{
+				"uri": "css/styles.css"
+			}]
+		}
+	}
+}

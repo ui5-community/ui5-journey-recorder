@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    .suites-menu {
+      width: 100%;
+      background-color: #add8e6;
+    }
+
+    .suites-menu .name {
+      display: inline-block;
+      padding: 10px;
+    }
+
+    .suites-menu .name.selected {
+      background-color: #90c9dc;
+      font-weight: 600;
+    }
+
+    .suite {
+      position: absolute;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .summary {
+      padding: 10px 20px;
+    }
+
+    .summary span {
+      padding-right: 20px;
+    }
+
+    .specs {
+      display: flex;
+    }
+
+    .specs-menu {
+      align-self: flex-start;
+      width: 500px;
+      background-color: #add8e6;
+    }
+
+    .specs-menu .selected {
+      background-color: #90c9dc;
+    }
+
+    .specs .name {
+      padding: 10px;
+      border-bottom: 1px solid #ffffff;
+    }
+
+    .name::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin-right: 10px;
+      border-radius: 50px;
+    }
+
+    .name.passed::before, .spec.passed .summary {
+      background-color: #3cb371;
+    }
+
+    .name.failed::before, .spec.failed .summary {
+      background-color: #ff6347;
+    }
+
+    .name:hover {
+      cursor: pointer;
+    }
+
+    .spec {
+      width: 100%;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid #add8e6;
+    }
+
+    .step.passed {
+      background-color: #3cb37166;
+    }
+
+    .step.failed {
+      background-color: #ff634766;
+    }
+
+    .step .content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-left: 20px;
+    }
+
+    .step .content.reverse {
+      flex-direction: column-reverse;
+    }
+
+    code {
+      width: 90%;
+      height: 300px;
+      padding: 10px;
+      background-color: #ffffff;
+      overflow: auto;
+      white-space: pre-wrap;
+    }
+
+    img {
+      width: 300px;
+      margin: 20px 0;
+    }
+
+    .strong {
+      font-weight: 600;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<div class="suites-menu">
+  
+  <div class="name" onClick="selectSuite(0)">test</div>
+  
+</div>
+
+<div class="suite hidden">
+  <div class="summary">
+    <span class="strong">Specs</span>
+    <span>Total: 1</span>
+    <span>Passed: 0</span>
+    <span>Failed: 1</span>
+    <span>Pending: 0</span>
+    <span>Disabled: 0</span>
+    <span>Duration: 12.4 sec</span>
+  </div>
+  <div class="specs">
+    <div class="specs-menu">
+      
+      <div class="name failed" onClick="selectSpec(0, 0)">Test 0</div>
+      
+    </div>
+    
+    <div class="spec failed 0 hidden">
+      <div class="summary">
+        <div class="strong">Test 0</div>
+        
+        <span class="strong">Expectations</span>
+        <span>Total: 1</span>
+        <span>Passed: 0</span>
+        <span>Failed: 1</span>
+        <span>Duration: 12.4 sec</span>
+        
+      </div>
+      
+      
+      <div class="step ">
+        <p class="strong">1.</p>
+        <div class="content reverse">
+          
+          
+          <div>Execute 'sendKeys' on element with ID '__xmlview1--searchField-I'
+             with value 'Car' 
+          </div>
+          
+          
+          <a href="sendKeys___xmlview1--searchField-I_0_2019-06-28T09-36-46.png" target="_blank">
+            <img data-source="sendKeys___xmlview1--searchField-I_0_2019-06-28T09-36-46.png"/>
+          </a>
+          
+          
+        </div>
+      </div>
+      
+      
+      
+      <div class="step ">
+        <p class="strong">2.</p>
+        <div class="content reverse">
+          
+          
+          <div>Execute 'click' on element with ID '__xmlview1--searchField-I'
+            
+          </div>
+          
+          
+          <a href="click___xmlview1--searchField-I_1_2019-06-28T09-36-47.png" target="_blank">
+            <img data-source="click___xmlview1--searchField-I_1_2019-06-28T09-36-47.png"/>
+          </a>
+          
+          
+        </div>
+      </div>
+      
+      
+      
+      <div class="step failed">
+        <p class="strong">3.</p>
+        <div class="content ">
+          
+          <div>Expectation FAILED: Failed: No element found using locator: by.control({&quot;controlType&quot;:&quot;sap.m.ColumnListItem&quot;,&quot;bindingPath&quot;:{&quot;path&quot;:&quot;/Posts(&#39;PostID_17&#39;)&quot;,&quot;model&quot;:&quot;mainData&quot;}})</div>
+          
+          
+          
+          <a href="test-Test-0_2_fail_2019-06-28T09-36-48.png" target="_blank">
+            <img data-source="test-Test-0_2_fail_2019-06-28T09-36-48.png"/>
+          </a>
+          
+          <code>NoSuchElementError: No element found using locator: by.control({&quot;controlType&quot;:&quot;sap.m.ColumnListItem&quot;,&quot;bindingPath&quot;:{&quot;path&quot;:&quot;/Posts(&#39;PostID_17&#39;)&quot;,&quot;model&quot;:&quot;mainData&quot;}})
+    at elementArrayFinder.getWebElements.then (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\protractor\built\element.js:814:27)
+    at ManagedPromise.invokeCallback_ (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\selenium-webdriver\lib\promise.js:1376:14)
+    at TaskQueue.execute_ (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\selenium-webdriver\lib\promise.js:3084:14)
+    at TaskQueue.executeNext_ (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\selenium-webdriver\lib\promise.js:3067:27)
+    at asyncRun (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\selenium-webdriver\lib\promise.js:2927:27)
+    at C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\selenium-webdriver\lib\promise.js:668:7
+    at &lt;anonymous&gt;
+    at process._tickCallback (internal/process/next_tick.js:189:7)Error
+    at ElementArrayFinder.applyAction_ (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\protractor\built\element.js:459:27)
+    at ElementArrayFinder.(anonymous function).args [as click] (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\protractor\built\element.js:91:29)
+    at ElementFinder.(anonymous function).args [as click] (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\protractor\built\element.js:831:22)
+    at UserContext.&lt;anonymous&gt; (D:\Repos\UI5con2019\presentation\webapp\test\e2e\test.spec.js:10:24)
+    at C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\jasminewd2\index.js:112:25
+    at new ManagedPromise (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\selenium-webdriver\lib\promise.js:1077:7)
+    at ControlFlow.promise (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\selenium-webdriver\lib\promise.js:2505:12)
+    at schedulerExecute (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\jasminewd2\index.js:95:18)
+    at TaskQueue.execute_ (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\selenium-webdriver\lib\promise.js:3084:14)
+    at TaskQueue.executeNext_ (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\selenium-webdriver\lib\promise.js:3067:27)
+From: Task: Run it(&quot;Test 0&quot;) in control flow
+    at UserContext.&lt;anonymous&gt; (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\jasminewd2\index.js:94:19)
+    at attempt (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\jasmine-core\lib\jasmine-core\jasmine.js:4297:26)
+    at QueueRunner.run (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\jasmine-core\lib\jasmine-core\jasmine.js:4217:20)
+    at runNext (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\jasmine-core\lib\jasmine-core\jasmine.js:4257:20)
+    at C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\jasmine-core\lib\jasmine-core\jasmine.js:4264:13
+    at C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\jasmine-core\lib\jasmine-core\jasmine.js:4172:9
+    at C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\jasminewd2\index.js:64:48
+    at ControlFlow.emit (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\selenium-webdriver\lib\events.js:62:21)
+    at ControlFlow.shutdown_ (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\selenium-webdriver\lib\promise.js:2674:10)
+    at shutdownTask_.MicroTask (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\selenium-webdriver\lib\promise.js:2599:53)
+From asynchronous test: 
+Error
+    at Suite.&lt;anonymous&gt; (D:\Repos\UI5con2019\presentation\webapp\test\e2e\test.spec.js:3:5)
+    at addSpecsToSuite (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\jasmine-core\lib\jasmine-core\jasmine.js:1107:25)
+    at Env.describe (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\jasmine-core\lib\jasmine-core\jasmine.js:1074:7)
+    at describe (C:\Users\martena\AppData\Roaming\npm\node_modules\@ui5\uiveri5\node_modules\jasmine-core\lib\jasmine-core\jasmine.js:4399:18)
+    at Object.&lt;anonymous&gt; (D:\Repos\UI5con2019\presentation\webapp\test\e2e\test.spec.js:1:63)
+    at Module._compile (module.js:653:30)
+    at Object.Module._extensions..js (module.js:664:10)
+    at Module.load (module.js:566:32)
+    at tryModuleLoad (module.js:506:12)</code>
+        </div>
+      </div>
+      
+      
+    </div>
+    
+  </div>
+</div>
+
+<script>
+  (function init () {
+    var suiteMenuElement = document.getElementsByClassName("suites-menu")[0];
+    var specMenuElement = document.getElementsByClassName("specs-menu")[0];
+    selectSuite(0);
+  })();
+
+  function selectSuite(suiteIndex) {
+    select(document, suiteIndex, "suites-menu", "suite");
+    selectSpec(suiteIndex, 0);
+  }
+
+  function selectSpec(suiteIndex, specIndex) {
+    var parentElement = document.getElementsByClassName("specs")[suiteIndex];
+    select(parentElement, specIndex, "specs-menu", "spec");
+
+    var specElements = parentElement.getElementsByClassName("spec");
+    var specImageElements = specElements[specIndex].getElementsByTagName("img");
+    Array.prototype.forEach.call(specImageElements, function (img) {
+      img.src = img.getAttribute("data-source");
+    });
+  }
+
+  function select(parentElement, index, menuClassName, itemClassName) {
+    var menuElement = parentElement.getElementsByClassName(menuClassName)[0];
+    var menuElements = menuElement.getElementsByClassName("name");
+    Array.prototype.forEach.call(menuElements, function (el) {
+      el.classList.remove("selected");
+    });
+    menuElements[index].classList.add("selected");
+
+    var itemElements = parentElement.getElementsByClassName(itemClassName);
+    Array.prototype.forEach.call(itemElements, function (el) {
+      el.classList.add("hidden");
+    });
+    itemElements[index].classList.remove("hidden");
+  }
+</script>
+</body>
+</html>

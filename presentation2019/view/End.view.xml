@@ -1,0 +1,68 @@
+<mvc:View xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" controllerName="sap.ui.demo.todo.controller.End">
+    <Page enableScrolling="false">
+        <customHeader>
+            <Bar class="topBar">
+                <contentLeft>
+                    <Image src="assets/msgLogo.png" height="100%" />
+                </contentLeft>
+                <contentMiddle>
+                    <Label text="" class="headerTitle" />
+                </contentMiddle>
+                <contentRight>
+                    <Image src="assets/testrecorder_ico.svg" height="100%" />
+                    <Label text="{i18n>presTitle}" />
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <content>
+                <HBox alignItems="Center" height="100%">
+                    <l:Grid containerQuery="true" defaultSpan="XL6 L4" defaultIndent="XL1 L2 M3" position="Center" hSpacing="5">
+                        <HBox>
+                            <Image src="assets/adrian.jpg" class="personImage" />
+                            <VBox>
+                                <Title text="{i18n>adrian_name}" class="nameTitle" />
+                                <Text text="{i18n>work_title}" class="presTitleH3" />
+                                <Text text="{i18n>work_phone}" class="presTitleH3 sapUiMediumMarginTop" wrapping="false" />
+                                <Text text="{i18n>work_email}" class="presTitleH3" wrapping="false" />
+                            </VBox>
+                        </HBox>
+                        <HBox>
+                            <Image src="assets/timo.jpg" class="personImage" />
+                            <VBox>
+                                <Title text="{i18n>timo_name}" class="nameTitle" />
+                                <Text text="{i18n>timo_work_title}" class="presTitleH3" />
+                                <Text text="{i18n>timo_work_phone}" class="presTitleH3 sapUiMediumMarginTop" wrapping="false" />
+                                <Text text="{i18n>timo_work_email}" class="presTitleH3" wrapping="false" />
+                            </VBox>
+                        </HBox>
+                    </l:Grid>
+                    <VBox class="moveLeft">
+                        <Image src="assets/msgLogo.png" />
+                        <Title text="{i18n>msg_title}" class="nameTitle" />
+                        <Text text="{i18n>msg_street}" class="presTitleH3" wrapping="false" />
+                        <Text text="{i18n>msg_city}" class="presTitleH3" wrapping="false" />
+                        <Text text="{i18n>msg_country}" class="presTitleH3" wrapping="false" />
+                        <Text text="{i18n>msg_inet}" class="presTitleH3_b sapUiMediumMarginTop" />
+                    </VBox>
+                </HBox>
+        </content>
+        <footer>
+            <Bar>
+                <contentLeft>
+                    <Text text="{i18n>copyright}" />
+                </contentLeft>
+                <contentMiddle>
+                    <Button id="leftE" icon="sap-icon://arrow-left" press="priorSlide" enabled="{= ${/siteNum} &gt; 0 }" />
+                    <Button id="upE" icon="sap-icon://arrow-top" press="_slideUp" enabled="{= ${endView>/subNav} &gt; 0 }" visible="{endView>/subActive}" />
+                    <Button id="downE" icon="sap-icon://arrow-bottom" press="_slideDown" enabled="{= ${endView>/subNav} &lt; ${endView>/maxSub} }" visible="{endView>/subActive}" />
+                    <Button id="rightE" icon="sap-icon://arrow-right" press="nextSlide" enabled="{= ${/siteNum} &lt; (${/slideSequence}.length -1) }" />
+                </contentMiddle>
+                <contentRight>
+                    <Text text="{parts: [{path: '/siteNum'}, 
+                                         {path: '/slideSequence'}], 
+                                 formatter: '.formatter.setSlideNumber'}" />
+                </contentRight>
+            </Bar>
+        </footer>
+    </Page>
+</mvc:View>

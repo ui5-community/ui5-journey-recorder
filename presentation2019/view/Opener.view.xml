@@ -1,0 +1,42 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" controllerName="sap.ui.demo.todo.controller.Opener">
+    <Page enableScrolling="false">
+        <customHeader>
+            <Bar class="topBar">
+                <contentLeft>
+                    <Image src="assets/msgLogo.png" height="100%" />
+                </contentLeft>
+                <contentMiddle>
+                    <Label text="" class="presTitleH2" />
+                </contentMiddle>
+                <contentRight>
+                    <Image src="assets/testrecorder_ico.svg" height="100%"/>
+                    <Label text="{i18n>presTitle}" />
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <content>
+            <VBox justifyContent="Center" alignItems="Center" class="topDistance">
+                <Title text="{i18n>presTitle}" class="inTheMiddle presTitleH1" />
+                <Title text="{i18n>presSubTitle}" class="presTitleH2" />
+                <Image src="assets/testrecorder2_ico.svg" height="25rem" class="topDistance1_2 bottomDistance" />
+            </VBox>
+        </content>
+        <footer>
+            <Bar>
+                <contentLeft>
+                    <Text text="{i18n>copyright}" /> <!--  {path: '/dDate', type: 'sap.ui.model.type.Date', formatOptions: {style: 'full'} -->
+                </contentLeft>
+                <contentMiddle>
+                    <Button id="leftO" icon="sap-icon://arrow-left" press="priorSlide" enabled="{= ${/siteNum} &gt; 0 }" />
+                    <Button id="upO" icon="sap-icon://arrow-top" press="_slideUp" enabled="{= ${page1View/subNav} &gt; 0 }" visible="{pageOpenView>/subActive}"/>
+                    <Button id="downO" icon="sap-icon://arrow-bottom" press="_slideDown" enabled="{= ${page1View/subNav} &lt; ${page1View/maxSub} }"  visible="{pageOpenView>/subActive}"/>                    
+                </contentMiddle>
+                <contentRight>
+                    <Text text="{parts: [{path: '/siteNum'}, 
+                                         {path: '/slideSequence'}], 
+                                 formatter: '.formatter.setSlideNumber'}" />
+                </contentRight>
+            </Bar>
+        </footer>
+    </Page>
+</mvc:View>

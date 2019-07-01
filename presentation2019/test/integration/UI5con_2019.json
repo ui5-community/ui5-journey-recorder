@@ -1,0 +1,4769 @@
+{
+  "versionId": "0.2.0",
+  "codeSettings": {
+    "language": "OPA",
+    "testName": "UI5con 2019",
+    "testCategory": "UI5 Testrecorder",
+    "testUrl": "http://localhost:8080/index.html#/p3",
+    "ui5Version": "",
+    "supportAssistant": false,
+    "authentification": "NONE"
+  },
+  "elements": [
+    {
+      "property": {
+        "assKeyMatchingCount": 1,
+        "elementState": "Success",
+        "assKey": "EXS",
+        "assertMessage": "",
+        "selectActInsert": "Car",
+        "actKey": "TYP",
+        "type": "ACT",
+        "selectItemBy": "ATTR",
+        "technicalName": "searchField",
+        "useTechnicalName": true,
+        "previewCode": "",
+        "actionSettings": {
+          "testSpeed": 1,
+          "replaceText": true,
+          "pasteText": false,
+          "blur": false,
+          "enter": false
+        },
+        "supportAssistant": {
+          "ignoreGlobal": false,
+          "supportRules": []
+        },
+        "domChildWith": "-I"
+      },
+      "item": {
+        "property": {
+          "placeholder": "Search",
+          "width": "auto",
+          "blocked": false,
+          "busy": false,
+          "busyIndicatorDelay": 1000,
+          "busyIndicatorSize": "Medium",
+          "visible": true,
+          "fieldGroupIds": [],
+          "value": "",
+          "enabled": true,
+          "maxLength": 0,
+          "showMagnifier": true,
+          "showRefreshButton": false,
+          "refreshButtonTooltip": "",
+          "showSearchButton": true,
+          "enableSuggestions": false,
+          "selectOnFocus": true
+        },
+        "aggregation": {
+          "customData": {
+            "rows": [],
+            "filled": true,
+            "name": "customData",
+            "length": 0
+          },
+          "dependents": {
+            "rows": [],
+            "filled": true,
+            "name": "dependents",
+            "length": 0
+          },
+          "dragDropConfig": {
+            "rows": [],
+            "filled": true,
+            "name": "dragDropConfig",
+            "length": 0
+          },
+          "suggestionItems": {
+            "rows": [],
+            "filled": true,
+            "name": "suggestionItems",
+            "length": 0
+          }
+        },
+        "association": {},
+        "context": {},
+        "metadata": {
+          "elementName": "sap.m.SearchField",
+          "componentName": "__component0",
+          "componentId": "sap.ui.demo.todo",
+          "componentDataSource": {
+            "mainService": {
+              "uri": "/presentation/data_srv/",
+              "localUri": "localService/metadata.xml"
+            }
+          }
+        },
+        "identifier": {
+          "domId": "__xmlview4--searchField",
+          "ui5Id": "__xmlview4--searchField",
+          "idCloned": false,
+          "idGenerated": true,
+          "ui5LocalId": "searchField",
+          "localIdClonedOrGenerated": false,
+          "ui5AbsoluteId": "__xmlview4--searchField",
+          "domIdOriginal": "__xmlview4--searchField-I"
+        },
+        "parent": {
+          "property": {
+            "blocked": false,
+            "busy": false,
+            "busyIndicatorDelay": 1000,
+            "busyIndicatorSize": "Medium",
+            "visible": true,
+            "fieldGroupIds": [],
+            "width": "",
+            "active": false,
+            "enabled": true,
+            "height": "",
+            "design": "Auto",
+            "style": "Standard"
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {
+            "elementName": "sap.m.Toolbar",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.Page3",
+            "localViewName": "Page3"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.m.Toolbar"
+            },
+            {
+              "elementName": "sap.ui.core.Control"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__toolbar0",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "__toolbar0",
+            "localIdClonedOrGenerated": true,
+            "ui5AbsoluteId": "__toolbar0"
+          }
+        },
+        "parentL2": {
+          "property": {
+            "width": "auto",
+            "growing": true,
+            "busy": false,
+            "enableBusyIndicator": true,
+            "blocked": false,
+            "busyIndicatorDelay": 1000,
+            "busyIndicatorSize": "Medium",
+            "visible": true,
+            "fieldGroupIds": [],
+            "inset": false,
+            "headerText": "",
+            "headerDesign": "Standard",
+            "footerText": "",
+            "mode": "None",
+            "includeItemInSelection": false,
+            "showUnread": false,
+            "noDataText": "No data",
+            "showNoData": true,
+            "modeAnimationOn": true,
+            "showSeparators": "All",
+            "swipeDirection": "Both",
+            "growingThreshold": 20,
+            "growingTriggerText": "",
+            "growingScrollToLoad": false,
+            "growingDirection": "Downwards",
+            "rememberSelections": true,
+            "keyboardMode": "Navigation",
+            "backgroundDesign": "Translucent",
+            "fixedLayout": true,
+            "showOverlay": false,
+            "alternateRowColors": false,
+            "popinLayout": "Block",
+            "contextualWidth": "Inherit"
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {
+            "items": {
+              "model": "mainData",
+              "path": "/Posts",
+              "relativePath": "/Posts",
+              "contextPath": "",
+              "static": false,
+              "jsonBinding": false
+            },
+            "busyIndicatorDelay": {
+              "model": "worklistView",
+              "static": true
+            }
+          },
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {
+            "elementName": "sap.m.Table",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.Page3",
+            "localViewName": "Page3"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.m.Table"
+            },
+            {
+              "elementName": "sap.m.ListBase"
+            },
+            {
+              "elementName": "sap.ui.core.Control"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__xmlview4--itemTable",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "itemTable",
+            "localIdClonedOrGenerated": false,
+            "ui5AbsoluteId": "__xmlview4--itemTable"
+          }
+        },
+        "parentL3": {
+          "property": {
+            "enableScrolling": false,
+            "blocked": false,
+            "busy": false,
+            "busyIndicatorDelay": 1000,
+            "busyIndicatorSize": "Medium",
+            "visible": true,
+            "fieldGroupIds": [],
+            "title": "",
+            "titleLevel": "Auto",
+            "showNavButton": false,
+            "showHeader": true,
+            "showSubHeader": true,
+            "navButtonText": "",
+            "navButtonTooltip": "",
+            "icon": "",
+            "backgroundDesign": "Standard",
+            "navButtonType": "Back",
+            "showFooter": true,
+            "contentOnlyBusy": false,
+            "floatingFooter": false
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {
+            "elementName": "sap.m.Page",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.Page3",
+            "localViewName": "Page3"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.m.Page"
+            },
+            {
+              "elementName": "sap.ui.core.Control"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__page3",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "__page3",
+            "localIdClonedOrGenerated": true,
+            "ui5AbsoluteId": "__page3"
+          }
+        },
+        "parentL4": {
+          "property": {
+            "viewName": "sap.ui.demo.todo.view.Page3",
+            "blocked": false,
+            "busy": false,
+            "busyIndicatorDelay": 1000,
+            "busyIndicatorSize": "Medium",
+            "visible": true,
+            "fieldGroupIds": [],
+            "width": "100%",
+            "height": "",
+            "displayBlock": false
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {
+            "elementName": "sap.ui.core.mvc.XMLView",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.App",
+            "localViewName": "App"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.ui.core.mvc.XMLView"
+            },
+            {
+              "elementName": "sap.ui.core.mvc.View"
+            },
+            {
+              "elementName": "sap.ui.core.Control"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__xmlview4",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "__xmlview4",
+            "localIdClonedOrGenerated": true,
+            "ui5AbsoluteId": "__xmlview4"
+          }
+        },
+        "itemdata": {
+          "property": {},
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {},
+          "viewProperty": {},
+          "classArray": [],
+          "identifier": {
+            "domId": "",
+            "ui5Id": "",
+            "idCloned": false,
+            "idGenerated": false,
+            "ui5LocalId": "",
+            "localIdClonedOrGenerated": false,
+            "ui5AbsoluteId": ""
+          }
+        },
+        "label": {
+          "property": {},
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {},
+          "viewProperty": {},
+          "classArray": [],
+          "identifier": {
+            "domId": "",
+            "ui5Id": "",
+            "idCloned": false,
+            "idGenerated": false,
+            "ui5LocalId": "",
+            "localIdClonedOrGenerated": false,
+            "ui5AbsoluteId": ""
+          }
+        },
+        "parents": [
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.m.Toolbar",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__toolbar0",
+              "ui5Id": "__toolbar0",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "__toolbar0",
+              "localIdClonedOrGenerated": true,
+              "ui5AbsoluteId": "__toolbar0"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.m.Toolbar"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.m.Table",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview4--itemTable",
+              "ui5Id": "__xmlview4--itemTable",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "itemTable",
+              "localIdClonedOrGenerated": false,
+              "ui5AbsoluteId": "__xmlview4--itemTable"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.m.Table"
+              },
+              {
+                "elementName": "sap.m.ListBase"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.m.Page",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__page3",
+              "ui5Id": "__page3",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "__page3",
+              "localIdClonedOrGenerated": true,
+              "ui5AbsoluteId": "__page3"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.m.Page"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.ui.core.mvc.XMLView",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview4",
+              "ui5Id": "__xmlview4",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "__xmlview4",
+              "localIdClonedOrGenerated": true,
+              "ui5AbsoluteId": "__xmlview4"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.ui.core.mvc.XMLView"
+              },
+              {
+                "elementName": "sap.ui.core.mvc.View"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.m.App",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview0--idAppControl",
+              "ui5Id": "__xmlview0--idAppControl",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "idAppControl",
+              "localIdClonedOrGenerated": false,
+              "ui5AbsoluteId": "__xmlview0--idAppControl"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.m.App"
+              },
+              {
+                "elementName": "sap.m.NavContainer"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.ui.core.mvc.XMLView",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview0",
+              "ui5Id": "__xmlview0",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "__xmlview0",
+              "localIdClonedOrGenerated": true,
+              "ui5AbsoluteId": "__xmlview0"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.ui.core.mvc.XMLView"
+              },
+              {
+                "elementName": "sap.ui.core.mvc.View"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          }
+        ],
+        "binding": {},
+        "bindingContext": {},
+        "model": {},
+        "viewProperty": {
+          "viewName": "sap.ui.demo.todo.view.Page3",
+          "localViewName": "Page3"
+        },
+        "classArray": [
+          {
+            "elementName": "sap.m.SearchField"
+          },
+          {
+            "elementName": "sap.ui.core.Control"
+          },
+          {
+            "elementName": "sap.ui.core.Element"
+          },
+          {
+            "elementName": "sap.ui.base.ManagedObject"
+          },
+          {
+            "elementName": "sap.ui.base.EventProvider"
+          },
+          {
+            "elementName": "sap.ui.base.Object"
+          }
+        ],
+        "uniquness": {
+          "property": {
+            "placeholder": 0,
+            "width": 0,
+            "blocked": 0,
+            "busy": 0,
+            "busyIndicatorDelay": 0,
+            "busyIndicatorSize": 0,
+            "visible": 0,
+            "fieldGroupIds": 0,
+            "value": 0,
+            "enabled": 0,
+            "maxLength": 0,
+            "showMagnifier": 0,
+            "showRefreshButton": 0,
+            "refreshButtonTooltip": 0,
+            "showSearchButton": 0,
+            "enableSuggestions": 0,
+            "selectOnFocus": 0
+          },
+          "context": {},
+          "binding": {},
+          "bindingContext": {}
+        },
+        "aggregationArray": [
+          {
+            "rows": [],
+            "filled": true,
+            "name": "customData",
+            "length": 0
+          },
+          {
+            "rows": [],
+            "filled": true,
+            "name": "dependents",
+            "length": 0
+          },
+          {
+            "rows": [],
+            "filled": true,
+            "name": "dragDropConfig",
+            "length": 0
+          },
+          {
+            "rows": [],
+            "filled": true,
+            "name": "suggestionItems",
+            "length": 0
+          }
+        ],
+        "children": [
+          {
+            "isInput": false,
+            "domChildWith": "-F"
+          },
+          {
+            "isInput": true,
+            "domChildWith": "-I"
+          },
+          {
+            "isInput": false,
+            "domChildWith": "-reset"
+          },
+          {
+            "isInput": false,
+            "domChildWith": "-search"
+          }
+        ]
+      },
+      "attributeFilter": [
+        {
+          "attributeType": "OWN",
+          "criteriaTypes": [
+            {
+              "criteriaKey": "ID",
+              "criteriaText": "Identifier"
+            },
+            {
+              "criteriaKey": "BNDX",
+              "criteriaText": "Binding Path"
+            },
+            {
+              "criteriaKey": "ATTR",
+              "criteriaText": "Attributes"
+            },
+            {
+              "criteriaKey": "BDG",
+              "criteriaText": "Binding Context"
+            },
+            {
+              "criteriaKey": "MTA",
+              "criteriaText": "Metadata"
+            },
+            {
+              "criteriaKey": "AGG",
+              "criteriaText": "Aggregation"
+            },
+            {
+              "criteriaKey": "VIW",
+              "criteriaText": "View-Data"
+            }
+          ],
+          "criteriaType": "MTA",
+          "subCriteriaType": "ELM",
+          "criteriaValue": "sap.m.SearchField",
+          "operatorType": "EQ",
+          "subCriteriaTypes": [
+            {
+              "subCriteriaType": "ELM",
+              "subCriteriaText": "Element-Name",
+              "calculatedValueUnres": "sap.m.SearchField",
+              "calculatedValue": "sap.m.SearchFie(...)"
+            },
+            {
+              "subCriteriaType": "CMP",
+              "subCriteriaText": "Component-Name",
+              "calculatedValueUnres": "__component0",
+              "calculatedValue": "__component0"
+            }
+          ]
+        },
+        {
+          "attributeType": "OWN",
+          "criteriaTypes": [
+            {
+              "criteriaKey": "ID",
+              "criteriaText": "Identifier"
+            },
+            {
+              "criteriaKey": "BNDX",
+              "criteriaText": "Binding Path"
+            },
+            {
+              "criteriaKey": "ATTR",
+              "criteriaText": "Attributes"
+            },
+            {
+              "criteriaKey": "BDG",
+              "criteriaText": "Binding Context"
+            },
+            {
+              "criteriaKey": "MTA",
+              "criteriaText": "Metadata"
+            },
+            {
+              "criteriaKey": "AGG",
+              "criteriaText": "Aggregation"
+            },
+            {
+              "criteriaKey": "VIW",
+              "criteriaText": "View-Data"
+            }
+          ],
+          "criteriaType": "ID",
+          "subCriteriaType": "LID",
+          "criteriaValue": "searchField",
+          "operatorType": "EQ",
+          "subCriteriaTypes": [
+            {
+              "subCriteriaType": "ID",
+              "subCriteriaText": "Global-Id",
+              "calculatedValueUnres": "__xmlview4--searchField",
+              "calculatedValue": "__xmlview4--sea(...)"
+            },
+            {
+              "subCriteriaType": "LID",
+              "subCriteriaText": "Local-Id",
+              "calculatedValueUnres": "searchField",
+              "calculatedValue": "searchField"
+            }
+          ]
+        }
+      ],
+      "assertFilter": [],
+      "subActionTypes": [
+        {
+          "text": "Root",
+          "domChildWith": "",
+          "order": 99
+        },
+        {
+          "text": "-search",
+          "domChildWith": "-search",
+          "order": 9999
+        },
+        {
+          "text": "-reset",
+          "domChildWith": "-reset",
+          "order": 9999
+        },
+        {
+          "text": "In Input-Field",
+          "domChildWith": "-I",
+          "order": 9999
+        },
+        {
+          "text": "-F",
+          "domChildWith": "-F",
+          "order": 9999
+        }
+      ],
+      "selector": {
+        "selectorAttributes": {
+          "domChildWith": "-I",
+          "metadata": {
+            "elementName": "sap.m.SearchField"
+          },
+          "identifier": {
+            "ui5LocalId": "searchField"
+          }
+        },
+        "selectorAttributesStringified": "{ domChildWith : \"-I\", metadata: { elementName : \"sap.m.SearchField\" }, identifier: { ui5LocalId : \"searchField\" } }",
+        "selectorAttributesBtf": "{\n  \"domChildWith\": \"-I\",\n  \"metadata\": {\n    \"elementName\": \"sap.m.SearchField\"\n  },\n  \"identifier\": {\n    \"ui5LocalId\": \"searchField\"\n  }\n}",
+        "selector": "UI5Selector",
+        "selectorUI5": {
+          "own": {
+            "controlType": "sap.m.SearchField",
+            "id": {
+              "id": "/searchField$/",
+              "__isRegex": true
+            }
+          }
+        }
+      },
+      "assertion": {
+        "code": [
+          ".exists).ok()"
+        ],
+        "assertType": "EXS",
+        "assertMsg": "",
+        "assertCode": [],
+        "assertMatchingCount": 1
+      },
+      "href": "http://localhost:8080/index.html#/p3",
+      "hash": "#/p3",
+      "stepExecuted": true
+    },
+    {
+      "property": {
+        "assKeyMatchingCount": 1,
+        "elementState": "Success",
+        "assKey": "EXS",
+        "assertMessage": "",
+        "selectActInsert": "",
+        "actKey": "PRS",
+        "type": "ACT",
+        "selectItemBy": "ATTR",
+        "technicalName": "searchField",
+        "useTechnicalName": true,
+        "previewCode": "",
+        "actionSettings": {
+          "testSpeed": 1,
+          "replaceText": false,
+          "pasteText": false,
+          "blur": false,
+          "enter": false
+        },
+        "supportAssistant": {
+          "ignoreGlobal": false,
+          "supportRules": []
+        },
+        "domChildWith": "-search"
+      },
+      "item": {
+        "property": {
+          "placeholder": "Search",
+          "width": "auto",
+          "value": "Car",
+          "blocked": false,
+          "busy": false,
+          "busyIndicatorDelay": 1000,
+          "busyIndicatorSize": "Medium",
+          "visible": true,
+          "fieldGroupIds": [],
+          "enabled": true,
+          "maxLength": 0,
+          "showMagnifier": true,
+          "showRefreshButton": false,
+          "refreshButtonTooltip": "",
+          "showSearchButton": true,
+          "enableSuggestions": false,
+          "selectOnFocus": true
+        },
+        "aggregation": {
+          "customData": {
+            "rows": [],
+            "filled": true,
+            "name": "customData",
+            "length": 0
+          },
+          "dependents": {
+            "rows": [],
+            "filled": true,
+            "name": "dependents",
+            "length": 0
+          },
+          "dragDropConfig": {
+            "rows": [],
+            "filled": true,
+            "name": "dragDropConfig",
+            "length": 0
+          },
+          "suggestionItems": {
+            "rows": [],
+            "filled": true,
+            "name": "suggestionItems",
+            "length": 0
+          }
+        },
+        "association": {},
+        "context": {},
+        "metadata": {
+          "elementName": "sap.m.SearchField",
+          "componentName": "__component0",
+          "componentId": "sap.ui.demo.todo",
+          "componentDataSource": {
+            "mainService": {
+              "uri": "/presentation/data_srv/",
+              "localUri": "localService/metadata.xml"
+            }
+          }
+        },
+        "identifier": {
+          "domId": "__xmlview4--searchField",
+          "ui5Id": "__xmlview4--searchField",
+          "idCloned": false,
+          "idGenerated": true,
+          "ui5LocalId": "searchField",
+          "localIdClonedOrGenerated": false,
+          "ui5AbsoluteId": "__xmlview4--searchField",
+          "domIdOriginal": "__xmlview4--searchField-search"
+        },
+        "parent": {
+          "property": {
+            "blocked": false,
+            "busy": false,
+            "busyIndicatorDelay": 1000,
+            "busyIndicatorSize": "Medium",
+            "visible": true,
+            "fieldGroupIds": [],
+            "width": "",
+            "active": false,
+            "enabled": true,
+            "height": "",
+            "design": "Auto",
+            "style": "Standard"
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {
+            "elementName": "sap.m.Toolbar",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.Page3",
+            "localViewName": "Page3"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.m.Toolbar"
+            },
+            {
+              "elementName": "sap.ui.core.Control"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__toolbar0",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "__toolbar0",
+            "localIdClonedOrGenerated": true,
+            "ui5AbsoluteId": "__toolbar0"
+          }
+        },
+        "parentL2": {
+          "property": {
+            "width": "auto",
+            "growing": true,
+            "busy": false,
+            "enableBusyIndicator": true,
+            "blocked": false,
+            "busyIndicatorDelay": 1000,
+            "busyIndicatorSize": "Medium",
+            "visible": true,
+            "fieldGroupIds": [],
+            "inset": false,
+            "headerText": "",
+            "headerDesign": "Standard",
+            "footerText": "",
+            "mode": "None",
+            "includeItemInSelection": false,
+            "showUnread": false,
+            "noDataText": "No data",
+            "showNoData": true,
+            "modeAnimationOn": true,
+            "showSeparators": "All",
+            "swipeDirection": "Both",
+            "growingThreshold": 20,
+            "growingTriggerText": "",
+            "growingScrollToLoad": false,
+            "growingDirection": "Downwards",
+            "rememberSelections": true,
+            "keyboardMode": "Navigation",
+            "backgroundDesign": "Translucent",
+            "fixedLayout": true,
+            "showOverlay": false,
+            "alternateRowColors": false,
+            "popinLayout": "Block",
+            "contextualWidth": "Inherit"
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {
+            "items": {
+              "model": "mainData",
+              "path": "/Posts",
+              "relativePath": "/Posts",
+              "contextPath": "",
+              "static": false,
+              "jsonBinding": false
+            },
+            "busyIndicatorDelay": {
+              "model": "worklistView",
+              "static": true
+            }
+          },
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {
+            "elementName": "sap.m.Table",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.Page3",
+            "localViewName": "Page3"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.m.Table"
+            },
+            {
+              "elementName": "sap.m.ListBase"
+            },
+            {
+              "elementName": "sap.ui.core.Control"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__xmlview4--itemTable",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "itemTable",
+            "localIdClonedOrGenerated": false,
+            "ui5AbsoluteId": "__xmlview4--itemTable"
+          }
+        },
+        "parentL3": {
+          "property": {
+            "enableScrolling": false,
+            "blocked": false,
+            "busy": false,
+            "busyIndicatorDelay": 1000,
+            "busyIndicatorSize": "Medium",
+            "visible": true,
+            "fieldGroupIds": [],
+            "title": "",
+            "titleLevel": "Auto",
+            "showNavButton": false,
+            "showHeader": true,
+            "showSubHeader": true,
+            "navButtonText": "",
+            "navButtonTooltip": "",
+            "icon": "",
+            "backgroundDesign": "Standard",
+            "navButtonType": "Back",
+            "showFooter": true,
+            "contentOnlyBusy": false,
+            "floatingFooter": false
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {
+            "elementName": "sap.m.Page",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.Page3",
+            "localViewName": "Page3"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.m.Page"
+            },
+            {
+              "elementName": "sap.ui.core.Control"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__page3",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "__page3",
+            "localIdClonedOrGenerated": true,
+            "ui5AbsoluteId": "__page3"
+          }
+        },
+        "parentL4": {
+          "property": {
+            "viewName": "sap.ui.demo.todo.view.Page3",
+            "blocked": false,
+            "busy": false,
+            "busyIndicatorDelay": 1000,
+            "busyIndicatorSize": "Medium",
+            "visible": true,
+            "fieldGroupIds": [],
+            "width": "100%",
+            "height": "",
+            "displayBlock": false
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {
+            "elementName": "sap.ui.core.mvc.XMLView",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.App",
+            "localViewName": "App"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.ui.core.mvc.XMLView"
+            },
+            {
+              "elementName": "sap.ui.core.mvc.View"
+            },
+            {
+              "elementName": "sap.ui.core.Control"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__xmlview4",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "__xmlview4",
+            "localIdClonedOrGenerated": true,
+            "ui5AbsoluteId": "__xmlview4"
+          }
+        },
+        "itemdata": {
+          "property": {},
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {},
+          "viewProperty": {},
+          "classArray": [],
+          "identifier": {
+            "domId": "",
+            "ui5Id": "",
+            "idCloned": false,
+            "idGenerated": false,
+            "ui5LocalId": "",
+            "localIdClonedOrGenerated": false,
+            "ui5AbsoluteId": ""
+          }
+        },
+        "label": {
+          "property": {},
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {},
+          "viewProperty": {},
+          "classArray": [],
+          "identifier": {
+            "domId": "",
+            "ui5Id": "",
+            "idCloned": false,
+            "idGenerated": false,
+            "ui5LocalId": "",
+            "localIdClonedOrGenerated": false,
+            "ui5AbsoluteId": ""
+          }
+        },
+        "parents": [
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.m.Toolbar",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__toolbar0",
+              "ui5Id": "__toolbar0",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "__toolbar0",
+              "localIdClonedOrGenerated": true,
+              "ui5AbsoluteId": "__toolbar0"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.m.Toolbar"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.m.Table",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview4--itemTable",
+              "ui5Id": "__xmlview4--itemTable",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "itemTable",
+              "localIdClonedOrGenerated": false,
+              "ui5AbsoluteId": "__xmlview4--itemTable"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.m.Table"
+              },
+              {
+                "elementName": "sap.m.ListBase"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.m.Page",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__page3",
+              "ui5Id": "__page3",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "__page3",
+              "localIdClonedOrGenerated": true,
+              "ui5AbsoluteId": "__page3"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.m.Page"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.ui.core.mvc.XMLView",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview4",
+              "ui5Id": "__xmlview4",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "__xmlview4",
+              "localIdClonedOrGenerated": true,
+              "ui5AbsoluteId": "__xmlview4"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.ui.core.mvc.XMLView"
+              },
+              {
+                "elementName": "sap.ui.core.mvc.View"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.m.App",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview0--idAppControl",
+              "ui5Id": "__xmlview0--idAppControl",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "idAppControl",
+              "localIdClonedOrGenerated": false,
+              "ui5AbsoluteId": "__xmlview0--idAppControl"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.m.App"
+              },
+              {
+                "elementName": "sap.m.NavContainer"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.ui.core.mvc.XMLView",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview0",
+              "ui5Id": "__xmlview0",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "__xmlview0",
+              "localIdClonedOrGenerated": true,
+              "ui5AbsoluteId": "__xmlview0"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.ui.core.mvc.XMLView"
+              },
+              {
+                "elementName": "sap.ui.core.mvc.View"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          }
+        ],
+        "binding": {},
+        "bindingContext": {},
+        "model": {},
+        "viewProperty": {
+          "viewName": "sap.ui.demo.todo.view.Page3",
+          "localViewName": "Page3"
+        },
+        "classArray": [
+          {
+            "elementName": "sap.m.SearchField"
+          },
+          {
+            "elementName": "sap.ui.core.Control"
+          },
+          {
+            "elementName": "sap.ui.core.Element"
+          },
+          {
+            "elementName": "sap.ui.base.ManagedObject"
+          },
+          {
+            "elementName": "sap.ui.base.EventProvider"
+          },
+          {
+            "elementName": "sap.ui.base.Object"
+          }
+        ],
+        "uniquness": {
+          "property": {
+            "placeholder": 0,
+            "width": 0,
+            "value": 0,
+            "blocked": 0,
+            "busy": 0,
+            "busyIndicatorDelay": 0,
+            "busyIndicatorSize": 0,
+            "visible": 0,
+            "fieldGroupIds": 0,
+            "enabled": 0,
+            "maxLength": 0,
+            "showMagnifier": 0,
+            "showRefreshButton": 0,
+            "refreshButtonTooltip": 0,
+            "showSearchButton": 0,
+            "enableSuggestions": 0,
+            "selectOnFocus": 0
+          },
+          "context": {},
+          "binding": {},
+          "bindingContext": {}
+        },
+        "aggregationArray": [
+          {
+            "rows": [],
+            "filled": true,
+            "name": "customData",
+            "length": 0
+          },
+          {
+            "rows": [],
+            "filled": true,
+            "name": "dependents",
+            "length": 0
+          },
+          {
+            "rows": [],
+            "filled": true,
+            "name": "dragDropConfig",
+            "length": 0
+          },
+          {
+            "rows": [],
+            "filled": true,
+            "name": "suggestionItems",
+            "length": 0
+          }
+        ],
+        "children": [
+          {
+            "isInput": false,
+            "domChildWith": "-F"
+          },
+          {
+            "isInput": true,
+            "domChildWith": "-I"
+          },
+          {
+            "isInput": false,
+            "domChildWith": "-reset"
+          },
+          {
+            "isInput": false,
+            "domChildWith": "-search"
+          }
+        ]
+      },
+      "attributeFilter": [
+        {
+          "attributeType": "OWN",
+          "criteriaTypes": [
+            {
+              "criteriaKey": "ID",
+              "criteriaText": "Identifier"
+            },
+            {
+              "criteriaKey": "BNDX",
+              "criteriaText": "Binding Path"
+            },
+            {
+              "criteriaKey": "ATTR",
+              "criteriaText": "Attributes"
+            },
+            {
+              "criteriaKey": "BDG",
+              "criteriaText": "Binding Context"
+            },
+            {
+              "criteriaKey": "MTA",
+              "criteriaText": "Metadata"
+            },
+            {
+              "criteriaKey": "AGG",
+              "criteriaText": "Aggregation"
+            },
+            {
+              "criteriaKey": "VIW",
+              "criteriaText": "View-Data"
+            }
+          ],
+          "criteriaType": "MTA",
+          "subCriteriaType": "ELM",
+          "criteriaValue": "sap.m.SearchField",
+          "operatorType": "EQ",
+          "subCriteriaTypes": [
+            {
+              "subCriteriaType": "ELM",
+              "subCriteriaText": "Element-Name",
+              "calculatedValueUnres": "sap.m.SearchField",
+              "calculatedValue": "sap.m.SearchFie(...)"
+            },
+            {
+              "subCriteriaType": "CMP",
+              "subCriteriaText": "Component-Name",
+              "calculatedValueUnres": "__component0",
+              "calculatedValue": "__component0"
+            }
+          ]
+        },
+        {
+          "attributeType": "OWN",
+          "criteriaTypes": [
+            {
+              "criteriaKey": "ID",
+              "criteriaText": "Identifier"
+            },
+            {
+              "criteriaKey": "BNDX",
+              "criteriaText": "Binding Path"
+            },
+            {
+              "criteriaKey": "ATTR",
+              "criteriaText": "Attributes"
+            },
+            {
+              "criteriaKey": "BDG",
+              "criteriaText": "Binding Context"
+            },
+            {
+              "criteriaKey": "MTA",
+              "criteriaText": "Metadata"
+            },
+            {
+              "criteriaKey": "AGG",
+              "criteriaText": "Aggregation"
+            },
+            {
+              "criteriaKey": "VIW",
+              "criteriaText": "View-Data"
+            }
+          ],
+          "criteriaType": "ID",
+          "subCriteriaType": "LID",
+          "criteriaValue": "searchField",
+          "operatorType": "EQ",
+          "subCriteriaTypes": [
+            {
+              "subCriteriaType": "ID",
+              "subCriteriaText": "Global-Id",
+              "calculatedValueUnres": "__xmlview4--searchField",
+              "calculatedValue": "__xmlview4--sea(...)"
+            },
+            {
+              "subCriteriaType": "LID",
+              "subCriteriaText": "Local-Id",
+              "calculatedValueUnres": "searchField",
+              "calculatedValue": "searchField"
+            }
+          ]
+        }
+      ],
+      "assertFilter": [],
+      "subActionTypes": [
+        {
+          "text": "Root",
+          "domChildWith": "",
+          "order": 99
+        },
+        {
+          "text": "-search",
+          "domChildWith": "-search",
+          "order": 9999
+        },
+        {
+          "text": "-reset",
+          "domChildWith": "-reset",
+          "order": 9999
+        },
+        {
+          "text": "In Input-Field",
+          "domChildWith": "-I",
+          "order": 9999
+        },
+        {
+          "text": "-F",
+          "domChildWith": "-F",
+          "order": 9999
+        }
+      ],
+      "selector": {
+        "selectorAttributes": {
+          "domChildWith": "-search",
+          "metadata": {
+            "elementName": "sap.m.SearchField"
+          },
+          "identifier": {
+            "ui5LocalId": "searchField"
+          }
+        },
+        "selectorAttributesStringified": "{ domChildWith : \"-search\", metadata: { elementName : \"sap.m.SearchField\" }, identifier: { ui5LocalId : \"searchField\" } }",
+        "selectorAttributesBtf": "{\n  \"domChildWith\": \"-search\",\n  \"metadata\": {\n    \"elementName\": \"sap.m.SearchField\"\n  },\n  \"identifier\": {\n    \"ui5LocalId\": \"searchField\"\n  }\n}",
+        "selector": "UI5Selector",
+        "selectorUI5": {
+          "own": {
+            "controlType": "sap.m.SearchField",
+            "id": {
+              "id": "/searchField$/",
+              "__isRegex": true
+            }
+          }
+        }
+      },
+      "assertion": {
+        "code": [
+          ".exists).ok()"
+        ],
+        "assertType": "EXS",
+        "assertMsg": "",
+        "assertCode": [],
+        "assertMatchingCount": 1
+      },
+      "href": "http://localhost:8080/index.html#/p3",
+      "hash": "#/p3",
+      "stepExecuted": true
+    },
+    {
+      "property": {
+        "assKeyMatchingCount": 1,
+        "elementState": "Warning",
+        "assKey": "EXS",
+        "assertMessage": "",
+        "selectActInsert": "",
+        "actKey": "PRS",
+        "type": "ACT",
+        "selectItemBy": "ATTR",
+        "technicalName": "columnListItem",
+        "useTechnicalName": true,
+        "previewCode": "",
+        "actionSettings": {
+          "testSpeed": 1,
+          "replaceText": false,
+          "pasteText": false,
+          "blur": false,
+          "enter": false
+        },
+        "supportAssistant": {
+          "ignoreGlobal": false,
+          "supportRules": []
+        },
+        "domChildWith": ""
+      },
+      "item": {
+        "property": {
+          "type": "Navigation",
+          "vAlign": "Middle",
+          "blocked": false,
+          "busy": false,
+          "busyIndicatorDelay": 1000,
+          "busyIndicatorSize": "Medium",
+          "visible": true,
+          "fieldGroupIds": [],
+          "unread": false,
+          "selected": false,
+          "counter": 0,
+          "highlight": "None",
+          "highlightText": ""
+        },
+        "aggregation": {
+          "customData": {
+            "rows": [],
+            "filled": true,
+            "name": "customData",
+            "length": 0
+          },
+          "dependents": {
+            "rows": [],
+            "filled": true,
+            "name": "dependents",
+            "length": 0
+          },
+          "dragDropConfig": {
+            "rows": [],
+            "filled": true,
+            "name": "dragDropConfig",
+            "length": 0
+          },
+          "cells": {
+            "rows": [
+              {
+                "context": {
+                  "mainData": {
+                    "PostID": "PostID_17",
+                    "Title": "Car VW Golf (white)",
+                    "Description": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+                    "Category": "Car Parts",
+                    "Contact": "james.McGillan@gmail.com",
+                    "Currency": "USD",
+                    "Price": 3006,
+                    "Flagged": 0
+                  }
+                },
+                "ui5Id": "__identifier0-__clone3",
+                "ui5AbsoluteId": "__identifier0-__clone3"
+              },
+              {
+                "context": {
+                  "mainData": {
+                    "PostID": "PostID_17",
+                    "Title": "Car VW Golf (white)",
+                    "Description": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+                    "Category": "Car Parts",
+                    "Contact": "james.McGillan@gmail.com",
+                    "Currency": "USD",
+                    "Price": 3006,
+                    "Flagged": 0
+                  }
+                },
+                "ui5Id": "__text7-__clone3",
+                "ui5AbsoluteId": "__text7-__clone3"
+              },
+              {
+                "context": {
+                  "mainData": {
+                    "PostID": "PostID_17",
+                    "Title": "Car VW Golf (white)",
+                    "Description": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+                    "Category": "Car Parts",
+                    "Contact": "james.McGillan@gmail.com",
+                    "Currency": "USD",
+                    "Price": 3006,
+                    "Flagged": 0
+                  }
+                },
+                "ui5Id": "__number0-__clone3",
+                "ui5AbsoluteId": "__number0-__clone3"
+              },
+              {
+                "context": {
+                  "mainData": {
+                    "PostID": "PostID_17",
+                    "Title": "Car VW Golf (white)",
+                    "Description": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+                    "Category": "Car Parts",
+                    "Contact": "james.McGillan@gmail.com",
+                    "Currency": "USD",
+                    "Price": 3006,
+                    "Flagged": 0
+                  }
+                },
+                "ui5Id": "__xmlview4--flaggedButton-__clone3",
+                "ui5AbsoluteId": "__xmlview4--flaggedButton-__clone3"
+              }
+            ],
+            "filled": true,
+            "name": "cells",
+            "length": 4
+          }
+        },
+        "association": {},
+        "context": {
+          "mainData": {
+            "PostID": "PostID_17",
+            "Title": "Car VW Golf (white)",
+            "Description": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+            "Category": "Car Parts",
+            "Contact": "james.McGillan@gmail.com",
+            "Currency": "USD",
+            "Price": 3006,
+            "Flagged": 0
+          }
+        },
+        "metadata": {
+          "elementName": "sap.m.ColumnListItem",
+          "componentName": "__component0",
+          "componentId": "sap.ui.demo.todo",
+          "componentDataSource": {
+            "mainService": {
+              "uri": "/presentation/data_srv/",
+              "localUri": "localService/metadata.xml"
+            }
+          }
+        },
+        "identifier": {
+          "domId": "__item0-__clone3",
+          "ui5Id": "__item0-__clone3",
+          "idCloned": false,
+          "idGenerated": true,
+          "ui5LocalId": "__clone3",
+          "localIdClonedOrGenerated": true,
+          "ui5AbsoluteId": "__item0-__clone3",
+          "domIdOriginal": "__item0-__clone3_cell0"
+        },
+        "parent": {
+          "property": {
+            "width": "auto",
+            "growing": true,
+            "busy": false,
+            "enableBusyIndicator": true,
+            "blocked": false,
+            "busyIndicatorDelay": 1000,
+            "busyIndicatorSize": "Medium",
+            "visible": true,
+            "fieldGroupIds": [],
+            "inset": false,
+            "headerText": "",
+            "headerDesign": "Standard",
+            "footerText": "",
+            "mode": "None",
+            "includeItemInSelection": false,
+            "showUnread": false,
+            "noDataText": "No data",
+            "showNoData": true,
+            "modeAnimationOn": true,
+            "showSeparators": "All",
+            "swipeDirection": "Both",
+            "growingThreshold": 20,
+            "growingTriggerText": "",
+            "growingScrollToLoad": false,
+            "growingDirection": "Downwards",
+            "rememberSelections": true,
+            "keyboardMode": "Navigation",
+            "backgroundDesign": "Translucent",
+            "fixedLayout": true,
+            "showOverlay": false,
+            "alternateRowColors": false,
+            "popinLayout": "Block",
+            "contextualWidth": "Inherit"
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {
+            "items": {
+              "model": "mainData",
+              "path": "/Posts",
+              "relativePath": "/Posts",
+              "contextPath": "",
+              "static": false,
+              "jsonBinding": false
+            },
+            "busyIndicatorDelay": {
+              "model": "worklistView",
+              "static": true
+            }
+          },
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {
+            "elementName": "sap.m.Table",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.Page3",
+            "localViewName": "Page3"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.m.Table"
+            },
+            {
+              "elementName": "sap.m.ListBase"
+            },
+            {
+              "elementName": "sap.ui.core.Control"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__xmlview4--itemTable",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "itemTable",
+            "localIdClonedOrGenerated": false,
+            "ui5AbsoluteId": "__xmlview4--itemTable"
+          }
+        },
+        "parentL2": {
+          "property": {
+            "enableScrolling": false,
+            "blocked": false,
+            "busy": false,
+            "busyIndicatorDelay": 1000,
+            "busyIndicatorSize": "Medium",
+            "visible": true,
+            "fieldGroupIds": [],
+            "title": "",
+            "titleLevel": "Auto",
+            "showNavButton": false,
+            "showHeader": true,
+            "showSubHeader": true,
+            "navButtonText": "",
+            "navButtonTooltip": "",
+            "icon": "",
+            "backgroundDesign": "Standard",
+            "navButtonType": "Back",
+            "showFooter": true,
+            "contentOnlyBusy": false,
+            "floatingFooter": false
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {
+            "elementName": "sap.m.Page",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.Page3",
+            "localViewName": "Page3"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.m.Page"
+            },
+            {
+              "elementName": "sap.ui.core.Control"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__page3",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "__page3",
+            "localIdClonedOrGenerated": true,
+            "ui5AbsoluteId": "__page3"
+          }
+        },
+        "parentL3": {
+          "property": {
+            "viewName": "sap.ui.demo.todo.view.Page3",
+            "blocked": false,
+            "busy": false,
+            "busyIndicatorDelay": 1000,
+            "busyIndicatorSize": "Medium",
+            "visible": true,
+            "fieldGroupIds": [],
+            "width": "100%",
+            "height": "",
+            "displayBlock": false
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {
+            "elementName": "sap.ui.core.mvc.XMLView",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.App",
+            "localViewName": "App"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.ui.core.mvc.XMLView"
+            },
+            {
+              "elementName": "sap.ui.core.mvc.View"
+            },
+            {
+              "elementName": "sap.ui.core.Control"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__xmlview4",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "__xmlview4",
+            "localIdClonedOrGenerated": true,
+            "ui5AbsoluteId": "__xmlview4"
+          }
+        },
+        "parentL4": {
+          "property": {
+            "blocked": false,
+            "busy": false,
+            "busyIndicatorDelay": 1000,
+            "busyIndicatorSize": "Medium",
+            "visible": true,
+            "fieldGroupIds": [],
+            "autoFocus": true,
+            "height": "100%",
+            "width": "100%",
+            "defaultTransitionName": "slide",
+            "homeIcon": null,
+            "backgroundColor": "",
+            "backgroundImage": "",
+            "backgroundRepeat": false,
+            "backgroundOpacity": 1,
+            "mobileWebAppCapable": true
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {
+            "elementName": "sap.m.App",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.App",
+            "localViewName": "App"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.m.App"
+            },
+            {
+              "elementName": "sap.m.NavContainer"
+            },
+            {
+              "elementName": "sap.ui.core.Control"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__xmlview0--idAppControl",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "idAppControl",
+            "localIdClonedOrGenerated": false,
+            "ui5AbsoluteId": "__xmlview0--idAppControl"
+          }
+        },
+        "itemdata": {
+          "property": {},
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {},
+          "viewProperty": {},
+          "classArray": [],
+          "identifier": {
+            "domId": "",
+            "ui5Id": "",
+            "idCloned": false,
+            "idGenerated": false,
+            "ui5LocalId": "",
+            "localIdClonedOrGenerated": false,
+            "ui5AbsoluteId": ""
+          }
+        },
+        "label": {
+          "property": {},
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {},
+          "viewProperty": {},
+          "classArray": [],
+          "identifier": {
+            "domId": "",
+            "ui5Id": "",
+            "idCloned": false,
+            "idGenerated": false,
+            "ui5LocalId": "",
+            "localIdClonedOrGenerated": false,
+            "ui5AbsoluteId": ""
+          }
+        },
+        "parents": [
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.m.Table",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview4--itemTable",
+              "ui5Id": "__xmlview4--itemTable",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "itemTable",
+              "localIdClonedOrGenerated": false,
+              "ui5AbsoluteId": "__xmlview4--itemTable"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.m.Table"
+              },
+              {
+                "elementName": "sap.m.ListBase"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.m.Page",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__page3",
+              "ui5Id": "__page3",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "__page3",
+              "localIdClonedOrGenerated": true,
+              "ui5AbsoluteId": "__page3"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.m.Page"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.ui.core.mvc.XMLView",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview4",
+              "ui5Id": "__xmlview4",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "__xmlview4",
+              "localIdClonedOrGenerated": true,
+              "ui5AbsoluteId": "__xmlview4"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.ui.core.mvc.XMLView"
+              },
+              {
+                "elementName": "sap.ui.core.mvc.View"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.m.App",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview0--idAppControl",
+              "ui5Id": "__xmlview0--idAppControl",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "idAppControl",
+              "localIdClonedOrGenerated": false,
+              "ui5AbsoluteId": "__xmlview0--idAppControl"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.m.App"
+              },
+              {
+                "elementName": "sap.m.NavContainer"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.ui.core.mvc.XMLView",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview0",
+              "ui5Id": "__xmlview0",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "__xmlview0",
+              "localIdClonedOrGenerated": true,
+              "ui5AbsoluteId": "__xmlview0"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.ui.core.mvc.XMLView"
+              },
+              {
+                "elementName": "sap.ui.core.mvc.View"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          }
+        ],
+        "binding": {},
+        "bindingContext": {
+          "mainData": "/Posts('PostID_17')"
+        },
+        "model": {},
+        "viewProperty": {
+          "viewName": "sap.ui.demo.todo.view.Page3",
+          "localViewName": "Page3"
+        },
+        "classArray": [
+          {
+            "elementName": "sap.m.ColumnListItem"
+          },
+          {
+            "elementName": "sap.m.ListItemBase"
+          },
+          {
+            "elementName": "sap.ui.core.Control"
+          },
+          {
+            "elementName": "sap.ui.core.Element"
+          },
+          {
+            "elementName": "sap.ui.base.ManagedObject"
+          },
+          {
+            "elementName": "sap.ui.base.EventProvider"
+          },
+          {
+            "elementName": "sap.ui.base.Object"
+          }
+        ],
+        "uniquness": {
+          "property": {
+            "type": 45,
+            "vAlign": 45,
+            "blocked": 45,
+            "busy": 45,
+            "busyIndicatorDelay": 0,
+            "busyIndicatorSize": 0,
+            "visible": 0,
+            "fieldGroupIds": 45,
+            "unread": 45,
+            "selected": 45,
+            "counter": 45,
+            "highlight": 0,
+            "highlightText": 45
+          },
+          "context": {
+            "mainData": {
+              "PostID": 100,
+              "Title": 100,
+              "Description": 100,
+              "Category": 100,
+              "Contact": 100,
+              "Currency": 45,
+              "Price": 100,
+              "Flagged": 45
+            }
+          },
+          "binding": {},
+          "bindingContext": {
+            "mainData": 100
+          }
+        },
+        "aggregationArray": [
+          {
+            "rows": [],
+            "filled": true,
+            "name": "customData",
+            "length": 0
+          },
+          {
+            "rows": [],
+            "filled": true,
+            "name": "dependents",
+            "length": 0
+          },
+          {
+            "rows": [],
+            "filled": true,
+            "name": "dragDropConfig",
+            "length": 0
+          },
+          {
+            "rows": [
+              {
+                "context": {
+                  "mainData": {
+                    "PostID": "PostID_17",
+                    "Title": "Car VW Golf (white)",
+                    "Description": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+                    "Category": "Car Parts",
+                    "Contact": "james.McGillan@gmail.com",
+                    "Currency": "USD",
+                    "Price": 3006,
+                    "Flagged": 0
+                  }
+                },
+                "ui5Id": "__identifier0-__clone3",
+                "ui5AbsoluteId": "__identifier0-__clone3"
+              },
+              {
+                "context": {
+                  "mainData": {
+                    "PostID": "PostID_17",
+                    "Title": "Car VW Golf (white)",
+                    "Description": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+                    "Category": "Car Parts",
+                    "Contact": "james.McGillan@gmail.com",
+                    "Currency": "USD",
+                    "Price": 3006,
+                    "Flagged": 0
+                  }
+                },
+                "ui5Id": "__text7-__clone3",
+                "ui5AbsoluteId": "__text7-__clone3"
+              },
+              {
+                "context": {
+                  "mainData": {
+                    "PostID": "PostID_17",
+                    "Title": "Car VW Golf (white)",
+                    "Description": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+                    "Category": "Car Parts",
+                    "Contact": "james.McGillan@gmail.com",
+                    "Currency": "USD",
+                    "Price": 3006,
+                    "Flagged": 0
+                  }
+                },
+                "ui5Id": "__number0-__clone3",
+                "ui5AbsoluteId": "__number0-__clone3"
+              },
+              {
+                "context": {
+                  "mainData": {
+                    "PostID": "PostID_17",
+                    "Title": "Car VW Golf (white)",
+                    "Description": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+                    "Category": "Car Parts",
+                    "Contact": "james.McGillan@gmail.com",
+                    "Currency": "USD",
+                    "Price": 3006,
+                    "Flagged": 0
+                  }
+                },
+                "ui5Id": "__xmlview4--flaggedButton-__clone3",
+                "ui5AbsoluteId": "__xmlview4--flaggedButton-__clone3"
+              }
+            ],
+            "filled": true,
+            "name": "cells",
+            "length": 4
+          }
+        ],
+        "children": [
+          {
+            "isInput": false,
+            "domChildWith": ""
+          },
+          {
+            "isInput": false,
+            "domChildWith": "_cell0"
+          },
+          {
+            "isInput": false,
+            "domChildWith": "_cell1"
+          },
+          {
+            "isInput": false,
+            "domChildWith": "_cell2"
+          },
+          {
+            "isInput": false,
+            "domChildWith": "_cell3"
+          },
+          {
+            "isInput": false,
+            "domChildWith": ""
+          }
+        ]
+      },
+      "attributeFilter": [
+        {
+          "attributeType": "OWN",
+          "criteriaTypes": [
+            {
+              "criteriaKey": "ID",
+              "criteriaText": "Identifier"
+            },
+            {
+              "criteriaKey": "BNDX",
+              "criteriaText": "Binding Path"
+            },
+            {
+              "criteriaKey": "ATTR",
+              "criteriaText": "Attributes"
+            },
+            {
+              "criteriaKey": "BDG",
+              "criteriaText": "Binding Context"
+            },
+            {
+              "criteriaKey": "MTA",
+              "criteriaText": "Metadata"
+            },
+            {
+              "criteriaKey": "AGG",
+              "criteriaText": "Aggregation"
+            },
+            {
+              "criteriaKey": "VIW",
+              "criteriaText": "View-Data"
+            }
+          ],
+          "criteriaType": "MTA",
+          "subCriteriaType": "ELM",
+          "criteriaValue": "sap.m.ColumnListItem",
+          "operatorType": "EQ",
+          "subCriteriaTypes": [
+            {
+              "subCriteriaType": "ELM",
+              "subCriteriaText": "Element-Name",
+              "calculatedValueUnres": "sap.m.ColumnListItem",
+              "calculatedValue": "sap.m.ColumnLis(...)"
+            },
+            {
+              "subCriteriaType": "CMP",
+              "subCriteriaText": "Component-Name",
+              "calculatedValueUnres": "__component0",
+              "calculatedValue": "__component0"
+            }
+          ]
+        },
+        {
+          "attributeType": "OWN",
+          "criteriaTypes": [
+            {
+              "criteriaKey": "ID",
+              "criteriaText": "Identifier"
+            },
+            {
+              "criteriaKey": "BNDX",
+              "criteriaText": "Binding Path"
+            },
+            {
+              "criteriaKey": "ATTR",
+              "criteriaText": "Attributes"
+            },
+            {
+              "criteriaKey": "BDG",
+              "criteriaText": "Binding Context"
+            },
+            {
+              "criteriaKey": "MTA",
+              "criteriaText": "Metadata"
+            },
+            {
+              "criteriaKey": "AGG",
+              "criteriaText": "Aggregation"
+            },
+            {
+              "criteriaKey": "VIW",
+              "criteriaText": "View-Data"
+            }
+          ],
+          "criteriaType": "BDG",
+          "subCriteriaType": "mainData/Title",
+          "criteriaValue": "Car VW Golf (white)",
+          "operatorType": "EQ",
+          "subCriteriaTypes": [
+            {
+              "subCriteriaType": "mainData/PostID",
+              "subCriteriaText": "mainData/PostID",
+              "calculatedValueUnres": "PostID_17",
+              "calculatedValue": "PostID_17"
+            },
+            {
+              "subCriteriaType": "mainData/Title",
+              "subCriteriaText": "mainData/Title",
+              "calculatedValueUnres": "Car VW Golf (white)",
+              "calculatedValue": "Car VW Golf (wh(...)"
+            },
+            {
+              "subCriteriaType": "mainData/Description",
+              "subCriteriaText": "mainData/Description",
+              "calculatedValueUnres": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+              "calculatedValue": "Only 160.000 km(...)"
+            },
+            {
+              "subCriteriaType": "mainData/Category",
+              "subCriteriaText": "mainData/Category",
+              "calculatedValueUnres": "Car Parts",
+              "calculatedValue": "Car Parts"
+            },
+            {
+              "subCriteriaType": "mainData/Contact",
+              "subCriteriaText": "mainData/Contact",
+              "calculatedValueUnres": "james.McGillan@gmail.com",
+              "calculatedValue": "james.McGillan@(...)"
+            },
+            {
+              "subCriteriaType": "mainData/Currency",
+              "subCriteriaText": "mainData/Currency",
+              "calculatedValueUnres": "USD",
+              "calculatedValue": "USD"
+            },
+            {
+              "subCriteriaType": "mainData/Price",
+              "subCriteriaText": "mainData/Price",
+              "calculatedValueUnres": "3006",
+              "calculatedValue": "3006"
+            },
+            {
+              "subCriteriaType": "mainData/Flagged",
+              "subCriteriaText": "mainData/Flagged",
+              "calculatedValueUnres": "0",
+              "calculatedValue": "0"
+            }
+          ]
+        }
+      ],
+      "assertFilter": [],
+      "subActionTypes": [
+        {
+          "text": "Root",
+          "domChildWith": "",
+          "order": 99
+        },
+        {
+          "text": "_cell3",
+          "domChildWith": "_cell3",
+          "order": 9999
+        },
+        {
+          "text": "_cell2",
+          "domChildWith": "_cell2",
+          "order": 9999
+        },
+        {
+          "text": "_cell1",
+          "domChildWith": "_cell1",
+          "order": 9999
+        },
+        {
+          "text": "_cell0",
+          "domChildWith": "_cell0",
+          "order": 9999
+        }
+      ],
+      "selector": {
+        "selectorAttributes": {
+          "metadata": {
+            "elementName": "sap.m.ColumnListItem"
+          },
+          "context": {
+            "mainData": {
+              "Title": "Car VW Golf (white)"
+            }
+          }
+        },
+        "selectorAttributesStringified": "{ metadata: { elementName : \"sap.m.ColumnListItem\" }, context: { mainData: { Title : \"Car VW Golf (white)\" } } }",
+        "selectorAttributesBtf": "{\n  \"metadata\": {\n    \"elementName\": \"sap.m.ColumnListItem\"\n  },\n  \"context\": {\n    \"mainData\": {\n      \"Title\": \"Car VW Golf (white)\"\n    }\n  }\n}",
+        "selector": "UI5Selector",
+        "selectorUI5": {
+          "own": {
+            "controlType": "sap.m.ColumnListItem"
+          }
+        }
+      },
+      "assertion": {
+        "code": [
+          ".exists).ok()"
+        ],
+        "assertType": "EXS",
+        "assertMsg": "",
+        "assertCode": [],
+        "assertMatchingCount": 1
+      },
+      "href": "http://localhost:8080/index.html#/p3",
+      "hash": "#/p3",
+      "stepExecuted": true
+    },
+    {
+      "property": {
+        "assKeyMatchingCount": 1,
+        "elementState": "Success",
+        "assKey": "ATTR",
+        "assertMessage": "",
+        "selectActInsert": "",
+        "actKey": "PRS",
+        "type": "ASS",
+        "selectItemBy": "ATTR",
+        "technicalName": "postDescriptionLabelText",
+        "useTechnicalName": true,
+        "previewCode": "",
+        "actionSettings": {
+          "testSpeed": 1,
+          "replaceText": false,
+          "pasteText": false,
+          "blur": false,
+          "enter": false
+        },
+        "supportAssistant": {
+          "ignoreGlobal": false,
+          "supportRules": []
+        },
+        "domChildWith": ""
+      },
+      "item": {
+        "property": {
+          "text": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+          "blocked": false,
+          "busy": false,
+          "busyIndicatorDelay": 1000,
+          "busyIndicatorSize": "Medium",
+          "visible": true,
+          "fieldGroupIds": [],
+          "textDirection": "Inherit",
+          "wrapping": true,
+          "wrappingType": "Normal",
+          "textAlign": "Begin",
+          "width": "",
+          "maxLines": 0,
+          "renderWhitespace": false
+        },
+        "aggregation": {
+          "customData": {
+            "rows": [],
+            "filled": true,
+            "name": "customData",
+            "length": 0
+          },
+          "dependents": {
+            "rows": [],
+            "filled": true,
+            "name": "dependents",
+            "length": 0
+          },
+          "dragDropConfig": {
+            "rows": [],
+            "filled": true,
+            "name": "dragDropConfig",
+            "length": 0
+          }
+        },
+        "association": {},
+        "context": {
+          "mainData": {
+            "PostID": "PostID_17",
+            "Title": "Car VW Golf (white)",
+            "Description": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+            "Category": "Car Parts",
+            "Contact": "james.McGillan@gmail.com",
+            "Currency": "USD",
+            "Price": 3006,
+            "Flagged": 0
+          }
+        },
+        "metadata": {
+          "elementName": "sap.m.Text",
+          "componentName": "__component0",
+          "componentId": "sap.ui.demo.todo",
+          "componentDataSource": {
+            "mainService": {
+              "uri": "/presentation/data_srv/",
+              "localUri": "localService/metadata.xml"
+            }
+          }
+        },
+        "identifier": {
+          "domId": "__xmlview5--descriptionText",
+          "ui5Id": "__xmlview5--descriptionText",
+          "idCloned": false,
+          "idGenerated": true,
+          "ui5LocalId": "descriptionText",
+          "localIdClonedOrGenerated": false,
+          "ui5AbsoluteId": "__xmlview5--descriptionText",
+          "domIdOriginal": "__xmlview5--descriptionText"
+        },
+        "parent": {
+          "property": {
+            "visible": true
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {
+            "mainData": "/Posts('PostID_17')"
+          },
+          "context": {
+            "mainData": {
+              "PostID": "PostID_17",
+              "Title": "Car VW Golf (white)",
+              "Description": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+              "Category": "Car Parts",
+              "Contact": "james.McGillan@gmail.com",
+              "Currency": "USD",
+              "Price": 3006,
+              "Flagged": 0
+            }
+          },
+          "model": {},
+          "metadata": {
+            "elementName": "sap.ui.layout.form.FormElement",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.Page4",
+            "localViewName": "Page4"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.ui.layout.form.FormElement"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__element1",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "__element1",
+            "localIdClonedOrGenerated": true,
+            "ui5AbsoluteId": "__element1"
+          }
+        },
+        "parentL2": {
+          "property": {
+            "expanded": true,
+            "expandable": false,
+            "visible": true
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {
+            "mainData": "/Posts('PostID_17')"
+          },
+          "context": {
+            "mainData": {
+              "PostID": "PostID_17",
+              "Title": "Car VW Golf (white)",
+              "Description": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+              "Category": "Car Parts",
+              "Contact": "james.McGillan@gmail.com",
+              "Currency": "USD",
+              "Price": 3006,
+              "Flagged": 0
+            }
+          },
+          "model": {},
+          "metadata": {
+            "elementName": "sap.ui.layout.form.FormContainer",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.Page4",
+            "localViewName": "Page4"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.ui.layout.form.FormContainer"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__container1",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "__container1",
+            "localIdClonedOrGenerated": true,
+            "ui5AbsoluteId": "__container1"
+          }
+        },
+        "parentL3": {
+          "property": {
+            "blocked": false,
+            "busy": false,
+            "busyIndicatorDelay": 1000,
+            "busyIndicatorSize": "Medium",
+            "visible": true,
+            "fieldGroupIds": [],
+            "width": "",
+            "editable": false
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {
+            "mainData": "/Posts('PostID_17')"
+          },
+          "context": {
+            "mainData": {
+              "PostID": "PostID_17",
+              "Title": "Car VW Golf (white)",
+              "Description": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+              "Category": "Car Parts",
+              "Contact": "james.McGillan@gmail.com",
+              "Currency": "USD",
+              "Price": 3006,
+              "Flagged": 0
+            }
+          },
+          "model": {},
+          "metadata": {
+            "elementName": "sap.ui.layout.form.Form",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.Page4",
+            "localViewName": "Page4"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.ui.layout.form.Form"
+            },
+            {
+              "elementName": "sap.ui.core.Control"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__form0--Form",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "Form",
+            "localIdClonedOrGenerated": false,
+            "ui5AbsoluteId": "__form0--Form"
+          }
+        },
+        "parentL4": {
+          "property": {
+            "layout": "ResponsiveGridLayout",
+            "blocked": false,
+            "busy": false,
+            "busyIndicatorDelay": 1000,
+            "busyIndicatorSize": "Medium",
+            "visible": true,
+            "fieldGroupIds": [],
+            "maxContainerCols": 2,
+            "minWidth": -1,
+            "width": "",
+            "editable": false,
+            "labelMinWidth": 192,
+            "labelSpanXL": -1,
+            "labelSpanL": 4,
+            "labelSpanM": 2,
+            "labelSpanS": 12,
+            "adjustLabelSpan": true,
+            "emptySpanXL": -1,
+            "emptySpanL": 0,
+            "emptySpanM": 0,
+            "emptySpanS": 0,
+            "columnsXL": -1,
+            "columnsL": 2,
+            "columnsM": 1,
+            "singleContainerFullSize": true,
+            "breakpointXL": 1440,
+            "breakpointL": 1024,
+            "breakpointM": 600,
+            "backgroundDesign": "Translucent"
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {
+            "mainData": "/Posts('PostID_17')"
+          },
+          "context": {
+            "mainData": {
+              "PostID": "PostID_17",
+              "Title": "Car VW Golf (white)",
+              "Description": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+              "Category": "Car Parts",
+              "Contact": "james.McGillan@gmail.com",
+              "Currency": "USD",
+              "Price": 3006,
+              "Flagged": 0
+            }
+          },
+          "model": {},
+          "metadata": {
+            "elementName": "sap.ui.layout.form.SimpleForm",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.Page4",
+            "localViewName": "Page4"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.ui.layout.form.SimpleForm"
+            },
+            {
+              "elementName": "sap.ui.core.Control"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__form0",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "__form0",
+            "localIdClonedOrGenerated": true,
+            "ui5AbsoluteId": "__form0"
+          }
+        },
+        "itemdata": {
+          "property": {},
+          "aggregation": [],
+          "association": {},
+          "binding": {},
+          "bindingContext": {},
+          "context": {},
+          "model": {},
+          "metadata": {},
+          "viewProperty": {},
+          "classArray": [],
+          "identifier": {
+            "domId": "",
+            "ui5Id": "",
+            "idCloned": false,
+            "idGenerated": false,
+            "ui5LocalId": "",
+            "localIdClonedOrGenerated": false,
+            "ui5AbsoluteId": ""
+          }
+        },
+        "label": {
+          "property": {
+            "text": "Description",
+            "blocked": false,
+            "busy": false,
+            "busyIndicatorDelay": 1000,
+            "busyIndicatorSize": "Medium",
+            "visible": true,
+            "fieldGroupIds": [],
+            "design": "Standard",
+            "textAlign": "Begin",
+            "textDirection": "Inherit",
+            "width": "",
+            "required": false,
+            "displayOnly": false,
+            "wrapping": false,
+            "wrappingType": "Normal",
+            "vAlign": "Inherit"
+          },
+          "aggregation": [],
+          "association": {},
+          "binding": {
+            "text": {
+              "model": "i18n",
+              "path": "postDescriptionLabel",
+              "relativePath": "postDescriptionLabel",
+              "contextPath": "",
+              "static": true,
+              "jsonBinding": false
+            }
+          },
+          "bindingContext": {
+            "mainData": "/Posts('PostID_17')"
+          },
+          "context": {
+            "mainData": {
+              "PostID": "PostID_17",
+              "Title": "Car VW Golf (white)",
+              "Description": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+              "Category": "Car Parts",
+              "Contact": "james.McGillan@gmail.com",
+              "Currency": "USD",
+              "Price": 3006,
+              "Flagged": 0
+            }
+          },
+          "model": {},
+          "metadata": {
+            "elementName": "sap.m.Label",
+            "componentName": "__component0",
+            "componentId": "sap.ui.demo.todo",
+            "componentDataSource": {
+              "mainService": {
+                "uri": "/presentation/data_srv/",
+                "localUri": "localService/metadata.xml"
+              }
+            }
+          },
+          "viewProperty": {
+            "viewName": "sap.ui.demo.todo.view.Page4",
+            "localViewName": "Page4"
+          },
+          "classArray": [
+            {
+              "elementName": "sap.m.Label"
+            },
+            {
+              "elementName": "sap.ui.core.Control"
+            },
+            {
+              "elementName": "sap.ui.core.Element"
+            },
+            {
+              "elementName": "sap.ui.base.ManagedObject"
+            },
+            {
+              "elementName": "sap.ui.base.EventProvider"
+            },
+            {
+              "elementName": "sap.ui.base.Object"
+            }
+          ],
+          "identifier": {
+            "ui5Id": "__label11",
+            "idCloned": false,
+            "idGenerated": true,
+            "ui5LocalId": "__label11",
+            "localIdClonedOrGenerated": true,
+            "ui5AbsoluteId": "__label11"
+          }
+        },
+        "parents": [
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.ui.layout.form.Form",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__form0--Form",
+              "ui5Id": "__form0--Form",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "Form",
+              "localIdClonedOrGenerated": false,
+              "ui5AbsoluteId": "__form0--Form"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.ui.layout.form.Form"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.ui.layout.form.SimpleForm",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__form0",
+              "ui5Id": "__form0",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "__form0",
+              "localIdClonedOrGenerated": true,
+              "ui5AbsoluteId": "__form0"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.ui.layout.form.SimpleForm"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.m.IconTabFilter",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__filter0",
+              "ui5Id": "__filter0",
+              "idCloned": true,
+              "idGenerated": true,
+              "ui5LocalId": "__filter0",
+              "localIdClonedOrGenerated": true,
+              "ui5AbsoluteId": "__filter0"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.m.IconTabFilter"
+              },
+              {
+                "elementName": "sap.ui.core.Item"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.m.IconTabHeader",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview5--iconTabBar--header",
+              "ui5Id": "__xmlview5--iconTabBar--header",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "header",
+              "localIdClonedOrGenerated": false,
+              "ui5AbsoluteId": "__xmlview5--iconTabBar--header"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.m.IconTabHeader"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.m.IconTabBar",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview5--iconTabBar",
+              "ui5Id": "__xmlview5--iconTabBar",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "iconTabBar",
+              "localIdClonedOrGenerated": false,
+              "ui5AbsoluteId": "__xmlview5--iconTabBar"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.m.IconTabBar"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.m.Page",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__page4",
+              "ui5Id": "__page4",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "__page4",
+              "localIdClonedOrGenerated": true,
+              "ui5AbsoluteId": "__page4"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.m.Page"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.ui.core.mvc.XMLView",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview5",
+              "ui5Id": "__xmlview5",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "__xmlview5",
+              "localIdClonedOrGenerated": true,
+              "ui5AbsoluteId": "__xmlview5"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.ui.core.mvc.XMLView"
+              },
+              {
+                "elementName": "sap.ui.core.mvc.View"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.m.App",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview0--idAppControl",
+              "ui5Id": "__xmlview0--idAppControl",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "idAppControl",
+              "localIdClonedOrGenerated": false,
+              "ui5AbsoluteId": "__xmlview0--idAppControl"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.m.App"
+              },
+              {
+                "elementName": "sap.m.NavContainer"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          },
+          {
+            "property": {},
+            "aggregation": [],
+            "association": {},
+            "context": {},
+            "metadata": {
+              "elementName": "sap.ui.core.mvc.XMLView",
+              "componentName": "__component0",
+              "componentId": "sap.ui.demo.todo",
+              "componentDataSource": {
+                "mainService": {
+                  "uri": "/presentation/data_srv/",
+                  "localUri": "localService/metadata.xml"
+                }
+              }
+            },
+            "identifier": {
+              "domId": "__xmlview0",
+              "ui5Id": "__xmlview0",
+              "idCloned": false,
+              "idGenerated": true,
+              "ui5LocalId": "__xmlview0",
+              "localIdClonedOrGenerated": true,
+              "ui5AbsoluteId": "__xmlview0"
+            },
+            "parent": {},
+            "parentL2": {},
+            "parentL3": {},
+            "parentL4": {},
+            "itemdata": {},
+            "label": {},
+            "parents": [],
+            "binding": {},
+            "bindingContext": {},
+            "model": {},
+            "viewProperty": {},
+            "classArray": [
+              {
+                "elementName": "sap.ui.core.mvc.XMLView"
+              },
+              {
+                "elementName": "sap.ui.core.mvc.View"
+              },
+              {
+                "elementName": "sap.ui.core.Control"
+              },
+              {
+                "elementName": "sap.ui.core.Element"
+              },
+              {
+                "elementName": "sap.ui.base.ManagedObject"
+              },
+              {
+                "elementName": "sap.ui.base.EventProvider"
+              },
+              {
+                "elementName": "sap.ui.base.Object"
+              }
+            ]
+          }
+        ],
+        "binding": {
+          "text": {
+            "model": "mainData",
+            "path": "/Posts('PostID_17')/Description",
+            "relativePath": "Description",
+            "contextPath": "/Posts('PostID_17')/",
+            "static": false,
+            "jsonBinding": false
+          }
+        },
+        "bindingContext": {
+          "mainData": "/Posts('PostID_17')"
+        },
+        "model": {},
+        "viewProperty": {
+          "viewName": "sap.ui.demo.todo.view.Page4",
+          "localViewName": "Page4"
+        },
+        "classArray": [
+          {
+            "elementName": "sap.m.Text"
+          },
+          {
+            "elementName": "sap.ui.core.Control"
+          },
+          {
+            "elementName": "sap.ui.core.Element"
+          },
+          {
+            "elementName": "sap.ui.base.ManagedObject"
+          },
+          {
+            "elementName": "sap.ui.base.EventProvider"
+          },
+          {
+            "elementName": "sap.ui.base.Object"
+          }
+        ],
+        "uniquness": {
+          "property": {
+            "text": 100,
+            "blocked": 0,
+            "busy": 0,
+            "busyIndicatorDelay": 0,
+            "busyIndicatorSize": 0,
+            "visible": 0,
+            "fieldGroupIds": 0,
+            "textDirection": 0,
+            "wrapping": 0,
+            "wrappingType": 0,
+            "textAlign": 0,
+            "width": 0,
+            "maxLines": 0,
+            "renderWhitespace": 0
+          },
+          "context": {
+            "mainData": {
+              "PostID": 0,
+              "Title": 0,
+              "Description": 0,
+              "Category": 0,
+              "Contact": 0,
+              "Currency": 0,
+              "Price": 0,
+              "Flagged": 0
+            }
+          },
+          "binding": {
+            "text": 100
+          },
+          "bindingContext": {
+            "mainData": 0
+          }
+        },
+        "aggregationArray": [
+          {
+            "rows": [],
+            "filled": true,
+            "name": "customData",
+            "length": 0
+          },
+          {
+            "rows": [],
+            "filled": true,
+            "name": "dependents",
+            "length": 0
+          },
+          {
+            "rows": [],
+            "filled": true,
+            "name": "dragDropConfig",
+            "length": 0
+          }
+        ],
+        "children": []
+      },
+      "attributeFilter": [
+        {
+          "attributeType": "OWN",
+          "criteriaTypes": [
+            {
+              "criteriaKey": "ID",
+              "criteriaText": "Identifier"
+            },
+            {
+              "criteriaKey": "BNDX",
+              "criteriaText": "Binding Path"
+            },
+            {
+              "criteriaKey": "ATTR",
+              "criteriaText": "Attributes"
+            },
+            {
+              "criteriaKey": "BDG",
+              "criteriaText": "Binding Context"
+            },
+            {
+              "criteriaKey": "MTA",
+              "criteriaText": "Metadata"
+            },
+            {
+              "criteriaKey": "AGG",
+              "criteriaText": "Aggregation"
+            },
+            {
+              "criteriaKey": "VIW",
+              "criteriaText": "View-Data"
+            }
+          ],
+          "criteriaType": "MTA",
+          "subCriteriaType": "ELM",
+          "criteriaValue": "sap.m.Text",
+          "operatorType": "EQ",
+          "subCriteriaTypes": [
+            {
+              "subCriteriaType": "ELM",
+              "subCriteriaText": "Element-Name",
+              "calculatedValueUnres": "sap.m.Text",
+              "calculatedValue": "sap.m.Text"
+            },
+            {
+              "subCriteriaType": "CMP",
+              "subCriteriaText": "Component-Name",
+              "calculatedValueUnres": "__component0",
+              "calculatedValue": "__component0"
+            }
+          ]
+        },
+        {
+          "attributeType": "OWN",
+          "criteriaTypes": [
+            {
+              "criteriaKey": "ID",
+              "criteriaText": "Identifier"
+            },
+            {
+              "criteriaKey": "BNDX",
+              "criteriaText": "Binding Path"
+            },
+            {
+              "criteriaKey": "ATTR",
+              "criteriaText": "Attributes"
+            },
+            {
+              "criteriaKey": "BDG",
+              "criteriaText": "Binding Context"
+            },
+            {
+              "criteriaKey": "MTA",
+              "criteriaText": "Metadata"
+            },
+            {
+              "criteriaKey": "AGG",
+              "criteriaText": "Aggregation"
+            },
+            {
+              "criteriaKey": "VIW",
+              "criteriaText": "View-Data"
+            }
+          ],
+          "criteriaType": "ID",
+          "subCriteriaType": "LID",
+          "criteriaValue": "descriptionText",
+          "operatorType": "EQ",
+          "subCriteriaTypes": [
+            {
+              "subCriteriaType": "ID",
+              "subCriteriaText": "Global-Id",
+              "calculatedValueUnres": "__xmlview5--descriptionText",
+              "calculatedValue": "__xmlview5--des(...)"
+            },
+            {
+              "subCriteriaType": "LID",
+              "subCriteriaText": "Local-Id",
+              "calculatedValueUnres": "descriptionText",
+              "calculatedValue": "descriptionText"
+            }
+          ]
+        }
+      ],
+      "assertFilter": [
+        {
+          "attributeType": "OWN",
+          "criteriaTypes": [
+            {
+              "criteriaKey": "ID",
+              "criteriaText": "Identifier"
+            },
+            {
+              "criteriaKey": "BNDX",
+              "criteriaText": "Binding Path"
+            },
+            {
+              "criteriaKey": "ATTR",
+              "criteriaText": "Attributes"
+            },
+            {
+              "criteriaKey": "BDG",
+              "criteriaText": "Binding Context"
+            },
+            {
+              "criteriaKey": "MTA",
+              "criteriaText": "Metadata"
+            },
+            {
+              "criteriaKey": "AGG",
+              "criteriaText": "Aggregation"
+            },
+            {
+              "criteriaKey": "VIW",
+              "criteriaText": "View-Data"
+            }
+          ],
+          "criteriaType": "ATTR",
+          "subCriteriaType": "text",
+          "criteriaValue": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+          "operatorType": "EQ",
+          "subCriteriaTypes": [
+            {
+              "subCriteriaType": "text",
+              "subCriteriaText": "text",
+              "calculatedValueUnres": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+              "calculatedValue": "Only 160.000 km(...)"
+            },
+            {
+              "subCriteriaType": "blocked",
+              "subCriteriaText": "blocked",
+              "calculatedValueUnres": "false",
+              "calculatedValue": "false"
+            },
+            {
+              "subCriteriaType": "busy",
+              "subCriteriaText": "busy",
+              "calculatedValueUnres": "false",
+              "calculatedValue": "false"
+            },
+            {
+              "subCriteriaType": "busyIndicatorDelay",
+              "subCriteriaText": "busyIndicatorDelay",
+              "calculatedValueUnres": "1000",
+              "calculatedValue": "1000"
+            },
+            {
+              "subCriteriaType": "busyIndicatorSize",
+              "subCriteriaText": "busyIndicatorSize",
+              "calculatedValueUnres": "Medium",
+              "calculatedValue": "Medium"
+            },
+            {
+              "subCriteriaType": "visible",
+              "subCriteriaText": "visible",
+              "calculatedValueUnres": "true",
+              "calculatedValue": "true"
+            },
+            {
+              "subCriteriaType": "fieldGroupIds",
+              "subCriteriaText": "fieldGroupIds",
+              "calculatedValueUnres": "",
+              "calculatedValue": ""
+            },
+            {
+              "subCriteriaType": "textDirection",
+              "subCriteriaText": "textDirection",
+              "calculatedValueUnres": "Inherit",
+              "calculatedValue": "Inherit"
+            },
+            {
+              "subCriteriaType": "wrapping",
+              "subCriteriaText": "wrapping",
+              "calculatedValueUnres": "true",
+              "calculatedValue": "true"
+            },
+            {
+              "subCriteriaType": "wrappingType",
+              "subCriteriaText": "wrappingType",
+              "calculatedValueUnres": "Normal",
+              "calculatedValue": "Normal"
+            },
+            {
+              "subCriteriaType": "textAlign",
+              "subCriteriaText": "textAlign",
+              "calculatedValueUnres": "Begin",
+              "calculatedValue": "Begin"
+            },
+            {
+              "subCriteriaType": "width",
+              "subCriteriaText": "width",
+              "calculatedValueUnres": "",
+              "calculatedValue": ""
+            },
+            {
+              "subCriteriaType": "maxLines",
+              "subCriteriaText": "maxLines",
+              "calculatedValueUnres": "0",
+              "calculatedValue": "0"
+            },
+            {
+              "subCriteriaType": "renderWhitespace",
+              "subCriteriaText": "renderWhitespace",
+              "calculatedValueUnres": "false",
+              "calculatedValue": "false"
+            }
+          ],
+          "assertionOK": true
+        }
+      ],
+      "subActionTypes": [
+        {
+          "text": "Root",
+          "domChildWith": "",
+          "order": 99
+        }
+      ],
+      "selector": {
+        "selectorAttributes": {
+          "metadata": {
+            "elementName": "sap.m.Text"
+          },
+          "identifier": {
+            "ui5LocalId": "descriptionText"
+          }
+        },
+        "selectorAttributesStringified": "{ metadata: { elementName : \"sap.m.Text\" }, identifier: { ui5LocalId : \"descriptionText\" } }",
+        "selectorAttributesBtf": "{\n  \"metadata\": {\n    \"elementName\": \"sap.m.Text\"\n  },\n  \"identifier\": {\n    \"ui5LocalId\": \"descriptionText\"\n  }\n}",
+        "selector": "UI5Selector",
+        "selectorUI5": {
+          "own": {
+            "controlType": "sap.m.Text",
+            "id": {
+              "id": "/descriptionText$/",
+              "__isRegex": true
+            }
+          }
+        }
+      },
+      "assertion": {
+        "code": [
+          ".getUI5(({ element }) => element.property.text)).eql('Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.')"
+        ],
+        "assertType": "ATTR",
+        "assertMsg": "",
+        "assertCode": [
+          {
+            "assertType": "EQ",
+            "assertLocation": "property.text",
+            "assertOperator": "EQ",
+            "assertValue": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details.",
+            "assertField": {
+              "type": "property",
+              "value": "text"
+            },
+            "assertUI5Spec": {
+              "properties": [
+                {
+                  "text": "Only 160.000 km and in really good shape, grip shift, contact me for appointment and more details."
+                }
+              ]
+            },
+            "assertMsg": ""
+          }
+        ],
+        "assertMatchingCount": 1,
+        "assertScope": ""
+      },
+      "href": "http://localhost:8080/index.html#/p4/PostID_17",
+      "hash": "#/p4/PostID_17",
+      "stepExecuted": true
+    }
+  ],
+  "test": {
+    "uuid": "f2a4d7c3-0f44-4422-a8b5-f63ee99dac090",
+    "createdAt": 1561715896098
+  }
+}

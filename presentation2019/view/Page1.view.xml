@@ -1,0 +1,48 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" controllerName="sap.ui.demo.todo.controller.Page1">
+    <Page enableScrolling="false">
+        <customHeader>
+            <Bar class="topBar">
+                <contentLeft>
+                    <Image src="assets/msgLogo.png" height="100%" />
+                </contentLeft>
+                <contentMiddle>
+                    <Label text="{i18n>opening}" class="headerTitle" visible="{= ${page1View>/subNav} &gt; 0}"/>
+                </contentMiddle>
+                <contentRight>
+                    <Image src="assets/testrecorder_ico.svg" height="100%"/>
+                    <Label text="{i18n>presTitle}"/>
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <content>
+            <VBox justifyContent="Center" alignItems="Center" class="topDistance" height="100%">
+                <Title text="{i18n>opening}" class="inTheMiddle presTitleH1_2 shrinkingHeader sapUiSmallMarginBottom" visible="{= ${page1View>/subNav} === 0 }"/>
+                <VBox visible="{= ${page1View>/subNav} === 1 }">
+                    <Image src="assets/teststrategy_external_transp.png" height="80%"/>
+                    <Text text="{i18n>picture_url_pyramid}" class=""/>
+                </VBox>
+                <VBox visible="{= ${page1View>/subNav} === 2 }">
+                    <Image src="assets/zombomeme_horizontal.jpg" height="80%"/>
+                </VBox>
+            </VBox>
+        </content>
+        <footer>
+            <Bar>
+                <contentLeft>
+                    <Text text="{i18n>copyright}" />
+                </contentLeft>
+                <contentMiddle>
+                    <Button id="left1" icon="sap-icon://arrow-left" press="priorSlide" enabled="{= ${/siteNum} &gt; 0 }" />
+                    <Button id="up1" icon="sap-icon://arrow-top" press="_slideUp" enabled="{= ${page1View>/subNav} &gt; 0 }" visible="{page1View>/subActive}"/>
+                    <Button id="down1" icon="sap-icon://arrow-bottom" press="_slideDown" enabled="{= ${page1View>/subNav} &lt; ${page1View>/maxSub} }"  visible="{page1View>/subActive}"/>                    
+                    <Button id="right1" icon="sap-icon://arrow-right" press="nextSlide" enabled="{= ${/siteNum} &lt; (${/slideSequence}.length -1) }" />
+                </contentMiddle>
+                <contentRight>
+                    <Text text="{parts: [{path: '/siteNum'}, 
+                                         {path: '/slideSequence'}], 
+                                 formatter: '.formatter.setSlideNumber'}" />
+                </contentRight>
+            </Bar>
+        </footer>
+    </Page>
+</mvc:View>

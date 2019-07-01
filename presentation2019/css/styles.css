@@ -1,0 +1,125 @@
+:root {
+	--main-contrast-color: #841439;
+}
+
+.inTheMiddle > span{
+	margin-left: auto;
+	margin-right: auto;
+	display: flex;
+}
+
+.presTitleH1 {
+	font-size: 12rem;
+	font-weight: bold;
+}
+
+.presTitleH1_2 {
+	font-size: 10rem;
+	font-weight: bold;
+}
+
+.presTitleH2 {
+	font-size: 4rem;
+	font-weight: bold;
+}
+
+.headerTitle {
+	font-size: 2rem;
+	font-weight: bold;
+}
+
+.presTitleH3 {
+	font-size: 1.5rem;
+}
+
+.nameTitle {
+	font-size: 2rem;
+	font-weight: bold;
+}
+
+.presTitleH3_b {
+	font-size: 1.5rem;
+	font-weight: bold;
+}
+
+.patuaFont {
+	font-family: 'Patua One', cursive;
+}
+
+.topDistance {
+	padding-top: 5rem;
+}
+
+.topDistance1_2 {
+	padding-top: 2.5rem;
+}
+
+.bottomDistance {
+	padding-bottom: 5rem;
+}
+
+.sapMBtnInner {
+	border: 1px solid var(--main-contrast-color);
+	color: var(--main-contrast-color);
+}
+
+:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive {
+	background-color: var(--main-contrast-color);
+    border-color: var(--main-contrast-color);
+}
+
+.sapMBtnIcon {
+	color: var(--main-contrast-color);
+}
+
+.sapMBtn:hover > .sapMBtnHoverable {
+	background-color: #f6c1d2;
+    border-color: var(--main-contrast-color);
+}
+
+.shrinkingHeader {
+	display: flex;
+	margin-top: auto;
+}
+
+.sapMPageHeader {
+	height: 3.5rem;
+}
+
+.topBar > .sapMBarLeft, .topBar > .sapMBarRight, .topBar > .sapMBarPH {
+	margin-top: 0.4rem;
+}
+
+.sapMPage > .sapMPageHeader {
+	-webkit-box-shadow: 0 7px 4px -6px var(--main-contrast-color);
+	-moz-box-shadow: 0 7px 4px -6px var(--main-contrast-color);
+	box-shadow: 0 7px 4px -6px var(--main-contrast-color);
+}
+
+.personImage {
+	object-fit: contain;
+	height: 15rem;
+	width: 12rem;
+	margin-right: 1rem;
+}
+
+.fillBox > div {
+	height: 70%;
+	width: 70%;
+}
+
+.sapMPageFooter {	
+	-webkit-box-shadow: 0 -7px 4px -6px var(--main-contrast-color);
+	-moz-box-shadow: 0 -7px 4px -6px var(--main-contrast-color);
+	box-shadow: 0 -7px 4px -6px var(--main-contrast-color);
+}
+
+.centerTable {
+	margin-left: auto;
+    margin-right: auto;
+    display: table;
+}
+
+.moveLeft {
+	left: -2rem;
+}
