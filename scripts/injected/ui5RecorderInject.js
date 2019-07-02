@@ -1,7 +1,7 @@
 var TestHandlerSingleton = null;
 
 document.addEventListener('do-ui5-init', function (oXMLEvent) {
-    console.log("Handle event 'do-ui5-init'")
+    //console.log("Handle event 'do-ui5-init'")
     if (TestHandlerSingleton) {
         TestHandlerSingleton.init();
     }
@@ -20,7 +20,7 @@ document.addEventListener("do-ui5-from-extension-to-inject", function (oXMLEvent
         delete oXMLEvent.detail.uuid;
     }
 
-    console.log(`ui5RecorderInject: Handling event with uuid: ${uuid} and type: ${oXMLEvent.detail.type}`);
+    //console.log(`ui5RecorderInject: Handling event with uuid: ${uuid} and type: ${oXMLEvent.detail.type}`);
 
     if (oXMLEvent.detail.type === "navigate") {
         //early exit, as TestHandlerSingleton is maybe not even existing.
@@ -41,17 +41,17 @@ document.addEventListener("do-ui5-from-extension-to-inject", function (oXMLEvent
 
     if (oReturn instanceof Promise) {
         oReturn.then(function (oData) {
-            console.log(`ui5RecorderInject: Dispatch event with uuid: ${uuid} 'do-ui5-from-inject-to-async' then-case`);
+            //console.log(`ui5RecorderInject: Dispatch event with uuid: ${uuid} 'do-ui5-from-inject-to-async' then-case`);
             document.dispatchEvent(new CustomEvent('do-ui5-from-inject-to-async', { detail: { type: "answer", uuid: uuid, data: oData } }));
         });
     } else {
-        console.log(`ui5RecorderInject: Dispatch event with uuid: ${uuid} 'do-ui5-from-inject-to-async' else-case`);
+        //console.log(`ui5RecorderInject: Dispatch event with uuid: ${uuid} 'do-ui5-from-inject-to-async' else-case`);
         document.dispatchEvent(new CustomEvent('do-ui5-from-inject-to-async', { detail: { type: "answer", uuid: uuid, data: oReturn } }));
     }
 });
 
 document.addEventListener('do-ui5-start', function (oXMLEvent) {
-    console.log(`ui5RecorderInject: Handling event with uuid: ${uuid} and type: ${oXMLEvent.detail.type} - do-ui5-start`);
+    //console.log(`ui5RecorderInject: Handling event with uuid: ${uuid} and type: ${oXMLEvent.detail.type} - do-ui5-start`);
     if (oXMLEvent.detail && oXMLEvent.detail.domId) {
         TestHandlerSingleton.startFor(oXMLEvent.detail.domId);
     } else {
