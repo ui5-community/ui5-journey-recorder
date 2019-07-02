@@ -30,6 +30,7 @@
                     <Button id="leftO" icon="sap-icon://arrow-left" press="priorSlide" enabled="{= ${/siteNum} &gt; 0 }" />
                     <Button id="upO" icon="sap-icon://arrow-top" press="_slideUp" enabled="{= ${page1View/subNav} &gt; 0 }" visible="{pageOpenView>/subActive}"/>
                     <Button id="downO" icon="sap-icon://arrow-bottom" press="_slideDown" enabled="{= ${page1View/subNav} &lt; ${page1View/maxSub} }"  visible="{pageOpenView>/subActive}"/>                    
+                    <Button id="rightO" icon="sap-icon://arrow-right" press="nextSlide" enabled="{= ${/siteNum} &lt; (${/slideSequence}.length -1) }" />
                 </contentMiddle>
                 <contentRight>
                     <Text text="{parts: [{path: '/siteNum'}, 
