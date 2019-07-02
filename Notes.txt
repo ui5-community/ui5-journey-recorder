@@ -8,3 +8,11 @@ Wichtige Issues:
 Links UI5 Gruppe:
  - https://chrome.google.com/webstore/devconsole/g09391382422910291111/hcpkckcanianjcbiigbklddcpfiljmhj/edit/listing?hl=de 
  - https://groups.google.com/forum/#!managemembers/ui5-testrecorder 
+ 
+Packaging:
+- scripts
+- bilder
+- ui5
+- README.md
+- manifest.json
+- LICENSE
