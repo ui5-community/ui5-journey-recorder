@@ -25,10 +25,9 @@
 
 (function ($) {
     $(document).ready(function () {
-        var dm = datamodeljs.dm()
         var personSpec = {}
         var personObj = {}
-        var syntax = new Syntax({
+        var syntax = new Syntax({s
             language: 'js',
             cssPrefix: "syntax-"
         })
