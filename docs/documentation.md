@@ -37,5 +37,5 @@ At the UI5 Testrecorder you can save the tests you have recorded for further usa
 This tests can be found at the *Review recorded tests* tab.  
 To open an existing record just click on the list item.
 
-
-
+[Record new Test](./recordTest.md)  
+[Review a recorded Test](./testDetailPage.md)

@@ -5,7 +5,7 @@ During recording the tool supports you in setting the perfect combination of uni
 
 Github-Page: http://msg-systems.github.io/ui5-testrecorder/
 
-Here you can find a [Documentation](https://github.com/msg-systems/ui5-testrecorder/blob/master/docs/documentation.md)
+Here you can find a [Documentation](./docs/documentation.md)
 
 The chrome plugin is published in Google-Webstore under https://chrome.google.com/webstore/detail/hcpkckcanianjcbiigbklddcpfiljmhj 
 
