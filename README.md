@@ -5,6 +5,8 @@ During recording the tool supports you in setting the perfect combination of uni
 
 Github-Page: http://msg-systems.github.io/ui5-testrecorder/
 
+Here you can find a [Documentation](./docs/documentation.md)
+
 The chrome plugin is published in Google-Webstore under https://chrome.google.com/webstore/detail/hcpkckcanianjcbiigbklddcpfiljmhj 
 
 The tool has support for the following test-frameworks:
