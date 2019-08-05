@@ -12,7 +12,7 @@ After clicking on an item the Testrecorder switches to a detail page for the tes
 ![alt](./img/ItemTestStepPage.png)  
 At the Header you can decide which type of test step you want to perform:  
 ![alt](./img/TestStepTypes.png)  
-There are actions and assertions. Actions are for actions you want to perform on the application. Assertions are for specific controls, you want to see or check thier properties for certain values. These differences can be selected by the action select box below: 
+There are actions and assertions. Actions are for actions you want to perform on the application. Assertions are for specific controls, you want to see or check thier properties for certain values. These differences can be selected by the action select box below:  
 ![alt](./img/ActionTypes.png) ![alt](./img/AssertTypes.png)   
 
 Actions can be: 
