@@ -315,7 +315,6 @@ sap.ui.define([
     };
 
     OPA5CodeStrategy.prototype.__createPressAction = function (oStep) {
-        var selectors = oStep.selector.selectorUI5.own;
         var viewName = oStep.item.viewProperty.localViewName ? oStep.item.viewProperty.localViewName : "Detached";
         this.__pages[viewName].addPressFunction();
 
@@ -325,9 +324,14 @@ sap.ui.define([
 
         //var sSelectorParts = this.__createSelectorProperties(selectors);
         //aParts.push(sSelectorParts);
+    
 
         aParts.push('{');
-        this.__createObjectMatcherInfos(oStep, aParts);
+        if (oStep.property.selectItemBy === "UI5") {
+            aParts.push('id: {value: "' + oStep.selector.selectorUI5.own.id + '",isRegex: true}');
+        } else {
+            this.__createObjectMatcherInfos(oStep, aParts);
+        }
 
         aParts.push('});');
         return aParts.reduce((a, b) => a + b, '');

@@ -8,7 +8,7 @@
         (function () {
             'use strict';
 
-            debugger;
+            //debugger;
             // Inject a script file in the current page
             var script = document.createElement('script');
             script.src = chrome.extension.getURL('/scripts/injected/ui5RecorderInject.js');
