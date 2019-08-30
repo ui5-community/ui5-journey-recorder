@@ -685,7 +685,7 @@ else {
         for (var sAttr in oItem.property) {
             iUniqueness = 0;
             var oAttrMeta = oItem.control.getMetadata().getProperty(sAttr);
-            if (oAttrMeta.defaultValue && oAttrMeta.defaultValue === oItem.property[sAttr]) {
+            if (oAttrMeta && oAttrMeta.defaultValue && oAttrMeta.defaultValue === oItem.property[sAttr]) {
                 iUniqueness = 0;
             } else {
                 //we know the total amount, and the amount of our own property + the general "diversity" of that column
@@ -1293,7 +1293,13 @@ else {
             };
             sap.ui.getCore().registerPlugin(fakePlugin);
             sap.ui.getCore().unregisterPlugin(fakePlugin);
-            var aElements = oCoreObject.mElements;
+
+            var aElements = {};
+            if(sap.ui.core.Element && sap.ui.core.Element.registry) {
+                aElements = sap.ui.core.Element.registry.all();
+            } else {
+                aElements = oCoreObject.mElements;
+            }
 
             //search for identifier of every single object..
             var bFound = false;
@@ -1525,8 +1531,17 @@ else {
         };
         sap.ui.getCore().registerPlugin(fakePlugin);
         sap.ui.getCore().unregisterPlugin(fakePlugin);
-        for (var sCoreObject in oCoreObject.mElements) {
-            var oObject = oCoreObject.mElements[sCoreObject];
+
+        var aElements = {};
+        if(sap.ui.core.Element && sap.ui.core.Element.registry) {
+            aElements = sap.ui.core.Element.registry.all();
+        } else {
+            aElements = oCoreObject.mElements;
+        }
+
+
+        for (var sCoreObject in aElements) {
+            var oObject = aElements[sCoreObject];
             if (oObject.getMetadata()._sClassName === "sap.m.Label") {
                 var oLabelFor = oObject.getLabelFor ? oObject.getLabelFor() : null;
                 if (oLabelFor) {

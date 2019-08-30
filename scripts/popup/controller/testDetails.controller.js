@@ -71,6 +71,7 @@ sap.ui.define([
             this.getView().setModel(this._oModel, "viewModel");
             this.getView().setModel(RecordController.getModel(), "recordModel");
             this.getView().setModel(Navigation.getModel(), "navModel");
+            this.getView().setModel(GlobalSettings.getModel(), "settings");
             this._createDialog();
             this.getOwnerComponent().getRouter().getRoute("testDetails").attachPatternMatched(this._onTestDisplay, this);
             this.getOwnerComponent().getRouter().getRoute("testDetailsCreate").attachPatternMatched(this._onTestCreate, this);
@@ -322,8 +323,8 @@ sap.ui.define([
         }
         this.getModel("navModel").setProperty("/elements", aElement);
         //Here the test should work automatically
-        var iReplayType = this.getModel('settings').getProperty('/settings/defaultReplayType');
-        if (iReplayType !== "0") {
+        var iReplayType = this.getModel('settings').getProperty('/settings/replayType');
+        if (iReplayType !== 0) {
             const timeout = 500 * iReplayType;
 
             new Promise((resolve, reject) => {
