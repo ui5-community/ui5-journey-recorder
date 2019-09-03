@@ -2036,7 +2036,12 @@ else {
 
         //return all simple properties
         for (var sProperty in oItem.mProperties) {
-            oReturn.property[sProperty] = oItem["get" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1)]();
+            var fnGetter = oItem["get" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1)];
+            if(fnGetter) {
+                oReturn.property[sProperty] = fnGetter.call(oItem);
+            } else {
+                oReturn.property[sProperty] = oItem.mProperties[sProperty];
+            }
         }
 
         //return all binding contexts
