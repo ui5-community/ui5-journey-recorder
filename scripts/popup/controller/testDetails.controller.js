@@ -69,7 +69,14 @@ sap.ui.define([
             Communication.registerEvent("itemSelected", this._onItemSelected.bind(this));
 
             this.getView().setModel(this._oModel, "viewModel");
-            this.getView().setModel(RecordController.getModel(), "recordModel");
+            var oRecordModel = RecordController.getModel();
+            this.getView().setModel(oRecordModel, "recordModel");
+            oRecordModel.attachPropertyChange(function(oEvent) {
+                var oPara = oEvent.getParameters();
+                if (oPara.path === "/targetUI5Version" && oPara.value && oPara.value !== "") {                    
+                    this.getModel('viewModel').setProperty('/codeSettings/ui5Version', oPara.value);
+                }
+            });
             this.getView().setModel(Navigation.getModel(), "navModel");
             this.getView().setModel(GlobalSettings.getModel(), "settings");
             this._createDialog();

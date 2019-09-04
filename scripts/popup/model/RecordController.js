@@ -118,6 +118,10 @@ sap.ui.define([
         return this._bIsInjected;
     };
 
+    RecordController.prototype.isRecording = function() {
+        return this._oModel.getProperty("/recording");
+    };
+
     RecordController.prototype._injectIntoTab = function (sTabId, sUrl) {
         chrome.tabs.sendMessage(sTabId, {
             type: "ui5-check-if-injected"
