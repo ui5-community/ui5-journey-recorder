@@ -10,7 +10,7 @@
                              title="{viewModel>/element/item/identifier/ui5Id}" showNavButton="true"
                              busy="{viewModel>/busy}">
         <semantic:customHeaderContent>
-            <MenuButton text="Navigate from Item" buttonMode="Regular">
+            <MenuButton text="Navigate from Item" buttonMode="Regular" >
                 <menu>
                     <Menu itemSelected="onMenuAction">
                         <items>
@@ -40,7 +40,7 @@
         <semantic:content>
             <Panel expandable="false" expanded="true" width="auto">
                 <headerToolbar>
-                    <Toolbar active="true" press="onExpandControl" height="3rem" style="Clear">
+                    <Toolbar active="true" press="onExpandControl" height="3rem" style="Clear" >
                         <ToolbarSpacer/>
                         <Button
                                 visible="{= ${viewModel>/quickMode} === true }"
@@ -66,7 +66,7 @@
                                 press="_onSave"/>
                     </Toolbar>
                 </headerToolbar>
-                <f:SimpleForm editable="true"
+                <f:SimpleForm editable="{= !${viewModel>/blocked}}"
                               layout="ResponsiveGridLayout"
                               labelSpanXL="3"
                               labelSpanL="3"
@@ -229,7 +229,8 @@
                     <Toolbar active="true"
                              press="onExpandControl"
                              height="3em"
-                             style="Clear">
+                             style="Clear"
+                              >
                         <content>
                             <ObjectStatus id="attrObjectStatus"
                                           text="Attributes ( {= ${viewModel>/element/attributeFilter}.length } )"
@@ -273,14 +274,16 @@
                                 <cells>
                                     <Select items="{viewModel>/dynamic/attrType}"
                                             change="onAttributeTypeChanged"
-                                            selectedKey="{viewModel>attributeType}">
+                                            selectedKey="{viewModel>attributeType}"
+                                             >
                                         <items>
                                             <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
                                         </items>
                                     </Select>
                                     <Select change="onCriteriaTypeChanged"
                                             selectedKey="{ path: 'viewModel>criteriaType'}"
-                                            items="{ path:'viewModel>criteriaTypes', sorter: { path: 'criteriaText' }}">
+                                            items="{ path:'viewModel>criteriaTypes', sorter: { path: 'criteriaText' }}"
+                                             >
                                         <items>
                                             <core:Item text="{viewModel>criteriaText}" key="{viewModel>criteriaKey}"/>
                                         </items>
@@ -288,6 +291,7 @@
                                     <Select change="onSubCriteriaTypeChanged"
                                             showSecondaryValues="true"
                                             width="13em"
+                                             
                                             selectedKey="{ path: 'viewModel>subCriteriaType' }"
                                             items="{ path: 'viewModel>subCriteriaTypes', sorter: { path: 'subCriteriaText' }}">
                                         <items>
@@ -299,7 +303,8 @@
                                     </Select>
                                     <Input change="onChangeCriteriaValue"
                                            width="100%"
-                                           value="{viewModel>criteriaValue}"/>
+                                           value="{viewModel>criteriaValue}"
+                                            />
                                 </cells>
                             </ColumnListItem>
                         </items>
@@ -316,7 +321,8 @@
                     <Toolbar active="true"
                              press="onExpandControl"
                              height="3em"
-                             style="Clear">
+                             style="Clear"
+                              >
                         <content>
                             <ObjectStatus text="Support-Assistant ( {viewModel>/element/supportAssistantResultLength} )"
                                           state="{viewModel>/element/property/elementState}"/>
@@ -328,7 +334,7 @@
                     </Toolbar>
                 </headerToolbar>
                 <content>
-                    <f:SimpleForm editable="true"
+                    <f:SimpleForm editable="{= !${viewModel>/blocked}}"
                                   layout="ResponsiveGridLayout"
                                   labelSpanXL="3"
                                   labelSpanL="3"

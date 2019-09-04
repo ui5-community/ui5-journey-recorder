@@ -84,7 +84,7 @@
                                         </Column>
                                     </columns>
                                     <items>
-                                        <ColumnListItem>
+                                        <ColumnListItem type="Navigation" press="onStepClick">
                                             <cells>
                                                 <Button visible="{= ${navModel>showPlay} &amp;&amp; ${viewModel>/replayMode}}" icon="sap-icon://play" type="Accept" press="onReplaySingleStep" />
                                                 <Select items="{path: 'constants>/stepTypes', templateShareable: false}" enabled="false" selectedKey="{navModel>property/type}">
@@ -115,9 +115,6 @@
                                                 <Text text="{navModel>item/identifier/ui5Id}" />
                                                 <Text text="{navModel>item/metadata/elementName}" />
                                                 <HBox alignContent="Start" alignItems="Start">
-                                                    <!--
-                                                    <Button icon="sap-icon://edit" visible="{= ${navModel>showPlay} &amp;&amp; ${viewModel>/replayMode}}" press="onEditStep" />
-                                                    -->
                                                     <Button icon="sap-icon://delete" press="onDeleteStep" />
                                                 </HBox>
                                             </cells>
