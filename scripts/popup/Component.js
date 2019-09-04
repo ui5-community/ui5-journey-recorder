@@ -82,17 +82,17 @@ sap.ui.define([
                             {
                                 pattern: "/testDetails/{TestId}/elementCreate/{ElementId}",
                                 name: "elementCreate",
-                                target: "elementCreate"
+                                target: "testElement"
                             },
                             {
                                 pattern: "/testDetails/{TestId}/elementCreateQuick/{ElementId}",
                                 name: "elementCreateQuick",
-                                target: "elementCreateQuick"
+                                target: "testElement"
                             },
                             {
                                 pattern: "/elementDisplay/{TestId}/{ElementId}",
                                 name: "elementDisplay",
-                                target: "elementDisplay"
+                                target: "testElement"
                             },
                             {
                                 pattern: "/mockserver",
@@ -107,17 +107,17 @@ sap.ui.define([
                             {
                                 pattern: "/testReplay/{TestId}",
                                 name: "testReplay",
-                                target: "testReplay"
+                                target: "testDetails"
                             },
                             {
                                 pattern: "/testDetailsCreate",
                                 name: "testDetailsCreate",
-                                target: "testDetailsCreate"
+                                target: "testDetails"
                             },
                             {
                                 pattern: "/testDetailsCreateQuick",
                                 name: "testDetailsCreateQuick",
-                                target: "testDetailsCreateQuick"
+                                target: "testDetails"
                             },
                             {
                                 pattern: "",
@@ -131,49 +131,19 @@ sap.ui.define([
                             }
                         ],
                         targets: {
-                            elementCreate: {
-                                viewName: "ui5Testing",
-                                viewLevel: 1,
-                                viewId: "ui5Testing",
-                                controlAggregation: "pages"
-                            },
-                            elementCreateQuick: {
-                                viewName: "ui5Testing",
-                                viewLevel: 1,
-                                viewId: "ui5Testing",
-                                controlAggregation: "pages"
-                            },
                             mockserver: {
                                 viewName: "mockserver",
                                 viewLevel: 1,
                                 viewId: "mockserver",
                                 controlAggregation: "pages"
                             },
-                            elementDisplay: {
+                            testElement: {
                                 viewName: "ui5Testing",
                                 viewLevel: 1,
                                 viewId: "ui5Testing",
                                 controlAggregation: "pages"
                             },
-                            testReplay: {
-                                viewName: "testDetails",
-                                viewLevel: 1,
-                                viewId: "testDetails",
-                                controlAggregation: "pages"
-                            },
                             testDetails: {
-                                viewName: "testDetails",
-                                viewLevel: 1,
-                                viewId: "testDetails",
-                                controlAggregation: "pages"
-                            },
-                            testDetailsCreate: {
-                                viewName: "testDetails",
-                                viewLevel: 1,
-                                viewId: "testDetails",
-                                controlAggregation: "pages"
-                            },
-                            testDetailsCreateQuick: {
                                 viewName: "testDetails",
                                 viewLevel: 1,
                                 viewId: "testDetails",
