@@ -5,10 +5,11 @@
 	"env": {
 		"browser": true,
 		"node"   : true,
-        "es6"    : true
+        "es6"    : true,
+        "webextensions": true
 	},
 	"globals": {
-		"sap"	: true
+        "sap"	: true
 	},
 	"rules": {
 		"brace-style"               : ["error", "1tbs", { "allowSingleLine": true }],
