@@ -1,10 +1,15 @@
 {
+	"parserOptions": {
+		"ecmaVersion": 8
+	},
 	"env": {
 		"browser": true,
-		"node"   : true
+		"node"   : true,
+        "es6"    : true,
+        "webextensions": true
 	},
 	"globals": {
-		"sap"	: true
+        "sap"	: true
 	},
 	"rules": {
 		"brace-style"               : ["error", "1tbs", { "allowSingleLine": true }],
@@ -19,7 +24,7 @@
 		"wrap-iife"                 : ["error", "any"],
 		"camelcase"                 : "warn",
 		"consistent-return"         : "warn",
-		"max-nested-callbacks"      : ["warn", 3],
+		"max-nested-callbacks"      : ["warn", 4],
 		"new-cap"                   : "warn",
 		"no-extra-boolean-cast"     : "warn",
 		"no-lonely-if"              : "warn",
