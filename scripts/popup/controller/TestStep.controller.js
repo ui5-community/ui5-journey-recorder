@@ -159,6 +159,9 @@ sap.ui.define([
             this.getModel('viewModel').setProperty('/blocked', true);
             this._setValidAttributeTypes();
             this._updatePreview();
+            if (RecordController.isInjected()) {
+                this.getView().byId("offlineStrip").setVisible(false);
+            }
         },
 
         /**

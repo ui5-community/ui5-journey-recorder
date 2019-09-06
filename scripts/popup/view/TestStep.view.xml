@@ -47,7 +47,7 @@
         </semantic:customFooterContent>
 
         <semantic:content>
-            <MessageStrip text="You will see recorded informations about a test step. The functionality for changes are limited." type="Warning" showIcon="true" visible="{viewModel>/blocked}"/>
+            <MessageStrip id="offlineStrip" text="You will see recorded informations about a test step. The functionality for changes are limited." type="Warning" showIcon="true" visible="{viewModel>/blocked}"/>
             <Panel expandable="false" expanded="true" width="auto">
                 <headerToolbar>
                     <Toolbar active="true" press="onExpandControl" height="3rem" style="Clear" visible="{= ${viewModel>/quickMode} === true || ${viewModel>/quickMode} === false}">
