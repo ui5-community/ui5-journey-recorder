@@ -33,7 +33,7 @@ sap.ui.define([
     Text) {
     "use strict";
 
-    return Controller.extend("com.ui5.testing.controller.testDetails", {
+    return Controller.extend("com.ui5.testing.controller.TestDetails", {
         utils: Utils,
         _oModel: new JSONModel({
             codes: [],
@@ -71,18 +71,18 @@ sap.ui.define([
             this.getView().setModel(this._oModel, "viewModel");
             var oRecordModel = RecordController.getModel();
             this.getView().setModel(oRecordModel, "recordModel");
-            oRecordModel.attachPropertyChange(function(oEvent) {
+            oRecordModel.attachPropertyChange(function (oEvent) {
                 var oPara = oEvent.getParameters();
-                if (oPara.path === "/targetUI5Version" && oPara.value && oPara.value !== "") {                    
+                if (oPara.path === "/targetUI5Version" && oPara.value && oPara.value !== "") {
                     this.getModel('viewModel').setProperty('/codeSettings/ui5Version', oPara.value);
                 }
             });
             this.getView().setModel(Navigation.getModel(), "navModel");
             this.getView().setModel(GlobalSettings.getModel(), "settings");
             this._createDialog();
-            this.getOwnerComponent().getRouter().getRoute("testDetails").attachPatternMatched(this._onTestDisplay, this);
-            this.getOwnerComponent().getRouter().getRoute("testDetailsCreate").attachPatternMatched(this._onTestCreate, this);
-            this.getOwnerComponent().getRouter().getRoute("testDetailsCreateQuick").attachPatternMatched(this._onTestCreateQuick, this);
+            this.getOwnerComponent().getRouter().getRoute("TestDetails").attachPatternMatched(this._onTestDisplay, this);
+            this.getOwnerComponent().getRouter().getRoute("TestDetailsCreate").attachPatternMatched(this._onTestCreate, this);
+            this.getOwnerComponent().getRouter().getRoute("TestDetailsCreateQuick").attachPatternMatched(this._onTestCreateQuick, this);
             this.getOwnerComponent().getRouter().getRoute("testReplay").attachPatternMatched(this._onTestReplay, this);
             Communication.registerEvent("loaded", this._onInjectionDone.bind(this));
 
@@ -90,12 +90,369 @@ sap.ui.define([
             //sap.ui.getCore().getEventBus().subscribe("RecordController", "windowFocusLost", this._recordStopped, this);
         },
 
+        /**
+         * 
+         * @param {*} oEvent 
+         */
+        onReplaySingleStep: function (oEvent) {
+            //var oLine = oEvent.getSource().getParent();
+            RecordController.focusTargetWindow();
+            var oLine = this.getView().byId('tblPerformedSteps').getItems()[this._iCurrentStep];
+            this._executeAction().then(function (oResult) {
+                var performedStep = oLine;
+                //this is our custom object
+                if (oResult && oResult.type && oResult.type === "ASS") {
+                    switch (oResult.result) {
+                        case "success":
+                            performedStep.setHighlight(sap.ui.core.MessageType.Success);
+                            this.replayNextStep();
+                            break;
+                        case "warning":
+                            performedStep.setHighlight(sap.ui.core.MessageType.Warning);
+                            this.replayNextStep();
+                            break;
+                        case "error":
+                            this.getModel("viewModel").setProperty("/replayMode", false);
+                            MessageToast.show('Assertion not met, check your setup!');
+                            performedStep.setHighlight(sap.ui.core.MessageType.Error);
+                            this._bReplayMode = false;
+                            this.getModel("viewModel").setProperty("/replayMode", false);
+                            RecordController.stopRecording();
+                            this.getRouter().navTo("TestDetails", {
+                                TestId: this.getModel("navModel").getProperty("/test/uuid")
+                            });
+                            break;
+                        default:
+                            jQuery.sap.log.info(`No handling for no event`);
+                    }
+                    //This is the object back from the Communication object.
+                } else if (oResult && oResult.uuid) {
+                    if (oResult.processed) {
+                        performedStep.setHighlight(sap.ui.core.MessageType.Success);
+                        this.replayNextStep();
+                    } else {
+                        this.getModel("viewModel").setProperty("/replayMode", false);
+                        MessageToast.show('Action can not be performed, check your setup!');
+                        performedStep.setHighlight(sap.ui.core.MessageType.Error);
+                    }
+                } else if (oResult && oResult.type && oResult.type === "ACT" && oResult.result === "error") {
+                    this.getModel("viewModel").setProperty("/replayMode", false);
+                    MessageToast.show('Action can not be performed, check your setup!');
+                    performedStep.setHighlight(sap.ui.core.MessageType.Error);
+                }
+            }.bind(this));
+        },
+
+        /**
+         * 
+         */
+        replayNextStep: function () {
+            var aEvent = this.getModel("navModel").getProperty("/elements");
+            this._iCurrentStep += 1;
+            this._updatePlayButton();
+            if (this._iCurrentStep >= aEvent.length) {
+                this._bReplayMode = false;
+                this.getModel("viewModel").setProperty("/replayMode", false);
+                RecordController.stopRecording();
+                //RecordController.startRecording();
+                this.checkRecordContinuing();
+                this.getRouter().navTo("TestDetails", {
+                    TestId: this.getModel("navModel").getProperty("/test/uuid")
+                });
+            }
+        },
+
+        /**
+         * 
+         */
+        checkRecordContinuing: function () {
+            var dialog = new Dialog({
+                title: 'Start Recording?',
+                type: 'Message',
+                content: new Text({
+                    text: 'Do you want to add additional test steps?'
+                }),
+                beginButton: new Button({
+                    text: 'Yes',
+                    tooltip: 'Starts the recording process',
+                    press: function () {
+                        RecordController.startRecording();
+                        this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
+                            oStep.setHighlight(sap.ui.core.MessageType.None);
+                        });
+                        dialog.close();
+                    }.bind(this)
+                }),
+                endButton: new Button({
+                    text: 'No',
+                    tooltip: 'No further actions',
+                    // eslint-disable-next-line require-jsdoc
+                    press: function () {
+                        dialog.close();
+                    }
+                }),
+                // eslint-disable-next-line require-jsdoc
+                afterClose: function () {
+                    dialog.destroy();
+                }
+            });
+
+            dialog.open();
+        },
+
+        /**
+         *
+         */
+        onContinueRecording: function () {
+            this._oRecordDialog.open();
+            RecordController.startRecording();
+        },
+
+        /**
+         *
+         */
+        onDeleteStep: function (oEvent) {
+            var aItem = oEvent.getSource().getBindingContext("navModel").getPath().split("/");
+            var sNumber = parseInt(aItem[aItem.length - 1], 10);
+            var aElements = this.getModel("navModel").getProperty("/elements");
+            aElements.splice(sNumber, 1);
+            this.getModel("navModel").setProperty("/elements", aElements);
+            this._updatePlayButton();
+        },
+
+        /**
+         *
+         */
+        onReplayAll: function (oEvent) {
+            var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
+            this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
+                oStep.setHighlight(sap.ui.core.MessageType.None);
+            });
+            this._iCurrentStep = -1;
+            chrome.permissions.request({
+                permissions: ['tabs'],
+                origins: [sUrl]
+            }, function (granted) {
+                if (granted) {
+                    this._oModel.setProperty("/replayMode", true);
+                    if (this._oModel.getProperty('/routeName') !== "testReplay") {
+                        this.getRouter().navTo("testReplay", {
+                            TestId: this.getModel("navModel").getProperty("/test/uuid")
+                        }, true);
+                    } else {
+                        this._onTestRerun();
+                    }
+                }
+            }.bind(this));
+        },
+
+        /**
+         *
+         */
+        onExport: function () {
+            var oSave = {
+                versionId: "0.2.0",
+                codeSettings: this._oModel.getProperty("/codeSettings"),
+                elements: this.getModel("navModel").getProperty("/elements"),
+                test: this.getModel("navModel").getProperty("/test")
+            };
+
+            //fix for cycling object
+            delete oSave.codeSettings.execComponent;
+
+            var vLink = document.createElement('a'),
+                vBlob = new Blob([JSON.stringify(oSave, null, 2)], {
+                    type: "octet/stream"
+                }),
+                vName = Utils.replaceUnsupportedFileSigns(this._oModel.getProperty('/codeSettings/testName'), '_') + '.json',
+                vUrl = window.URL.createObjectURL(vBlob);
+            vLink.setAttribute('href', vUrl);
+            vLink.setAttribute('download', vName);
+            vLink.click();
+        },
+
+        /**
+         *
+         */
+        onExpandControl: function (oEvent) {
+            var oPanel = oEvent.getSource().getParent();
+            oPanel.setExpanded(oPanel.getExpanded() === false);
+        },
+
+        /**
+         *
+         */
+        onUpdatePreview: function () {
+            this._updatePreview();
+        },
+
+        /**
+         *
+         */
+        showCode: function (sId) {
+            this._bShowCodeOnly = true;
+        },
+
+        /**
+         * 
+         */
+        onRecord: function () {
+            RecordController.startRecording();
+        },
+
+        /**
+         * 
+         */
+        onSave: function () {
+            //save /codesettings & /test & navModel>/elements - optimiazion potential..
+            var oSave = {
+                codeSettings: this._oModel.getProperty("/codeSettings"),
+                elements: this.getModel("navModel").getProperty("/elements"),
+                test: this.getModel("navModel").getProperty("/test")
+            };
+            ChromeStorage.saveRecord(oSave);
+        },
+
+        /**
+         * 
+         */
+        onDelete: function () {
+            var sId = this.getModel("navModel").getProperty("/test/uuid");
+            ChromeStorage.deleteTest(sId).then(this.getRouter().navTo("start"));
+        },
+
+        /**
+         * 
+         */
+        onNavBack: function () {
+            RecordController.stopRecording();
+            this._oRecordDialog.close();
+            this.getRouter().navTo("start");
+        },
+
+        /**
+         * 
+         */
+        onStopRecord: function () {
+            RecordController.stopRecording();
+            this._oRecordDialog.close();
+        },
+
+        /**
+         *
+         */
+        downloadSource: function (oEvent) {
+            var sSourceCode = oEvent.getSource().getParent().getContent().filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue();
+            var element = document.createElement('a');
+            element.setAttribute('href', 'data:text/javascript;charset=utf-8,' + encodeURIComponent(sSourceCode));
+            var fileName = Utils.replaceUnsupportedFileSigns(oEvent.getSource().getParent().getText(), '_') + '.js';
+            element.setAttribute('download', fileName);
+
+            element.style.display = 'none';
+            document.body.appendChild(element);
+
+            element.click();
+            document.body.removeChild(element);
+        },
+
+        /**
+         *
+         */
+        onTabChange: function (oEvent) {
+            this._oModel.setProperty('/activeTab', oEvent.getSource().getSelectedKey());
+        },
+
+        /**
+         *
+         */
+        downloadAll: function (oEvent) {
+            var zip = new JSZip();
+            //take all sources containing code no free text
+
+            if (this._oModel.getProperty('/codeSettings/language') === "OPA") {
+                var aSources = this.getView()
+                    .byId('codeTab')
+                    .getItems()
+                    .filter(f => f.getContent().filter(c => c instanceof sap.m.FormattedText)[0].getVisible() === false);
+                var test = zip.folder('test');
+                var integration = test.folder('integration');
+                var customMatcher = test.folder('customMatcher');
+                var pages = integration.folder('pages');
+
+                //get all pages
+                aSources.filter(t => t.getText().indexOf('Page') > -1)
+                    .map(t => ({
+                        fileName: Utils.replaceUnsupportedFileSigns(t.getText(), '_') + '.js',
+                        source: t.getContent().filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue()
+                    }))
+                    .forEach(c => pages.file(c.fileName, c.source));
+
+                //get all matcher implementation
+                aSources.filter(t => t.getText().indexOf('Matcher') > -1)
+                    .map(t => ({
+                        fileName: Utils.replaceUnsupportedFileSigns(t.getText(), '_') + '.js',
+                        source: t.getContent().filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue()
+                    }))
+                    .forEach(c => customMatcher.file(c.fileName, c.source));
+
+                //get all remaining except pages and matcher
+                aSources.filter(t => t.getText().indexOf('Matcher') === -1 && t.getText().indexOf('Page') === -1)
+                    .map(t => ({
+                        fileName: Utils.replaceUnsupportedFileSigns(t.getText(), '_') + '.js',
+                        source: t.getContent().filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue()
+                    }))
+                    .forEach(c => integration.file(c.fileName, c.source));
+            } else {
+                this.getView()
+                    .byId('codeTab')
+                    .getItems()
+                    .filter(f => f.getContent().filter(c => c instanceof sap.m.FormattedText)[0].getVisible() === false)
+                    .map(t => ({
+                        fileName: Utils.replaceUnsupportedFileSigns(t.getText(), '_') + '.js',
+                        source: t.getContent()
+                            .filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue()
+                    }))
+                    .forEach(c => zip.file(c.fileName, c.source));
+            }
+
+            zip.generateAsync({
+                    type: "blob"
+                })
+                .then(content => saveAs(content, "testCode.zip"));
+        },
+
+        /**
+         *
+         */
+        onStepClick: function (oEvent) {
+            var sPath = oEvent.getSource().getBindingContext('navModel').getPath();
+            sPath = sPath.substring(sPath.lastIndexOf('/') + 1);
+            this.getRouter().navTo("elementDisplay", {
+                TestId: this._sTestId,
+                ElementId: sPath
+            });
+        },
+
+        /**
+         *
+         */
+        _lengthStatusFormatter: function (iLength) {
+            return "Success";
+        },
+
+        /**
+         * 
+         * @param {*} oData 
+         */
         _onInjectionDone: function (oData) {
             if (oData.ok === true) {
                 this._oModel.setProperty('/ui5Version', oData.version);
             }
         },
 
+        /**
+         * 
+         */
         _replay: function () {
             var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
             chrome.tabs.create({
@@ -154,60 +511,17 @@ sap.ui.define([
             }.bind(this));
         },
 
+        /**
+         * 
+         */
         _startReplay: function () {
             this._iCurrentStep = 0;
             this._updatePlayButton();
         },
 
-        onReplaySingleStep: function (oEvent) {
-            //var oLine = oEvent.getSource().getParent();
-            RecordController.focusTargetWindow();
-            var oLine = this.getView().byId('tblPerformedSteps').getItems()[this._iCurrentStep];
-            this._executeAction().then(function (oResult) {
-                var performedStep = oLine;
-                //this is our custom object
-                if (oResult && oResult.type && oResult.type === "ASS") {
-                    switch (oResult.result) {
-                        case "success":
-                            performedStep.setHighlight(sap.ui.core.MessageType.Success);
-                            this.replayNextStep();
-                            break;
-                        case "warning":
-                            performedStep.setHighlight(sap.ui.core.MessageType.Warning);
-                            this.replayNextStep();
-                            break;
-                        case "error":
-                            this.getModel("viewModel").setProperty("/replayMode", false);
-                            MessageToast.show('Assertion not met, check your setup!');
-                            performedStep.setHighlight(sap.ui.core.MessageType.Error);
-                            this._bReplayMode = false;
-                            this.getModel("viewModel").setProperty("/replayMode", false);
-                            RecordController.stopRecording();
-                            this.getRouter().navTo("testDetails", {
-                                TestId: this.getModel("navModel").getProperty("/test/uuid")
-                            });
-                            break;
-                        default:
-                            jQuery.sap.log.info(`No handling for no event`);
-                    }
-                    //This is the object back from the Communication object.
-                } else if (oResult && oResult.uuid) {
-                    if (oResult.processed) {
-                        performedStep.setHighlight(sap.ui.core.MessageType.Success);
-                        this.replayNextStep();
-                    } else {
-                        this.getModel("viewModel").setProperty("/replayMode", false);
-                        MessageToast.show('Action can not be performed, check your setup!');
-                        performedStep.setHighlight(sap.ui.core.MessageType.Error);
-                    }
-                } else if (oResult && oResult.type && oResult.type === "ACT" && oResult.result === "error") {
-                    this.getModel("viewModel").setProperty("/replayMode", false);
-                    MessageToast.show('Action can not be performed, check your setup!');
-                    performedStep.setHighlight(sap.ui.core.MessageType.Error);
-                }
-            }.bind(this));
-        },
-
+        /**
+         * 
+         */
         _executeAction: function () {
             var aEvent = this.getModel("navModel").getProperty("/elements");
             var oElement = aEvent[this._iCurrentStep];
@@ -253,6 +567,10 @@ sap.ui.define([
             }.bind(this));
         },
 
+        /**
+         * 
+         * @param {*} oElement 
+         */
         _getFoundElements: function (oElement) {
             var oDefinition = oElement.selector;
 
@@ -264,61 +582,17 @@ sap.ui.define([
             }.bind(this));
         },
 
+        /**
+         * 
+         * @param {*} oSelector 
+         */
         _findItemAndExclude: function (oSelector) {
             return Communication.fireEvent("find", oSelector);
         },
 
-        replayNextStep: function () {
-            var aEvent = this.getModel("navModel").getProperty("/elements");
-            this._iCurrentStep += 1;
-            this._updatePlayButton();
-            if (this._iCurrentStep >= aEvent.length) {
-                this._bReplayMode = false;
-                this.getModel("viewModel").setProperty("/replayMode", false);
-                RecordController.stopRecording();
-                //RecordController.startRecording();
-                this.checkRecordContinuing();
-                this.getRouter().navTo("testDetails", {
-                    TestId: this.getModel("navModel").getProperty("/test/uuid")
-                });
-            }
-        },
-
-        checkRecordContinuing: function () {
-            var dialog = new Dialog({
-                title: 'Start Recording?',
-                type: 'Message',
-                content: new Text({
-                    text: 'Do you want to add additional test steps?'
-                }),
-                beginButton: new Button({
-                    text: 'Yes',
-                    tooltip: 'Starts the recording process',
-                    press: function () {
-                        RecordController.startRecording();
-                        this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                            oStep.setHighlight(sap.ui.core.MessageType.None);
-                        });
-                        dialog.close();
-                    }.bind(this)
-                }),
-                endButton: new Button({
-                    text: 'No',
-                    tooltip: 'No further actions',
-                    // eslint-disable-next-line require-jsdoc
-                    press: function () {
-                        dialog.close();
-                    }
-                }),
-                // eslint-disable-next-line require-jsdoc
-                afterClose: function () {
-                    dialog.destroy();
-                }
-            });
-
-            dialog.open();
-        },
-
+        /**
+         * 
+         */
         _updatePlayButton: function () {
             if (!this._oModel.getProperty("/replayMode")) {
                 this._oModel.setProperty("/replayMode", true);
@@ -344,7 +618,10 @@ sap.ui.define([
             }
         },
 
-        uuidv4: function () {
+        /**
+         * 
+         */
+        _uuidv4: function () {
             var sStr = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                 var r = Math.random() * 16 | 0,
                     v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -354,6 +631,9 @@ sap.ui.define([
             return sStr;
         },
 
+        /**
+         * 
+         */
         _createDialog: function () {
             this._oRecordDialog = sap.ui.xmlfragment(
                 "com.ui5.testing.fragment.RecordDialog",
@@ -363,36 +643,10 @@ sap.ui.define([
             this._oRecordDialog.setModel(RecordController.getModel(), "recordModel");
         },
 
-        onRecord: function () {
-            RecordController.startRecording();
-        },
-
-        onSave: function () {
-            //save /codesettings & /test & navModel>/elements - optimiazion potential..
-            var oSave = {
-                codeSettings: this._oModel.getProperty("/codeSettings"),
-                elements: this.getModel("navModel").getProperty("/elements"),
-                test: this.getModel("navModel").getProperty("/test")
-            };
-            ChromeStorage.saveRecord(oSave);
-        },
-
-        onDelete: function () {
-            var sId = this.getModel("navModel").getProperty("/test/uuid");
-            ChromeStorage.deleteTest(sId).then(this.getRouter().navTo("start"));
-        },
-
-        onNavBack: function () {
-            RecordController.stopRecording();
-            this._oRecordDialog.close();
-            this.getRouter().navTo("start");
-        },
-
-        onStopRecord: function () {
-            RecordController.stopRecording();
-            this._oRecordDialog.close();
-        },
-
+        /**
+         * 
+         * @param {*} oEvent 
+         */
         _onTestCreateQuick: function (oEvent) {
             this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
             this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
@@ -402,6 +656,10 @@ sap.ui.define([
             this._initTestCreate(true);
         },
 
+        /**
+         * 
+         * @param {*} oEvent 
+         */
         _onTestCreate: function (oEvent) {
             this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
             this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
@@ -411,11 +669,15 @@ sap.ui.define([
             this._initTestCreate(false);
         },
 
+        /**
+         * 
+         * @param {*} bImmediate 
+         */
         _initTestCreate: function (bImmediate) {
             this._oModel.setProperty("/replayMode", false);
 
             this.getModel("navModel").setProperty("/test", {
-                uuid: this.uuidv4(),
+                uuid: this._uuidv4(),
                 createdAt: new Date().getTime()
             });
             this._oModel.setProperty("/codeSettings/language", this.getModel("settings").getProperty("/settings/defaultLanguage"));
@@ -432,12 +694,16 @@ sap.ui.define([
                     this._oRecordDialog.close();
                 }
 
-                this.getRouter().navTo("testDetails", {
+                this.getRouter().navTo("TestDetails", {
                     TestId: this.getModel("navModel").getProperty("/test/uuid")
                 });
             }.bind(this));
         },
 
+        /**
+         * 
+         * @param {*} oData 
+         */
         _onItemSelected: function (oData) {
             if (this._bReplayMode === true) {
                 return; //NO!
@@ -459,6 +725,10 @@ sap.ui.define([
             }
         },
 
+        /**
+         * 
+         * @param {*} oEvent 
+         */
         _onTestReplay: function (oEvent) {
             this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
             this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
@@ -501,6 +771,9 @@ sap.ui.define([
             }
         },
 
+        /**
+         * 
+         */
         _onTestRerun: function () {
             this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
                 oStep.setHighlight(sap.ui.core.MessageType.None);
@@ -510,6 +783,9 @@ sap.ui.define([
             this._replay();
         },
 
+        /**
+         * 
+         */
         _onTestDisplay: function (oEvent) {
             this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
             this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
@@ -544,168 +820,15 @@ sap.ui.define([
             this._updatePreview();
         },
 
+        /**
+         * 
+         */
         _updatePreview: function () {
             var aStoredItems = this.getModel("navModel").getProperty("/elements");
             var codeSettings = this.getModel('viewModel').getProperty('/codeSettings');
             codeSettings.language = this.getModel('settings').getProperty('/settings/defaultLanguage');
             codeSettings.execComponent = this.getOwnerComponent();
             this._oModel.setProperty("/codes", CodeHelper.getFullCode(codeSettings, aStoredItems));
-        },
-
-        onContinueRecording: function () {
-            this._oRecordDialog.open();
-            RecordController.startRecording();
-        },
-
-        onDeleteStep: function (oEvent) {
-            var aItem = oEvent.getSource().getBindingContext("navModel").getPath().split("/");
-            var sNumber = parseInt(aItem[aItem.length - 1], 10);
-            var aElements = this.getModel("navModel").getProperty("/elements");
-            aElements.splice(sNumber, 1);
-            this.getModel("navModel").setProperty("/elements", aElements);
-            this._updatePlayButton();
-        },
-
-        onReplayAll: function (oEvent) {
-            var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
-            this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                oStep.setHighlight(sap.ui.core.MessageType.None);
-            });
-            this._iCurrentStep = -1;
-            chrome.permissions.request({
-                permissions: ['tabs'],
-                origins: [sUrl]
-            }, function (granted) {
-                if (granted) {
-                    this._oModel.setProperty("/replayMode", true);
-                    if (this._oModel.getProperty('/routeName') !== "testReplay") {
-                        this.getRouter().navTo("testReplay", {
-                            TestId: this.getModel("navModel").getProperty("/test/uuid")
-                        }, true);
-                    } else {
-                        this._onTestRerun();
-                    }
-                }
-            }.bind(this));
-        },
-
-        onExport: function () {
-            var oSave = {
-                versionId: "0.2.0",
-                codeSettings: this._oModel.getProperty("/codeSettings"),
-                elements: this.getModel("navModel").getProperty("/elements"),
-                test: this.getModel("navModel").getProperty("/test")
-            };
-
-            //fix for cycling object
-            delete oSave.codeSettings.execComponent;
-
-            var vLink = document.createElement('a'),
-                vBlob = new Blob([JSON.stringify(oSave, null, 2)], {
-                    type: "octet/stream"
-                }),
-                vName = Utils.replaceUnsupportedFileSigns(this._oModel.getProperty('/codeSettings/testName'), '_') + '.json',
-                vUrl = window.URL.createObjectURL(vBlob);
-            vLink.setAttribute('href', vUrl);
-            vLink.setAttribute('download', vName);
-            vLink.click();
-        },
-
-        onExpandControl: function (oEvent) {
-            var oPanel = oEvent.getSource().getParent();
-            oPanel.setExpanded(oPanel.getExpanded() === false);
-        },
-
-        onUpdatePreview: function () {
-            this._updatePreview();
-        },
-
-        showCode: function (sId) {
-            this._bShowCodeOnly = true;
-        },
-
-        _lengthStatusFormatter: function (iLength) {
-            return "Success";
-        },
-
-        downloadSource: function (oEvent) {
-            var sSourceCode = oEvent.getSource().getParent().getContent().filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue();
-            var element = document.createElement('a');
-            element.setAttribute('href', 'data:text/javascript;charset=utf-8,' + encodeURIComponent(sSourceCode));
-            var fileName = Utils.replaceUnsupportedFileSigns(oEvent.getSource().getParent().getText(), '_') + '.js';
-            element.setAttribute('download', fileName);
-
-            element.style.display = 'none';
-            document.body.appendChild(element);
-
-            element.click();
-            document.body.removeChild(element);
-        },
-
-        onTabChange: function (oEvent) {
-            this._oModel.setProperty('/activeTab', oEvent.getSource().getSelectedKey());
-        },
-
-        downloadAll: function (oEvent) {
-            var zip = new JSZip();
-            //take all sources containing code no free text
-
-            if (this._oModel.getProperty('/codeSettings/language') === "OPA") {
-                var aSources = this.getView()
-                    .byId('codeTab')
-                    .getItems()
-                    .filter(f => f.getContent().filter(c => c instanceof sap.m.FormattedText)[0].getVisible() === false);
-                var test = zip.folder('test');
-                var integration = test.folder('integration');
-                var customMatcher = test.folder('customMatcher');
-                var pages = integration.folder('pages');
-
-                //get all pages
-                aSources.filter(t => t.getText().indexOf('Page') > -1)
-                    .map(t => ({
-                        fileName: Utils.replaceUnsupportedFileSigns(t.getText(), '_') + '.js',
-                        source: t.getContent().filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue()
-                    }))
-                    .forEach(c => pages.file(c.fileName, c.source));
-
-                //get all matcher implementation
-                aSources.filter(t => t.getText().indexOf('Matcher') > -1)
-                    .map(t => ({
-                        fileName: Utils.replaceUnsupportedFileSigns(t.getText(), '_') + '.js',
-                        source: t.getContent().filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue()
-                    }))
-                    .forEach(c => customMatcher.file(c.fileName, c.source));
-
-                //get all remaining except pages and matcher
-                aSources.filter(t => t.getText().indexOf('Matcher') === -1 && t.getText().indexOf('Page') === -1)
-                    .map(t => ({
-                        fileName: Utils.replaceUnsupportedFileSigns(t.getText(), '_') + '.js',
-                        source: t.getContent().filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue()
-                    }))
-                    .forEach(c => integration.file(c.fileName, c.source));
-            } else {
-                this.getView()
-                    .byId('codeTab')
-                    .getItems()
-                    .filter(f => f.getContent().filter(c => c instanceof sap.m.FormattedText)[0].getVisible() === false)
-                    .map(t => ({
-                        fileName: Utils.replaceUnsupportedFileSigns(t.getText(), '_') + '.js',
-                        source: t.getContent()
-                            .filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue()
-                    }))
-                    .forEach(c => zip.file(c.fileName, c.source));
-            }
-
-            zip.generateAsync({
-                    type: "blob"
-                })
-                .then(content => saveAs(content, "testCode.zip"));
-        },
-
-        onStepClick: function (oEvent) {
-            var sPath = oEvent.getSource().getBindingContext('navModel').getPath();
-            sPath = sPath.substring(sPath.lastIndexOf('/')+1);       
-            this.getRouter().navTo("elementDisplay", {TestId: this._sTestId, ElementId: sPath});
         }
     });
 });

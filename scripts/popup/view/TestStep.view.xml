@@ -1,4 +1,11 @@
-<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:code="sap.ui.codeeditor" xmlns:semantic="sap.m.semantic" xmlns:core="sap.ui.core" controllerName="com.ui5.testing.controller.ui5Testing">
+<mvc:View 
+    xmlns="sap.m" 
+    xmlns:mvc="sap.ui.core.mvc" 
+    xmlns:f="sap.ui.layout.form" 
+    xmlns:code="sap.ui.codeeditor" 
+    xmlns:semantic="sap.m.semantic" 
+    xmlns:core="sap.ui.core" 
+    controllerName="com.ui5.testing.controller.TestStep">
     <semantic:FullscreenPage 
         navButtonPress="onNavBack" 
         showSubHeader="false" 

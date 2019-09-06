@@ -25,7 +25,7 @@ sap.ui.define([
     Utils) {
     "use strict";
 
-    return Controller.extend("com.ui5.testing.controller.ui5Testing", {
+    return Controller.extend("com.ui5.testing.controller.TestStep", {
         _oDialog: null,
         _oPopoverAction: null,
         _bDialogActive: false,
@@ -493,7 +493,7 @@ sap.ui.define([
                     TestId: this._sTestId
                 }, true);
             } else {
-                this.getRouter().navTo("testDetails", {
+                this.getRouter().navTo("TestDetails", {
                     TestId: this._sTestId
                 }, true);
             }
@@ -512,7 +512,7 @@ sap.ui.define([
          * 
          */
         _onNewStepFromQuick: function () {
-            this.getRouter().navTo("testDetailsCreateQuick", {}, true);
+            this.getRouter().navTo("TestDetailsCreateQuick", {}, true);
         },
 
         /**
@@ -526,7 +526,7 @@ sap.ui.define([
                         TestId: this._sTestId
                     }, true);
                 } else {
-                    this.getRouter().navTo("testDetails", {
+                    this.getRouter().navTo("TestDetails", {
                         TestId: this._sTestId
                     }, true);
                     RecordController.startRecording();
