@@ -93,7 +93,7 @@ var oTestGlobalBuffer = {
 
 //super shitty code - we are just architectuarlly not designed correctly here..
 if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui.getCore === "undefined" || !sap.ui.getCore() || !sap.ui.getCore().isInitialized()) {
-    debugger;
+    //debugger;
     document.dispatchEvent(new CustomEvent('do-ui5-ok', {
         detail: {
             ok: false,
@@ -101,7 +101,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         }
     }));
 } else {
-    debugger;
+    //debugger;
     document.dispatchEvent(new CustomEvent('do-ui5-ok', {
         detail: {
             ok: true,
@@ -334,7 +334,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                 }.bind(this));
             }.bind(this));
             
-            debugger;
+            //debugger;
             if (typeof sap !== "undefined" && sap.m && sap.m.MessageToast) {
                 sap.m.MessageToast.show("Testing Framework Initialized...");
             }

@@ -43,8 +43,6 @@
             //debugger;
             // Inject a script file in the current page
             var run = function (oEvent) {
-                //debugger;
-                setTimeout(function(){
                 var script = document.createElement('script');
                 script.src = chrome.extension.getURL('/scripts/injected/ui5RecorderInject.js');
                 script.defer = "defer";
@@ -73,7 +71,9 @@
                             }
                         }, function (response) {});
                     } else {
-                        var oVers = oXMLEvent.detail, oLastDom = null, oLastAnswer = {};
+                        var oVers = oXMLEvent.detail,
+                            oLastDom = null,
+                            oLastAnswer = {};
 
                         document.addEventListener("mousedown", function (event) {
                             if (event.button == 2) {
@@ -155,20 +155,26 @@
                         }, function (response) {});
                     }
                 });
-                }, 500);
             };
 
-            Array.from(document.head.getElementsByTagName('script')).forEach(function (script) {
-                if (script.src.indexOf('sap-ui-core') > -1) {
-                    script.onload = run;
+            const maxWaitTime = 3000;
+            var waited = 0;
+            var intvervalID = setInterval(function () {
+                waited = waited + 100;
+                if (document.readyState === "complete" && typeof sap !== undefined) {
+                    clearInterval(intvervalID);
+                    run();
+                } else if (waited > maxWaitTime) {
+                    clearInterval(intvervalID);
+                    chrome.runtime.sendMessage({
+                        type: "loaded",
+                        data: {
+                            ok: false,
+                            version: ""
+                        }
+                    }, function (response) {});
                 }
-            });
-
-
-            if (document.readyState === "complete" || sap) {
-                run();
-            }
-
+            }, 100);
         }());
     }, {}]
 }, {}, [1]);

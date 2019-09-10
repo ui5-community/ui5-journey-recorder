@@ -235,13 +235,14 @@ sap.ui.define([
             }, function (granted) {
                 if (granted) {
                     this._oModel.setProperty("/replayMode", true);
-                    if (this._oModel.getProperty('/routeName') !== "testReplay") {
+                    this._replay();
+                    /*if (this._oModel.getProperty('/routeName') !== "testReplay") {
                         this.getRouter().navTo("testReplay", {
                             TestId: this.getModel("navModel").getProperty("/test/uuid")
                         }, true);
                     } else {
                         this._onTestRerun();
-                    }
+                    }*/
                 }
             }.bind(this));
         },
@@ -469,14 +470,6 @@ sap.ui.define([
                  */
                 const fnListenerFunction = function (tabId, changeInfo, tab) {
                     if (tab.url.indexOf(sCheckUrl) > -1 && changeInfo.status === 'complete' && !bInjectRequested) {
-                        /*                     chrome.windows.create({
-                                                tabId: tab.id,
-                                                type: 'normal',
-                                                focused: true
-                                                //state: 'maximized'
-                                            }, function (fnWindow) {
-                                                //now inject into our window..
-                         */
                         RecordController.injectScript(tab.id).then(function (oData) {
                             //check here
                             if (RecordController.isInjected() && !this._bReplayMode) {
@@ -491,18 +484,6 @@ sap.ui.define([
                             }
                         }.bind(this));
                         bInjectRequested = true;
-                        /*
-                        const fnListenHandshake = function (message, sender, sendResponse) {
-                            if (message.type === "HandshakeToWindow") {
-                                chrome.runtime.sendMessage({
-                                    "type": "send-window-id",
-                                }, function (response) {});
-                                chrome.runtime.onMessage.removeListener(fnListenerFunction());
-                            }
-                        };
-
-                        chrome.runtime.onMessage.addListener(fnListenHandshake());*/
-                        //}.bind(this));
                         chrome.tabs.onUpdated.removeListener(fnListenerFunction.bind(this));
                     }
                 };
@@ -597,11 +578,11 @@ sap.ui.define([
             if (!this._oModel.getProperty("/replayMode")) {
                 this._oModel.setProperty("/replayMode", true);
             }
-            var aElement = this.getModel("navModel").getProperty("/elements");
-            for (var i = 0; i < aElement.length; i++) {
-                aElement[i].showPlay = i === this._iCurrentStep;
+            var oNavModel = this.getModel('navModel');
+            var iNumElements = oNavModel.getProperty("/elements").length;
+            for (var i = 0; i < iNumElements; i++) {
+                oNavModel.setProperty("/elements/" + i + "/showPlay", i === this._iCurrentStep);
             }
-            this.getModel("navModel").setProperty("/elements", aElement);
             //Here the test should work automatically
             var iReplayType = this.getModel('settings').getProperty('/settings/replayType');
             if (iReplayType !== 0) {

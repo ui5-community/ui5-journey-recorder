@@ -103,6 +103,9 @@ sap.ui.define([
                     chrome.tabs.sendMessage(this._sTabId, {
                         type: "ui5-check-if-injected"
                     }, function (response) {
+                        if (chrome.runtime.lastError) {
+                            setTimeout(this._checkWindowLifecycle.this, 500);
+                        }
                         if (this._bIsInjected === true && (typeof response === "undefined" || typeof response.injected === "undefined")) {
                             this._bIsInjected = false;
                             //ok - we are not.. reset our promise, we have to inject again..
@@ -118,36 +121,37 @@ sap.ui.define([
         return this._bIsInjected;
     };
 
-    RecordController.prototype.isRecording = function() {
+    RecordController.prototype.isRecording = function () {
         return this._oModel.getProperty("/recording");
     };
 
     RecordController.prototype._injectIntoTab = function (sTabId, sUrl) {
-        chrome.tabs.sendMessage(sTabId, {
-            type: "ui5-check-if-injected"
-        }, function (response) {
+        if (!this.isInjected()) {
+            //chrome.tabs.sendMessage(sTabId, {
+            //    type: "ui5-check-if-injected"
+            //}, function (response) {
             this._sTabId = sTabId;
-            this._sLastTabId = this._sTabId;
+            //    this._sLastTabId = this._sTabId;
             this._sCurrentURL = sUrl;
-            if (typeof response === "undefined" || typeof response.injected === "undefined") {
-                chrome.tabs.executeScript(this._sTabId, {
-                    file: '/scripts/content/ui5Testing.js'
-                }, function () {
-                    if (chrome.runtime.lastError) {
-                        MessageToast.show("Initialization for " + this._sCurrentURL + " failed. Please restart the Addon.");
-                    }
-                });
+            //if (typeof response === "undefined" || typeof response.injected === "undefined") {
+            chrome.tabs.executeScript(this._sTabId, {
+                file: '/scripts/content/ui5Testing.js'
+            }, function () {
+                if (chrome.runtime.lastError) {
+                    MessageToast.show("Initialization for " + this._sCurrentURL + " failed. Please restart the Addon.");
+                }
                 this._checkWindowLifecycle();
                 this._bIsInjected = true;
                 Communication.register(this._sTabId);
-            } else {
-                //we are already injected.. no need to register or do anything..
-                Communication.register(this._sTabId);
-                this._bIsInjected = true;
-                this._checkWindowLifecycle();
-                this._oInitPromiseResolve();
-            }
-        }.bind(this));
+            }.bind(this));
+        } else {
+            //we are already injected.. no need to register or do anything..
+            Communication.register(this._sTabId);
+            this._bIsInjected = true;
+            this._checkWindowLifecycle();
+            this._oInitPromiseResolve();
+        }
+        //}.bind(this));
     };
 
     RecordController.prototype.onHandleClose = function (oEvent) {
