@@ -1,3 +1,4 @@
+/* eslint-disable require-jsdoc */
 sap.ui.define([
     "sap/ui/base/Object",
     "sap/ui/model/json/JSONModel",
@@ -40,12 +41,25 @@ sap.ui.define([
     RecordController.prototype.focusTargetWindow = function () {
         chrome.tabs.update(this._sTabId, {
             "active": true
-        }, function (tab) {});
+        });
         chrome.tabs.get(this._sTabId, function (tab) {
             chrome.windows.update(tab.windowId, {
                 focused: true
             });
         });
+    };
+
+    RecordController.prototype.closeTab = function () {
+        return new Promise(function (resolve, reject) {
+            chrome.tabs.remove(this._sTabId, function () {
+                if (chrome.runtime.lastError) {
+                    reject();
+                }
+                this._bIsInjected = false;
+                this._sTabId = "";
+                resolve();
+            }.bind(this));
+        }.bind(this));
     };
 
     RecordController.prototype.getModel = function () {
@@ -78,6 +92,7 @@ sap.ui.define([
 
     RecordController.prototype._onStopped = function () {
         this._oModel.setProperty("/recording", false);
+        this._bIsInjected = false;
     };
 
 
@@ -96,6 +111,7 @@ sap.ui.define([
     };
 
     RecordController.prototype._checkWindowLifecycle = function () {
+        var counter = 0;
         chrome.tabs.onUpdated.addListener(function (tabid, changeInfo) {
             if (tabid === this._sTabId) {
                 //check if we are still injected..
@@ -103,7 +119,11 @@ sap.ui.define([
                     chrome.tabs.sendMessage(this._sTabId, {
                         type: "ui5-check-if-injected"
                     }, function (response) {
+                        if (chrome.runtime.lastError) {
+                            setTimeout(this._checkWindowLifecycle.this, 500);
+                        }
                         if (this._bIsInjected === true && (typeof response === "undefined" || typeof response.injected === "undefined")) {
+                            //console.log('Reset injection flag!');
                             this._bIsInjected = false;
                             //ok - we are not.. reset our promise, we have to inject again..
                             sap.ui.getCore().getEventBus().publish("RecordController", "windowFocusLost", {});
@@ -118,36 +138,38 @@ sap.ui.define([
         return this._bIsInjected;
     };
 
+    RecordController.prototype.isRecording = function () {
+        return this._oModel.getProperty("/recording");
+    };
+
     RecordController.prototype._injectIntoTab = function (sTabId, sUrl) {
-        chrome.tabs.sendMessage(sTabId, {
-            type: "ui5-check-if-injected"
-        }, function (response) {
+        if (!this.isInjected()) {
             this._sTabId = sTabId;
-            this._sLastTabId = this._sTabId;
             this._sCurrentURL = sUrl;
-            if (typeof response === "undefined" || typeof response.injected === "undefined") {
-                chrome.tabs.executeScript(this._sTabId, {
-                    file: '/scripts/content/ui5Testing.js'
-                }, function () {
-                    if (chrome.runtime.lastError) {
-                        MessageToast.show("Initialization for " + this._sCurrentURL + " failed. Please restart the Addon.");
-                    }
-                });
-                this._checkWindowLifecycle();
+            chrome.tabs.executeScript(this._sTabId, {
+                file: '/scripts/content/ui5Testing.js'
+            }, function () {
+                if (chrome.runtime.lastError) {
+                    MessageToast.show("Initialization for " + this._sCurrentURL + " failed. Please restart the Addon.");
+                }
                 this._bIsInjected = true;
                 Communication.register(this._sTabId);
-            } else {
-                //we are already injected.. no need to register or do anything..
-                Communication.register(this._sTabId);
-                this._bIsInjected = true;
-                this._checkWindowLifecycle();
+                //this._checkWindowLifecycle();
                 this._oInitPromiseResolve();
-            }
-        }.bind(this));
+            }.bind(this));
+        } else {
+            //we are already injected.. no need to register or do anything..
+            this._bIsInjected = true;
+            Communication.register(this._sTabId);
+            //this._checkWindowLifecycle();
+            this._oInitPromiseResolve();
+        }
+        //}.bind(this));
     };
 
     RecordController.prototype.onHandleClose = function (oEvent) {
         var aContexts = oEvent.getParameter("selectedContexts");
+        this._bIsInjected = false;
         if (aContexts && aContexts.length) {
             var oObject = aContexts[0].getObject();
             this._injectIntoTab(oObject.id, oObject.url);
@@ -202,8 +224,8 @@ sap.ui.define([
                 reject();
                 this._oInitPromiseReject = null;
             }.bind(this));
-        }.bind(this))
-    }
+        }.bind(this));
+    };
 
     return new RecordController();
 });

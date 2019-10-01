@@ -33,7 +33,10 @@ document.addEventListener("do-ui5-from-extension-to-inject", function (oXMLEvent
     }
     var oReturn = TestHandlerSingleton.handleEvent(oXMLEvent.detail.type, oXMLEvent.detail.data);
     if (!oReturn) {
-        oReturn = { processed: true, uuid: uuid };
+        oReturn = {
+            processed: true,
+            uuid: uuid
+        };
     } else {
         oReturn.processed = true;
         oReturn.uuid = uuid;
@@ -42,11 +45,23 @@ document.addEventListener("do-ui5-from-extension-to-inject", function (oXMLEvent
     if (oReturn instanceof Promise) {
         oReturn.then(function (oData) {
             //console.log(`ui5RecorderInject: Dispatch event with uuid: ${uuid} 'do-ui5-from-inject-to-async' then-case`);
-            document.dispatchEvent(new CustomEvent('do-ui5-from-inject-to-async', { detail: { type: "answer", uuid: uuid, data: oData } }));
+            document.dispatchEvent(new CustomEvent('do-ui5-from-inject-to-async', {
+                detail: {
+                    type: "answer",
+                    uuid: uuid,
+                    data: oData
+                }
+            }));
         });
     } else {
         //console.log(`ui5RecorderInject: Dispatch event with uuid: ${uuid} 'do-ui5-from-inject-to-async' else-case`);
-        document.dispatchEvent(new CustomEvent('do-ui5-from-inject-to-async', { detail: { type: "answer", uuid: uuid, data: oReturn } }));
+        document.dispatchEvent(new CustomEvent('do-ui5-from-inject-to-async', {
+            detail: {
+                type: "answer",
+                uuid: uuid,
+                data: oReturn
+            }
+        }));
     }
 });
 
@@ -74,10 +89,19 @@ var oTestGlobalBuffer = {
 
 //super shitty code - we are just architectuarlly not designed correctly here..
 if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui.getCore === "undefined" || !sap.ui.getCore() || !sap.ui.getCore().isInitialized()) {
-    document.dispatchEvent(new CustomEvent('do-ui5-ok', { detail: { ok: false, version: "none" } }));
-}
-else {
-    document.dispatchEvent(new CustomEvent('do-ui5-ok', { detail: { ok: true, version: sap.ui.version } }));
+    document.dispatchEvent(new CustomEvent('do-ui5-ok', {
+        detail: {
+            ok: false,
+            version: "none"
+        }
+    }));
+} else {
+    document.dispatchEvent(new CustomEvent('do-ui5-ok', {
+        detail: {
+            ok: true,
+            version: sap.ui.version
+        }
+    }));
 
     //woaah: that is shitty - but it is difficult to inject a lot of pages and make best practice coding here.. for personal use okee..
     var BaseObject = sap.ui.require("sap/ui/base/Object");
@@ -248,12 +272,17 @@ else {
     };
 
     TestHandler.prototype.fireEventToContent = function (sEventType, oEventData) {
-        document.dispatchEvent(new CustomEvent('do-ui5-from-inject-to-extension', { detail: { type: sEventType, data: oEventData } }));
+        document.dispatchEvent(new CustomEvent('do-ui5-from-inject-to-extension', {
+            detail: {
+                type: sEventType,
+                data: oEventData
+            }
+        }));
     };
 
     TestHandler.prototype._getControlFromDom = function (oDomNode) {
         var oControls = [];
-        if(oDomNode.id) {
+        if (oDomNode.id) {
             oControls = jQuery(document.getElementById(oDomNode.id)).control();
         } else {
             oControls = jQuery(oDomNode).control()
@@ -331,7 +360,7 @@ else {
             oDom.get(0).dispatchEvent(event);
 
             //afterwards trigger the blur event, in order to trigger the change event (enter is not really the same.. but ya..)
-            if (oItem.property.actionSettings.blur === true ) {
+            if (oItem.property.actionSettings.blur === true) {
                 var event = new MouseEvent('blur', {
                     view: window,
                     bubbles: true,
@@ -340,7 +369,7 @@ else {
                 event.originalEvent = event;
                 oDom.get(0).dispatchEvent(event);
             }
-            if ( oItem.property.actionSettings.enter === true ) {
+            if (oItem.property.actionSettings.enter === true) {
                 var event = new KeyboardEvent('keydown', {
                     view: window,
                     data: '',
@@ -572,16 +601,16 @@ else {
             property: {},
             context: {},
             binding: {},
-			//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+            //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
             bindingContext: {}
         };
 
         //create uniquness for properties..
         var oObjectProps = {};
-		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+        //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
         var oObjectBndngs = {};
         var oObjectCtx = {};
-		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+        //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
         var oObjectBndngContexts = {};
         if (oItem.parent && oItem.parent.control && oItem.control.sParentAggregationName && oItem.control.sParentAggregationName.length > 0) {
             //we are an item..get all children of my current level, to search for identical items..
@@ -595,8 +624,7 @@ else {
                 }
                 for (var sModel in oItem.context) {
                     if (!oObjectCtx[sModel]) {
-                        oObjectCtx[sModel] = {
-                        };
+                        oObjectCtx[sModel] = {};
                     }
                     var oCtx = aItems[i].getBindingContext(sModel === "undefined" ? undefined : sModel);
                     if (!oCtx) {
@@ -623,9 +651,9 @@ else {
                     }
                 }
 
-				//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-				/*@Adrian - Start*/
-				for (var sProperty in oItem.bindingContext) {
+                //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                /*@Adrian - Start*/
+                for (var sProperty in oItem.bindingContext) {
                     if (!oObjectBndngContexts[sProperty]) {
                         oObjectBndngContexts[sProperty] = {
                             _totalAmount: 0
@@ -661,7 +689,7 @@ else {
                     oObjectBndngs[sProperty]._differentValues = this._getPropertiesInArray(oObjectBndngs[sProperty]);
                 }
 
-				/*@Adrian - End*/
+                /*@Adrian - End*/
                 for (var sProperty in oItem.property) {
                     var sGetter = "get" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1);
                     if (!oObjectProps[sProperty]) {
@@ -715,12 +743,12 @@ else {
         for (var sAttr in oItem.binding) {
             iUniqueness = 0;
             if (oMerged.cloned === true) {
-            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-				/*@Adrian - Start				
+                //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                /*@Adrian - Start				
                 //we are > 0 - our uniquness is 0, as bindings as MOST CERTAINLY not done per item (but globally)
                 iUniqueness = 0;
 				  @Adrian - End */
-				/*@Adrian - Start*/				
+                /*@Adrian - Start*/
                 //we are > 0 - our uniquness is 0, our binding will contain a primary key for the list binding
                 if (oObjectBndngs[sAttr]._totalAmount === oObjectBndngs[sAttr]._differentValues) {
                     //seems to be a key field.. great
@@ -741,8 +769,8 @@ else {
         }
 
         //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-		/*@Adrian - Start*/
-		for (var sAttr in oItem.bindingContext) {
+        /*@Adrian - Start*/
+        for (var sAttr in oItem.bindingContext) {
             iUniqueness = 0;
             if (oMerged.cloned === true) {
                 //we are > 0 - our uniquness is 0, our binding will contain a primary key for the list binding
@@ -757,7 +785,7 @@ else {
             }
             oItem.uniquness.bindingContext[sAttr] = parseInt(iUniqueness, 10);
         }
-		/*@Adrian - End*/
+        /*@Adrian - End*/
         for (var sModel in oItem.context) {
             oItem.uniquness.context[sModel] = {};
             for (var sAttr in oItem.context[sModel]) {
@@ -796,9 +824,9 @@ else {
     }
 
     //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-	/*@Adrian - Start*/
+    /*@Adrian - Start*/
 
-    TestHandler.prototype._navigateToListItem = function(oItem) {
+    TestHandler.prototype._navigateToListItem = function (oItem) {
         //in case we are actually part of a list item (means of a multi-combobox as an example), we should move to another place
         //we should directly pretend that we are selecting the list item, otherwise this will just make troubles...
         /*if (oItem.getMetadata().getElementName() === "sap.m.StandardListItem" ) {
@@ -810,9 +838,9 @@ else {
         return oItem;
     };
 
-	/*@Adrian - End*/
+    /*@Adrian - End*/
     TestHandler.prototype._setItem = function (oControl, oDomNode, oOriginalDomNode) {
-		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+        //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
         oControl = this._navigateToListItem(oControl);
         var oItem = this._getElementInformation(oControl, oDomNode);
         oItem = this._setUniqunessInformation(oItem);
@@ -858,7 +886,15 @@ else {
 
     TestHandler.prototype._getMergedClassArray = function (oItem) {
         var aClassArray = this._getClassArray(oItem);
-        var oReturn = { defaultAction: { "": "" }, askForBindingContext: false, preferredProperties: [], cloned: false, actions: {} };
+        var oReturn = {
+            defaultAction: {
+                "": ""
+            },
+            askForBindingContext: false,
+            preferredProperties: [],
+            cloned: false,
+            actions: {}
+        };
         //merge from button to top (while higher elements are overwriting lower elements)
         for (var i = 0; i < aClassArray.length; i++) {
             var oClass = aClassArray[i];
@@ -867,7 +903,8 @@ else {
                 oClass.defaultAction = [];
             } else if (typeof oClass.defaultAction === "string") {
                 oClass.defaultAction = [{
-                    domChildWith: "", action: oClass.defaultAction
+                    domChildWith: "",
+                    action: oClass.defaultAction
                 }];
             }
             oReturn.cloned = oClass.cloned === true ? true : oReturn.cloned;
@@ -885,7 +922,9 @@ else {
                 } else {
                     for (var j = 0; j < oClass.actions[sAction].length; j++) {
                         //remove all elements, with the same domChildWith, higher elements are more descriptive..
-                        var aExisting = oReturn.actions[sAction].filter(function (e) { return e.domChildWith === oClass.actions[sAction][j].domChildWith; });
+                        var aExisting = oReturn.actions[sAction].filter(function (e) {
+                            return e.domChildWith === oClass.actions[sAction][j].domChildWith;
+                        });
                         if (aExisting.length) {
                             aExisting[0] = oClass.actions[sAction][j];
                         } else {
@@ -999,7 +1038,7 @@ else {
             if (!oLastDom && oData.domId) {
                 oLastDom = document.getElementById(oData.domId);
             }
-            if ( !oLastDom ) {
+            if (!oLastDom) {
                 oLastDom = document.activeElement;
             }
 
@@ -1028,23 +1067,26 @@ else {
         this.onClick(oElement, false);
     };
 
-    TestHandler.prototype.__showFastInformation = function(event){
+    TestHandler.prototype.__showFastInformation = function (event) {
         this.__popover = new sap.m.Popover();
         var control = this._getControlFromDom(event.target);
         var controlInformation = new sap.ui.model.json.JSONModel({});
         controlInformation.setProperty('/controlClass', control.getMetadata()._sClassName);
         controlInformation.setProperty('/controlId', control.getId());
         var genIdPatt = new RegExp('__' + control.getMetadata()._sUIDToken + '[0-9]+');
-        if(genIdPatt.exec(control.getId())) {
+        if (genIdPatt.exec(control.getId())) {
             controlInformation.setProperty('/generatedId', true);
         } else {
             controlInformation.setProperty('/generatedId', false);
         }
         var aPropertyMethods = [...new Set(control.getMetadata()._aAllPublicMethods.filter(m => m.startsWith('get')))];
         var aValues = aPropertyMethods
-            .filter(m => typeof(control[m]) === 'function')
-            .map(b => ({property: b.replace('get', ''), value: control[b]()}))
-            .filter(o => Object.values(o)[0] !== null && typeof(Object.values(o)[0]) !== 'function' && typeof(Object.values(o)[0]) !== 'object'  && typeof(Object.values(o)[0]) !== 'undefined');
+            .filter(m => typeof (control[m]) === 'function')
+            .map(b => ({
+                property: b.replace('get', ''),
+                value: control[b]()
+            }))
+            .filter(o => Object.values(o)[0] !== null && typeof (Object.values(o)[0]) !== 'function' && typeof (Object.values(o)[0]) !== 'object' && typeof (Object.values(o)[0]) !== 'undefined');
 
         controlInformation.setProperty('/primitiveProperties', aValues);
         this.__popover.setModel(controlInformation);
@@ -1056,7 +1098,10 @@ else {
 
         var vBox = new sap.m.VBox();
         controlInformation.getProperty('/primitiveProperties')
-                            .forEach(el => vBox.addItem(new sap.m.ObjectAttribute({title: el.property, text: el.value})));
+            .forEach(el => vBox.addItem(new sap.m.ObjectAttribute({
+                title: el.property,
+                text: el.value
+            })));
 
         this.__popover.addContent(vBox);
         this.__popover.openBy(control);
@@ -1093,16 +1138,18 @@ else {
             }.bind(this));
 
             //avoid closing any popups.. this is an extremly dirty hack
-            var fnOldEvent = sap.ui.core.Popup.prototype.onFocusEvent;
-            sap.ui.core.Popup.prototype.onFocusEvent = function (oBrowserEvent) {
-                if (that._bActive === false) {
-                    if (that._bScreenLocked === false) {
-                        return fnOldEvent.apply(this, arguments);
+            if(sap.ui.core.Popup) {
+                var fnOldEvent = sap.ui.core.Popup.prototype.onFocusEvent;
+                sap.ui.core.Popup.prototype.onFocusEvent = function (oBrowserEvent) {
+                    if (that._bActive === false) {
+                        if (that._bScreenLocked === false) {
+                            return fnOldEvent.apply(this, arguments);
+                        }
                     }
-                }
 
-                return;
-            };
+                    return;
+                };
+            }
 
             $('*').on("mouseup mousedown mouseover mousemove mouseout", function (e) {
                 if (this._bActive === false && this._bScreenLocked === false) {
@@ -1186,13 +1233,20 @@ else {
 
     TestHandler.prototype._defineElementBasedActions = function () {
         this._oElementMix = {
-            "sap.m.StandardListItem": {
-            },
+            "sap.m.StandardListItem": {},
             "sap.ui.core.Element": {
                 defaultAction: "PRS",
                 actions: {
-                    "PRS": [{ text: "Root", domChildWith: "", order: 99 }],
-                    "TYP": [{ text: "Root", domChildWith: "", order: 99 }]
+                    "PRS": [{
+                        text: "Root",
+                        domChildWith: "",
+                        order: 99
+                    }],
+                    "TYP": [{
+                        text: "Root",
+                        domChildWith: "",
+                        order: 99
+                    }]
                 }
             },
             "sap.ui.core.Icon": {
@@ -1217,12 +1271,16 @@ else {
             "sap.ui.core.Item": {
                 cloned: true
             },
-            "sap.m.Link": {
-            },
+            "sap.m.Link": {},
             "sap.m.ComboBoxBase": {
                 defaultAction: "PRS",
                 actions: {
-                    "PRS": [{ text: "Arrow (Open List)", domChildWith: "-arrow", preferred: true, order: 1 }]
+                    "PRS": [{
+                        text: "Arrow (Open List)",
+                        domChildWith: "-arrow",
+                        preferred: true,
+                        order: 1
+                    }]
                 }
             },
             "sap.m.GenericTile": {
@@ -1231,7 +1289,12 @@ else {
             "sap.m.MultiComboBox": {
                 defaultAction: "PRS",
                 actions: {
-                    "PRS": [{ text: "Arrow (Open List)", domChildWith: "-arrow", preferred: true, order: 1 }]
+                    "PRS": [{
+                        text: "Arrow (Open List)",
+                        domChildWith: "-arrow",
+                        preferred: true,
+                        order: 1
+                    }]
                 }
             },
             "sap.m.Text": {
@@ -1240,26 +1303,51 @@ else {
             "sap.m.Select": {
                 defaultAction: "PRS",
                 actions: {
-                    "PRS": [{ text: "Arrow (Open List)", domChildWith: "-arrow", preferred: true, order: 1 }]
+                    "PRS": [{
+                        text: "Arrow (Open List)",
+                        domChildWith: "-arrow",
+                        preferred: true,
+                        order: 1
+                    }]
                 }
             },
             "sap.m.InputBase": {
                 defaultAction: "TYP",
                 actions: {
-                    "TYP": [{ text: "In Input-Field", domChildWith: "-inner", preferred: true, order: 1 }]
+                    "TYP": [{
+                        text: "In Input-Field",
+                        domChildWith: "-inner",
+                        preferred: true,
+                        order: 1
+                    }]
                 }
             },
             "sap.ui.table.Row": {
                 cloned: true,
                 defaultAction: "PRS",
                 actions: {
-                    "TYP": [{ text: "On Selection-Area", domChildWith: "-col0", preferred: true, order: 1 }]
+                    "TYP": [{
+                        text: "On Selection-Area",
+                        domChildWith: "-col0",
+                        preferred: true,
+                        order: 1
+                    }]
                 }
             },
             "sap.m.SearchField": {
-                defaultAction: [{ domChildWith: "-search", action: "PRS" },
-                { domChildWith: "-reset", action: "PRS" },
-                { domChildWith: "", action: "TYP" }]
+                defaultAction: [{
+                        domChildWith: "-search",
+                        action: "PRS"
+                    },
+                    {
+                        domChildWith: "-reset",
+                        action: "PRS"
+                    },
+                    {
+                        domChildWith: "",
+                        action: "TYP"
+                    }
+                ]
             }
         };
     };
@@ -1295,7 +1383,7 @@ else {
             sap.ui.getCore().unregisterPlugin(fakePlugin);
 
             var aElements = {};
-            if(sap.ui.core.Element && sap.ui.core.Element.registry) {
+            if (sap.ui.core.Element && sap.ui.core.Element.registry) {
                 aElements = sap.ui.core.Element.registry.all();
             } else {
                 aElements = oCoreObject.mElements;
@@ -1395,7 +1483,15 @@ else {
             association: {},
             context: {},
             metadata: {},
-            identifier: { domId: "", ui5Id: "", idCloned: false, idGenerated: false, ui5LocalId: "", localIdClonedOrGenerated: false, ui5AbsoluteId: "" },
+            identifier: {
+                domId: "",
+                ui5Id: "",
+                idCloned: false,
+                idGenerated: false,
+                ui5LocalId: "",
+                localIdClonedOrGenerated: false,
+                ui5AbsoluteId: ""
+            },
             parent: {},
             parentL2: {},
             parentL3: {},
@@ -1455,8 +1551,8 @@ else {
 
         //(2) no custom data? search for special cases
         //2.1: Multi-Combo-Box
-		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-		/*@Adrian - Start
+        //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+        /*@Adrian - Start
         var oPrt = _getParentWithDom(oItem, 3);
         if (oPrt && oPrt.getMetadata().getElementName() === "sap.m.MultiComboBox") {
             if (oPrt._getItemByListItem) {
@@ -1467,13 +1563,13 @@ else {
             }
         }
 		  @Adrian - End*/
-		/*@Adrian - Start*/
-		var iIndex = 1;
+        /*@Adrian - Start*/
+        var iIndex = 1;
         var oPrt = oItem;
         while (oPrt) {
             oPrt = _getParentWithDom(oItem, iIndex);
             iIndex += 1;
-            if ( iIndex > 100 ) {  //avoid endless loop..
+            if (iIndex > 100) { //avoid endless loop..
                 return null;
             }
             if (oPrt && oPrt.getMetadata().getElementName() === "sap.m.MultiComboBox") {
@@ -1486,7 +1582,7 @@ else {
             }
         }
         return null;
-		/*@Adrian - End*/
+        /*@Adrian - End*/
     };
 
     //on purpose implemented as local methods
@@ -1533,7 +1629,7 @@ else {
         sap.ui.getCore().unregisterPlugin(fakePlugin);
 
         var aElements = {};
-        if(sap.ui.core.Element && sap.ui.core.Element.registry) {
+        if (sap.ui.core.Element && sap.ui.core.Element.registry) {
             aElements = sap.ui.core.Element.registry.all();
         } else {
             aElements = oCoreObject.mElements;
@@ -1674,8 +1770,8 @@ else {
             }
         }
 
-		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-		/*@Adrian - Start*/
+        //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+        /*@Adrian - Start*/
         if (id.bindingContext) {
             for (var sModel in id.bindingContext) {
                 var oCtx = oItem.getBindingContext(sModel === "undefined" ? undefined : sModel);
@@ -1688,17 +1784,17 @@ else {
                 }
             }
         }
-		/*@Adrian - End*/
+        /*@Adrian - End*/
         if (id.binding) {
             for (var sBinding in id.binding) {
                 //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-				/*@Adrian - Start
+                /*@Adrian - Start
         		var oAggrInfo = oItem.getBindingInfo(sBinding);
                 if (!oAggrInfo) {
                     //SPECIAL CASE for sap.m.Label in Forms, where the label is actually bound against the parent element (yay)
                   @Adrian - End*/
-                    /*@Adrian - Start*/
-                    
+                /*@Adrian - Start*/
+
                 var oBndgInfo = fnGetBindingInformation(oItem, sBinding);
 
                 if (oBndgInfo.path !== id.binding[sBinding].path) {
@@ -1715,8 +1811,8 @@ else {
                     } else {
                         return false;
                     }
-                //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-				/*@Adrian - Start
+                    //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                    /*@Adrian - Start
         		} else {
                     var oBinding = oItem.getBinding(sBinding);
                     if (!oBinding) {
@@ -1787,10 +1883,10 @@ else {
         }
         return true;
     };
-	
+
     //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-	/*@Adrian - Start*/
-	var fnGetBindingContextInformation = function (oItem, sModel) {
+    /*@Adrian - Start*/
+    var fnGetBindingContextInformation = function (oItem, sModel) {
         var oCtx = oItem.getBindingContext(sModel === "undefined" ? undefined : sModel);
         if (!oCtx) {
             return null;
@@ -1838,21 +1934,29 @@ else {
         }
         return oReturn;
     };
-	/*@Adrian - End*/
+    /*@Adrian - End*/
     var fnGetElementInformation = function (oItem, oDomNode, bFull) {
         var oReturn = {
             property: {},
             aggregation: [],
             association: {},
             binding: {},
-		    //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+            //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
             bindingContext: {},
             context: {},
             model: {},
             metadata: {},
             viewProperty: {},
             classArray: [],
-            identifier: { domId: "", ui5Id: "", idCloned: false, idGenerated: false, ui5LocalId: "", localIdClonedOrGenerated: false, ui5AbsoluteId: "" },
+            identifier: {
+                domId: "",
+                ui5Id: "",
+                idCloned: false,
+                idGenerated: false,
+                ui5LocalId: "",
+                localIdClonedOrGenerated: false,
+                ui5AbsoluteId: ""
+            },
             control: null,
             dom: null
         };
@@ -1964,9 +2068,9 @@ else {
 
         //bindings..
         for (var sBinding in oItem.mBindingInfos) {
-		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-        oReturn.binding[sBinding] = fnGetBindingInformation(oItem, sBinding);
-		/*@Adrian - Start
+            //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+            oReturn.binding[sBinding] = fnGetBindingInformation(oItem, sBinding);
+            /*@Adrian - Start
             var oBindingInfo = oItem.getBindingInfo(sBinding);
             var oBinding = oItem.getBinding(sBinding);
             if (!oBindingInfo) {
@@ -2021,9 +2125,9 @@ else {
             }
         }
 
-		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-		/*@Adrian - Start*/
-		//binding context
+        //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+        /*@Adrian - Start*/
+        //binding context
         var aModels = fnGetContextModels(oItem);
         for (var sModel in aModels) {
             var oBndg = fnGetBindingContextInformation(oItem, sModel);
@@ -2032,12 +2136,12 @@ else {
             }
             oReturn.bindingContext[sModel] = oBndg;
         }
-		/*@Adrian - End*/
+        /*@Adrian - End*/
 
         //return all simple properties
         for (var sProperty in oItem.mProperties) {
             var fnGetter = oItem["get" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1)];
-            if(fnGetter) {
+            if (fnGetter) {
                 oReturn.property[sProperty] = fnGetter.call(oItem);
             } else {
                 oReturn.property[sProperty] = oItem.mProperties[sProperty];
@@ -2083,9 +2187,9 @@ else {
         oTestGlobalBuffer["fnGetElement"][bFull][oItem.getId()] = oReturn;
         return oReturn;
 
-		//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-		/*@Adrian - Start*/
-	};
+        //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+        /*@Adrian - Start*/
+    };
 
     var fnGetContextModels = function (oItem) {
         var oReturn = {};
@@ -2098,7 +2202,7 @@ else {
         oModel = $.extend(true, oModel, oItem.oModels);
         oModel = $.extend(true, oModel, oItem.oPropagatedProperties.oModels);
         return oModel;
-		/*@Adrian - End*/
+        /*@Adrian - End*/
     };
 
     //missing: get elements with same parent, to get elements "right next", "left" and on same level
