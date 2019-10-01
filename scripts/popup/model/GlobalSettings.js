@@ -11,7 +11,6 @@ sap.ui.define([
         constructor: function () {
             var oJSON = {
                 settings: {
-                    defaultReplayType: 0,
                     defaultLanguage: "UI5",
                     defaultNatLanguage: "EN",
                     defaultAuthentification: "NONE"

@@ -77,8 +77,11 @@ sap.ui.define([
                     this.getModel('viewModel').setProperty('/codeSettings/ui5Version', oPara.value);
                 }
             });
+
             this.getView().setModel(Navigation.getModel(), "navModel");
             this.getView().setModel(GlobalSettings.getModel(), "settings");
+            this.getModel('settings').setProperty('/settings/replayType', this.getModel('settings').getProperty('/settingsDefault/replayType'));
+
             this._createDialog();
             this.getOwnerComponent().getRouter().getRoute("TestDetails").attachPatternMatched(this._onTestDisplay, this);
             this.getOwnerComponent().getRouter().getRoute("TestDetailsCreate").attachPatternMatched(this._onTestCreate, this);
@@ -188,8 +191,9 @@ sap.ui.define([
                     tooltip: 'No further actions',
                     // eslint-disable-next-line require-jsdoc
                     press: function () {
+                        this._rejectConnection();
                         dialog.close();
-                    }
+                    }.bind(this)
                 }),
                 // eslint-disable-next-line require-jsdoc
                 afterClose: function () {
@@ -209,6 +213,14 @@ sap.ui.define([
         },
 
         /**
+         * 
+         */
+        _rejectConnection: function () {
+            RecordController.stopRecording();
+            RecordController.closeTab();
+        },
+
+        /**
          *
          */
         onDeleteStep: function (oEvent) {
@@ -224,27 +236,41 @@ sap.ui.define([
          *
          */
         onReplayAll: function (oEvent) {
-            var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
-            this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                oStep.setHighlight(sap.ui.core.MessageType.None);
-            });
-            this._iCurrentStep = -1;
-            chrome.permissions.request({
-                permissions: ['tabs'],
-                origins: [sUrl]
-            }, function (granted) {
-                if (granted) {
-                    this._oModel.setProperty("/replayMode", true);
-                    this._replay();
-                    /*if (this._oModel.getProperty('/routeName') !== "testReplay") {
-                        this.getRouter().navTo("testReplay", {
-                            TestId: this.getModel("navModel").getProperty("/test/uuid")
-                        }, true);
-                    } else {
-                        this._onTestRerun();
-                    }*/
-                }
-            }.bind(this));
+            console.log('ReplayStart, have to close former tab: ' + RecordController.isInjected());
+            if (RecordController.isInjected()) {
+                RecordController.closeTab().then(function () {
+                    this._bReplayMode = false;
+                    var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
+                    this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
+                        oStep.setHighlight(sap.ui.core.MessageType.None);
+                    });
+                    this._iCurrentStep = -1;
+                    chrome.permissions.request({
+                        permissions: ['tabs'],
+                        origins: [sUrl]
+                    }, function (granted) {
+                        if (granted) {
+                            this._oModel.setProperty("/replayMode", true);
+                            this._replay();
+                        }
+                    }.bind(this));
+                }.bind(this));
+            } else {
+                var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
+                this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
+                    oStep.setHighlight(sap.ui.core.MessageType.None);
+                });
+                this._iCurrentStep = -1;
+                chrome.permissions.request({
+                    permissions: ['tabs'],
+                    origins: [sUrl]
+                }, function (granted) {
+                    if (granted) {
+                        this._oModel.setProperty("/replayMode", true);
+                        this._replay();
+                    }
+                }.bind(this));
+            }
         },
 
         /**
@@ -327,6 +353,7 @@ sap.ui.define([
          */
         onNavBack: function () {
             RecordController.stopRecording();
+            RecordController.closeTab();
             this._oRecordDialog.close();
             this.getRouter().navTo("start");
         },
@@ -456,27 +483,27 @@ sap.ui.define([
          */
         _replay: function () {
             var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
-            chrome.tabs.create({
-                url: sUrl,
-                active: true
-            }, function (tab) {
-                var sCheckUrl = sUrl;
-                var bInjectRequested = false;
-                /**
-                 *
-                 * @param {*} tabId
-                 * @param {*} changeInfo
-                 * @param {*} tab
-                 */
-                const fnListenerFunction = function (tabId, changeInfo, tab) {
-                    if (tab.url.indexOf(sCheckUrl) > -1 && changeInfo.status === 'complete' && !bInjectRequested) {
-                        RecordController.injectScript(tab.id).then(function (oData) {
-                            //check here
+            var bInjectRequested = false;
+            var lastCreatedTab = "";
+
+            /**
+             * @param {string} tabId tab id the event comes from
+             * @param {object} oChangeInfo the object containing the update information
+             * @param {chrome.tabs.Tab} tTab the tab updated
+             */
+            function fnListenerFunction(tabId, oChangeInfo, tTab) {
+                console.log('Tabs: ' + lastCreatedTab + ' === ' + tabId + ', ' + (lastCreatedTab === tabId) + ', currentStatus: ' + oChangeInfo.status);
+                if (oChangeInfo.status === "complete" && lastCreatedTab === tabId) {
+                    console.log(tTab.url + ', already injected: ' + bInjectRequested + ' and Replay mode activated: ' + this._bReplayMode);
+                    if (tTab.url.indexOf(sUrl) > -1 && !bInjectRequested) {
+                        RecordController.injectScript(tabId).then(function (oData) {
+                            console.log('Injection done: ' + RecordController.isInjected());
                             if (RecordController.isInjected() && !this._bReplayMode) {
                                 this._bReplayMode = true;
                                 this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
                                     oStep.setHighlight(sap.ui.core.MessageType.None);
                                 });
+                                console.log("_startReplay");
                                 this._startReplay();
                             }
                             if (oData) {
@@ -486,10 +513,18 @@ sap.ui.define([
                         bInjectRequested = true;
                         chrome.tabs.onUpdated.removeListener(fnListenerFunction.bind(this));
                     }
-                };
+                }
+            }
 
-                chrome.tabs.onUpdated.addListener(fnListenerFunction.bind(this));
-            }.bind(this));
+            chrome.tabs.onUpdated.addListener(fnListenerFunction.bind(this));
+
+            chrome.tabs.create({
+                url: sUrl,
+                active: true
+            }, function (oTab) {
+                console.log('Now created: ' + oTab.id);
+                lastCreatedTab = oTab.id;
+            });
         },
 
         /**
