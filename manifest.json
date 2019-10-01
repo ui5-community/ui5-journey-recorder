@@ -1,7 +1,7 @@
 {
     "name": "UI5 Test-Recorder",
     "short_name": "UI5 Testrec.",
-    "version": "0.4.5",
+    "version": "0.5.2",
     "manifest_version": 2,
     "description": "UI5 Test-Recorder",
     "homepage_url": "https://github.com/msg-systems/ui5-testrecorder",
