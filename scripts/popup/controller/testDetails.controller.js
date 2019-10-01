@@ -236,7 +236,7 @@ sap.ui.define([
          *
          */
         onReplayAll: function (oEvent) {
-            console.log('ReplayStart, have to close former tab: ' + RecordController.isInjected());
+            //console.log('ReplayStart, have to close former tab: ' + RecordController.isInjected());
             if (RecordController.isInjected()) {
                 RecordController.closeTab().then(function () {
                     this._bReplayMode = false;
@@ -492,18 +492,18 @@ sap.ui.define([
              * @param {chrome.tabs.Tab} tTab the tab updated
              */
             function fnListenerFunction(tabId, oChangeInfo, tTab) {
-                console.log('Tabs: ' + lastCreatedTab + ' === ' + tabId + ', ' + (lastCreatedTab === tabId) + ', currentStatus: ' + oChangeInfo.status);
+                //console.log('Tabs: ' + lastCreatedTab + ' === ' + tabId + ', ' + (lastCreatedTab === tabId) + ', currentStatus: ' + oChangeInfo.status);
                 if (oChangeInfo.status === "complete" && lastCreatedTab === tabId) {
-                    console.log(tTab.url + ', already injected: ' + bInjectRequested + ' and Replay mode activated: ' + this._bReplayMode);
+                    //console.log(tTab.url + ', already injected: ' + bInjectRequested + ' and Replay mode activated: ' + this._bReplayMode);
                     if (tTab.url.indexOf(sUrl) > -1 && !bInjectRequested) {
                         RecordController.injectScript(tabId).then(function (oData) {
-                            console.log('Injection done: ' + RecordController.isInjected());
+                            //console.log('Injection done: ' + RecordController.isInjected());
                             if (RecordController.isInjected() && !this._bReplayMode) {
                                 this._bReplayMode = true;
                                 this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
                                     oStep.setHighlight(sap.ui.core.MessageType.None);
                                 });
-                                console.log("_startReplay");
+                                //console.log("_startReplay");
                                 this._startReplay();
                             }
                             if (oData) {
@@ -522,7 +522,7 @@ sap.ui.define([
                 url: sUrl,
                 active: true
             }, function (oTab) {
-                console.log('Now created: ' + oTab.id);
+                //console.log('Now created: ' + oTab.id);
                 lastCreatedTab = oTab.id;
             });
         },

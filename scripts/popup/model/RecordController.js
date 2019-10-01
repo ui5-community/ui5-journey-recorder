@@ -123,7 +123,7 @@ sap.ui.define([
                             setTimeout(this._checkWindowLifecycle.this, 500);
                         }
                         if (this._bIsInjected === true && (typeof response === "undefined" || typeof response.injected === "undefined")) {
-                            console.log('Reset injection flag!');
+                            //console.log('Reset injection flag!');
                             this._bIsInjected = false;
                             //ok - we are not.. reset our promise, we have to inject again..
                             sap.ui.getCore().getEventBus().publish("RecordController", "windowFocusLost", {});
