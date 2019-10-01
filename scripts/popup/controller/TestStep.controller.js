@@ -25,7 +25,7 @@ sap.ui.define([
     Utils) {
     "use strict";
 
-    return Controller.extend("com.ui5.testing.controller.ui5Testing", {
+    return Controller.extend("com.ui5.testing.controller.TestStep", {
         _oDialog: null,
         _oPopoverAction: null,
         _bDialogActive: false,
@@ -116,6 +116,7 @@ sap.ui.define([
          * @param {*} oEvent 
          */
         _onObjectMatched: function (oEvent) {
+            this.getModel('viewModel').setProperty('/blocked', false);
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._bReplayMode = false;
             this._oModel.setProperty("/quickMode", false);
@@ -133,6 +134,7 @@ sap.ui.define([
          * @param {*} oEvent 
          */
         _onObjectMatchedQuick: function (oEvent) {
+            this.getModel('viewModel').setProperty('/blocked', false);
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._bReplayMode = false;
             this._oModel.setProperty("/quickMode", true);
@@ -154,6 +156,12 @@ sap.ui.define([
             this._sElementId = oEvent.getParameter("arguments").ElementId;
 
             this.getModel('viewModel').setProperty('/element', this.getModel('navModel').getProperty('/elements/' + this._sElementId));
+            this.getModel('viewModel').setProperty('/blocked', true);
+            this._setValidAttributeTypes();
+            this._updatePreview();
+            if (RecordController.isInjected()) {
+                this.getView().byId("offlineStrip").setVisible(false);
+            }
         },
 
         /**
@@ -433,6 +441,8 @@ sap.ui.define([
                 stepExecuted: true
             };
 
+            var bRecording = RecordController.isRecording();
+
             //adjust the technical name if duplicates..
             var aProp = this.getModel("navModel").getProperty("/elements");
             var bFound = true;
@@ -457,16 +467,24 @@ sap.ui.define([
                 }
             }
 
-            return new Promise(function (resolve, reject) {
-                Communication.fireEvent("getwindowinfo").then(function (oData) {
-                    if (!oData) {
-                        return;
-                    }
-                    oReturn.href = oData.url;
-                    oReturn.hash = oData.hash;
+            if (bRecording) {
+                return new Promise(function (resolve, reject) {
+                    Communication.fireEvent("getwindowinfo").then(function (oData) {
+                        if (!oData) {
+                            return;
+                        }
+                        oReturn.href = oData.url;
+                        oReturn.hash = oData.hash;
+                        resolve(JSON.parse(JSON.stringify(oReturn)));
+                    });
+                });
+            } else {
+                return new Promise(function (resolve, reject) {
+                    oReturn.href = oElement.href;
+                    oReturn.hash = oElement.hash;
                     resolve(JSON.parse(JSON.stringify(oReturn)));
                 });
-            });
+            }
         },
 
         /**
@@ -478,7 +496,7 @@ sap.ui.define([
                     TestId: this._sTestId
                 }, true);
             } else {
-                this.getRouter().navTo("testDetails", {
+                this.getRouter().navTo("TestDetails", {
                     TestId: this._sTestId
                 }, true);
             }
@@ -497,7 +515,7 @@ sap.ui.define([
          * 
          */
         _onNewStepFromQuick: function () {
-            this.getRouter().navTo("testDetailsCreateQuick", {}, true);
+            this.getRouter().navTo("TestDetailsCreateQuick", {}, true);
         },
 
         /**
@@ -511,7 +529,7 @@ sap.ui.define([
                         TestId: this._sTestId
                     }, true);
                 } else {
-                    this.getRouter().navTo("testDetails", {
+                    this.getRouter().navTo("TestDetails", {
                         TestId: this._sTestId
                     }, true);
                     RecordController.startRecording();
@@ -723,20 +741,27 @@ sap.ui.define([
          * @param {*} oSelector 
          */
         _findItemAndExclude: function (oSelector) {
-            return new Promise(function (resolve, reject) {
-                Communication.fireEvent("find", oSelector).then(function (aItemsEnhanced) {
-                    for (var i = 0; i < aItemsEnhanced.length; i++) {
-                        var oItem = aItemsEnhanced[i];
-                        if (oItem.aggregationArray) {
-                            oItem.aggregation = {};
-                            for (var j = 0; j < oItem.aggregationArray.length; j++) {
-                                oItem.aggregation[oItem.aggregationArray[j].name] = oItem.aggregationArray[j];
+            //ensure "offline" editing.
+            if (RecordController.isRecording() || RecordController.isInjected()) {
+                return new Promise(function (resolve, reject) {
+                    Communication.fireEvent("find", oSelector).then(function (aItemsEnhanced) {
+                        for (var i = 0; i < aItemsEnhanced.length; i++) {
+                            var oItem = aItemsEnhanced[i];
+                            if (oItem.aggregationArray) {
+                                oItem.aggregation = {};
+                                for (var j = 0; j < oItem.aggregationArray.length; j++) {
+                                    oItem.aggregation[oItem.aggregationArray[j].name] = oItem.aggregationArray[j];
+                                }
                             }
                         }
-                    }
-                    resolve(aItemsEnhanced);
+                        resolve(aItemsEnhanced);
+                    });
                 });
-            });
+            } else {
+                return new Promise(function (resolve, reject) {
+                    resolve([]);
+                });
+            }
         },
 
         /**
@@ -1150,7 +1175,7 @@ sap.ui.define([
         /**
          *
          */
-        _setValidAttributeTypes: function (oItem) {
+        _setValidAttributeTypes: function () {
             var oItem = this._oModel.getProperty("/element/item");
             var aTypes = this.getModel('constants').getProperty("/attrType");
             var aAcceptable = [];

@@ -73,19 +73,19 @@ sap.ui.define([
                             controlAggregation: "pages",
                             bypassed: {
                                 target: [
-                                    "ui5Testing"
+                                    "TestStep"
                                 ]
                             },
                             async: true
                         },
                         routes: [
                             {
-                                pattern: "/testDetails/{TestId}/elementCreate/{ElementId}",
+                                pattern: "/TestDetails/{TestId}/elementCreate/{ElementId}",
                                 name: "elementCreate",
                                 target: "testElement"
                             },
                             {
-                                pattern: "/testDetails/{TestId}/elementCreateQuick/{ElementId}",
+                                pattern: "/TestDetails/{TestId}/elementCreateQuick/{ElementId}",
                                 name: "elementCreateQuick",
                                 target: "testElement"
                             },
@@ -100,24 +100,24 @@ sap.ui.define([
                                 target: "mockserver"
                             },
                             {
-                                pattern: "/testDetails/{TestId}",
-                                name: "testDetails",
-                                target: "testDetails"
+                                pattern: "/TestDetails/{TestId}",
+                                name: "TestDetails",
+                                target: "TestDetails"
                             },
                             {
                                 pattern: "/testReplay/{TestId}",
                                 name: "testReplay",
-                                target: "testDetails"
+                                target: "TestDetails"
                             },
                             {
-                                pattern: "/testDetailsCreate",
-                                name: "testDetailsCreate",
-                                target: "testDetails"
+                                pattern: "/TestDetailsCreate",
+                                name: "TestDetailsCreate",
+                                target: "TestDetails"
                             },
                             {
-                                pattern: "/testDetailsCreateQuick",
-                                name: "testDetailsCreateQuick",
-                                target: "testDetails"
+                                pattern: "/TestDetailsCreateQuick",
+                                name: "TestDetailsCreateQuick",
+                                target: "TestDetails"
                             },
                             {
                                 pattern: "",
@@ -138,15 +138,15 @@ sap.ui.define([
                                 controlAggregation: "pages"
                             },
                             testElement: {
-                                viewName: "ui5Testing",
+                                viewName: "TestStep",
                                 viewLevel: 1,
-                                viewId: "ui5Testing",
+                                viewId: "TestStep",
                                 controlAggregation: "pages"
                             },
-                            testDetails: {
-                                viewName: "testDetails",
+                            TestDetails: {
+                                viewName: "TestDetails",
                                 viewLevel: 1,
-                                viewId: "testDetails",
+                                viewId: "TestDetails",
                                 controlAggregation: "pages"
                             },
                             start: {

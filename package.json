@@ -1,7 +1,7 @@
 {
     "name": "ui5TestAutomation",
     "description": "Test-Automation for UI5",
-    "version": "0.1.1",
+    "version": "0.5.2",
     "repository": {
         "type": "git",
         "url": "https://github.com/msg-systems/ui5-testrecorder.git"

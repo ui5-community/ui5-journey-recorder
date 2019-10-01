@@ -1,5 +1,9 @@
-<mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:code="sap.ui.codeeditor" xmlns:semantic="sap.m.semantic" controllerName="com.ui5.testing.controller.testDetails">
-    <semantic:FullscreenPage navButtonPress="onNavBack" showNavButton="true" title="Test {viewModel>/codeSettings/testName}">
+<mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:code="sap.ui.codeeditor" xmlns:semantic="sap.m.semantic" controllerName="com.ui5.testing.controller.TestDetails">
+    <semantic:FullscreenPage 
+        navButtonPress="onNavBack" 
+        showNavButton="true" 
+        title="Test {viewModel>/codeSettings/testName}"
+        showFooter="{= ${viewModel>/activeTab} === 'settings' || ${viewModel>/activeTab} === 'code'}">
         <semantic:subHeader>
             <Bar>
                 <contentRight>
@@ -17,6 +21,16 @@
                 </contentRight>
             </Bar>
         </semantic:subHeader>
+
+        <semantic:customFooterContent>
+            <Button icon="sap-icon://record" text="Record" press="onContinueRecording" visible="{= ${viewModel>/activeTab} === 'settings'}" />
+            <Button id="beExport" text="Export" icon="sap-icon://action" press="onExport" visible="{= ${viewModel>/activeTab} === 'settings'}" />
+            <Button id="beDelete" type="Reject" text="Delete" press="onDelete" visible="{= ${viewModel>/activeTab} === 'settings'}" />
+            <Button id="btCancel" type="Emphasized" text="Cancel" press="onNavBack" visible="{= ${viewModel>/activeTab} === 'settings'}" />
+            <Button id="btSave" type="Accept" text="Save" press="onSave" visible="{= ${viewModel>/activeTab} === 'settings'}" />
+            <Button id="btDownload" icon="sap-icon://download-from-cloud" text="Download Sources" press="downloadAll" visible="{= ${viewModel>/activeTab} === 'code'}" />
+        </semantic:customFooterContent>
+
         <semantic:content>
             <IconTabBar id="idIconTabBarNoIcons" select="onTabChange" expanded="true" stretchContentHeight="true" applyContentPadding="false">
                 <items>
@@ -31,7 +45,7 @@
                                 
                                 <Label text="Test-Page" />
                                 <Input value="{viewModel>/codeSettings/testUrl}" change="onUpdatePreview" />
-                                <Text text="{recordModel>/targetUI5Version}" />
+                                <Text text="{viewModel>/codeSettings/ui5Version}" />
                                 
                                 <Label text="Authentification" />
                                 <Select id="tstAuthentication" change="onUpdatePreview" items="{settings>/authentification}" selectedKey="{viewModel>/codeSettings/authentification}">
@@ -53,7 +67,7 @@
                                     <Label text="Replay" tooltip="Replay.." visible="false" />
                                     <!--<Button icon="sap-icon://play" text="{i18n>replayAuto}" press="onReplayAutomatic" />-->
                                     
-                                    <Select id="sReplayMode" items="{settings>/replayModes}" selectedKey="{settings>/settings/defaultReplayType}">
+                                    <Select id="sReplayMode" items="{settings>/replayModes}" selectedKey="{settings>/settings/replayType}">
                                         <items>
                                             <core:Item text="{settings>mode}" key="{settings>key}" />
                                         </items>
@@ -140,13 +154,5 @@
                 </items>
             </IconTabBar>
         </semantic:content>
-        <semantic:customFooterContent>
-            <Button icon="sap-icon://record" text="Record" press="onContinueRecording" visible="{= ${viewModel>/activeTab} === 'settings'}" />
-            <Button id="beExport" text="Export" icon="sap-icon://action" press="onExport" visible="{= ${viewModel>/activeTab} === 'settings'}" />
-            <Button id="beDelete" type="Reject" text="Delete" press="onDelete" visible="{= ${viewModel>/activeTab} === 'settings'}" />
-            <Button id="btCancel" type="Emphasized" text="Cancel" press="onNavBack" visible="{= ${viewModel>/activeTab} === 'settings'}" />
-            <Button id="btSave" type="Accept" text="Save" press="onSave" visible="{= ${viewModel>/activeTab} === 'settings'}" />
-            <Button id="btDownload" icon="sap-icon://download-from-cloud" text="Download Sources" press="downloadAll" visible="{= ${viewModel>/activeTab} === 'code'}" />
-        </semantic:customFooterContent>
     </semantic:FullscreenPage>
 </mvc:View>

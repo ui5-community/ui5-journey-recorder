@@ -3,6 +3,19 @@
 The tool enables efficient test-automation for SAP UI5 and OpenUI5 Applications, by providing you a test-recorder for UI5 with exporting capabilities to uiveri5, testcafe and OPA5.
 During recording the tool supports you in setting the perfect combination of unique attributes in order to allow a stable test-execution.
 
+/********************
+/Release Notes "0.5.2"
+/********************
+Several Bugfixes:
+- removed recuring cals for successful injection, broke the replay option
+- Fixed the TestDetails controller for better replay
+
+New Features:
+- Auto Close of old Tabs on replay
+- Offline view of single Teststeps
+  
+
+
 Github-Page: http://msg-systems.github.io/ui5-testrecorder/
 
 Here you can find a [Documentation](./docs/documentation.md)

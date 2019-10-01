@@ -1,8 +1,13 @@
 sap.ui.define([
     "sap/m/MessageToast"
-], function(MessageToast){
+], function (MessageToast) {
+    "use strict";
     var ChromeStorage = {
-        set: function(oSettings) {
+        /**
+         * 
+         * @param {*} oSettings 
+         */
+        set: function (oSettings) {
             const requestKey = oSettings.key;
             const oData = oSettings.data;
             const successCallback = oSettings.success;
@@ -10,32 +15,53 @@ sap.ui.define([
             var storageObject = {};
             storageObject[requestKey] = oData;
 
-            chrome.storage.local.set(storageObject, function(obj) {
-                if(obj && obj[requestKey]) {if(successCallback) successCallback(obj[requestKey])}
-                else {if(failureCallback) failureCallback(chrome.runtime.lastError)}
+            chrome.storage.local.set(storageObject, function (obj) {
+                if (obj && obj[requestKey]) {
+                    if (successCallback) successCallback(obj[requestKey])
+                } else {
+                    if (failureCallback) failureCallback(chrome.runtime.lastError)
+                }
             });
         },
-        get: function(oSettings) {
+
+        /**
+         *
+         */
+        get: function (oSettings) {
             const requestKey = oSettings.key;
             const successCallback = oSettings.success;
             const failureCallback = oSettings.failure;
 
-            chrome.storage.local.get(requestKey, function(obj) {
-                if(obj && obj[requestKey]) {if(successCallback) successCallback(obj[requestKey])}
-                else {if(failureCallback) failureCallback(chrome.runtime.lastError)}
+            chrome.storage.local.get(requestKey, function (obj) {
+                if (obj && obj[requestKey]) {
+                    if (successCallback) successCallback(obj[requestKey])
+                } else {
+                    if (failureCallback) failureCallback(chrome.runtime.lastError)
+                }
             });
         },
-        remove: function(oSettings) {
+
+        /**
+         *
+         */
+        remove: function (oSettings) {
             const requestKey = oSettings.key;
             const successCallback = oSettings.success;
             const failureCallback = oSettings.failure;
 
-            chrome.storage.local.remove(requestKey, function(obj) {
-                if(obj && obj[requestKey]) {if(successCallback) successCallback(obj[requestKey])}
-                else {if(failureCallback) failureCallback(chrome.runtime.lastError)}
+            chrome.storage.local.remove(requestKey, function (obj) {
+                if (obj && obj[requestKey]) {
+                    if (successCallback) successCallback(obj[requestKey])
+                } else {
+                    if (failureCallback) failureCallback(chrome.runtime.lastError)
+                }
             });
         },
-        getRecords: function(oSettings) {
+
+        /**
+         *
+         */
+        getRecords: function (oSettings) {
             var oModel = oSettings.model;
             var sPath = oSettings.path;
             var successCallback = oSettings.success;
@@ -59,13 +85,18 @@ sap.ui.define([
                         });
                     }
                     oModel.setProperty(sPath, aDataStore);
-                    if(successCallback) {successCallback();}
+                    if (successCallback) {
+                        successCallback();
+                    }
                 });
             });
         },
 
-        deleteTest: function(sTestId) {
-            return new Promise(function(resolve, reject){
+        /**
+         *
+         */
+        deleteTest: function (sTestId) {
+            return new Promise(function (resolve, reject) {
                 var aExisting = [];
                 chrome.storage.local.get(["items"], function (items) {
                     if (items && items.items) {
@@ -77,13 +108,18 @@ sap.ui.define([
                         return;
                     }
                     aExisting.splice(iIndex, 1);
-                    chrome.storage.local.set({ "items": aExisting });
+                    chrome.storage.local.set({
+                        "items": aExisting
+                    });
                     chrome.storage.local.remove(sTestId);
                     resolve();
                 });
             });
         },
 
+        /**
+         *
+         */
         saveRecord: function (oSave) {
             return new Promise(function (resolve, reject) {
                 var aExisting = [];
@@ -92,9 +128,13 @@ sap.ui.define([
                         aExisting = items.items;
                     }
                     //check if we are already existing (do not add twice to the array..)
-                    if (aExisting.filter(function (obj) { return obj === oSave.test.uuid;  }).length === 0) {
+                    if (aExisting.filter(function (obj) {
+                            return obj === oSave.test.uuid;
+                        }).length === 0) {
                         aExisting.push(oSave.test.uuid);
-                        chrome.storage.local.set({ "items": aExisting });
+                        chrome.storage.local.set({
+                            "items": aExisting
+                        });
                     }
                     var oStore = {};
 
