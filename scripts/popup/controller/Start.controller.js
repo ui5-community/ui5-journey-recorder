@@ -5,8 +5,10 @@ sap.ui.define([
     "com/ui5/testing/model/Navigation",
     "sap/ui/model/json/JSONModel",
     "com/ui5/testing/model/ChromeStorage",
-    "sap/m/MessageToast"
-], function (BaseController, Communication, RecordController, Navigation, JSONModel, ChromeStorage, MessageToast) {
+    "sap/m/MessageToast",
+    "com/ui5/testing/model/Connection",
+    "com/ui5/testing/model/Utils"
+], function (BaseController, Communication, RecordController, Navigation, JSONModel, ChromeStorage, MessageToast, Connection, Utils) {
     "use strict";
 
     return BaseController.extend("com.ui5.testing.controller.Start", {
@@ -263,6 +265,8 @@ sap.ui.define([
          *
          */
         _importDone: function (oData) {
+            oData.test.uuid = Utils.getUUIDv4(this);
+            oData.test.createdAt = new Date().getTime();
             ChromeStorage.saveRecord(oData).then(function () {
                 ChromeStorage.getRecords({
                     path: '/items',
@@ -276,6 +280,18 @@ sap.ui.define([
          */
         onImport: function () {
             document.getElementById("importOrigHelper").click();
+        },
+
+        /**
+         * @experimental
+         */
+        checkConnection: function() {
+            var tabList = this.getView().byId("tabList");
+            var id = tabList.getItems()[0].getBindingContext('viewModel').getObject().id;
+            var url = tabList.getItems()[0].getBindingContext('viewModel').getObject().url;
+
+            var oConnection = Connection.getInstance();
+            oConnection.establishConnection(id);
         }
     });
 });
