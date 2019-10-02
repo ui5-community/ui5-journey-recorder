@@ -72,20 +72,13 @@
                 port.disconnect();
             }
 
-            const maxWaitTime = 3000;
-            var waited = 0;
-            var intvervalID = setInterval(function () {
-                waited = waited + 100;
-                if (document.readyState === "complete") {
-                    clearInterval(intvervalID);
-                    success(sap.ui);
-                } else if (waited > maxWaitTime) {
-                    clearInterval(intvervalID);
-                    error({
-                        message: "Waiting time for sap missed!"
-                    });
-                }
-            }, 100);
+            /*
+                hier müssen wir code in die page injecten damit wir auf das vorhandensein der sap bibliothek prüfen können
+                in diesem scope ist das nicht möglich
+                siehe hierzu https://developer.chrome.com/extensions/content_scripts#host-page-communication
+
+                Alle methoden die sap bibliotheken nutzen müssen benötigen das nachträglich injectete script.
+            */
         }());
     }, {}]
 }, {}, [1]);
