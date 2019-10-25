@@ -11,6 +11,8 @@ sap.ui.define([
         constructor: function () {
             this._sTabId = "";
             this._port = null;
+            this._oMessageMap = {};
+            this._iMessageID = 0;
             chrome.runtime.onConnect.addListener(this._handleIncommingConnections.bind(this));
             //<SuperObject>.call(this) <-- Inheritance call constructor super class
         },
@@ -20,16 +22,36 @@ sap.ui.define([
          * @param {*} sTabId 
          */
         establishConnection: function (sTabId) {
-            console.log("Create connection");
-            if (!this._sTabId) {
-                this._sTabId = sTabId;
+            return new Promise(function (resolve, reject) {
+                /**
+                 * Event handler for the page message to show the connection status between page and extension
+                 *
+                 * @param {string} sChannelId the channel we are on
+                 * @param {string} sEventId  the event we are reacting on
+                 * @param {object} oData the carrier data for the event
+                 */
+                function fnCallback(sChannelId, sEventId, oData) {
+                    sap.ui.getCore().getEventBus().unsubscribe("Internal", "inject-init", fnCallback);
+                    if (oData.ui5) {
+                        resolve(oData);
+                    } else {
+                        reject();
+                    }
+                }
 
-                chrome.tabs.executeScript(this._sTabId, {
-                    file: '/scripts/content/newInject.js'
-                });
-            } else {
-                MessageBox.alert("There is already a connection, please stop before opening a new one");
-            }
+                sap.ui.getCore().getEventBus().subscribe("Internal", "inject-init", fnCallback);
+
+                console.log("Create connection");
+                if (!this._sTabId) {
+                    this._sTabId = sTabId;
+
+                    chrome.tabs.executeScript(this._sTabId, {
+                        file: '/scripts/content/contentInject.js'
+                    });
+                } else {
+                    reject();
+                }
+            }.bind(this));
         },
 
         /**
@@ -41,7 +63,7 @@ sap.ui.define([
             console.log('connection incomming');
             if (!this._port) {
                 this._port = port;
-                this._port.onDisconnect.addListener(function() {
+                this._port.onDisconnect.addListener(function () {
                     this._port = null;
                     this._sTabId = "";
                     MessageBox.information("Connection to the webpage lost try to reconnect.");
@@ -58,8 +80,55 @@ sap.ui.define([
          * @param {object} oMsg the message send from the injected code.
          */
         _handleIncommingMessage: function (oMsg) {
-            console.log("MessageIncomming: ");
-            console.log(JSON.stringify(oMsg));
+            if (oMsg.information && oMsg.information.messageID) {
+                this._oMessageMap[oMsg.messageID].success(oMsg.oInformation);
+                console.log("MessageIncomming: ", JSON.stringify(oMsg));
+            } else {
+                sap.ui.getCore().getEventBus().publish("Internal", oMsg.data.reason, oMsg.data.data);
+                console.log("How to use async message?", JSON.stringify(oMsg));
+            }
+        },
+
+        /**
+         * Sends a message to the page
+         *
+         * @param {object} oInformation 
+         */
+        _sendMessage: function (oInformation) {
+            this._port.postMessage(oInformation);
+        },
+
+        //test for "promised-Request"
+        /**
+         * Sends a synchronous handled message to the page.
+         *
+         * @param {object} oInformation 
+         */
+        syncMessage: function (oInformation) {
+            var oSyncronizer = {};
+            if (typeof oInformation.success === "function") {
+                oSyncronizer.success = oInformation.success;
+            } else {
+                sap.base.Log.error("oInformation.success is not a function, therefore it will be ignored.");
+            }
+            if (typeof oInformation.error === "function") {
+                oSyncronizer.error = oInformation.error;
+            } else {
+                sap.base.Log.error("oInformation.error is not a function, therefore it will be ignored.");
+            }
+            oInformation.messageID = ++this._iMessageID;
+            oSyncronizer.messageID = oInformation.messageID;
+            this._oMessageMap[oInformation.messageID] = oSyncronizer;
+            this._sendMessage(oInformation);
+        },
+
+        /**
+         * Sends a asynchronous message to the UI5-Page
+         *
+         * @param {object} oInformation the information which should be send to the page
+         */
+        asyncMessage: function (oInformation) {
+            this._sendMessage(oInformation);
         }
     });
 

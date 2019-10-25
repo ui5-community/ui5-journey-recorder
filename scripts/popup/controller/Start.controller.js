@@ -7,8 +7,9 @@ sap.ui.define([
     "com/ui5/testing/model/ChromeStorage",
     "sap/m/MessageToast",
     "com/ui5/testing/model/Connection",
-    "com/ui5/testing/model/Utils"
-], function (BaseController, Communication, RecordController, Navigation, JSONModel, ChromeStorage, MessageToast, Connection, Utils) {
+    "com/ui5/testing/model/Utils",
+    "sap/m/MessageBox"
+], function (BaseController, Communication, RecordController, Navigation, JSONModel, ChromeStorage, MessageToast, Connection, Utils, MessageBox) {
     "use strict";
 
     return BaseController.extend("com.ui5.testing.controller.Start", {
@@ -291,7 +292,15 @@ sap.ui.define([
             var url = tabList.getItems()[0].getBindingContext('viewModel').getObject().url;
 
             var oConnection = Connection.getInstance();
-            oConnection.establishConnection(id);
+            oConnection.establishConnection(id).then((oData) => {
+                //this.getModel("navModel").setProperty("/elements", []);
+                //this.getModel("navModel").setProperty("/elementLength", 0);
+                //this.getRouter().navTo("TestDetailsCreate");
+                MessageToast.show(`Connection established: Page use ${oData.name} at version ${oData.version}`);
+            })
+            .catch(() => {
+                MessageBox.alert("There is already a connection, please stop before opening a new one");
+            });
         }
     });
 });

@@ -7,7 +7,7 @@
     <semantic:FullscreenPage
             showFooter="false"
             showNavButton="false"
-            title="UI5 Automated Testing"
+            title="{i18n>appTitle}"
             busy="{viewModel>/busy}">
         <semantic:customHeaderContent>
             <Button icon="sap-icon://busy" press="checkConnection"/>

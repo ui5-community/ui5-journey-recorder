@@ -281,6 +281,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
     };
 
     TestHandler.prototype._getControlFromDom = function (oDomNode) {
+        "use strict";
         var oControls = [];
         if (oDomNode.id) {
             oControls = jQuery(document.getElementById(oDomNode.id)).control();
@@ -1123,6 +1124,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                 }
             }.bind(this));
 
+            /**change to css */
             $('*').mouseover(function (event) {
                 if (this._bActive === false) {
                     return;

@@ -4,8 +4,9 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "com/ui5/testing/model/Communication",
     "com/ui5/testing/model/Navigation",
-    "sap/m/MessageToast"
-], function (UI5Object, JSONModel, Communication, Navigation, MessageToast) {
+    "sap/m/MessageToast",
+    "sap/m/MessageBox"
+], function (UI5Object, JSONModel, Communication, Navigation, MessageToast, MessageBox) {
     "use strict";
 
     var RecordController = UI5Object.extend("com.ui5.testing.model.RecordController", {
@@ -50,16 +51,30 @@ sap.ui.define([
     };
 
     RecordController.prototype.closeTab = function () {
-        return new Promise(function (resolve, reject) {
-            chrome.tabs.remove(this._sTabId, function () {
-                if (chrome.runtime.lastError) {
-                    reject();
-                }
-                this._bIsInjected = false;
-                this._sTabId = "";
-                resolve();
-            }.bind(this));
-        }.bind(this));
+        MessageBox.show(
+            "You closed the session, the tab involved also?", {
+                icon: MessageBox.Icon.QUESTION,
+                title: "Close current Tab?",
+                actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                onClose: function (sAction) {
+                    if (sAction === MessageBox.Action.YES) {
+                        return new Promise(function (resolve, reject) {
+                            chrome.tabs.remove(this._sTabId, function () {
+                                if (chrome.runtime.lastError) {
+                                    reject();
+                                }
+                                this._bIsInjected = false;
+                                this._sTabId = "";
+                                resolve();
+                            }.bind(this));
+                        }.bind(this));
+                    } else {
+                        return new Promise(function () {});
+                    }
+                }.bind(this)
+            }
+        );
+
     };
 
     RecordController.prototype.getModel = function () {
@@ -111,7 +126,6 @@ sap.ui.define([
     };
 
     RecordController.prototype._checkWindowLifecycle = function () {
-        var counter = 0;
         chrome.tabs.onUpdated.addListener(function (tabid, changeInfo) {
             if (tabid === this._sTabId) {
                 //check if we are still injected..

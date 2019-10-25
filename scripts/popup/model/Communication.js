@@ -90,6 +90,10 @@ sap.ui.define([
 
     Messaging.prototype.fireEvent = function (sType, oData) {
         //forewarding from injection to extension..
+        /**
+         * Generates a uuidv4 for message identification
+         * @returns {string} the uuid v4 for message id
+         */
         function uuidv4() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);

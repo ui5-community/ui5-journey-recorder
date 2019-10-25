@@ -217,7 +217,6 @@ sap.ui.define([
          */
         _rejectConnection: function () {
             RecordController.stopRecording();
-            RecordController.closeTab();
         },
 
         /**
