@@ -35,12 +35,11 @@ function createAndStart(tab, bStartSelectImmediate) {
 			if (bInitialized === false) {
 				bInitialized = true;
 				chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-					if (message.type === "HandshakeToWindow") {
-						chrome.runtime.sendMessage({
-							"type": "send-window-id",
-							"windowid": sender.tab.windowId,
+					if (message.type === "handshake-get-window-id") {
+						sendResponse({
+							"type": "handshake-send-window-id",
+							"windowId": sender.tab.windowId,
 							"startImmediate": bNextImmediateStart
-						}, function (response) {
 						});
 					}
 				});

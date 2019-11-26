@@ -13,17 +13,12 @@ sap.ui.define([
             var that = this;
             this._oWindowId = null;
             this._initPromise = new Promise(function (resolve, reject) {
-                chrome.runtime.onMessage.addListener(
-                    function (request, sender, sendResponse) {
-                        if (request && request.type === "send-window-id") {
-                            that._oWindowId = request.windowid;
-                            that._bStartImmediate = request.startImmediate;
-                            resolve();
-                        }
-                    }.bind(this)
-                );
-                chrome.runtime.sendMessage({type: "HandshakeToWindow"}, function (response) {
-                    //ask to get our window id
+                chrome.runtime.sendMessage({type: "handshake-get-window-id"}, function (response) {
+                    if (response && response.type === "handshake-send-window-id") {
+                        that._oWindowId = response.windowId;
+                        that._bStartImmediate = response.startImmediate;
+                        resolve();
+                    }
                 }.bind(this));
             }.bind(this))
         }
