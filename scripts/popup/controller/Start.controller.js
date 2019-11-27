@@ -146,8 +146,7 @@ sap.ui.define([
             var vTabId = oEvent.getSource().getBindingContext('viewModel').getObject().id;
             chrome.tabs.update(vTabId, {
                 "active": true
-            }, function (tab) {});
-            chrome.tabs.get(vTabId, function (tab) {
+            }, function (tab) {
                 chrome.windows.update(tab.windowId, {
                     focused: true
                 });
