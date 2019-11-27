@@ -351,9 +351,14 @@ sap.ui.define([
          * 
          */
         onNavBack: function () {
+            // stop recording
             RecordController.stopRecording();
-            RecordController.closeTab();
             this._oRecordDialog.close();
+            // close automatically opened tab if we currently are in a replay
+            if (this._oModel.getProperty("/replayMode")) {
+                RecordController.closeTab();
+            }
+            // go to start page
             this.getRouter().navTo("start");
         },
 
