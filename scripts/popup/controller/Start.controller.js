@@ -25,24 +25,7 @@ sap.ui.define([
             this.getView().setModel(RecordController.getModel(), "recordModel");
             RecordController.init(this.getOwnerComponent());
             this.getView().setModel(Navigation.getModel(), "navModel");
-            this._getCurrentURL();
             this.getRouter().getRoute("start").attachPatternMatched(this._loadTableItems, this);
-        },
-
-        /**
-         *
-         */
-        _getCurrentURL: function () {
-            chrome.tabs.query({
-                active: true,
-                currentWindow: false
-            }, function (tabs) {
-                var sUrl = "";
-                if (tabs && tabs[0]) {
-                    sUrl = tabs[0].url;
-                }
-                this._oModel.setProperty("/currentUrl", sUrl);
-            }.bind(this));
         },
 
         /**
