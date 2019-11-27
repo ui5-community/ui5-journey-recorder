@@ -1,12 +1,9 @@
 sap.ui.define([
     "com/ui5/testing/controller/BaseController",
-    "com/ui5/testing/model/Communication",
-    "com/ui5/testing/model/RecordController",
     "com/ui5/testing/model/GlobalSettings",
     "com/ui5/testing/model/ChromeStorage",
-    "sap/ui/model/json/JSONModel",
     "sap/m/MessageToast"
-], function (BaseController, Communication, RecordController, GlobalSettings, ChromeStorage, JSONModel, MessageToast) {
+], function (BaseController, GlobalSettings, ChromeStorage, MessageToast) {
     "use strict";
 
     return BaseController.extend("com.ui5.testing.controller.Settings", {
