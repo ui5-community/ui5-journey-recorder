@@ -199,31 +199,47 @@
         }
 
         function onClick(oDOMNode) {
-            console.log('Clicked on: ', oDOMNode);
+
+            console.debug("pageInject.onClick – Clicked on: %o", oDOMNode);
+
+            // get control for given DOM node
             var oControl = _getControlFromDom(oDOMNode);
+            // if there is no control, return rightaway
             if (!oControl) {
                 return;
             }
-            //per default (on purpose) reset the clicked element to "root" - the user should activly (!!) set the lower aggregation as valid..
-            var oOriginalDomNode = oDOMNode;
-            oDOMNode = oControl.getDomRef();
-            oDOMNode.classList.add('ElementReveal');
+
+            // reset the clicked element to "root", as the user should activly (!!)
+            // set the lower aggregation as valid
+            var oOriginalDomNode = oDOMNode; // backup for original
+            oDOMNode = oControl.getDomRef(); // get DOM reference for found control
 
             //TODO: this._resetCache();
 
+            // in the case that the control's parent is undefined, the attribute 'sParentAggregationName' is NOT set, and
+            // actually have a "local ID", this means that we have found an actually 100% depending child control.
+            // we will move up in that case..
+            if (!oControl.getParent() && !oControl.sParentAggregationName &&
+                RegExp("([A-Z,a-z,0-9])-([A-Z,a-z,0-9])").test(oControl.getId()) === true) {
 
-            //in case we are actually a "local-id", and we do NOT have "sParentAggregationName" set, and our parent is undefined
-            //this means that we are actually a dumbshit (100% depending) child control - we will move up in that case..
-            if (!oControl.getParent() && !oControl.sParentAggregationName && RegExp("([A-Z,a-z,0-9])-([A-Z,a-z,0-9])").test(oControl.getId()) === true) {
+                // get ID of parent control
                 var sItem = oControl.getId().substring(0, oControl.getId().lastIndexOf("-"));
+                // obtain corresponding control
                 var oCtrlTest = sap.ui.getCore().byId(sItem);
+
+                // if we found a valid parent element, set this as the control to be returned
                 if (oCtrlTest) {
                     oControl = oCtrlTest;
                     oDOMNode = oControl.getDomRef();
                 }
             }
 
-            var oItem = this._setItem(oControl, oDOMNode, oOriginalDomNode);
+            console.debug("pageInject.onClick – Found control: %o", oDOMNode);
+
+            // highlight found DOM element of control on the site
+            oDOMNode.classList.add("ElementReveal");
+
+            // var oItem = this._setItem(oControl, oDOMNode, oOriginalDomNode);
             //remove the "non-serializable" data..
             //TODO: this.fireEventToContent("itemSelected", this._removeNonSerializable(oItem));
             //TODO: this.lockScreen();
@@ -237,19 +253,49 @@
          * UI5-Testrecorder Page Inject assist functions - START
          */
 
+         /**
+          * Retrieve the UI5 control for the given DOM node (i.e., HTML element)
+          *
+          * @param {HTMLElement} oDOMNode a DOM node (e.g., selected in UI)
+          *
+          * @returns {sap.ui.core.Element} the UI5 element associated with the given DOM node
+          *
+          * @see sap/ui/dom/jquery/control-dbg.js
+          */
         function _getControlFromDom(oDOMNode) {
-            debugger;
-            var oControls = [];
-            if (oDOMNode.id) {
-                oControls = jQuery(document.getElementById(oDOMNode.id)).control();
-            } else {
-                oControls = jQuery(oDOMNode).control();
-            }
+            // predefine resulting element ID
+            var sResultID;
 
-            if (!oControls || !oControls.length) {
+            // traverse up in the DOM tree until finding a proper UI5 control,
+            // starting with the given DOM node
+            var oCurrentCandidate = oDOMNode;
+            do {
+                // if the current candidate has an attribute 'data-sap-ui-related',
+                // its content directly mentions the control's ID
+                if (oCurrentCandidate.hasAttribute("data-sap-ui-related")) {
+                    sResultID = oCurrentCandidate.getAttribute("data-sap-ui-related");
+                    break;
+                }
+
+                // if the current candidate has an attribute 'data-sap-ui', the
+                // attribute 'id' is the control's ID that we search for
+                if (oCurrentCandidate.hasAttribute("data-sap-ui")) {
+                    sResultID = oCurrentCandidate.getAttribute("id");
+                    break;
+                }
+
+                // check parent of current DOM element
+                oCurrentCandidate = oCurrentCandidate.parentNode;
+
+            } while (oCurrentCandidate); // break if there is no candidate left
+
+            // if we traverse all candidates and do not find a UI5 control, we return here
+            if (!sResultID) {
                 return null;
             }
-            return oControls[0];
+
+            // obtain and return UI5 control by the ID we found
+            return sap.ui.getCore().byId(sResultID);
         }
 
         /**
