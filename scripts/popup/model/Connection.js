@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (SuperObject, MessageBox) {
     "use strict";
     var oInstance;
-    var Connection = SuperObject.extend("com.ui5.testing.model.Connection", /** @lends com.ui5.testing.model.Connection */ {
+    var Connection = SuperObject.extend("com.ui5.testing.model.Connection", /** @lends com.ui5.testing.model.Connection.prototype */ {
         /**
          * Constructor for the Connection object
          */
@@ -18,8 +18,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} sTabId 
+         *
+         * @param {*} sTabId
          */
         establishConnection: function (sTabId) {
             return new Promise(function (resolve, reject) {
@@ -92,7 +92,7 @@ sap.ui.define([
         /**
          * Sends a message to the page
          *
-         * @param {object} oInformation 
+         * @param {object} oInformation
          */
         _sendMessage: function (oInformation) {
             this._port.postMessage(oInformation);
@@ -102,7 +102,7 @@ sap.ui.define([
         /**
          * Sends a synchronous handled message to the page.
          *
-         * @param {object} oInformation 
+         * @param {object} oInformation
          */
         syncMessage: function (oInformation) {
             var oSyncronizer = {};
