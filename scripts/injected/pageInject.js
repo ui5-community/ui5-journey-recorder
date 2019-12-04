@@ -162,14 +162,14 @@
                 }
                 var e = e || window.event,
                     el = e.target || e.srcElement;
-                el.classList.add("ElementReveal");
+                el.classList.add("UI5TR_ElementHover");
             };
 
             document.onmouseout = function (e) {
                 if (!_oDialog || !_oDialog.isOpen()) {
                     var e = e || window.event,
                         el = e.target || e.srcElement;
-                    el.classList.remove("ElementReveal");
+                    el.classList.remove("UI5TR_ElementHover");
                 }
             };
 
@@ -237,7 +237,7 @@
             console.debug("pageInject.onClick – Found control: %o", oDOMNode);
 
             // highlight found DOM element of control on the site
-            oDOMNode.classList.add("ElementReveal");
+            oDOMNode.classList.add("UI5TR_ControlFound");
 
             // var oItem = this._setItem(oControl, oDOMNode, oOriginalDomNode);
             //remove the "non-serializable" data..

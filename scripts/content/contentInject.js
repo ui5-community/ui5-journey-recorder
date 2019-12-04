@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 (function () {
     "use strict";
-    
+
     console.log('Start injection:');
     console.log('- generating inject id');
     var sInjectId = 'xxxyxxxy'.replace(/[xy]/g, function (c) {
@@ -22,7 +22,7 @@
      ***/
     /**
      * Send message to extension
-     * @param {object} oCarrierData 
+     * @param {object} oCarrierData
      */
     function sendToExtension(sType, oCarrierData) {
         port.postMessage({
@@ -33,7 +33,7 @@
 
     port.onMessage.addListener(
         /**
-         * Listener function for messages from the Extension, 
+         * Listener function for messages from the Extension,
          * to be forwarded to the page inject.
          * @param {object} oMessage the message information from the extension to the page.
          */
@@ -71,7 +71,7 @@
                             link.id = "testing_ui5";
                             link.rel = 'stylesheet';
                             link.type = 'text/css';
-                            link.href = chrome.extension.getURL('/scripts/injected/style.css');
+                            link.href = chrome.extension.getURL('/scripts/injected/pageInject.css');
                             link.media = 'all';
                             document.head.appendChild(link);
 
