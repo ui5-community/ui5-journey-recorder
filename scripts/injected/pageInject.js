@@ -237,13 +237,19 @@
             console.debug("pageInject.onClick – Found control: %o", oDOMNode);
 
             // highlight found DOM element of control on the site:
-            // 1) remove all previously highlightings
+            // 1) remove all previously enabled highlightings
             var prevFoundElements = document.getElementsByClassName("UI5TR_ControlFound");
             Array.prototype.forEach.call(prevFoundElements, function (oElement) {
                 oElement.classList.remove("UI5TR_ControlFound");
+                oElement.classList.remove("UI5TR_ControlFound_InlineFix");
             });
             // 2) highlight the new element
             oDOMNode.classList.add("UI5TR_ControlFound");
+            // 3) ensure that class is displayed properly (e.g., DIV elements with 'display: inline'
+            // do not display background)
+            if (window.getComputedStyle(oDOMNode)["display"] === "inline") {
+                oDOMNode.classList.add("UI5TR_ControlFound_InlineFix");
+            }
 
             // var oItem = this._setItem(oControl, oDOMNode, oOriginalDomNode);
             //remove the "non-serializable" data..
