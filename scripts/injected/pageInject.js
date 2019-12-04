@@ -236,7 +236,13 @@
 
             console.debug("pageInject.onClick – Found control: %o", oDOMNode);
 
-            // highlight found DOM element of control on the site
+            // highlight found DOM element of control on the site:
+            // 1) remove all previously highlightings
+            var prevFoundElements = document.getElementsByClassName("UI5TR_ControlFound");
+            Array.prototype.forEach.call(prevFoundElements, function (oElement) {
+                oElement.classList.remove("UI5TR_ControlFound");
+            });
+            // 2) highlight the new element
             oDOMNode.classList.add("UI5TR_ControlFound");
 
             // var oItem = this._setItem(oControl, oDOMNode, oOriginalDomNode);
