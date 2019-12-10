@@ -165,7 +165,7 @@ function onClick(oDOMNode) {
     console.debug("pageInject.onClick – Clicked on: %o", oDOMNode);
 
     // get control for given DOM node
-    var oControl = TestItem._getControlFromDom(oDOMNode);
+    var oControl = UI5ControlHelper._getControlFromDom(oDOMNode);
     // if there is no control, return rightaway
     if (!oControl) {
         return;
@@ -231,7 +231,7 @@ function unlockScreen() {
     _bScreenLocked = false;
 };
 
-// #region TestItemHandler and global cache
+// #region class TestItem
 
 /**
  * TestItem class.
@@ -272,6 +272,78 @@ class TestItem {
             label: null
         };
     }
+
+    constructor(oControl, oDOMNode, oOriginalDomNode) {
+        this._oControl = oControl;
+        this._oDOMNode = oDOMNode;
+        this._oOriginalDomNode = oOriginalDomNode;
+        this._testItem = null;
+
+        TestItem._resetCache();
+    }
+
+    /**
+     * Initialize the control item in context of the selected DOM nodes for
+     * being used in test steps.
+     *
+     * This function basically enhances the control with needed attributes (such as information
+     * on parents) and removes unserializable content.
+     */
+    initializeTestItem = function () {
+        // TODO: @Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+
+        var oItem = UI5ControlHelper._getElementInformation(this._oControl, this._oDOMNode);
+        oItem = UI5ControlHelper._setUniqunessInformationElement(oItem);
+        this._oOriginalDOMNode = this._oOriginalDOMNode ? this._oOriginalDOMNode : this._oDOMNode;
+        oItem.aggregationArray = [];
+        oItem.parents = [];
+        oItem.identifier.domIdOriginal = this._oOriginalDOMNode.id;
+
+        var aNode = UI5ControlHelper._getAllChildrenOfDom(oItem.control.getDomRef(), oItem.control);
+        oItem.children = [];
+
+        for (var i = 0; i < aNode.length; i++) {
+            oItem.children.push({
+                isInput: $(aNode[i]).is("input") || $(aNode[i]).is("textarea"),
+                domChildWith: aNode[i].id.substr(oItem.control.getId().length)
+            });
+        }
+
+        for (var sKey in oItem.aggregation) {
+            oItem.aggregationArray.push(oItem.aggregation[sKey]);
+        }
+        var oItemCur = oItem.control;
+        while (oItemCur) {
+            oItemCur = UI5ControlHelper._getParentAtLevel(oItemCur, 1);
+            if (!oItemCur) {
+                break;
+            }
+            if (oItemCur && oItemCur.getDomRef && oItemCur.getDomRef()) {
+                oItem.parents.push(UI5ControlHelper._getElementInformation(oItemCur, oItemCur.getDomRef ? oItemCur.getDomRef() : null, false));
+            }
+        }
+
+        oItem = UI5ControlHelper._removeNonSerializable(oItem);
+
+        this._testItem = oItem;
+    }
+
+    /**
+     * Return inialized test item.
+     *
+     * @returns {Object} the initalized test item
+     */
+    getTestItem = function () {
+        if (!this._testItem) {
+            console.log("Test item not initalized. Initializing now...");
+            this.initializeItem();
+        }
+
+        return this._testItem;
+    }
+}
+
+class UI5ControlHelper {
 
     /**
      * Default properties for common controls.
@@ -394,75 +466,6 @@ class TestItem {
         }
     }
 
-    constructor(oControl, oDOMNode, oOriginalDomNode) {
-        this._oControl = oControl;
-        this._oDOMNode = oDOMNode;
-        this._oOriginalDomNode = oOriginalDomNode;
-        this._testItem = null;
-
-        TestItem._resetCache();
-    }
-
-    /**
-     * Prepare the control item in context of the selected DOM nodes for
-     * being used in test steps.
-     *
-     * This function basically adds needed attributes such as information on parents and
-     * removes unserializable
-     */
-    initializeTestItem = function () {
-        // TODO: @Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-
-        var oItem = TestItem._getElementInformation(this._oControl, this._oDOMNode);
-        oItem = TestItem._setUniqunessInformationElement(oItem);
-        this._oOriginalDOMNode = this._oOriginalDOMNode ? this._oOriginalDOMNode : this._oDOMNode;
-        oItem.aggregationArray = [];
-        oItem.parents = [];
-        oItem.identifier.domIdOriginal = this._oOriginalDOMNode.id;
-
-        var aNode = TestItem._getAllChildrenOfDom(oItem.control.getDomRef(), oItem.control);
-        oItem.children = [];
-
-        for (var i = 0; i < aNode.length; i++) {
-            oItem.children.push({
-                isInput: $(aNode[i]).is("input") || $(aNode[i]).is("textarea"),
-                domChildWith: aNode[i].id.substr(oItem.control.getId().length)
-            });
-        }
-
-        for (var sKey in oItem.aggregation) {
-            oItem.aggregationArray.push(oItem.aggregation[sKey]);
-        }
-        var oItemCur = oItem.control;
-        while (oItemCur) {
-            oItemCur = TestItem._getParentAtLevel(oItemCur, 1);
-            if (!oItemCur) {
-                break;
-            }
-            if (oItemCur && oItemCur.getDomRef && oItemCur.getDomRef()) {
-                oItem.parents.push(TestItem._getElementInformation(oItemCur, oItemCur.getDomRef ? oItemCur.getDomRef() : null, false));
-            }
-        }
-
-        oItem = TestItem._removeNonSerializable(oItem);
-
-        this._testItem = oItem;
-    }
-
-    /**
-     * Return inialized test item.
-     *
-     * @returns {Object} the initalized test item
-     */
-    getTestItem = function () {
-        if (!this._testItem) {
-            console.log("Test item not initalized. Initializing now...");
-            this.initializeItem();
-        }
-
-        return this._testItem;
-    }
-
     /**
      * Retrieve the UI5 control for the given DOM node (i.e., HTML element)
      *
@@ -508,7 +511,6 @@ class TestItem {
         return sap.ui.getCore().byId(sResultID);
     }
 
-
     static _getElementInformation = function (_oControl, _oDOMNode, bFull = true) {
         var oReturn = {
             property: {},
@@ -545,18 +547,18 @@ class TestItem {
         }
 
         //local methods on purpose (even if duplicated) (see above)
-        oReturn = $.extend(true, oReturn, TestItem.fnGetElementInformation(_oControl, _oDOMNode, bFull));
+        oReturn = $.extend(true, oReturn, UI5ControlHelper.fnGetElementInformation(_oControl, _oDOMNode, bFull));
         if (bFull === false) {
             TestItem._oTestGlobalCache["fnGetElementInfo"][bFull][_oControl.getId()] = oReturn;
             return oReturn;
         }
         //get all parents, and attach the same information in the same structure
-        oReturn.parent = TestItem.fnGetElementInformation(TestItem._getParentAtLevel(_oControl, 1), bFull);
-        oReturn.parentL2 = TestItem.fnGetElementInformation(TestItem._getParentAtLevel(_oControl, 2), bFull);
-        oReturn.parentL3 = TestItem.fnGetElementInformation(TestItem._getParentAtLevel(_oControl, 3), bFull);
-        oReturn.parentL4 = TestItem.fnGetElementInformation(TestItem._getParentAtLevel(_oControl, 4), bFull);
-        oReturn.label = TestItem.fnGetElementInformation(TestItem._getLabelForItem(_oControl), bFull);
-        oReturn.itemdata = TestItem.fnGetElementInformation(TestItem._getItemForItem(_oControl), bFull);
+        oReturn.parent = UI5ControlHelper.fnGetElementInformation(UI5ControlHelper._getParentAtLevel(_oControl, 1), bFull);
+        oReturn.parentL2 = UI5ControlHelper.fnGetElementInformation(UI5ControlHelper._getParentAtLevel(_oControl, 2), bFull);
+        oReturn.parentL3 = UI5ControlHelper.fnGetElementInformation(UI5ControlHelper._getParentAtLevel(_oControl, 3), bFull);
+        oReturn.parentL4 = UI5ControlHelper.fnGetElementInformation(UI5ControlHelper._getParentAtLevel(_oControl, 4), bFull);
+        oReturn.label = UI5ControlHelper.fnGetElementInformation(UI5ControlHelper._getLabelForItem(_oControl), bFull);
+        oReturn.itemdata = UI5ControlHelper.fnGetElementInformation(UI5ControlHelper._getItemForItem(_oControl), bFull);
 
         TestItem._oTestGlobalCache["fnGetElementInfo"][bFull][_oControl.getId()] = oReturn;
 
@@ -602,8 +604,8 @@ class TestItem {
 
         oReturn.control = oItem;
         oReturn.dom = oDomNode;
-        oReturn.identifier.ui5Id = TestItem._getUi5Id(oItem);
-        oReturn.identifier.ui5LocalId = TestItem._getUi5LocalId(oItem);
+        oReturn.identifier.ui5Id = UI5ControlHelper._getUi5Id(oItem);
+        oReturn.identifier.ui5LocalId = UI5ControlHelper._getUi5LocalId(oItem);
 
 
         oReturn.classArray = [];
@@ -647,7 +649,7 @@ class TestItem {
         //get metadata..
         oReturn.metadata = {
             elementName: oItem.getMetadata().getElementName(),
-            componentName: TestItem._getOwnerComponent(oItem),
+            componentName: UI5ControlHelper._getOwnerComponent(oItem),
             componentId: "",
             componentTitle: "",
             componentDescription: "",
@@ -683,7 +685,7 @@ class TestItem {
         }
 
         //view..
-        var oView = TestItem._getParentAtLevel(oItem, 1, true);
+        var oView = UI5ControlHelper._getParentAtLevel(oItem, 1, true);
         if (oView) {
             if (oView.getProperty("viewName")) {
                 oReturn.viewProperty.viewName = oView.getProperty("viewName");
@@ -697,7 +699,7 @@ class TestItem {
         //bindings..
         for (var sBinding in oItem.mBindingInfos) {
             //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-            oReturn.binding[sBinding] = TestItem.fnGetBindingInformation(oItem, sBinding);
+            oReturn.binding[sBinding] = UI5ControlHelper.fnGetBindingInformation(oItem, sBinding);
             /*@Adrian - Start
             var oBindingInfo = oItem.getBindingInfo(sBinding);
             var oBinding = oItem.getBinding(sBinding);
@@ -756,9 +758,9 @@ class TestItem {
         //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
         /*@Adrian - Start*/
         //binding context
-        var aModels = TestItem.fnGetContextModels(oItem);
+        var aModels = UI5ControlHelper.fnGetContextModels(oItem);
         for (var sModel in aModels) {
-            var oBndg = TestItem.fnGetBindingContextInformation(oItem, sModel);
+            var oBndg = UI5ControlHelper.fnGetBindingContextInformation(oItem, sModel);
             if (!oBndg) {
                 continue;
             }
@@ -777,7 +779,7 @@ class TestItem {
         }
 
         //return all binding contexts
-        oReturn.context = TestItem.fnGetContexts(oItem);
+        oReturn.context = UI5ControlHelper.fnGetContexts(oItem);
 
         //get model information..
         var oMetadata = oItem.getMetadata();
@@ -804,8 +806,8 @@ class TestItem {
             //for every single line, get the binding context, and the row id, which can later on be analyzed again..
             for (var i = 0; i < aAggregation.length; i++) {
                 oAggregationInfo.rows.push({
-                    context: TestItem.fnGetContexts(aAggregation[i]),
-                    ui5Id: TestItem._getUi5Id(aAggregation[i]),
+                    context: UI5ControlHelper.fnGetContexts(aAggregation[i]),
+                    ui5Id: UI5ControlHelper._getUi5Id(aAggregation[i]),
                     ui5AbsoluteId: aAggregation[i].getId()
                 });
             }
@@ -976,7 +978,7 @@ class TestItem {
     }
 
     static _getLabelForItem = function (oItem) {
-        var aItems = TestItem._getAllLabels();
+        var aItems = UI5ControlHelper._getAllLabels();
         return (aItems && aItems[oItem.getId()]) ? aItems[oItem.getId()] : null;
     }
 
@@ -1065,7 +1067,7 @@ class TestItem {
         var iIndex = 1;
         var oPrt = oItem;
         while (oPrt) {
-            oPrt = TestItem._getParentAtLevel(oItem, iIndex);
+            oPrt = UI5ControlHelper._getParentAtLevel(oItem, iIndex);
             iIndex += 1;
             if (iIndex > 100) { //avoid endless loop..
                 return null;
@@ -1084,7 +1086,7 @@ class TestItem {
 
     static _setUniqunessInformationElement = function (oItem) {
         var iUniqueness = 0;
-        var oMerged = TestItem._getMergedControlClassArray(oItem);
+        var oMerged = UI5ControlHelper._getMergedControlClassArray(oItem);
         oItem.uniquness = {
             property: {},
             context: {},
@@ -1148,7 +1150,7 @@ class TestItem {
                         };
                     }
 
-                    var sValue = TestItem.fnGetBindingContextInformation(aItems[i], sProperty);
+                    var sValue = UI5ControlHelper.fnGetBindingContextInformation(aItems[i], sProperty);
                     if (!oObjectBndngContexts[sProperty][sValue]) {
                         oObjectBndngContexts[sProperty][sValue] = 0;
                     }
@@ -1166,7 +1168,7 @@ class TestItem {
                         };
                     }
 
-                    var sValue = TestItem.fnGetBindingInformation(aItems[i], sProperty).path;
+                    var sValue = UI5ControlHelper.fnGetBindingInformation(aItems[i], sProperty).path;
                     if (!oObjectBndngs[sProperty][sValue]) {
                         oObjectBndngs[sProperty][sValue] = 0;
                     }
@@ -1316,8 +1318,8 @@ class TestItem {
                 if (!oMetadata._sClassName) {
                     break;
                 }
-                if (TestItem._oElementMix[oMetadata._sClassName]) {
-                    aReturn.unshift(TestItem._oElementMix[oMetadata._sClassName]);
+                if (UI5ControlHelper._oElementMix[oMetadata._sClassName]) {
+                    aReturn.unshift(UI5ControlHelper._oElementMix[oMetadata._sClassName]);
                 }
                 oMetadata = oMetadata.getParent();
             };
@@ -1383,7 +1385,7 @@ class TestItem {
             var aControl = $(aChildren[i]).control();
             if (aControl.length === 1 && aControl[0].getId() === oControl.getId()) {
                 aReturn.push(aChildren[i]);
-                aReturn = aReturn.concat(TestItem._getAllChildrenOfDom(aChildren[i], oControl));
+                aReturn = aReturn.concat(UI5ControlHelper._getAllChildrenOfDom(aChildren[i], oControl));
             }
         }
         return aReturn;
