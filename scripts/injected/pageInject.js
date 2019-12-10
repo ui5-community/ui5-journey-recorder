@@ -258,7 +258,7 @@ class TestItem {
     /**
      * Resets the static variable {@link oTestGlobalBuffer}.
      */
-    static _resetCache = function () {
+    static _resetCache() {
         TestItem._oTestGlobalCache = {
             fnGetElement: {
                 true: {},
@@ -289,7 +289,7 @@ class TestItem {
      * This function basically enhances the control with needed attributes (such as information
      * on parents) and removes unserializable content.
      */
-    initializeTestItem = function () {
+    initializeTestItem() {
         // TODO: @Adrian - Fix bnd-ctxt uiveri5 2019/06/25
 
         var oItem = UI5ControlHelper._getElementInformation(this._oControl, this._oDOMNode);
@@ -333,7 +333,7 @@ class TestItem {
      *
      * @returns {Object} the initalized test item
      */
-    getTestItem = function () {
+    getTestItem() {
         if (!this._testItem) {
             console.log("Test item not initalized. Initializing now...");
             this.initializeItem();
@@ -511,7 +511,7 @@ class UI5ControlHelper {
         return sap.ui.getCore().byId(sResultID);
     }
 
-    static _getElementInformation = function (_oControl, _oDOMNode, bFull = true) {
+    static _getElementInformation(_oControl, _oDOMNode, bFull = true) {
         var oReturn = {
             property: {},
             aggregation: {},
@@ -565,7 +565,7 @@ class UI5ControlHelper {
         return oReturn;
     }
 
-    static fnGetElementInformation = function (oItem, oDomNode, bFull) {
+    static fnGetElementInformation(oItem, oDomNode, bFull = true) {
         var oReturn = {
             property: {},
             aggregation: [],
@@ -590,7 +590,6 @@ class UI5ControlHelper {
             control: null,
             dom: null
         };
-        bFull = typeof bFull === "undefined" ? true : bFull;
 
         if (!oItem) {
             return oReturn;
@@ -818,7 +817,7 @@ class UI5ControlHelper {
         return oReturn;
     }
 
-    static _getUi5Id = function (oItem) {
+    static _getUi5Id(oItem) {
         //remove all component information from the control
         var oParent = oItem;
         var sCurrentComponent = "";
@@ -841,7 +840,7 @@ class UI5ControlHelper {
         return sId;
     }
 
-    static _getUi5LocalId = function (oItem) {
+    static _getUi5LocalId(oItem) {
         var sId = oItem.getId();
         if (sId.lastIndexOf("-") !== -1) {
             return sId.substr(sId.lastIndexOf("-") + 1);
@@ -849,7 +848,7 @@ class UI5ControlHelper {
         return sId;
     }
 
-    static _getOwnerComponent = function (oItem) {
+    static _getOwnerComponent(oItem) {
         var sCurrentComponent = "";
         while (oItem && oItem.getParent) {
             if (oItem.getController && oItem.getController() && oItem.getController().getOwnerComponent && oItem.getController().getOwnerComponent()) {
@@ -861,7 +860,7 @@ class UI5ControlHelper {
         return sCurrentComponent;
     }
 
-    static _getParentAtLevel = function (oItem, iLevel, bViewOnly) {
+    static _getParentAtLevel(oItem, iLevel, bViewOnly) {
         oItem = oItem.getParent();
         while (oItem && oItem.getParent) {
             if (oItem.getMetadata && oItem.getMetadata().getElementName) { //dom is not required, but it must be a valid element name
@@ -879,7 +878,7 @@ class UI5ControlHelper {
         return null;
     }
 
-    static fnGetBindingInformation = function (oItem, sBinding) {
+    static fnGetBindingInformation(oItem, sBinding) {
         var oBindingInfo = oItem.getBindingInfo(sBinding);
         var oBinding = oItem.getBinding(sBinding);
         var oReturn = {};
@@ -920,7 +919,7 @@ class UI5ControlHelper {
         return oReturn;
     }
 
-    static fnGetContextModels = function (oItem) {
+    static fnGetContextModels(oItem) {
         var oReturn = {};
 
         if (!oItem) {
@@ -934,7 +933,7 @@ class UI5ControlHelper {
         return oModel;
     }
 
-    static fnGetBindingContextInformation = function (oItem, sModel) {
+    static fnGetBindingContextInformation(oItem, sModel) {
         var oCtx = oItem.getBindingContext(sModel === "undefined" ? undefined : sModel);
         if (!oCtx) {
             return null;
@@ -944,7 +943,7 @@ class UI5ControlHelper {
     }
 
     // TODO: missing: get elements with same parent, to get elements "right next", "left" and on same level
-    static fnGetContexts = function (oItem) {
+    static fnGetContexts(oItem) {
         var oReturn = {};
 
         if (!oItem) {
@@ -977,12 +976,12 @@ class UI5ControlHelper {
         return oReturn;
     }
 
-    static _getLabelForItem = function (oItem) {
+    static _getLabelForItem(oItem) {
         var aItems = UI5ControlHelper._getAllLabels();
         return (aItems && aItems[oItem.getId()]) ? aItems[oItem.getId()] : null;
     }
 
-    static _getAllLabels = function () {
+    static _getAllLabels() {
 
         if (TestItem._oTestGlobalCache.label) {
             return TestItem._oTestGlobalCache.label;
@@ -1034,7 +1033,7 @@ class UI5ControlHelper {
         return TestItem._oTestGlobalCache.label;
     }
 
-    static _getItemForItem = function (oItem) {
+    static _getItemForItem(oItem) {
         //(0) check if we are already an item - no issue than..
         if (oItem instanceof sap.ui.core.Item) {
             return oItem;
@@ -1084,7 +1083,7 @@ class UI5ControlHelper {
         return null;
     }
 
-    static _setUniqunessInformationElement = function (oItem) {
+    static _setUniqunessInformationElement(oItem) {
         var iUniqueness = 0;
         var oMerged = UI5ControlHelper._getMergedControlClassArray(oItem);
         oItem.uniquness = {
@@ -1309,7 +1308,7 @@ class UI5ControlHelper {
         return oItem;
     }
 
-    static _getMergedControlClassArray = function (oItem) {
+    static _getMergedControlClassArray(oItem) {
 
         function __getControlClassArray(oItem) {
             var oMetadata = oItem.control.getMetadata();
@@ -1378,7 +1377,7 @@ class UI5ControlHelper {
         return oReturn;
     }
 
-    static _getAllChildrenOfDom = function (oDom, oControl) {
+    static _getAllChildrenOfDom(oDom, oControl) {
         var aChildren = $(oDom).children();
         var aReturn = [];
         for (var i = 0; i < aChildren.length; i++) {
@@ -1391,7 +1390,7 @@ class UI5ControlHelper {
         return aReturn;
     }
 
-    static _removeNonSerializable = function (oItem) {
+    static _removeNonSerializable(oItem) {
 
         function _removeNonSerializableData(oSingleItem) {
             if (!oSingleItem) {
