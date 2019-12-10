@@ -1397,20 +1397,25 @@ class UI5ControlHelper {
             if (!oSingleItem) {
                 return;
             }
+
             delete oSingleItem.control;
             delete oSingleItem.dom;
         }
 
+        // 1) item itself
         _removeNonSerializableData(oItem);
-        _removeNonSerializableData(oItem.parent);
-        _removeNonSerializableData(oItem.parentL2);
-        _removeNonSerializableData(oItem.parentL3);
-        _removeNonSerializableData(oItem.parentL4);
-        _removeNonSerializableData(oItem.label);
-        _removeNonSerializableData(oItem.itemdata);
-        for (var i = 0; i < oItem.parents.length; i++) {
-            _removeNonSerializableData(oItem.parents[i]);
-        }
+
+        // 2) various properties
+        var aProperties = ["parent", "parentL2", "parentL3", "parentL4", "label", "itemdata"];
+        aProperties.forEach(function (sProperty) {
+            _removeNonSerializableData(oItem[sProperty]);
+        });
+
+        // 3) all parents
+        oItem.parents.forEach(function (oParent) {
+            _removeNonSerializableData(oParent);
+        });
+
         return oItem;
     }
 
