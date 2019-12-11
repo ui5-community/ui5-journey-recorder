@@ -33,7 +33,6 @@ sap.ui.define([
                 function fnCallback(sChannelId, sEventId, oData) {
                     sap.ui.getCore().getEventBus().unsubscribe("Internal", "injectDone", fnCallback);
 
-                    debugger;
                     if (oData.status === "success") {
                         resolve(oData);
                     } else {
@@ -51,7 +50,9 @@ sap.ui.define([
                         file: '/scripts/content/contentInject.js'
                     });
                 } else {
-                    reject();
+                    reject({
+                        message: "There is already a connection, please stop before opening a new one."
+                    });
                 }
             }.bind(this));
         },

@@ -281,8 +281,8 @@ sap.ui.define([
                 //this.getRouter().navTo("TestDetailsCreate");
                 MessageToast.show(`Connection established: Page use ${oData.name} at version ${oData.version}`);
             })
-            .catch(() => {
-                MessageBox.alert("There is already a connection, please stop before opening a new one");
+            .catch((oData) => {
+                MessageBox.alert(oData.message);
             });
         }
     });
