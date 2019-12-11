@@ -24,22 +24,24 @@ sap.ui.define([
         establishConnection: function (sTabId) {
             return new Promise(function (resolve, reject) {
                 /**
-                 * Event handler for the page message to show the connection status between page and extension
+                 * Event handler for the page message to set the connection status between page and extension
                  *
                  * @param {string} sChannelId the channel we are on
                  * @param {string} sEventId  the event we are reacting on
                  * @param {object} oData the carrier data for the event
                  */
                 function fnCallback(sChannelId, sEventId, oData) {
-                    sap.ui.getCore().getEventBus().unsubscribe("Internal", "inject-init", fnCallback);
-                    if (oData.ui5) {
+                    sap.ui.getCore().getEventBus().unsubscribe("Internal", "injectDone", fnCallback);
+
+                    debugger;
+                    if (oData.status === "success") {
                         resolve(oData);
                     } else {
-                        reject();
+                        reject(oData);
                     }
                 }
 
-                sap.ui.getCore().getEventBus().subscribe("Internal", "inject-init", fnCallback);
+                sap.ui.getCore().getEventBus().subscribe("Internal", "injectDone", fnCallback);
 
                 console.log("Create connection");
                 if (!this._sTabId) {

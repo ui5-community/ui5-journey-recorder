@@ -117,43 +117,42 @@
                 switch (oMessage.data.type) {
 
                     // page injection is completed
-                    case "inject-init":
+                    case "injectDone":
 
                         // UI5 found on page
-                        if (oMessage.data.data.ui5) {
+                        if (oMessage.data.data.status === "success") {
                             console.log('Finished setup, inform extension about success!');
 
                             // inject CSS
                             PageInjector.injectCSS();
 
-                            // send success message to extension
-                            this.sendToExtension(
-                                "success",
-                                {
-                                    reason: "inject-init",
-                                    data: {
-                                        ui5: oMessage.data.data.ui5,
-                                        version: oMessage.data.data.version,
-                                        name: oMessage.data.data.name
-                                    }
-                                }
-                            );
+                            var data = {
+                                status: oMessage.data.data.status,
+                                version: oMessage.data.data.version,
+                                name: oMessage.data.data.name
+                            };
                         }
                         // *no* UI5 found on page
                         else {
                             console.log('Finished setup, inform extension about failure!');
 
-                            // send error message to extension
-                            this.sendToExtension(
-                                "error",
-                                {
-                                    message: "No UI5 found in page, try to re-inject or make clear the page contains a UI5 version."
-                                }
-                            );
+                            var data = {
+                                status: oMessage.data.data.status,
+                                message: "No UI5 found in page, try to re-inject or make clear the page contains a UI5 version."
+                            };
 
                             // disconnect the port to not spam the browser
                             this._port.disconnect();
                         }
+
+                        // send error message to extension
+                        this.sendToExtension(
+                            "injection",
+                            {
+                                reason: "injectDone",
+                                data: data
+                            }
+                        );
 
                         break;
 

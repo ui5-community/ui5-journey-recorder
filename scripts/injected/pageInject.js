@@ -48,7 +48,7 @@ function setupTestRecorderFunctions() {
 function ui5Check() {
     var oData = {};
     if (window.sap && window.sap.ui) {
-        oData.ui5 = true;
+        oData.status = "success";
 
         // Get framework version
         try {
@@ -73,7 +73,7 @@ function ui5Check() {
         oData.isVersionSupported = !!sap.ui.require;
 
     } else {
-        oData.ui5 = false;
+        oData.status = "error";
     }
     return oData;
 }
@@ -89,13 +89,13 @@ function test() {
             console.log('- checking UI5 appearance...');
         }
         var oCheckData = ui5Check();
-        if (oCheckData.ui5) {
+        if (oCheckData.status === "success") {
             clearInterval(intvervalID);
             setupTestRecorderFunctions();
-            messageToExtension("inject-init", oCheckData);
+            messageToExtension("injectDone", oCheckData);
         } else if (waited > maxWaitTime) {
             clearInterval(intvervalID);
-            messageToExtension("inject-init", oCheckData);
+            messageToExtension("injectDone", oCheckData);
         }
     }, 100);
 }
