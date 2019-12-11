@@ -1,3 +1,5 @@
+(function () {
+
 "use strict";
 
 /**
@@ -1479,3 +1481,5 @@ class UI5ControlHelper {
 // Finished setting up the coding now check if UI5 is loaded on the page.
 console.log("- UI5-Testrecorder code appended");
 test();
+
+}());

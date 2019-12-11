@@ -46,11 +46,12 @@
         start() {
             // open port for extension messaging
             this._openPort();
-
+            // add listener for incoming and outgoing messages
             this._port.onMessage.addListener(this._handleMessagesFromExtension.bind(this));
-            window.addEventListener("message", this._handleMessagesFromPage.bind(this));
-        }
+            this._handleMessagesFromPageBind = this._handleMessagesFromPage.bind(this);
+            window.addEventListener("message", this._handleMessagesFromPageBind);
 
+        }
 
         /**
          * Open the port for extension messaging.
@@ -126,6 +127,7 @@
                             // inject CSS
                             PageInjector.injectCSS();
 
+                            // return UI5 information
                             var data = {
                                 status: oMessage.data.data.status,
                                 version: oMessage.data.data.version,
@@ -136,13 +138,13 @@
                         else {
                             console.log('Finished setup, inform extension about failure!');
 
+                            // remove injected JS
+                            PageInjector.removeJS();
+
                             var data = {
                                 status: oMessage.data.data.status,
                                 message: "No UI5 found in page, try to re-inject or make clear the page contains a UI5 version."
                             };
-
-                            // disconnect the port to not spam the browser
-                            this._port.disconnect();
                         }
 
                         // send error message to extension
@@ -153,6 +155,13 @@
                                 data: data
                             }
                         );
+
+                        // disconnect the port if injection was aborted
+                        if (oMessage.data.data.status === "error") {
+                            this._port.disconnect();
+                            // remove listener
+                            window.removeEventListener("message", this._handleMessagesFromPageBind);
+                        }
 
                         break;
 
@@ -178,17 +187,26 @@
      */
     class PageInjector {
 
+        static ID = "ui5-testrecorder-functions";
+
         /**
          * Inject the JS part of the page injection (i.e., {@file /scripts/injected/pageInject.js}).
          */
         static injectJS() {
             console.log("- Inject page script and wait until UI5 is loaded");
             var script = document.createElement('script');
-            script.id = "ui5-testrecorder-functions";
+            script.id = PageInjector.ID;
             script.src = chrome.extension.getURL('/scripts/injected/pageInject.js');
             script.defer = "defer";
             var head = document.head;
             head.appendChild(script);
+        }
+
+        static removeJS() {
+            var oJSTag = document.getElementById(PageInjector.ID);
+            if (oJSTag) {
+                oJSTag.remove();
+            }
         }
 
         /**

@@ -9,10 +9,7 @@ sap.ui.define([
          * Constructor for the Connection object
          */
         constructor: function () {
-            this._sTabId = "";
-            this._port = null;
-            this._oMessageMap = {};
-            this._iMessageID = 0;
+            this.resetConnection();
             chrome.runtime.onConnect.addListener(this._handleIncommingConnections.bind(this));
             //<SuperObject>.call(this) <-- Inheritance call constructor super class
         },
@@ -36,11 +33,12 @@ sap.ui.define([
                     if (oData.status === "success") {
                         resolve(oData);
                     } else {
+                        this.resetConnection();
                         reject(oData);
                     }
                 }
 
-                sap.ui.getCore().getEventBus().subscribe("Internal", "injectDone", fnCallback);
+                sap.ui.getCore().getEventBus().subscribe("Internal", "injectDone", fnCallback.bind(this));
 
                 console.log("Create connection");
                 if (!this._sTabId) {
@@ -58,6 +56,16 @@ sap.ui.define([
         },
 
         /**
+         * Reset the connection such that a new one can be established.
+         */
+        resetConnection: function () {
+            this._sTabId = "";
+            this._port = null;
+            this._oMessageMap = {};
+            this._iMessageID = 0;
+        },
+
+        /**
          * Handle incomming connection and adjusts the port listening to
          *
          * @param {chrome.runtime.Port} port the port which is calling
@@ -67,9 +75,8 @@ sap.ui.define([
             if (!this._port) {
                 this._port = port;
                 this._port.onDisconnect.addListener(function () {
-                    this._port = null;
-                    this._sTabId = "";
-                    MessageBox.information("Connection to the webpage lost try to reconnect.");
+                    this.resetConnection();
+                    MessageBox.information("Connection to the webpage lost, try to reconnect.");
                 }.bind(this));
                 this._port.onMessage.addListener(this._handleIncommingMessage.bind(this));
             } else {
