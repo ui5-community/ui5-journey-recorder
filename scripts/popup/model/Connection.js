@@ -90,8 +90,8 @@ sap.ui.define([
          * @param {object} oMsg the message send from the injected code.
          */
         _handleIncommingMessage: function (oMsg) {
-            if (oMsg.data.messageID) {
-                this._oMessageMap[oMsg.data.messageID].success(oMsg.data.data);
+            if (oMsg.data.messageID && this._oMessageMap[oMsg.data.messageID]) {
+                this._oMessageMap[oMsg.data.messageID].resolve(oMsg.data.data);
                 console.log("MessageIncomming: ", JSON.stringify(oMsg));
             } else {
                 sap.ui.getCore().getEventBus().publish("Internal", oMsg.data.reason, oMsg.data.data);
@@ -113,23 +113,22 @@ sap.ui.define([
          * Sends a synchronous handled message to the page.
          *
          * @param {object} oInformation
+         *
+         * @returns {Promise}
          */
         syncMessage: function (oInformation) {
             var oSyncronizer = {};
-            if (typeof oInformation.success === "function") {
-                oSyncronizer.success = oInformation.success;
-            } else {
-                console.warn("oInformation.success is not a function, therefore it will be ignored.");
-            }
-            if (typeof oInformation.error === "function") {
-                oSyncronizer.error = oInformation.error;
-            } else {
-                console.warn("oInformation.error is not a function, therefore it will be ignored.");
-            }
+
             oInformation.messageID = ++this._iMessageID;
-            oSyncronizer.messageID = oInformation.messageID;
+            var oReturn = new Promise(function(resolve, reject) {
+                oSyncronizer.resolve = resolve;
+                oSyncronizer.reject = reject;
+                this._sendMessage(oInformation);
+            }.bind(this));
+
             this._oMessageMap[oInformation.messageID] = oSyncronizer;
-            this._sendMessage(oInformation);
+
+            return oReturn;
         },
 
         /**
@@ -141,10 +140,11 @@ sap.ui.define([
             this._sendMessage(oInformation);
         },
 
-        getWindowInfo: function (fFunc) {
-            this.syncMessage({
-                action: "getWindowInfo",
-                success: fFunc
+        /**
+         */
+        getWindowInfo: function () {
+            return this.syncMessage({
+                action: "getWindowInfo"
             });
         }
     });

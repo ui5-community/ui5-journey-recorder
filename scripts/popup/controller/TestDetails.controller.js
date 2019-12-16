@@ -703,7 +703,7 @@ sap.ui.define([
             });
             this._oModel.setProperty("/codeSettings/language", this.getModel("settings").getProperty("/settings/defaultLanguage"));
             this._oModel.setProperty("/codeSettings/authentification", this.getModel("settings").getProperty("/settings/defaultAuthentification"));
-            Connection.getInstance().getWindowInfo(function (oData) {
+            Connection.getInstance().getWindowInfo().then(function (oData) {
                 if (!oData) {
                     return;
                 }
