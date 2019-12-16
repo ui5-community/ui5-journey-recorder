@@ -2,273 +2,261 @@
 
 "use strict";
 
-/**
- * Message passing to and from Extension - START
- */
-
-function messageToExtension(sType, oData, iMessageID = null) {
-    window.postMessage({
-        origin: "FROM_PAGE",
-        messageID: iMessageID,
-        type: sType,
-        data: oData
-    });
-}
-
-function messageFromExtension(oEvent) {
-    //We only accept messages from ourselves
-    if (oEvent.source !== window) {
-        return;
-    }
-
-    if (event.data.type && (event.data.origin === "FROM_EXTENSION")) {
-        console.log("Page injection received message: ");
-        console.log("- type: " + oEvent.data.type);
-        console.log("- data: " + JSON.stringify(oEvent.data.data));
-
-        handleEvent(oEvent);
-    }
-
-}
-
-function handleEvent(oEvent) {
-    console.debug("Find suitable event handling strategy for event: %o", oEvent);
-
-    var sEventType = oEvent.data.type;
-    var iMessageID = oEvent.data.messageID;
-    switch (sEventType) {
-        // case "start":
-        //     this._start(oEventData);
-        //     break;
-        // case "stop":
-        //     this._stop();
-        //     break;
-        // case "unlock":
-        //     this.unlockScreen();
-        //     break;
-        // case "find":
-        //     return this._getFoundElements(oEventData);
-        // case "mockserver":
-        //     return this._getDataModelInformation();
-        // case "replay-steps":
-        //     return this._doReplaySteps(oEventData);
-        // case "execute":
-        //     this._executeAction(oEventData);
-        //     break;
-        // case "setWindowLocation":
-        //     this._setWindowLocation(oEventData);
-        //     break;
-        // case "selectItem":
-        //     this._selectItem(oEventData);
-        //     break;
-        // case "runSupportAsssistant":
-        //     return this._runSupportAssistant(oEventData);
-        case "getWindowInfo":
-            var oWindowInfo = _getWindowInfo();
-            messageToExtension("getWindowInfo", oWindowInfo, iMessageID);
-        default:
-            break;
-    }
-}
-/**
- * Message passing to and from Extension - END
- */
+// #region Page communication
 
 /**
- * UI5-Testrecorder Page inject setup STARTUP Coding - START
- */
-function setupTestRecorderFunctions() {
-    //setup listener for messages from the Extension
-    window.addEventListener("message", messageFromExtension);
-    setupPageListener();
-    startRecording();
-}
+* PageCommunication class to handle any page–extension messaging.
+*
+* This class is singleton to ensure reliable message handling in both directions.
+*
+* Messages are handled using a {@link window.message} and corresponding listeners.
+*/
+class PageCommunication {
 
-function ui5Check() {
-    var oData = {};
-    if (window.sap && window.sap.ui) {
-        oData.status = "success";
+    static _oInstance;
 
-        // Get framework version
-        try {
-            oData.version = sap.ui.getVersionInfo().version;
-        } catch (e) {
-            oData.version = '';
+    /**
+     * Obtain the singleton instance of this class.
+     *
+     * @returns {PageCommunication} the singleton instance
+     */
+    static getInstance() {
+        if (!PageCommunication._oInstance) {
+            PageCommunication._oInstance = new PageCommunication();
         }
 
-        // Get framework name
-        try {
-            var versionInfo = sap.ui.getVersionInfo();
-
-            // Use group artifact version for maven builds or name for other builds (like SAPUI5-on-ABAP)
-            var frameworkInfo = versionInfo.gav ? versionInfo.gav : versionInfo.name;
-
-            oData.name = frameworkInfo.indexOf('openui5') !== -1 ? 'OpenUI5' : 'SAPUI5';
-        } catch (e) {
-            oData.name = 'UI5';
-        }
-
-        // Check if the version is supported
-        oData.isVersionSupported = !!sap.ui.require;
-
-    } else {
-        oData.status = "error";
+        return PageCommunication._oInstance;
     }
-    return oData;
-}
 
-function test() {
+    /**
+     * Start connection by opening ports and application of listeners.
+     */
+    start() {
+        // add listener for incoming and outgoing messages
+        window.addEventListener("message", this._messageFromExtension.bind(this));
+    }
 
-    console.log('- checking UI5 appearance...');
-    const maxWaitTime = 3000;
-    var waited = 0;
-    var intvervalID = setInterval(function () {
-        waited = waited + 100;
-        if (waited % 500 === 0) {
-            console.log('- checking UI5 appearance...');
-        }
-        var oCheckData = ui5Check();
-        if (oCheckData.status === "success") {
-            clearInterval(intvervalID);
-            setupTestRecorderFunctions();
-            messageToExtension("injectDone", oCheckData);
-        } else if (waited > maxWaitTime) {
-            clearInterval(intvervalID);
-            messageToExtension("injectDone", oCheckData);
-        }
-    }, 100);
-}
-/**
- *  UI5-Testrecorder Page inject setup STARTUP Coding - END
- */
+    /**
+     * Send message from page.
+     *
+     * @param {string} sType the message type/label
+     * @param {object} oCarrierData the data of the message
+     * @param {integer} iMessageID the message ID to reply to (optional)
+     */
+    messageFromPage(sType, oData, iMessageID = null) {
+        window.postMessage({
+            origin: "FROM_PAGE",
+            messageID: iMessageID,
+            type: sType,
+            data: oData
+        });
+    }
 
-/**
- * UI5-Testrecorder Page Inject functional coding - START
- */
-var _bActive = false,
-    _bScreenLocked = false,
-    _bStarted = false,
-    _oDialog = null;
-
-function startRecording() {
-    _bActive = true;
-    _bStarted = true;
-}
-
-function setupPageListener() {
-    /** use the css hovering class */
-    document.onmouseover = function (e) {
-        if (_bActive === false) {
+    /**
+     * Message listener for messages *for* the page.
+     *
+     * @param {string} oMessage the incoming message
+     */
+    _messageFromExtension(oMessage) {
+        //We only accept messages from ourselves
+        if (oMessage.source !== window) {
             return;
         }
-        var e = e || window.event,
-            el = e.target || e.srcElement;
-        el.classList.add("UI5TR_ElementHover");
-    };
 
-    document.onmouseout = function (e) {
-        if (!_oDialog || !_oDialog.isOpen()) {
+        if (event.data.type && (event.data.origin === "FROM_EXTENSION")) {
+            console.log("Page injection received message: ");
+            console.log("- type: " + oMessage.data.type);
+            console.log("- data: " + JSON.stringify(oMessage.data.data));
+
+            this._handleIncomingMessage(oMessage);
+        }
+    }
+
+    /**
+     * Handle detailed incoming messages.
+     *
+     * @param {object} oMessage a detailed message to handle
+     */
+    _handleIncomingMessage(oMessage) {
+        console.debug("Find suitable event handling strategy for event: %o", oMessage);
+
+        var sEventType = oMessage.data.type;
+        var iMessageID = oMessage.data.messageID;
+        switch (sEventType) {
+            // case "start":
+            //     this._start(oEventData);
+            //     break;
+            // case "stop":
+            //     this._stop();
+            //     break;
+            // case "unlock":
+            //     this.unlockScreen();
+            //     break;
+            // case "find":
+            //     return this._getFoundElements(oEventData);
+            // case "mockserver":
+            //     return this._getDataModelInformation();
+            // case "replay-steps":
+            //     return this._doReplaySteps(oEventData);
+            // case "execute":
+            //     this._executeAction(oEventData);
+            //     break;
+            // case "setWindowLocation":
+            //     this._setWindowLocation(oEventData);
+            //     break;
+            // case "selectItem":
+            //     this._selectItem(oEventData);
+            //     break;
+            // case "runSupportAsssistant":
+            //     return this._runSupportAssistant(oEventData);
+            case "getWindowInfo":
+                var oWindowInfo = _getWindowInfo();
+                PageCommunication.getInstance().messageFromPage("getWindowInfo", oWindowInfo, iMessageID);
+            default:
+                break;
+        }
+    }
+}
+
+function _getWindowInfo() {
+    return {
+        title: document.title,
+        url: window.location.href,
+        hash: window.location.hash,
+        ui5Version: sap.ui.version
+    };
+}
+
+// #endregion
+
+// #region Page listener
+
+class PageListener {
+
+    static _oInstance;
+
+    /**
+     * Obtain the singleton instance of this class.
+     *
+     * @returns {PageListener} the singleton instance
+     */
+    static getInstance() {
+        if (!PageListener._oInstance) {
+            PageListener._oInstance = new PageListener();
+        }
+
+        return PageListener._oInstance;
+    }
+
+    setupPageListener() {
+        /** use the css hovering class */
+        document.onmouseover = function (e) {
+            if (_bActive === false) {
+                return;
+            }
             var e = e || window.event,
                 el = e.target || e.srcElement;
-            el.classList.remove("UI5TR_ElementHover");
-        }
-    };
+            el.classList.add("UI5TR_ElementHover");
+        };
 
-    document.onclick = function (e) {
-        var e = e || window.event,
-            el = e.target || e.srcElement;
-
-        if (_bActive === false) {
-            //no active recording, but still recording ongoing (e.g. in the other tab..)
-            if (_bScreenLocked === true) {
-                sap.m.MessageToast.show("Please finalize the step in the Popup, before proceeding...");
-                event.preventDefault();
-                event.stopPropagation();
-                event.stopImmediatePropagation();
+        document.onmouseout = function (e) {
+            if (!_oDialog || !_oDialog.isOpen()) {
+                var e = e || window.event,
+                    el = e.target || e.srcElement;
+                el.classList.remove("UI5TR_ElementHover");
             }
+        };
+
+        document.onclick = function (e) {
+            var e = e || window.event,
+                el = e.target || e.srcElement;
+
+            if (_bActive === false) {
+                //no active recording, but still recording ongoing (e.g. in the other tab..)
+                if (_bScreenLocked === true) {
+                    sap.m.MessageToast.show("Please finalize the step in the Popup, before proceeding...");
+                    event.preventDefault();
+                    event.stopPropagation();
+                    event.stopImmediatePropagation();
+                }
+                return;
+            }
+
+            _bActive = false;
+            this._handleClickOn(el);
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+        }.bind(this);
+
+        sap.m.MessageToast.show("UI5-Testrecorder fully injected!");
+    }
+
+    _handleClickOn(oDOMNode) {
+
+        console.debug("pageInject.onClick – Clicked on: %o", oDOMNode);
+
+        // get control for given DOM node
+        var oControl = UI5ControlHelper.getControlFromDom(oDOMNode);
+        // if there is no control, return rightaway
+        if (!oControl) {
             return;
         }
 
-        _bActive = false;
-        onClick(el);
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-    };
+        // reset the clicked element to "root", as the user should activly (!!)
+        // set the lower aggregation as valid
+        var oOriginalDomNode = oDOMNode; // backup for original
+        oDOMNode = oControl.getDomRef(); // get DOM reference for found control
 
-    sap.m.MessageToast.show("UI5-Testrecorder fully injected!");
-}
+        // in the case that the control's parent is undefined, the attribute 'sParentAggregationName' is NOT set, and
+        // actually have a "local ID", this means that we have found an actually 100% depending child control.
+        // we will move up in that case..
+        if (!oControl.getParent() && !oControl.sParentAggregationName &&
+            RegExp("([A-Z,a-z,0-9])-([A-Z,a-z,0-9])").test(oControl.getId()) === true) {
 
-function onClick(oDOMNode) {
+            // get ID of parent control
+            var sItem = oControl.getId().substring(0, oControl.getId().lastIndexOf("-"));
+            // obtain corresponding control
+            var oCtrlTest = sap.ui.getCore().byId(sItem);
 
-    console.debug("pageInject.onClick – Clicked on: %o", oDOMNode);
-
-    // get control for given DOM node
-    var oControl = UI5ControlHelper.getControlFromDom(oDOMNode);
-    // if there is no control, return rightaway
-    if (!oControl) {
-        return;
-    }
-
-    // reset the clicked element to "root", as the user should activly (!!)
-    // set the lower aggregation as valid
-    var oOriginalDomNode = oDOMNode; // backup for original
-    oDOMNode = oControl.getDomRef(); // get DOM reference for found control
-
-    // in the case that the control's parent is undefined, the attribute 'sParentAggregationName' is NOT set, and
-    // actually have a "local ID", this means that we have found an actually 100% depending child control.
-    // we will move up in that case..
-    if (!oControl.getParent() && !oControl.sParentAggregationName &&
-        RegExp("([A-Z,a-z,0-9])-([A-Z,a-z,0-9])").test(oControl.getId()) === true) {
-
-        // get ID of parent control
-        var sItem = oControl.getId().substring(0, oControl.getId().lastIndexOf("-"));
-        // obtain corresponding control
-        var oCtrlTest = sap.ui.getCore().byId(sItem);
-
-        // if we found a valid parent element, set this as the control to be returned
-        if (oCtrlTest) {
-            oControl = oCtrlTest;
-            oDOMNode = oControl.getDomRef();
+            // if we found a valid parent element, set this as the control to be returned
+            if (oCtrlTest) {
+                oControl = oCtrlTest;
+                oDOMNode = oControl.getDomRef();
+            }
         }
+
+        console.debug("pageInject.onClick – Found control: %o", oDOMNode);
+
+        // highlight found DOM element of control on the site:
+        // 1) remove all previously enabled highlightings
+        var prevFoundElements = document.getElementsByClassName("UI5TR_ControlFound");
+        Array.prototype.forEach.call(prevFoundElements, function (oElement) {
+            oElement.classList.remove("UI5TR_ControlFound");
+            oElement.classList.remove("UI5TR_ControlFound_InlineFix");
+        });
+        // 2) highlight the new element
+        oDOMNode.classList.add("UI5TR_ControlFound");
+        // 3) ensure that class is displayed properly (e.g., DIV elements with 'display: inline'
+        // do not display background)
+        if (window.getComputedStyle(oDOMNode)["display"] === "inline") {
+            oDOMNode.classList.add("UI5TR_ControlFound_InlineFix");
+        }
+
+        // send control to extension for testing:
+        // 0) construct test item
+        var oTestItem = new TestItem(oControl, oDOMNode, oOriginalDomNode);
+        // 1) enhance with meta data
+        oTestItem.initializeTestItem();
+        // 3) send item to extension
+        PageCommunication.getInstance().messageFromPage("itemSelected", oTestItem.getTestItem());
+
+        // lock screen to indicate switch to extension
+        lockScreen();
     }
-
-    console.debug("pageInject.onClick – Found control: %o", oDOMNode);
-
-    // highlight found DOM element of control on the site:
-    // 1) remove all previously enabled highlightings
-    var prevFoundElements = document.getElementsByClassName("UI5TR_ControlFound");
-    Array.prototype.forEach.call(prevFoundElements, function (oElement) {
-        oElement.classList.remove("UI5TR_ControlFound");
-        oElement.classList.remove("UI5TR_ControlFound_InlineFix");
-    });
-    // 2) highlight the new element
-    oDOMNode.classList.add("UI5TR_ControlFound");
-    // 3) ensure that class is displayed properly (e.g., DIV elements with 'display: inline'
-    // do not display background)
-    if (window.getComputedStyle(oDOMNode)["display"] === "inline") {
-        oDOMNode.classList.add("UI5TR_ControlFound_InlineFix");
-    }
-
-    // send control to extension for testing:
-    // 0) construct test item
-    var oTestItem = new TestItem(oControl, oDOMNode, oOriginalDomNode);
-    // 1) enhance with meta data
-    oTestItem.initializeTestItem();
-    // 3) send item to extension
-    messageToExtension("itemSelected", oTestItem.getTestItem());
-
-    // lock screen to indicate switch to extension
-    lockScreen();
 }
 
-function lockScreen() {
-    _bScreenLocked = true;
-};
-
-function unlockScreen() {
-    _bScreenLocked = false;
-};
+// #endregion
 
 // #region class TestItem
 
@@ -1511,25 +1499,100 @@ class UI5ControlHelper {
 
 // #endregion
 
-// #region Event handler
-
-function _getWindowInfo() {
-    return {
-        title: document.title,
-        url: window.location.href,
-        hash: window.location.hash,
-        ui5Version: sap.ui.version
-    };
-}
-
-// #endregion
-
 // #region Utility functions
 
 // #endregion
 
+// #region Record handling
+
+var _bActive = false,
+    _bScreenLocked = false,
+    _bStarted = false,
+    _oDialog = null;
+
+function startRecording() {
+    _bActive = true;
+    _bStarted = true;
+}
+
+function lockScreen() {
+    _bScreenLocked = true;
+};
+
+function unlockScreen() {
+    _bScreenLocked = false;
+};
+
+// #endregion
+
+// #region Initialization
+
+function checkPageForUI5() {
+    var oData = {};
+    if (window.sap && window.sap.ui) {
+        oData.status = "success";
+
+        // Get framework version
+        try {
+            oData.version = sap.ui.getVersionInfo().version;
+        } catch (e) {
+            oData.version = '';
+        }
+
+        // Get framework name
+        try {
+            var versionInfo = sap.ui.getVersionInfo();
+
+            // Use group artifact version for maven builds or name for other builds (like SAPUI5-on-ABAP)
+            var frameworkInfo = versionInfo.gav ? versionInfo.gav : versionInfo.name;
+
+            oData.name = frameworkInfo.indexOf('openui5') !== -1 ? 'OpenUI5' : 'SAPUI5';
+        } catch (e) {
+            oData.name = 'UI5';
+        }
+
+        // Check if the version is supported
+        oData.isVersionSupported = !!sap.ui.require;
+
+    } else {
+        oData.status = "error";
+    }
+    return oData;
+}
+
+function initializePage() {
+
+    console.log('- checking UI5 appearance...');
+    const maxWaitTime = 3000;
+    var waited = 0;
+    var intvervalID = setInterval(function () {
+        waited = waited + 100;
+        if (waited % 500 === 0) {
+            console.log('- checking UI5 appearance...');
+        }
+        var oCheckData = checkPageForUI5();
+        if (oCheckData.status === "success") {
+            clearInterval(intvervalID);
+            setupTestRecorderFunctions();
+            PageCommunication.getInstance().messageFromPage("injectDone", oCheckData);
+        } else if (waited > maxWaitTime) {
+            clearInterval(intvervalID);
+            PageCommunication.getInstance().messageFromPage("injectDone", oCheckData);
+        }
+    }, 100);
+}
+
+function setupTestRecorderFunctions() {
+    //setup listener for messages from the Extension
+    PageCommunication.getInstance().start();
+    PageListener.getInstance().setupPageListener();
+    startRecording();
+}
+
 // Finished setting up the coding now check if UI5 is loaded on the page.
 console.log("- UI5-Testrecorder code appended");
-test();
+initializePage();
+
+// #endregion
 
 }());
