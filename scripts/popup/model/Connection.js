@@ -11,6 +11,15 @@ sap.ui.define([
         constructor: function () {
             this.resetConnection();
             chrome.runtime.onConnect.addListener(this._handleIncommingConnections.bind(this));
+
+            // get window info for popup window
+            this._iWindowId = null;
+            chrome.runtime.sendMessage({type: "handshake-get-window-id"}, function (response) {
+                if (response && response.type === "handshake-send-window-id") {
+                    this._iWindowId = response.windowId;
+                }
+            }.bind(this));
+
             //<SuperObject>.call(this) <-- Inheritance call constructor super class
         },
 
@@ -120,7 +129,7 @@ sap.ui.define([
             var oSyncronizer = {};
 
             oInformation.messageID = ++this._iMessageID;
-            var oReturn = new Promise(function(resolve, reject) {
+            var oReturn = new Promise(function (resolve, reject) {
                 oSyncronizer.resolve = resolve;
                 oSyncronizer.reject = reject;
                 this._sendMessage(oInformation);
@@ -138,6 +147,24 @@ sap.ui.define([
          */
         asyncMessage: function (oInformation) {
             this._sendMessage(oInformation);
+        },
+
+        /**
+         * Get the ID of the tab to which this connection points to.
+         *
+         * @returns {integer} the tab's ID
+         */
+        getConnectedTabId: function () {
+            return this._sTabId;
+        },
+
+        /**
+         * Get the window ID of the popup.
+         *
+         * @returns {integer} the window's ID
+         */
+        getConnectingWindowId: function () {
+            return this._iWindowId;
         }
     });
 
