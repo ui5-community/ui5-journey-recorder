@@ -736,7 +736,7 @@ sap.ui.define([
             }
 
             Navigation.setSelectedItem(oData);
-            RecordController.focusPopup();
+            this._focusPopup();
 
             if (this._bQuickMode !== true) {
                 this.getRouter().navTo("elementCreate", {
@@ -855,6 +855,19 @@ sap.ui.define([
             codeSettings.language = this.getModel('settings').getProperty('/settings/defaultLanguage');
             codeSettings.execComponent = this.getOwnerComponent();
             this._oModel.setProperty("/codes", CodeHelper.getFullCode(codeSettings, aStoredItems));
+        },
+
+        /**
+         * Focus the popup.
+         */
+        _focusPopup: function() {
+            var iWindowId = Connection.getInstance().getConnectingWindowId();
+            if (iWindowId) {
+                console.debug("changing to window: " + iWindowId)
+                chrome.windows.update(iWindowId, {
+                    focused: true
+                });
+            }
         }
     });
 });
