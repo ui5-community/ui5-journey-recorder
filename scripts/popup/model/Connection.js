@@ -90,8 +90,8 @@ sap.ui.define([
          * @param {object} oMsg the message send from the injected code.
          */
         _handleIncommingMessage: function (oMsg) {
-            if (oMsg.information && oMsg.information.messageID) {
-                this._oMessageMap[oMsg.messageID].success(oMsg.oInformation);
+            if (oMsg.data.messageID) {
+                this._oMessageMap[oMsg.data.messageID].success(oMsg.data.data);
                 console.log("MessageIncomming: ", JSON.stringify(oMsg));
             } else {
                 sap.ui.getCore().getEventBus().publish("Internal", oMsg.data.reason, oMsg.data.data);
@@ -119,12 +119,12 @@ sap.ui.define([
             if (typeof oInformation.success === "function") {
                 oSyncronizer.success = oInformation.success;
             } else {
-                sap.base.Log.error("oInformation.success is not a function, therefore it will be ignored.");
+                console.warn("oInformation.success is not a function, therefore it will be ignored.");
             }
             if (typeof oInformation.error === "function") {
                 oSyncronizer.error = oInformation.error;
             } else {
-                sap.base.Log.error("oInformation.error is not a function, therefore it will be ignored.");
+                console.warn("oInformation.error is not a function, therefore it will be ignored.");
             }
             oInformation.messageID = ++this._iMessageID;
             oSyncronizer.messageID = oInformation.messageID;
@@ -139,6 +139,13 @@ sap.ui.define([
          */
         asyncMessage: function (oInformation) {
             this._sendMessage(oInformation);
+        },
+
+        getWindowInfo: function (fFunc) {
+            this.syncMessage({
+                action: "getWindowInfo",
+                success: fFunc
+            });
         }
     });
 

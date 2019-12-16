@@ -6,9 +6,10 @@
  * Message passing to and from Extension - START
  */
 
-function messageToExtension(sType, oData) {
+function messageToExtension(sType, oData, iMessageID = null) {
     window.postMessage({
         origin: "FROM_PAGE",
+        messageID: iMessageID,
         type: sType,
         data: oData
     });
@@ -31,7 +32,43 @@ function messageFromExtension(oEvent) {
 }
 
 function handleEvent(oEvent) {
-    console.log('Find suitable event handling strategy');
+    console.debug("Find suitable event handling strategy for event: %o", oEvent);
+
+    var sEventType = oEvent.data.type;
+    var iMessageID = oEvent.data.messageID;
+    switch (sEventType) {
+        // case "start":
+        //     this._start(oEventData);
+        //     break;
+        // case "stop":
+        //     this._stop();
+        //     break;
+        // case "unlock":
+        //     this.unlockScreen();
+        //     break;
+        // case "find":
+        //     return this._getFoundElements(oEventData);
+        // case "mockserver":
+        //     return this._getDataModelInformation();
+        // case "replay-steps":
+        //     return this._doReplaySteps(oEventData);
+        // case "execute":
+        //     this._executeAction(oEventData);
+        //     break;
+        // case "setWindowLocation":
+        //     this._setWindowLocation(oEventData);
+        //     break;
+        // case "selectItem":
+        //     this._selectItem(oEventData);
+        //     break;
+        // case "runSupportAsssistant":
+        //     return this._runSupportAssistant(oEventData);
+        case "getWindowInfo":
+            var oWindowInfo = _getWindowInfo();
+            messageToExtension("getWindowInfo", oWindowInfo, iMessageID);
+        default:
+            break;
+    }
 }
 /**
  * Message passing to and from Extension - END
@@ -1470,6 +1507,19 @@ class UI5ControlHelper {
     }
 
     // #endregion
+}
+
+// #endregion
+
+// #region Event handler
+
+function _getWindowInfo() {
+    return {
+        title: document.title,
+        url: window.location.href,
+        hash: window.location.hash,
+        ui5Version: sap.ui.version
+    };
 }
 
 // #endregion

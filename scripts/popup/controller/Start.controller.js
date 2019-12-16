@@ -1,6 +1,5 @@
 sap.ui.define([
     "com/ui5/testing/controller/BaseController",
-    "com/ui5/testing/model/Communication",
     "com/ui5/testing/model/RecordController",
     "com/ui5/testing/model/Navigation",
     "sap/ui/model/json/JSONModel",
@@ -9,12 +8,12 @@ sap.ui.define([
     "com/ui5/testing/model/Connection",
     "com/ui5/testing/model/Utils",
     "sap/m/MessageBox"
-], function (BaseController, Communication, RecordController, Navigation, JSONModel, ChromeStorage, MessageToast, Connection, Utils, MessageBox) {
+], function (BaseController, RecordController, Navigation, JSONModel, ChromeStorage, MessageToast, Connection, Utils, MessageBox) {
     "use strict";
 
     return BaseController.extend("com.ui5.testing.controller.Start", {
         /**
-         * 
+         *
          */
         onInit: function () {
             this._oModel = new JSONModel({
@@ -58,7 +57,7 @@ sap.ui.define([
                 for (var i = 0; i < tabs.length; i++) {
                     if (tabs[i].url && tabs[i].url.indexOf('chrome:') < 0) {
                         /**
-                         * 
+                         *
                          */
                         function checkUI5() {
                             var normal = [].slice.call(document.head.getElementsByTagName('script')).filter(function (s) {
@@ -72,9 +71,9 @@ sap.ui.define([
                         }
 
                         /**
-                         * 
-                         * @param {*} tabId 
-                         * @param {*} tabUrl 
+                         *
+                         * @param {*} tabId
+                         * @param {*} tabUrl
                          */
                         function callback(tabId, tabUrl) {
                             return function (results) {
@@ -169,12 +168,16 @@ sap.ui.define([
                 iId = oEvent.getSource().getBindingContext('viewModel').getObject().id;
                 sUrl = oEvent.getSource().getBindingContext('viewModel').getObject().url;
             }
-            RecordController.injectScript(iId, sUrl).then(function () {
+
+            var oConnection = Connection.getInstance();
+            oConnection.establishConnection(iId).then((oData) => {
+                MessageToast.show(`Connection established: Page use ${oData.name} at version ${oData.version}`);
                 this.getModel("navModel").setProperty("/elements", []);
                 this.getModel("navModel").setProperty("/elementLength", 0);
                 this.getRouter().navTo("TestDetailsCreate");
-            }.bind(this), function () {
-                return;
+            })
+            .catch(() => {
+                MessageBox.alert("There is already a connection, please stop before opening a new one");
             });
         },
 
@@ -264,26 +267,6 @@ sap.ui.define([
          */
         onImport: function () {
             document.getElementById("importOrigHelper").click();
-        },
-
-        /**
-         * @experimental
-         */
-        checkConnection: function() {
-            var tabList = this.getView().byId("tabList");
-            var id = tabList.getItems()[0].getBindingContext('viewModel').getObject().id;
-            var url = tabList.getItems()[0].getBindingContext('viewModel').getObject().url;
-
-            var oConnection = Connection.getInstance();
-            oConnection.establishConnection(id).then((oData) => {
-                //this.getModel("navModel").setProperty("/elements", []);
-                //this.getModel("navModel").setProperty("/elementLength", 0);
-                //this.getRouter().navTo("TestDetailsCreate");
-                MessageToast.show(`Connection established: Page use ${oData.name} at version ${oData.version}`);
-            })
-            .catch((oData) => {
-                MessageBox.alert(oData.message);
-            });
         }
     });
 });

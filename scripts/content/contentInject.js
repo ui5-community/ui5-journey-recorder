@@ -7,7 +7,7 @@
      * This class is singleton to only allow one port per page.
      *
      * Messages between the proxy and the extension are handled using a {@link chrome.runtime.Port}.
-     * Messages between the proxy and the page are handled using a {@link window.message} and appropriate
+     * Messages between the proxy and the page are handled using a {@link window.message} and corresponding listeners.
      */
     class ConnectionProxy {
 
@@ -83,7 +83,7 @@
          * @param {object} oMessage the message information from the extension to the page.
          */
         _handleMessagesFromExtension(oMessage) {
-            this.sendToPage(oMessage.action, oMessage.data);
+            this.sendToPage(oMessage.action, oMessage.data, oMessage.messageID);
         }
 
         /**
@@ -91,10 +91,12 @@
          *
          * @param {string} sAction the action to perform on page side
          * @param {object} oCarrierData the data used to perform the action
+         * @param {integer} iMessageID the message's ID for callback identification
          */
-        sendToPage(sAction, oCarrierData) {
+        sendToPage(sAction, oCarrierData, iMessageID = null) {
             window.postMessage({
                 origin: "FROM_EXTENSION",
+                messageID: iMessageID,
                 type: sAction,
                 data: oCarrierData
             });
@@ -171,6 +173,7 @@
                         this.sendToExtension(
                             "information",
                             {
+                                messageID: event.data.messageID,
                                 reason: oMessage.data.type,
                                 data: oMessage.data.data
                             }

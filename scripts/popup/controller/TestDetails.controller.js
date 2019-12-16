@@ -4,7 +4,7 @@ sap.ui.define([
     'sap/m/MessagePopover',
     'sap/m/MessageItem',
     "com/ui5/testing/model/Navigation",
-    "com/ui5/testing/model/Communication",
+    "com/ui5/testing/model/Connection",
     "com/ui5/testing/model/RecordController",
     "com/ui5/testing/model/GlobalSettings",
     "com/ui5/testing/model/CodeHelper",
@@ -21,7 +21,7 @@ sap.ui.define([
     MessagePopover,
     MessageItem,
     Navigation,
-    Communication,
+    Connection,
     RecordController,
     GlobalSettings,
     CodeHelper,
@@ -66,7 +66,7 @@ sap.ui.define([
          *
          */
         onInit: function () {
-            Communication.registerEvent("itemSelected", this._onItemSelected.bind(this));
+            sap.ui.getCore().getEventBus().subscribe("Internal", "itemSelected", this._onItemSelected.bind(this));
 
             this.getView().setModel(this._oModel, "viewModel");
             var oRecordModel = RecordController.getModel();
@@ -87,7 +87,8 @@ sap.ui.define([
             this.getOwnerComponent().getRouter().getRoute("TestDetailsCreate").attachPatternMatched(this._onTestCreate, this);
             this.getOwnerComponent().getRouter().getRoute("TestDetailsCreateQuick").attachPatternMatched(this._onTestCreateQuick, this);
             this.getOwnerComponent().getRouter().getRoute("testReplay").attachPatternMatched(this._onTestReplay, this);
-            Communication.registerEvent("loaded", this._onInjectionDone.bind(this));
+            // FIXME was event "loaded" before! check this twice
+            sap.ui.getCore().getEventBus().subscribe("Internal", "injectCompleted", this._onInjectionDone.bind(this));
 
             //Why is this function subscribed?
             //sap.ui.getCore().getEventBus().subscribe("RecordController", "windowFocusLost", this._recordStopped, this);
@@ -702,14 +703,14 @@ sap.ui.define([
             });
             this._oModel.setProperty("/codeSettings/language", this.getModel("settings").getProperty("/settings/defaultLanguage"));
             this._oModel.setProperty("/codeSettings/authentification", this.getModel("settings").getProperty("/settings/defaultAuthentification"));
-            Communication.fireEvent("getwindowinfo").then(function (oData) {
+            Connection.getInstance().getWindowInfo(function (oData) {
                 if (!oData) {
                     return;
                 }
                 this._oModel.setProperty("/codeSettings/testName", oData.title);
                 this._oModel.setProperty("/codeSettings/testCategory", oData.title);
                 this._oModel.setProperty("/codeSettings/testUrl", oData.url);
-                RecordController.startRecording(bImmediate);
+                // FIXME: RecordController.startRecording(bImmediate);
                 if (bImmediate === true) {
                     this._oRecordDialog.close();
                 }
@@ -721,10 +722,12 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oData 
+         *
+         * @param {string} sChannel the channel name of the incoming event (ignored)
+         * @param {string} sEventId the event ID of the incoming event (ignored)
+         * @param {*} oData the data on the selected element
          */
-        _onItemSelected: function (oData) {
+        _onItemSelected: function (sChannel, sEventId, oData) {
             if (this._bReplayMode === true) {
                 return; //NO!
             }
