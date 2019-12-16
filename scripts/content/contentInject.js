@@ -11,8 +11,6 @@
      */
     class ConnectionProxy {
 
-        static _oInstance;
-
         /**
          * Obtain the singleton instance of this class.
          *
@@ -28,6 +26,8 @@
 
         /**
          * Generate a unique injection ID.
+         *
+         * @returns {string} the generated injection ID
          */
         static _generateInjectID() {
             console.log('- Generating injection id');
@@ -122,28 +122,30 @@
                     // page injection is completed
                     case "injectDone":
 
+                        var data = {};
+
                         // UI5 found on page
                         if (oMessage.data.data.status === "success") {
                             console.log('Finished setup, inform extension about success!');
 
                             // inject CSS
+                            // eslint-disable-next-line no-use-before-define
                             PageInjector.injectCSS();
 
                             // return UI5 information
-                            var data = {
+                            data = {
                                 status: oMessage.data.data.status,
                                 version: oMessage.data.data.version,
                                 name: oMessage.data.data.name
                             };
-                        }
-                        // *no* UI5 found on page
-                        else {
+                        } /* *no* UI5 found on page */ else {
                             console.log('Finished setup, inform extension about failure!');
 
                             // remove injected JS
+                            // eslint-disable-next-line no-use-before-define
                             PageInjector.removeJS();
 
-                            var data = {
+                            data = {
                                 status: oMessage.data.data.status,
                                 message: "No UI5 found in page, try to re-inject or make clear the page contains a UI5 version."
                             };
@@ -190,8 +192,6 @@
      */
     class PageInjector {
 
-        static ID = "ui5-testrecorder-functions";
-
         /**
          * Inject the JS part of the page injection (i.e., {@file /scripts/injected/pageInject.js}).
          */
@@ -226,6 +226,9 @@
             document.head.appendChild(link);
         }
     }
+
+    // PageInjector element ID
+    PageInjector.ID = "ui5-testrecorder-functions";
 
     // open connections and inject JS
     ConnectionProxy.getInstance().start();

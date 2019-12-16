@@ -13,8 +13,6 @@
 */
 class PageCommunication {
 
-    static _oInstance;
-
     /**
      * Obtain the singleton instance of this class.
      *
@@ -40,7 +38,7 @@ class PageCommunication {
      * Send message from page.
      *
      * @param {string} sType the message type/label
-     * @param {object} oCarrierData the data of the message
+     * @param {object} oData the data of the message
      * @param {integer} iMessageID the message ID to reply to (optional)
      */
     messageFromPage(sType, oData, iMessageID = null) {
@@ -112,6 +110,8 @@ class PageCommunication {
             case "getWindowInfo":
                 var oWindowInfo = _getWindowInfo();
                 PageCommunication.getInstance().messageFromPage("getWindowInfo", oWindowInfo, iMessageID);
+                break;
+
             default:
                 break;
         }
@@ -132,8 +132,6 @@ function _getWindowInfo() {
 // #region Page listener
 
 class PageListener {
-
-    static _oInstance;
 
     /**
      * Obtain the singleton instance of this class.
@@ -274,13 +272,6 @@ class PageListener {
  * @param {HTMLElement} oOriginalDOMNode the DOM node that has been initially selected on the site
  */
 class TestItem {
-
-    /**
-     * Global control cache for easier retrieval of visited controls.
-     *
-     * @see _resetCache initialization
-     */
-    static _oTestGlobalCache = null;
 
     /**
      * Resets the static variable {@link oTestGlobalBuffer}.
@@ -952,132 +943,18 @@ class TestItem {
 
 }
 
+/**
+ * Global control cache for easier retrieval of visited controls.
+ *
+ * @see _resetCache initialization
+ */
+TestItem._oTestGlobalCache = null;
+
 // #endregion
 
 // #region UI5ControlHelper
 
 class UI5ControlHelper {
-
-    /**
-     * Default properties for common controls.
-     */
-    static _oElementMix = {
-        "sap.m.StandardListItem": {},
-        "sap.ui.core.Element": {
-            defaultAction: "PRS",
-            actions: {
-                "PRS": [{
-                    text: "Root",
-                    domChildWith: "",
-                    order: 99
-                }],
-                "TYP": [{
-                    text: "Root",
-                    domChildWith: "",
-                    order: 99
-                }]
-            }
-        },
-        "sap.ui.core.Icon": {
-            preferredProperties: ["src"]
-        },
-        "sap.m.List": {
-            defaultInteraction: "root"
-        },
-        "sap.m.ObjectListItem": {
-            cloned: true,
-            defaultInteraction: "root",
-            preferredProperties: ["title"]
-        },
-        "sap.m.Button": {
-            defaultAction: "PRS",
-            preferredProperties: ["text", "icon"]
-        },
-        "sap.m.ListItemBase": {
-            cloned: true,
-            askForBindingContext: true
-        },
-        "sap.ui.core.Item": {
-            cloned: true
-        },
-        "sap.m.Link": {},
-        "sap.m.ComboBoxBase": {
-            defaultAction: "PRS",
-            actions: {
-                "PRS": [{
-                    text: "Arrow (Open List)",
-                    domChildWith: "-arrow",
-                    preferred: true,
-                    order: 1
-                }]
-            }
-        },
-        "sap.m.GenericTile": {
-            defaultAction: "PRS"
-        },
-        "sap.m.MultiComboBox": {
-            defaultAction: "PRS",
-            actions: {
-                "PRS": [{
-                    text: "Arrow (Open List)",
-                    domChildWith: "-arrow",
-                    preferred: true,
-                    order: 1
-                }]
-            }
-        },
-        "sap.m.Text": {
-            preferredProperties: ["text"]
-        },
-        "sap.m.Select": {
-            defaultAction: "PRS",
-            actions: {
-                "PRS": [{
-                    text: "Arrow (Open List)",
-                    domChildWith: "-arrow",
-                    preferred: true,
-                    order: 1
-                }]
-            }
-        },
-        "sap.m.InputBase": {
-            defaultAction: "TYP",
-            actions: {
-                "TYP": [{
-                    text: "In Input-Field",
-                    domChildWith: "-inner",
-                    preferred: true,
-                    order: 1
-                }]
-            }
-        },
-        "sap.ui.table.Row": {
-            cloned: true,
-            defaultAction: "PRS",
-            actions: {
-                "TYP": [{
-                    text: "On Selection-Area",
-                    domChildWith: "-col0",
-                    preferred: true,
-                    order: 1
-                }]
-            }
-        },
-        "sap.m.SearchField": {
-            defaultAction: [{
-                domChildWith: "-search",
-                action: "PRS"
-            },
-            {
-                domChildWith: "-reset",
-                action: "PRS"
-            },
-            {
-                domChildWith: "",
-                action: "TYP"
-            }]
-        }
-    }
 
     // #region Control identification (i.e., from DOM, parents, children)
 
@@ -1438,7 +1315,7 @@ class UI5ControlHelper {
                     aReturn.unshift(UI5ControlHelper._oElementMix[oMetadata._sClassName]);
                 }
                 oMetadata = oMetadata.getParent();
-            };
+            }
             return $.extend(true, [], aReturn);
         }
 
@@ -1466,7 +1343,6 @@ class UI5ControlHelper {
             }
             oReturn.cloned = oClass.cloned === true ? true : oReturn.cloned;
             oReturn.preferredProperties = oReturn.preferredProperties.concat(oClass.preferredProperties ? oClass.preferredProperties : []);
-            var aElementsAttributes = [];
 
             for (var j = 0; j < oClass.defaultAction.length; j++) {
                 oReturn.defaultAction[oClass.defaultAction[j].domChildWith] = oClass.defaultAction[j];
@@ -1497,6 +1373,127 @@ class UI5ControlHelper {
     // #endregion
 }
 
+/**
+ * Default properties for common controls.
+ */
+UI5ControlHelper._oElementMix = {
+    "sap.m.StandardListItem": {},
+    "sap.ui.core.Element": {
+        defaultAction: "PRS",
+        actions: {
+            "PRS": [{
+                text: "Root",
+                domChildWith: "",
+                order: 99
+            }],
+            "TYP": [{
+                text: "Root",
+                domChildWith: "",
+                order: 99
+            }]
+        }
+    },
+    "sap.ui.core.Icon": {
+        preferredProperties: ["src"]
+    },
+    "sap.m.List": {
+        defaultInteraction: "root"
+    },
+    "sap.m.ObjectListItem": {
+        cloned: true,
+        defaultInteraction: "root",
+        preferredProperties: ["title"]
+    },
+    "sap.m.Button": {
+        defaultAction: "PRS",
+        preferredProperties: ["text", "icon"]
+    },
+    "sap.m.ListItemBase": {
+        cloned: true,
+        askForBindingContext: true
+    },
+    "sap.ui.core.Item": {
+        cloned: true
+    },
+    "sap.m.Link": {},
+    "sap.m.ComboBoxBase": {
+        defaultAction: "PRS",
+        actions: {
+            "PRS": [{
+                text: "Arrow (Open List)",
+                domChildWith: "-arrow",
+                preferred: true,
+                order: 1
+            }]
+        }
+    },
+    "sap.m.GenericTile": {
+        defaultAction: "PRS"
+    },
+    "sap.m.MultiComboBox": {
+        defaultAction: "PRS",
+        actions: {
+            "PRS": [{
+                text: "Arrow (Open List)",
+                domChildWith: "-arrow",
+                preferred: true,
+                order: 1
+            }]
+        }
+    },
+    "sap.m.Text": {
+        preferredProperties: ["text"]
+    },
+    "sap.m.Select": {
+        defaultAction: "PRS",
+        actions: {
+            "PRS": [{
+                text: "Arrow (Open List)",
+                domChildWith: "-arrow",
+                preferred: true,
+                order: 1
+            }]
+        }
+    },
+    "sap.m.InputBase": {
+        defaultAction: "TYP",
+        actions: {
+            "TYP": [{
+                text: "In Input-Field",
+                domChildWith: "-inner",
+                preferred: true,
+                order: 1
+            }]
+        }
+    },
+    "sap.ui.table.Row": {
+        cloned: true,
+        defaultAction: "PRS",
+        actions: {
+            "TYP": [{
+                text: "On Selection-Area",
+                domChildWith: "-col0",
+                preferred: true,
+                order: 1
+            }]
+        }
+    },
+    "sap.m.SearchField": {
+        defaultAction: [{
+            domChildWith: "-search",
+            action: "PRS"
+        },
+        {
+            domChildWith: "-reset",
+            action: "PRS"
+        },
+        {
+            domChildWith: "",
+            action: "TYP"
+        }]
+    }
+};
+
 // #endregion
 
 // #region Utility functions
@@ -1517,11 +1514,11 @@ function startRecording() {
 
 function lockScreen() {
     _bScreenLocked = true;
-};
+}
 
 function unlockScreen() {
     _bScreenLocked = false;
-};
+}
 
 // #endregion
 
