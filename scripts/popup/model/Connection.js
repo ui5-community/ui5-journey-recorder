@@ -138,14 +138,6 @@ sap.ui.define([
          */
         asyncMessage: function (oInformation) {
             this._sendMessage(oInformation);
-        },
-
-        /**
-         */
-        getWindowInfo: function () {
-            return this.syncMessage({
-                action: "getWindowInfo"
-            });
         }
     });
 

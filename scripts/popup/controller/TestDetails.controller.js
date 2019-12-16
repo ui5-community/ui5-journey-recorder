@@ -5,6 +5,7 @@ sap.ui.define([
     'sap/m/MessageItem',
     "com/ui5/testing/model/Navigation",
     "com/ui5/testing/model/Connection",
+    "com/ui5/testing/model/ConnectionMessages",
     "com/ui5/testing/model/RecordController",
     "com/ui5/testing/model/GlobalSettings",
     "com/ui5/testing/model/CodeHelper",
@@ -22,6 +23,7 @@ sap.ui.define([
     MessageItem,
     Navigation,
     Connection,
+    ConnectionMessages,
     RecordController,
     GlobalSettings,
     CodeHelper,
@@ -703,22 +705,23 @@ sap.ui.define([
             });
             this._oModel.setProperty("/codeSettings/language", this.getModel("settings").getProperty("/settings/defaultLanguage"));
             this._oModel.setProperty("/codeSettings/authentification", this.getModel("settings").getProperty("/settings/defaultAuthentification"));
-            Connection.getInstance().getWindowInfo().then(function (oData) {
-                if (!oData) {
-                    return;
-                }
-                this._oModel.setProperty("/codeSettings/testName", oData.title);
-                this._oModel.setProperty("/codeSettings/testCategory", oData.title);
-                this._oModel.setProperty("/codeSettings/testUrl", oData.url);
-                // FIXME: RecordController.startRecording(bImmediate);
-                if (bImmediate === true) {
-                    this._oRecordDialog.close();
-                }
+            ConnectionMessages.getWindowInfo(Connection.getInstance())
+                .then(function (oData) {
+                    if (!oData) {
+                        return;
+                    }
+                    this._oModel.setProperty("/codeSettings/testName", oData.title);
+                    this._oModel.setProperty("/codeSettings/testCategory", oData.title);
+                    this._oModel.setProperty("/codeSettings/testUrl", oData.url);
+                    // FIXME: RecordController.startRecording(bImmediate);
+                    if (bImmediate === true) {
+                        this._oRecordDialog.close();
+                    }
 
-                this.getRouter().navTo("TestDetails", {
-                    TestId: this.getModel("navModel").getProperty("/test/uuid")
-                });
-            }.bind(this));
+                    this.getRouter().navTo("TestDetails", {
+                        TestId: this.getModel("navModel").getProperty("/test/uuid")
+                    });
+                }.bind(this));
         },
 
         /**
