@@ -100,7 +100,7 @@
                     </IconTabFilter>
                 </items>
             </IconTabBar>
-            <core:html
+            <core:HTML
                     content="&lt;input type='file' id='importOrigHelper' accept='.json' style='display:none'/&gt;"/>
 
         </semantic:content>

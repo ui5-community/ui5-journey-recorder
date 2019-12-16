@@ -387,7 +387,7 @@
                 </TabContainer>
             </VBox>
         </l:Splitter>
-        <core:html content="&lt;input type='file' id='importOrigHelper2' accept='.json' style='display:none'/&gt;"/>
+        <core:HTML content="&lt;input type='file' id='importOrigHelper2' accept='.json' style='display:none'/&gt;"/>
         <footer>
             <Bar>
                 <contentLeft>

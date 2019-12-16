@@ -150,7 +150,7 @@ sap.ui.define([
                                 controlAggregation: "pages"
                             },
                             start: {
-                                viewName: "start",
+                                viewName: "Start",
                                 viewLevel: 1,
                                 viewId: "start",
                                 controlAggregation: "pages"
