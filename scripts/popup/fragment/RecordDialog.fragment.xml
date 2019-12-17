@@ -16,7 +16,7 @@
             <VBox fitContainer="true" height="100%">
                 <HBox fitContainer="true" height="100%">
                     <core:Icon 
-						visible="{= ${recordModel>/recording} === false}" 
+						visible="{= ${recordModel>/isRecording} === false}"
 						size="128px" 
 						decorative="false" 
 						press="onRecord" 
@@ -27,7 +27,7 @@
                         </core:layoutData>
                     </core:Icon>
                     <core:Icon 
-						visible="{= ${recordModel>/recording} === true}" 
+						visible="{= ${recordModel>/isRecording} === true}"
 						size="128px" 
 						decorative="false" 
 						press="onStopRecord" 

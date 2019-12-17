@@ -91,14 +91,14 @@ sap.ui.define([
         Communication.fireEvent("start", {
             startImmediate: typeof bStartForControl !== "undefined" ? bStartForControl : false
         });
-        this._oModel.setProperty("/recording", true);
+        this._oModel.setProperty("/isRecording", true);
         if (bStartForControl !== true) {
             this.focusTargetWindow();
         }
     };
 
     RecordController.prototype.stopRecording = function () {
-        if (this._oModel.getProperty("/recording") === true) {
+        if (this._oModel.getProperty("/isRecording") === true) {
             Communication.fireEvent("stop");
             Communication.fireEvent("unlock");
             this._onStopped();
@@ -106,7 +106,7 @@ sap.ui.define([
     };
 
     RecordController.prototype._onStopped = function () {
-        this._oModel.setProperty("/recording", false);
+        this._oModel.setProperty("/isRecording", false);
         this._bIsInjected = false;
     };
 
@@ -153,7 +153,7 @@ sap.ui.define([
     };
 
     RecordController.prototype.isRecording = function () {
-        return this._oModel.getProperty("/recording");
+        return this._oModel.getProperty("/isRecording");
     };
 
     RecordController.prototype._injectIntoTab = function (sTabId, sUrl) {

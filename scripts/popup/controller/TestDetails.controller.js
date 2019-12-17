@@ -823,7 +823,7 @@ sap.ui.define([
                         this._updatePreview();
                     }.bind(this)
                 });
-            } else if (this.getModel("recordModel").getProperty("/recording") === true && this._bQuickMode === false) {
+            } else if (this.getModel("recordModel").getProperty("/isRecording") === true && this._bQuickMode === false) {
                 setTimeout(function () {
                     this._oRecordDialog.open();
                 }.bind(this), 100);
