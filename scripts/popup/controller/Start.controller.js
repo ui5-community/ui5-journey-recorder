@@ -174,6 +174,7 @@ sap.ui.define([
                 MessageToast.show(`Connection established: Page use ${oData.name} at version ${oData.version}`);
                 this.getModel("navModel").setProperty("/elements", []);
                 this.getModel("navModel").setProperty("/elementLength", 0);
+                this.getModel("recordModel").setProperty("/targetUI5Version", oData.version);
                 this.getRouter().navTo("TestDetailsCreate");
             })
             .catch(() => {

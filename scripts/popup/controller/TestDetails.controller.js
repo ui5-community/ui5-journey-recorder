@@ -68,32 +68,27 @@ sap.ui.define([
          *
          */
         onInit: function () {
-            sap.ui.getCore().getEventBus().subscribe("Internal", "itemSelected", this._onItemSelected.bind(this));
-
+            // set models
             this.getView().setModel(this._oModel, "viewModel");
-            var oRecordModel = RecordController.getModel();
-            this.getView().setModel(oRecordModel, "recordModel");
-            oRecordModel.attachPropertyChange(function (oEvent) {
-                var oPara = oEvent.getParameters();
-                if (oPara.path === "/targetUI5Version" && oPara.value && oPara.value !== "") {
-                    this.getModel('viewModel').setProperty('/codeSettings/ui5Version', oPara.value);
-                }
-            });
-
+            this.getView().setModel(RecordController.getModel(), "recordModel");
             this.getView().setModel(Navigation.getModel(), "navModel");
             this.getView().setModel(GlobalSettings.getModel(), "settings");
-            this.getModel('settings').setProperty('/settings/replayType', this.getModel('settings').getProperty('/settingsDefault/replayType'));
 
+            // initialize some model properties
+            this.getModel("viewModel").setProperty("/codeSettings/ui5Version", this.getModel("recordModel").getProperty("/targetUI5Version"));
+            this.getModel("settings").setProperty("/settings/replayType", this.getModel("settings").getProperty("/settingsDefault/replayType"));
+
+            // initialize recording dialog
             this._createDialog();
+
+            // attach routes
             this.getOwnerComponent().getRouter().getRoute("TestDetails").attachPatternMatched(this._onTestDisplay, this);
             this.getOwnerComponent().getRouter().getRoute("TestDetailsCreate").attachPatternMatched(this._onTestCreate, this);
             this.getOwnerComponent().getRouter().getRoute("TestDetailsCreateQuick").attachPatternMatched(this._onTestCreateQuick, this);
             this.getOwnerComponent().getRouter().getRoute("testReplay").attachPatternMatched(this._onTestReplay, this);
-            // FIXME was event "loaded" before! check this twice
-            sap.ui.getCore().getEventBus().subscribe("Internal", "injectCompleted", this._onInjectionDone.bind(this));
 
-            //Why is this function subscribed?
-            //sap.ui.getCore().getEventBus().subscribe("RecordController", "windowFocusLost", this._recordStopped, this);
+            // add event listener for item selections on page
+            sap.ui.getCore().getEventBus().subscribe("Internal", "itemSelected", this._onItemSelected.bind(this));
         },
 
         /**
@@ -473,16 +468,6 @@ sap.ui.define([
          */
         _lengthStatusFormatter: function (iLength) {
             return "Success";
-        },
-
-        /**
-         * 
-         * @param {*} oData 
-         */
-        _onInjectionDone: function (oData) {
-            if (oData.ok === true) {
-                this._oModel.setProperty('/ui5Version', oData.version);
-            }
         },
 
         /**
