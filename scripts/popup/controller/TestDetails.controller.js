@@ -92,8 +92,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oEvent 
+         *
+         * @param {*} oEvent
          */
         onReplaySingleStep: function (oEvent) {
             //var oLine = oEvent.getSource().getParent();
@@ -145,7 +145,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         replayNextStep: function () {
             var aEvent = this.getModel("navModel").getProperty("/elements");
@@ -164,7 +164,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         checkRecordContinuing: function () {
             var dialog = new Dialog({
@@ -211,7 +211,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _rejectConnection: function () {
             RecordController.stopRecording();
@@ -318,14 +318,14 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         onRecord: function () {
             RecordController.startRecording();
         },
 
         /**
-         * 
+         *
          */
         onSave: function () {
             //save /codesettings & /test & navModel>/elements - optimiazion potential..
@@ -338,7 +338,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         onDelete: function () {
             var sId = this.getModel("navModel").getProperty("/test/uuid");
@@ -346,7 +346,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         onNavBack: function () {
             // stop recording
@@ -361,7 +361,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         onStopRecord: function () {
             RecordController.stopRecording();
@@ -446,8 +446,8 @@ sap.ui.define([
             }
 
             zip.generateAsync({
-                    type: "blob"
-                })
+                type: "blob"
+            })
                 .then(content => saveAs(content, "testCode.zip"));
         },
 
@@ -471,7 +471,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _replay: function () {
             var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
@@ -520,7 +520,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _startReplay: function () {
             this._iCurrentStep = 0;
@@ -528,7 +528,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _executeAction: function () {
             var aEvent = this.getModel("navModel").getProperty("/elements");
@@ -576,8 +576,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oElement 
+         *
+         * @param {*} oElement
          */
         _getFoundElements: function (oElement) {
             var oDefinition = oElement.selector;
@@ -591,15 +591,15 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oSelector 
+         *
+         * @param {*} oSelector
          */
         _findItemAndExclude: function (oSelector) {
             return Communication.fireEvent("find", oSelector);
         },
 
         /**
-         * 
+         *
          */
         _updatePlayButton: function () {
             if (!this._oModel.getProperty("/replayMode")) {
@@ -627,7 +627,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _uuidv4: function () {
             var sStr = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -640,7 +640,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _createDialog: function () {
             this._oRecordDialog = sap.ui.xmlfragment(
@@ -652,8 +652,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oEvent 
+         *
+         * @param {*} oEvent
          */
         _onTestCreateQuick: function (oEvent) {
             this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
@@ -665,8 +665,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oEvent 
+         *
+         * @param {*} oEvent
          */
         _onTestCreate: function (oEvent) {
             this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
@@ -678,8 +678,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} bImmediate 
+         *
+         * @param {*} bImmediate
          */
         _initTestCreate: function (bImmediate) {
             this._oModel.setProperty("/replayMode", false);
@@ -741,8 +741,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oEvent 
+         *
+         * @param {*} oEvent
          */
         _onTestReplay: function (oEvent) {
             this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
@@ -787,7 +787,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _onTestRerun: function () {
             this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
@@ -799,7 +799,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _onTestDisplay: function (oEvent) {
             this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
@@ -836,7 +836,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _updatePreview: function () {
             var aStoredItems = this.getModel("navModel").getProperty("/elements");
@@ -849,7 +849,7 @@ sap.ui.define([
         /**
          * Focus the popup.
          */
-        _focusPopup: function() {
+        _focusPopup: function () {
             var iWindowId = Connection.getInstance().getConnectingWindowId();
             if (iWindowId) {
                 console.debug("changing to window: " + iWindowId)
@@ -862,7 +862,7 @@ sap.ui.define([
         /**
          * Focus the target window.
          */
-        _focusTargetWindow: function() {
+        _focusTargetWindow: function () {
             chrome.tabs.update(
                 Connection.getInstance().getConnectedTabId(),
                 {
