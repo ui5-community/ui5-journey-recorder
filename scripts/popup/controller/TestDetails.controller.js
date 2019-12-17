@@ -698,7 +698,11 @@ sap.ui.define([
                     this._oModel.setProperty("/codeSettings/testName", oData.title);
                     this._oModel.setProperty("/codeSettings/testCategory", oData.title);
                     this._oModel.setProperty("/codeSettings/testUrl", oData.url);
-                    // FIXME: RecordController.startRecording(bImmediate);
+
+                    // start recording
+                    this._startRecording(bImmediate);
+
+                    // close record dialog if we have an immediate start
                     if (bImmediate === true) {
                         this._oRecordDialog.close();
                     }
@@ -852,6 +856,41 @@ sap.ui.define([
                 chrome.windows.update(iWindowId, {
                     focused: true
                 });
+            }
+        },
+
+        /**
+         * Focus the target window.
+         */
+        _focusTargetWindow: function() {
+            chrome.tabs.update(
+                Connection.getInstance().getConnectedTabId(),
+                {
+                    "active": true
+                },
+                function (tab) {
+                    chrome.windows.update(tab.windowId, {
+                        focused: true
+                    });
+                }
+            );
+        },
+
+        _startRecording: function () {
+            var bStartForControl = Connection.getInstance().isStartImmediately();
+            Connection.getInstance().setStartImmediately(false); // disable consecutive immediate starts
+
+            // send word to the injection that recording starts
+            ConnectionMessages.startRecording(
+                Connection.getInstance(),
+                {
+                    startImmediate: bStartForControl ? bStartForControl : false
+                }
+            );
+
+            this.getModel("recordModel").setProperty("/isRecording", true);
+            if (bStartForControl !== true) {
+                this._focusTargetWindow();
             }
         }
     });
