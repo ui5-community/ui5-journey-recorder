@@ -75,7 +75,6 @@ sap.ui.define([
             this.getView().setModel(GlobalSettings.getModel(), "settings");
 
             // initialize some model properties
-            this.getModel("viewModel").setProperty("/codeSettings/ui5Version", this.getModel("recordModel").getProperty("/targetUI5Version"));
             this.getModel("settings").setProperty("/settings/replayType", this.getModel("settings").getProperty("/settingsDefault/replayType"));
 
             // initialize recording dialog
@@ -698,6 +697,7 @@ sap.ui.define([
                     this._oModel.setProperty("/codeSettings/testName", oData.title);
                     this._oModel.setProperty("/codeSettings/testCategory", oData.title);
                     this._oModel.setProperty("/codeSettings/testUrl", oData.url);
+                    this._oModel.setProperty("/codeSettings/ui5Version", oData.ui5Version);
 
                     // start recording
                     this._startRecording(bImmediate);

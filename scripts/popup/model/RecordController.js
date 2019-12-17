@@ -19,7 +19,6 @@ sap.ui.define([
             this._sLastTabId = "";
             this._oInitializedPromise = null;
             this._bIsInjected = false;
-            this._UI5Version = "";
             this._oComponent = null;
             Communication.registerEvent("stopped", this._onStopped.bind(this));
             Communication.registerEvent("loaded", this._onInjectionDone.bind(this));
@@ -118,7 +117,6 @@ sap.ui.define([
                 //inform our window, to clean up!
                 this.stopRecording();
             }.bind(this);
-            this._oModel.setProperty('/targetUI5Version', oData.version);
             MessageToast.show("Initialization for " + this._sCurrentURL + " succeed. UI5 " + oData.version + " is used");
         } else {
             MessageToast.show("Recording for " + this._sCurrentURL + " not possible. UI5 is not used on that page.");
