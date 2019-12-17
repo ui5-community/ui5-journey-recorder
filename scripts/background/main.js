@@ -25,7 +25,7 @@ chrome.browserAction.onClicked.addListener(function (tab) {
 					sendResponse({
 						"type": "handshake-send-window-id",
 						"windowId": fnWindow.id,
-						"startImmediate": bNextImmediateStart
+						"startImmediately": bNextImmediateStart
 					});
 				}
 			});

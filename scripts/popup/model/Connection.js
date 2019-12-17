@@ -14,9 +14,11 @@ sap.ui.define([
 
             // get window info for popup window
             this._iWindowId = null;
+            this._bStartImmediately = false;
             chrome.runtime.sendMessage({type: "handshake-get-window-id"}, function (response) {
                 if (response && response.type === "handshake-send-window-id") {
                     this._iWindowId = response.windowId;
+                    this._bStartImmediately = response.startImmediately;
                 }
             }.bind(this));
 
@@ -165,6 +167,24 @@ sap.ui.define([
          */
         getConnectingWindowId: function () {
             return this._iWindowId;
+        },
+
+        /**
+         * Get the flag whether this is an immediate start or not.
+         *
+         * @returns {boolean} start immediately?
+         */
+        isStartImmediately: function () {
+            return this._bStartImmediately;
+        },
+
+        /**
+         * Set the flag whether this is an immediate start or not.
+         *
+         * @param {boolean} bStartImmediately start immediately?
+         */
+        setStartImmediately: function (bStartImmediately) {
+            this._bStartImmediately = bStartImmediately;
         }
     });
 
