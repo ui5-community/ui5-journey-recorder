@@ -132,7 +132,7 @@ sap.ui.define([
                         ],
                         targets: {
                             mockserver: {
-                                viewName: "mockserver",
+                                viewName: "Mockserver",
                                 viewLevel: 1,
                                 viewId: "mockserver",
                                 controlAggregation: "pages"
@@ -150,13 +150,13 @@ sap.ui.define([
                                 controlAggregation: "pages"
                             },
                             start: {
-                                viewName: "start",
+                                viewName: "Start",
                                 viewLevel: 1,
                                 viewId: "start",
                                 controlAggregation: "pages"
                             },
                             settings: {
-                                viewName: "settings",
+                                viewName: "Settings",
                                 viewLevel: 1,
                                 viewId: "settings",
                                 controlAggregation: "pages"
