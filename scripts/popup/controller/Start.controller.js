@@ -167,14 +167,15 @@ sap.ui.define([
             }
 
             var oConnection = Connection.getInstance();
-            oConnection.establishConnection(iId).then((oData) => {
+            oConnection.establishConnection(iId)
+            .then((oData) => {
                 MessageToast.show(`Connection established: Page use ${oData.name} at version ${oData.version}`);
                 this.getModel("navModel").setProperty("/elements", []);
                 this.getModel("navModel").setProperty("/elementLength", 0);
                 this.getRouter().navTo("TestDetailsCreate");
             })
-            .catch(() => {
-                MessageBox.alert("There is already a connection, please stop before opening a new one");
+            .catch((oData) => {
+                MessageBox.error(oData.message);
             });
         },
 

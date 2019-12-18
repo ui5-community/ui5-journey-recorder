@@ -87,11 +87,13 @@ sap.ui.define([
                 this._port = port;
                 this._port.onDisconnect.addListener(function () {
                     this.resetConnection();
-                    MessageBox.information("Connection to the webpage lost, try to reconnect.");
+                    // TODO publish appropriate event to event bus instead of showing message box
+                    MessageBox.error("Connection to the webpage lost, try to reconnect.");
                 }.bind(this));
                 this._port.onMessage.addListener(this._handleIncommingMessage.bind(this));
             } else {
-                MessageBox.alert("There is already a connection, please stop before opening a new one");
+                // TODO publish appropriate event to event bus instead of showing message box
+                MessageBox.warning("There is already a connection, please stop before opening a new one.");
             }
         },
 
