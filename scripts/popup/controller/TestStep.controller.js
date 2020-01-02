@@ -97,7 +97,7 @@ sap.ui.define([
         _sTestId: "",
 
         /**
-         * 
+         *
          */
         onInit: function () {
             this._getCriteriaTypes();
@@ -112,8 +112,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oEvent 
+         *
+         * @param {*} oEvent
          */
         _onObjectMatched: function (oEvent) {
             this.getModel('viewModel').setProperty('/blocked', false);
@@ -130,8 +130,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oEvent 
+         *
+         * @param {*} oEvent
          */
         _onObjectMatchedQuick: function (oEvent) {
             this.getModel('viewModel').setProperty('/blocked', false);
@@ -148,8 +148,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oEvent 
+         *
+         * @param {*} oEvent
          */
         _onObjectMatchedInReplay: function (oEvent) {
             this._sTestId = oEvent.getParameter("arguments").TestId;
@@ -165,8 +165,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oEvent 
+         *
+         * @param {*} oEvent
          */
         onShowActionSettings: function (oEvent) {
             this._createActionPopover();
@@ -174,7 +174,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _initMessagePopover: function () {
             var oMessageTemplate = new MessageItem({
@@ -224,8 +224,8 @@ sap.ui.define([
             this._oTableContext = new sap.m.Table({
                 mode: "MultiSelect",
                 /**
-                 * 
-                 * @param {*} oEvent 
+                 *
+                 * @param {*} oEvent
                  */
                 itemPress: function (oEvent) {
                     if (oEvent.getSource().setSelected) {
@@ -334,8 +334,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oElement 
+         *
+         * @param {*} oElement
          */
         _getAssertDefinition: function (oElement) {
             var sBasisCode = "";
@@ -423,8 +423,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oElement 
+         *
+         * @param {*} oElement
          */
         _adjustBeforeSaving: function (oElement) {
             //what we are actually saving, is an extremly reduced form, of everything we need for code generation
@@ -488,7 +488,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _onCancelStep: function () {
             if (this._bReplayMode === true) {
@@ -504,7 +504,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _onStopFromQuick: function () {
             RecordController.getInstance().stopRecording();
@@ -512,14 +512,14 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _onNewStepFromQuick: function () {
             this.getRouter().navTo("TestDetailsCreateQuick", {}, true);
         },
 
         /**
-         * 
+         *
          */
         _onSave: function () {
             this._save(function () {
@@ -538,8 +538,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} fnCallback 
+         *
+         * @param {*} fnCallback
          */
         _save: function (fnCallback) {
             this._checkAndDisplay(function () {
@@ -562,8 +562,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oElement 
+         *
+         * @param {*} oElement
          */
         _executeAction: function (oElement) {
             return new Promise(function (resolve, reject) {
@@ -585,8 +585,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oEvent 
+         *
+         * @param {*} oEvent
          */
         onUpdateAction: function (oEvent) {
             this._updateSubActionTypes(false);
@@ -595,7 +595,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _updateSubActionTypes: function () {
             var oItem = this._oModel.getProperty("/element/item");
@@ -659,7 +659,7 @@ sap.ui.define([
 
 
         /**
-         * 
+         *
          */
         _checkElementNumber: function () {
             this._check().then(function (oCheck) {
@@ -674,7 +674,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         onExplain: function (oEvent) {
             this._oMessagePopover.toggle(oEvent.getSource());
@@ -696,8 +696,8 @@ sap.ui.define([
                         title: "There are open issues - Are you sure you want to save?",
                         actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
                         /**
-                         * 
-                         * @param {*} oAction 
+                         *
+                         * @param {*} oAction
                          */
                         onClose: function (oAction) {
                             if (oAction === MessageBox.Action.OK) {
@@ -712,7 +712,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _updatePreview: function () {
             var oItem = this._oModel.getProperty("/element");
@@ -737,8 +737,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oSelector 
+         *
+         * @param {*} oSelector
          */
         _findItemAndExclude: function (oSelector) {
             //ensure "offline" editing.
@@ -765,7 +765,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _getFoundElements: function () {
             // Wieso das??
@@ -848,8 +848,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oEvent 
+         *
+         * @param {*} oEvent
          */
         onShowAssertionIssue: function (oEvent) {
             this._oMessagePopoverAssert.setBindingContext(oEvent.getSource().getBindingContext("viewModel"), "viewModel");
@@ -857,8 +857,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oEvent 
+         *
+         * @param {*} oEvent
          */
         onChangeCriteriaValue: function (oEvent) {
             //reformat to have the correct data type..
@@ -890,21 +890,21 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         onRunSupportAssistant: function () {
             this._runSupportAssistantForSelElement();
         },
 
         /**
-         * 
+         *
          */
         _runSupportAssistantForSelElement: function () {
             this._runSupportAssistant(); //TODO
         },
 
         /**
-         * 
+         *
          */
         _runSupportAssistant: function () {
             Communication.fireEvent("runSupportAsssistant", {
@@ -920,7 +920,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _convertValueSpecToUI5: function (oSpec, oSelectorUI5, oAttribute, oItem) {
             var oScopeLocal = this._attributeTypes[oAttribute.attributeType].getScope(oSelectorUI5);
@@ -932,8 +932,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oEvent 
+         *
+         * @param {*} oEvent
          */
         onExpandControl: function (oEvent) {
             var oPanel = oEvent.getSource().getParent();
@@ -941,7 +941,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _getSelectorDefinition: function (oElement) {
             var oScope = {};
@@ -1011,9 +1011,9 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oLine 
-         * @param {*} oItem 
+         *
+         * @param {*} oLine
+         * @param {*} oItem
          */
         _getValueSpec: function (oLine, oItem) {
             var aCriteriaSettings = this._criteriaTypes[oLine.criteriaType].criteriaSpec(oItem);
@@ -1026,8 +1026,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oItem 
+         *
+         * @param {*} oItem
          */
         _getOwnerComponent: function (oItem) {
             var sCurrentComponent = "";
@@ -1043,8 +1043,8 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oItem 
+         *
+         * @param {*} oItem
          */
         _getUi5LocalId: function (oItem) {
             var sId = oItem.getId();
@@ -1055,7 +1055,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _getUi5Id: function (oItem) {
             //remove all component information from the control
@@ -1081,7 +1081,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         onSelectItem: function (oEvent) {
             var oObj = oEvent.getSource().getBindingContext("viewModel").getObject();
@@ -1091,7 +1091,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         onUpdatePreview: function () {
             this._updatePreview();
