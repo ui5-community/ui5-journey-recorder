@@ -727,17 +727,11 @@ sap.ui.define([
             Navigation.setSelectedItem(oData);
             this._focusPopup();
 
-            if (this._bQuickMode !== true) {
-                this.getRouter().navTo("elementCreate", {
-                    TestId: this.getModel("navModel").getProperty("/test/uuid"),
-                    ElementId: oData.identifier.ui5AbsoluteId
-                });
-            } else {
-                this.getRouter().navTo("elementCreateQuick", {
-                    TestId: this.getModel("navModel").getProperty("/test/uuid"),
-                    ElementId: oData.identifier.ui5AbsoluteId
-                });
-            }
+            var sRouterTarget = this._bQuickMode ? "elementCreateQuick" : "elementCreate";
+            this.getRouter().navTo(sRouterTarget, {
+                TestId: this.getModel("navModel").getProperty("/test/uuid"),
+                ElementId: oData.identifier.ui5AbsoluteId
+            });
         },
 
         /**
