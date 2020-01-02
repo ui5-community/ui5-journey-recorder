@@ -159,7 +159,7 @@ sap.ui.define([
             this.getModel('viewModel').setProperty('/blocked', true);
             this._setValidAttributeTypes();
             this._updatePreview();
-            if (RecordController.isInjected()) {
+            if (RecordController.getInstance().isInjected()) {
                 this.getView().byId("offlineStrip").setVisible(false);
             }
         },
@@ -441,7 +441,7 @@ sap.ui.define([
                 stepExecuted: true
             };
 
-            var bRecording = RecordController.isRecording();
+            var bRecording = RecordController.getInstance().isRecording();
 
             //adjust the technical name if duplicates..
             var aProp = this.getModel("navModel").getProperty("/elements");
@@ -500,14 +500,14 @@ sap.ui.define([
                     TestId: this._sTestId
                 }, true);
             }
-            RecordController.startRecording();
+            RecordController.getInstance().startRecording();
         },
 
         /**
          * 
          */
         _onStopFromQuick: function () {
-            RecordController.stopRecording();
+            RecordController.getInstance().stopRecording();
             window.close();
         },
 
@@ -532,7 +532,7 @@ sap.ui.define([
                     this.getRouter().navTo("TestDetails", {
                         TestId: this._sTestId
                     }, true);
-                    RecordController.startRecording();
+                    RecordController.getInstance().startRecording();
                 }
             }.bind(this));
         },
@@ -742,7 +742,7 @@ sap.ui.define([
          */
         _findItemAndExclude: function (oSelector) {
             //ensure "offline" editing.
-            if (RecordController.isRecording() || RecordController.isInjected()) {
+            if (RecordController.getInstance().isRecording() || RecordController.getInstance().isInjected()) {
                 return new Promise(function (resolve, reject) {
                     Communication.fireEvent("find", oSelector).then(function (aItemsEnhanced) {
                         for (var i = 0; i < aItemsEnhanced.length; i++) {

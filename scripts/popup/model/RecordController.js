@@ -9,6 +9,11 @@ sap.ui.define([
 ], function (UI5Object, JSONModel, Communication, Navigation, MessageToast, MessageBox) {
     "use strict";
 
+    /**
+     * Singleton instance for RecordController
+     */
+    var oInstance;
+
     var RecordController = UI5Object.extend("com.ui5.testing.model.RecordController", {
         constructor: function () {
             var oJSON = {
@@ -239,5 +244,18 @@ sap.ui.define([
         }.bind(this));
     };
 
-    return new RecordController();
+
+    return {
+        /**
+         * Getter function for the Singleton pattern
+         *
+         * @returns {com.ui5.testing.model.RecordController} the RecordController instance
+         */
+        getInstance: function () {
+            if (!oInstance) {
+                oInstance = new RecordController();
+            }
+            return oInstance;
+        }
+    };
 });

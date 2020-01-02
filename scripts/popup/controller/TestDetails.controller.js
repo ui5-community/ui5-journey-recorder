@@ -70,7 +70,7 @@ sap.ui.define([
         onInit: function () {
             // set models
             this.getView().setModel(this._oModel, "viewModel");
-            this.getView().setModel(RecordController.getModel(), "recordModel");
+            this.getView().setModel(RecordController.getInstance().getModel(), "recordModel");
             this.getView().setModel(Navigation.getModel(), "navModel");
             this.getView().setModel(GlobalSettings.getModel(), "settings");
 
@@ -96,7 +96,7 @@ sap.ui.define([
          */
         onReplaySingleStep: function (oEvent) {
             //var oLine = oEvent.getSource().getParent();
-            RecordController.focusTargetWindow();
+            RecordController.getInstance().focusTargetWindow();
             var oLine = this.getView().byId('tblPerformedSteps').getItems()[this._iCurrentStep];
             this._executeAction().then(function (oResult) {
                 var performedStep = oLine;
@@ -117,7 +117,7 @@ sap.ui.define([
                             performedStep.setHighlight(sap.ui.core.MessageType.Error);
                             this._bReplayMode = false;
                             this.getModel("viewModel").setProperty("/replayMode", false);
-                            RecordController.stopRecording();
+                            RecordController.getInstance().stopRecording();
                             this.getRouter().navTo("TestDetails", {
                                 TestId: this.getModel("navModel").getProperty("/test/uuid")
                             });
@@ -153,8 +153,8 @@ sap.ui.define([
             if (this._iCurrentStep >= aEvent.length) {
                 this._bReplayMode = false;
                 this.getModel("viewModel").setProperty("/replayMode", false);
-                RecordController.stopRecording();
-                //RecordController.startRecording();
+                RecordController.getInstance().stopRecording();
+                //RecordController.getInstance().startRecording();
                 this.checkRecordContinuing();
                 this.getRouter().navTo("TestDetails", {
                     TestId: this.getModel("navModel").getProperty("/test/uuid")
@@ -176,7 +176,7 @@ sap.ui.define([
                     text: 'Yes',
                     tooltip: 'Starts the recording process',
                     press: function () {
-                        RecordController.startRecording();
+                        RecordController.getInstance().startRecording();
                         this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
                             oStep.setHighlight(sap.ui.core.MessageType.None);
                         });
@@ -206,14 +206,14 @@ sap.ui.define([
          */
         onContinueRecording: function () {
             this._oRecordDialog.open();
-            RecordController.startRecording();
+            RecordController.getInstance().startRecording();
         },
 
         /**
          *
          */
         _rejectConnection: function () {
-            RecordController.stopRecording();
+            RecordController.getInstance().stopRecording();
         },
 
         /**
@@ -232,9 +232,9 @@ sap.ui.define([
          *
          */
         onReplayAll: function (oEvent) {
-            //console.log('ReplayStart, have to close former tab: ' + RecordController.isInjected());
-            if (RecordController.isInjected()) {
-                RecordController.closeTab().then(function () {
+            //console.log('ReplayStart, have to close former tab: ' + RecordController.getInstance().isInjected());
+            if (RecordController.getInstance().isInjected()) {
+                RecordController.getInstance().closeTab().then(function () {
                     this._bReplayMode = false;
                     var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
                     this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
@@ -320,7 +320,7 @@ sap.ui.define([
          *
          */
         onRecord: function () {
-            RecordController.startRecording();
+            RecordController.getInstance().startRecording();
         },
 
         /**
@@ -349,11 +349,11 @@ sap.ui.define([
          */
         onNavBack: function () {
             // stop recording
-            RecordController.stopRecording();
+            RecordController.getInstance().stopRecording();
             this._oRecordDialog.close();
             // close automatically opened tab if we currently are in a replay
             if (this._oModel.getProperty("/replayMode")) {
-                RecordController.closeTab();
+                RecordController.getInstance().closeTab();
             }
             // go to start page
             this.getRouter().navTo("start");
@@ -363,7 +363,7 @@ sap.ui.define([
          *
          */
         onStopRecord: function () {
-            RecordController.stopRecording();
+            RecordController.getInstance().stopRecording();
             this._oRecordDialog.close();
         },
 
@@ -487,9 +487,9 @@ sap.ui.define([
                 if (oChangeInfo.status === "complete" && lastCreatedTab === tabId) {
                     //console.log(tTab.url + ', already injected: ' + bInjectRequested + ' and Replay mode activated: ' + this._bReplayMode);
                     if (tTab.url.indexOf(sUrl) > -1 && !bInjectRequested) {
-                        RecordController.injectScript(tabId).then(function (oData) {
+                        RecordController.getInstance().injectScript(tabId).then(function (oData) {
                             //console.log('Injection done: ' + RecordController.isInjected());
-                            if (RecordController.isInjected() && !this._bReplayMode) {
+                            if (RecordController.getInstance().isInjected() && !this._bReplayMode) {
                                 this._bReplayMode = true;
                                 this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
                                     oStep.setHighlight(sap.ui.core.MessageType.None);
@@ -647,7 +647,7 @@ sap.ui.define([
                 this
             );
             this._oRecordDialog.setModel(this._oModel, "viewModel");
-            this._oRecordDialog.setModel(RecordController.getModel(), "recordModel");
+            this._oRecordDialog.setModel(RecordController.getInstance().getModel(), "recordModel");
         },
 
         /**

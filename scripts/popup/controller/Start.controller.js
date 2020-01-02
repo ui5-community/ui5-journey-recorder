@@ -188,7 +188,7 @@ sap.ui.define([
                 iId = oEvent.getSource().getBindingContext('viewModel').getObject().id;
                 sUrl = oEvent.getSource().getBindingContext('viewModel').getObject().url;
             }
-            RecordController.injectScript(iId, sUrl).then(function () {
+            RecordController.getInstance().injectScript(iId, sUrl).then(function () {
                 this.getRouter().navTo("mockserver");
             }.bind(this), function () {
                 return;
