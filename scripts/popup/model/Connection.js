@@ -105,10 +105,10 @@ sap.ui.define([
         _handleIncommingMessage: function (oMsg) {
             if (oMsg.data.messageID && this._oMessageMap[oMsg.data.messageID]) {
                 this._oMessageMap[oMsg.data.messageID].resolve(oMsg.data.data);
-                console.log("MessageIncomming: ", JSON.stringify(oMsg));
+                console.debug("Message incomming with callback: ", JSON.stringify(oMsg));
             } else {
                 sap.ui.getCore().getEventBus().publish("Internal", oMsg.data.reason, oMsg.data.data);
-                console.log("How to use async message?", JSON.stringify(oMsg));
+                console.debug("Message incomming without callback", JSON.stringify(oMsg));
             }
         },
 
