@@ -1043,16 +1043,32 @@ class UI5ControlHelper {
         return sap.ui.getCore().byId(sResultID);
     }
 
+    /**
+     * Returns all children of the given DOM node within the same UI5 control.
+     *
+     * @param {*} oDom the DOM node to inspect
+     * @param {*} oControl the UI5 control of the DOM node
+     *
+     * @returns {Array} an array of the identified DOM nodes
+     */
     static getAllChildrenOfDom(oDom, oControl) {
-        var aChildren = $(oDom).children();
+
+        // initialize return value
         var aReturn = [];
-        for (var i = 0; i < aChildren.length; i++) {
-            var aControl = $(aChildren[i]).control();
-            if (aControl.length === 1 && aControl[0].getId() === oControl.getId()) {
-                aReturn.push(aChildren[i]);
-                aReturn = aReturn.concat(UI5ControlHelper.getAllChildrenOfDom(aChildren[i], oControl));
+
+        // get all direct children of the current DOM node
+        var aChildren = Array.prototype.slice.call(oDom.children);
+
+        // for each child, get the control and check whether it matches the given one 'oControl';
+        // if yes, check also all children of this DOM node
+        for (var oChild of aChildren) {
+            var oChildControl = UI5ControlHelper.getControlFromDom(oChild);
+            if (oChildControl && oChildControl.getId() === oControl.getId()) {
+                aReturn.push(oChild);
+                aReturn = aReturn.concat(UI5ControlHelper.getAllChildrenOfDom(oChild, oControl));
             }
         }
+
         return aReturn;
     }
 
