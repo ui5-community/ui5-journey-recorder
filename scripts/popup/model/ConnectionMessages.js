@@ -24,6 +24,18 @@ sap.ui.define([], function () {
                 data: oInformation
             });
         }
+
+        /**
+         *
+         * @param {com.ui5.testing.model.Connection} connection the connection to use for sending messages
+         * @param {object} oItemSelector selector information
+         */
+        static findElements(oConnection, oItemSelector) {
+            return oConnection.syncMessage({
+                action: "find",
+                data: oItemSelector
+            });
+        }
     }
 
     return ConnectionMessages;

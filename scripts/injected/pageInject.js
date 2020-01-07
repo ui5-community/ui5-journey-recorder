@@ -90,8 +90,11 @@ class PageCommunication {
             // case "unlock":
             //     this.unlockScreen();
             //     break;
-            // case "find":
-            //     return this._getFoundElements(oEventData);
+            case "find":
+                var oElements = _findItemsBySelector(oMessage.data.data);
+                PageCommunication.getInstance().messageFromPage("find", oElements, iMessageID);
+                break;
+
             // case "mockserver":
             //     return this._getDataModelInformation();
             // case "replay-steps":
@@ -116,6 +119,10 @@ class PageCommunication {
                 break;
         }
     }
+}
+
+function _findItemsBySelector(oSelector) {
+    return TestItem.findItemsBySelector(oSelector);
 }
 
 function _getWindowInfo() {
@@ -274,7 +281,7 @@ class PageListener {
 class TestItem {
 
     /**
-     * Resets the static variable {@link oTestGlobalBuffer}.
+     * Resets the static variable {@link _oTestGlobalCache}.
      */
     static _resetCache() {
         TestItem._oTestGlobalCache = {
@@ -317,7 +324,7 @@ class TestItem {
         oItem.parents = [];
         oItem.identifier.domIdOriginal = this._oOriginalDOMNode.id;
 
-        var aNode = UI5ControlHelper._getAllChildrenOfDom(oItem.control.getDomRef(), oItem.control);
+        var aNode = UI5ControlHelper.getAllChildrenOfDom(oItem.control.getDomRef(), oItem.control);
         oItem.children = [];
 
         for (var i = 0; i < aNode.length; i++) {
@@ -359,6 +366,39 @@ class TestItem {
 
         return this._testItem;
     }
+
+    // #region Item finding
+
+    /**
+     *
+     * @param {*} oSelector
+     */
+    static findItemsBySelector(oSelector) {
+
+        var sStringified = JSON.stringify(oSelector);
+
+        var aInformation = [];
+        if (!TestItem._oTestGlobalCache["findItem"][sStringified]) {
+            TestItem._oTestGlobalCache["findItem"][sStringified] = UI5ControlHelper.findControlsBySelector(oSelector);
+        }
+        aInformation = TestItem._oTestGlobalCache["findItem"][sStringified];
+
+        //remove all items, which are starting with "testDialog"..
+        // TODO Is this needed anyway?! If yes: "!startWith" or "!includes"? "indexOf() === -1" is "!includes"...
+        var aItems = aInformation.filter(function(oItem) {
+            return oItem.getId().indexOf("testDialog") === -1;
+        })
+
+        var aItemsEnhanced = aItems.map(function(oItem) {
+            return TestItem._removeNonSerializable(
+                TestItem._getElementInformation(oItem, oItem.getDomRef(), true)
+            );
+        });
+
+        return aItemsEnhanced;
+    }
+
+    // #endregion
 
     // #region Information retrieval
 
@@ -883,7 +923,7 @@ class TestItem {
                             break;
                         }
                     }
-                    if (bFound === false) {
+                    if (!bFound) {
                         //there is no binding, but we have a binding context - theoretically, we could "check the uniquness" as per the data available
                         //to really check the uniquness here, would require to scan all elements, and still wouldn't be great
                         //==>just skip
@@ -1003,17 +1043,118 @@ class UI5ControlHelper {
         return sap.ui.getCore().byId(sResultID);
     }
 
-    static _getAllChildrenOfDom(oDom, oControl) {
+    static getAllChildrenOfDom(oDom, oControl) {
         var aChildren = $(oDom).children();
         var aReturn = [];
         for (var i = 0; i < aChildren.length; i++) {
             var aControl = $(aChildren[i]).control();
             if (aControl.length === 1 && aControl[0].getId() === oControl.getId()) {
                 aReturn.push(aChildren[i]);
-                aReturn = aReturn.concat(UI5ControlHelper._getAllChildrenOfDom(aChildren[i], oControl));
+                aReturn = aReturn.concat(UI5ControlHelper.getAllChildrenOfDom(aChildren[i], oControl));
             }
         }
         return aReturn;
+    }
+
+    static findControlsBySelector(oSelector) {
+
+        // collect all string selectors
+        var sSelectorStringForJQuery = [];
+
+        if (typeof oSelector !== "string") {
+            if (JSON.stringify(oSelector) == JSON.stringify({})) {
+                return [];
+            }
+
+            // TODO can we reuse UI5ControlHelper.getLabelForItem._getAllLabels here?
+            var oCoreObject = null;
+            var fakePlugin = {
+                startPlugin: function (core) {
+                    oCoreObject = core;
+                    return core;
+                }
+            };
+            sap.ui.getCore().registerPlugin(fakePlugin);
+            sap.ui.getCore().unregisterPlugin(fakePlugin);
+
+            var aElements = {};
+            if (sap.ui.core.Element && sap.ui.core.Element.registry) {
+                aElements = sap.ui.core.Element.registry.all();
+            } else {
+                aElements = oCoreObject.mElements;
+            }
+
+            //search for identifier of every single object..
+            for (var sElement in aElements) {
+
+                var oItem = aElements[sElement];
+
+                // check item itself
+                if (!UI5ControlHelper.checkItemAgainstSelector(oItem, oSelector)) {
+                    continue;
+                }
+
+                // check item match against various related components:
+                // 1) check against label
+                if (oSelector.label && !UI5ControlHelper.checkItemAgainstSelector(UI5ControlHelper.getLabelForItem(oItem), oSelector.label)) {
+                    continue;
+                }
+                //  2) check parent levels
+                if (oSelector.parent && !UI5ControlHelper.checkItemAgainstSelector(UI5ControlHelper.getParentControlAtLevel(oItem, 1), oSelector.parent)) {
+                    continue;
+                }
+                if (oSelector.parentL2 && !UI5ControlHelper.checkItemAgainstSelector(UI5ControlHelper.getParentControlAtLevel(oItem, 2), oSelector.parentL2)) {
+                    continue;
+                }
+                if (oSelector.parentL3 && !UI5ControlHelper.checkItemAgainstSelector(UI5ControlHelper.getParentControlAtLevel(oItem, 3), oSelector.parentL3)) {
+                    continue;
+                }
+                if (oSelector.parentL4 && !UI5ControlHelper.checkItemAgainstSelector(UI5ControlHelper.getParentControlAtLevel(oItem, 4), oSelector.parentL4)) {
+                    continue;
+                }
+                // 3) check item data
+                if (oSelector.itemdata && !UI5ControlHelper.checkItemAgainstSelector(UI5ControlHelper.getItemDataForItem(oItem), oSelector.itemdata)) {
+                    continue;
+                }
+
+                // if there is no DOM reference, we can continue
+                if (!oItem.getDomRef()) {
+                    continue;
+                }
+
+                // add DOM-reference query to selector strings
+                var sDOMId = "*[id$='" + oItem.getDomRef().id + "']";
+                sSelectorStringForJQuery.push(sDOMId);
+            }
+
+        } else {
+
+            //our search for an ID is using "ends with", as we are using local IDs only (ignore component)
+            //this is not really perfect for multi-component architecture (here the user has to add the component manually)
+            //but sufficient for most approaches. Reason for removign component:
+            //esnure testability both in standalone and launchpage enviroments
+            if (oSelector.charAt(0) === '#') {
+                oSelector = oSelector.substr(1); //remove the leading "#" if any
+            }
+
+            // add selector string as query to selector strings
+            var sSearchId = "*[id$='" + oSelector + "']";
+            sSelectorStringForJQuery.push(sSearchId);
+
+        }
+
+        // join selector string to use with JQuery
+        sSelectorStringForJQuery = sSelectorStringForJQuery.join(",");
+        // select items via JQuery based on selector strings
+        var aItem = $(sSelectorStringForJQuery);
+
+        // if the result does not make sense or is no UI5 control, return empty
+        if (!aItem || !aItem.length || !aItem.control() || !aItem.control().length) {
+            return [];
+        }
+
+        // return control for item
+        return aItem.control();
     }
 
     static getOwnerComponent(oItem) {
@@ -1047,6 +1188,8 @@ class UI5ControlHelper {
     }
 
     // #endregion
+
+    // #region UI5 IDs
 
     static getUi5Id(oItem) {
         var sCurrentComponent = "";
@@ -1083,6 +1226,8 @@ class UI5ControlHelper {
 
         return sId;
     }
+
+    // #endregion
 
     // #region Contexts and binding contexts
 
@@ -1197,6 +1342,7 @@ class UI5ControlHelper {
 
             TestItem._oTestGlobalCache.label = {};
             var oCoreObject = null;
+            // TODO https://stackoverflow.com/a/44510152
             var fakePlugin = {
                 startPlugin: function (core) {
                     oCoreObject = core;
@@ -1274,7 +1420,7 @@ class UI5ControlHelper {
                 }
             }
         }
-          @Adrian - End*/
+            @Adrian - End*/
         var iIndex = 1;
         var oPrt = oItem;
         while (oPrt) {
@@ -1296,6 +1442,196 @@ class UI5ControlHelper {
         }
 
         return null;
+    }
+
+    /**
+     * Check whether the item matchs with the given selector.
+     *
+     * @param {*} oItem
+     * @param {*} oSelector
+     *
+     * @returns {boolean} true if the item matches the selector; false otherwise
+     */
+    static checkItemAgainstSelector(oItem, oSelector) {
+        var bFound = true;
+        if (!oItem) { //e.g. parent level is not existing at all..
+            return false;
+        }
+        if (oSelector.metadata) {
+            if (oSelector.metadata.elementName && oSelector.metadata.elementName !== oItem.getMetadata().getElementName()) {
+                return false;
+            }
+            if (oSelector.metadata.componentName && oSelector.metadata.componentName !== UI5ControlHelper.getOwnerComponent(oItem)) {
+                return false;
+            }
+        }
+
+        if (oSelector.viewProperty) {
+            var oView = UI5ControlHelper.getParentControlAtLevel(oItem, 1, true);
+            if (!oView) {
+                return false;
+            }
+
+            var sViewName = oView.getProperty("viewName");
+            var sViewNameLocal = sViewName.split(".").pop();
+            if (sViewNameLocal.length) {
+                sViewNameLocal = sViewNameLocal.charAt(0).toUpperCase() + sViewNameLocal.substring(1);
+            }
+
+            if (oSelector.viewProperty.viewName && oSelector.viewProperty.viewName !== sViewName) {
+                return false;
+            }
+            if (oSelector.viewProperty.localViewName && oSelector.viewProperty.localViewName !== sViewNameLocal) {
+                return false;
+            }
+        }
+
+        if (oSelector.domChildWith && oSelector.domChildWith.length > 0) {
+            var oDomRef = oItem.getDomRef();
+            if (!oDomRef) {
+                return false;
+            }
+            if ($("*[id$='" + oDomRef.id + oSelector.domChildWith + "']").length === 0) {
+                return false;
+            }
+        }
+
+        if (oSelector.model) {
+            for (var sModel in oSelector.model) {
+                sModel = sModel === "undefined" ? undefined : sModel;
+                if (!oItem.getModel(sModel)) {
+                    return false;
+                }
+                for (var sModelProp in oSelector.model[sModel]) {
+                    if (oItem.getModel(sModel).getProperty(sModelProp) !== oSelector.model[sModel][sModelProp]) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        if (oSelector.identifier) {
+            if (oSelector.identifier.ui5Id && oSelector.identifier.ui5Id !== UI5ControlHelper.getUi5Id(oItem)) {
+                return false;
+            }
+            if (oSelector.identifier.ui5LocalId && oSelector.identifier.ui5LocalId !== UI5ControlHelper.getUi5LocalId(oItem)) {
+                return false;
+            }
+        }
+
+        //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+        /*@Adrian - Start*/
+        if (oSelector.bindingContext) {
+            for (var sModel in oSelector.bindingContext) {
+                var oCtx = oItem.getBindingContext(sModel === "undefined" ? undefined : sModel);
+                if (!oCtx) {
+                    return false;
+                }
+
+                if (oCtx.getPath() !== oSelector.bindingContext[sModel]) {
+                    return false;
+                }
+            }
+        }
+        /*@Adrian - End*/
+        if (oSelector.binding) {
+            for (var sBinding in oSelector.binding) {
+                //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                /*@Adrian - Start
+                var oAggrInfo = oItem.getBindingInfo(sBinding);
+                if (!oAggrInfo) {
+                    //SPECIAL CASE for sap.m.Label in Forms, where the label is actually bound against the parent element (yay)
+                    @Adrian - End*/
+                /*@Adrian - Start*/
+
+                var oBndgInfo = UI5ControlHelper.getBindingInformation(oItem, sBinding);
+
+                if (oBndgInfo.path !== oSelector.binding[sBinding].path) {
+                    /*@Adrian - End*/
+                    if (oItem.getMetadata().getElementName() === "sap.m.Label") {
+                        if (oItem.getParent() && oItem.getParent().getMetadata()._sClassName === "sap.ui.layout.form.FormElement") {
+                            var oParentBndg = oItem.getParent().getBinding("label");
+                            if (!oParentBndg || oParentBndg.getPath() !== oSelector.binding[sBinding].path) {
+                                return false;
+                            }
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                    //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                    /*@Adrian - Start
+                } else {
+                    var oBinding = oItem.getBinding(sBinding);
+                    if (!oBinding) {
+                        if (oAggrInfo.path !== id.binding[sBinding].path) {
+                            return false;
+                        }
+                    } else {
+                        if (oBinding.getPath() !== id.binding[sBinding].path) {
+                            return false;
+                        }
+                    }
+                    @Adrian - End*/
+                }
+            }
+        }
+
+        if (oSelector.aggregation) {
+            for (var sAggregationName in oSelector.aggregation) {
+                var oAggr = oSelector.aggregation[sAggregationName];
+                if (!oAggr.name) {
+                    continue; //no sense to search without aggregation name..
+                }
+                if (typeof oAggr.length !== "undefined") {
+                    if (oItem.getAggregation(sAggregationName).length !== oAggr.length) {
+                        bFound = false;
+                    }
+                }
+                if (!bFound) {
+                    return false;
+                }
+            }
+        }
+        if (oSelector.context) {
+            for (var sModel in oSelector.context) {
+                var oCtx = oItem.getBindingContext(sModel === "undefined" ? undefined : sModel);
+                if (!oCtx) {
+                    return false;
+                }
+                var oObjectCompare = oCtx.getObject();
+                if (!oObjectCompare) {
+                    return false;
+                }
+                var oObject = oSelector.context[sModel];
+                for (var sAttr in oObject) {
+                    if (oObject[sAttr] !== oObjectCompare[sAttr]) {
+                        return false;
+                    }
+                }
+            }
+        }
+        if (oSelector.property) {
+            for (var sProperty in oSelector.property) {
+                if (!oItem["get" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1)]) {
+                    //property is not even available in that item.. just skip it..
+                    bFound = false;
+                    break;
+                }
+                var sPropertyValueItem = oItem["get" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1)]();
+                var sPropertyValueSearch = oSelector.property[sProperty];
+                if (sPropertyValueItem !== sPropertyValueSearch) {
+                    bFound = false;
+                    break;
+                }
+            }
+            if (!bFound) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     // #endregion

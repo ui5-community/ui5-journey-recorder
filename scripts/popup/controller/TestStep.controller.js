@@ -6,6 +6,8 @@ sap.ui.define([
     'sap/m/MessageItem',
     "sap/m/MessageBox",
     "com/ui5/testing/model/GlobalSettings",
+    "com/ui5/testing/model/ConnectionMessages",
+    "com/ui5/testing/model/Connection",
     "com/ui5/testing/model/Navigation",
     "com/ui5/testing/model/Communication",
     "com/ui5/testing/model/RecordController",
@@ -18,6 +20,8 @@ sap.ui.define([
     MessageItem,
     MessageBox,
     GlobalSettings,
+    ConnectionMessages,
+    Connection,
     Navigation,
     Communication,
     RecordController,
@@ -469,10 +473,7 @@ sap.ui.define([
 
             if (bRecording) {
                 return new Promise(function (resolve, reject) {
-                    Communication.fireEvent("getwindowinfo").then(function (oData) {
-                        if (!oData) {
-                            return;
-                        }
+                    ConnectionMessages.getWindowInfo(Connection.getInstance()).then(function (oData) {
                         oReturn.href = oData.url;
                         oReturn.hash = oData.hash;
                         resolve(JSON.parse(JSON.stringify(oReturn)));
@@ -744,7 +745,7 @@ sap.ui.define([
             //ensure "offline" editing.
             if (RecordController.getInstance().isRecording() || RecordController.getInstance().isInjected()) {
                 return new Promise(function (resolve, reject) {
-                    Communication.fireEvent("find", oSelector).then(function (aItemsEnhanced) {
+                    ConnectionMessages.findElements(Connection.getInstance(), oSelector).then(function (aItemsEnhanced) {
                         for (var i = 0; i < aItemsEnhanced.length; i++) {
                             var oItem = aItemsEnhanced[i];
                             if (oItem.aggregationArray) {
