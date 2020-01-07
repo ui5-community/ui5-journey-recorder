@@ -32,7 +32,7 @@ sap.ui.define([], function () {
          */
         static findElements(oConnection, oItemSelector) {
             return oConnection.syncMessage({
-                action: "find",
+                action: "findItemsBySelector",
                 data: oItemSelector
             });
         }

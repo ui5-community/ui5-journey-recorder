@@ -594,7 +594,7 @@ sap.ui.define([
          * @param {*} oSelector
          */
         _findItemAndExclude: function (oSelector) {
-            return Communication.fireEvent("find", oSelector);
+            return Communication.fireEvent("findItemsBySelector", oSelector);
         },
 
         /**

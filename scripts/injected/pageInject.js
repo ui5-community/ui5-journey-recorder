@@ -90,9 +90,9 @@ class PageCommunication {
             // case "unlock":
             //     this.unlockScreen();
             //     break;
-            case "find":
+            case "findItemsBySelector":
                 var oElements = _findItemsBySelector(oMessage.data.data);
-                PageCommunication.getInstance().messageFromPage("find", oElements, iMessageID);
+                PageCommunication.getInstance().messageFromPage(sEventType, oElements, iMessageID);
                 break;
 
             // case "mockserver":
@@ -112,7 +112,7 @@ class PageCommunication {
             //     return this._runSupportAssistant(oEventData);
             case "getWindowInfo":
                 var oWindowInfo = _getWindowInfo();
-                PageCommunication.getInstance().messageFromPage("getWindowInfo", oWindowInfo, iMessageID);
+                PageCommunication.getInstance().messageFromPage(sEventType, oWindowInfo, iMessageID);
                 break;
 
             default:
