@@ -407,7 +407,31 @@ class TestItem {
 
     static _getElementInformation(oControl, oDOMNode, bFull = true) {
 
+        /**
+         * Obtains detailed information on the given control (available at the given DOM node).
+         *
+         * The data includes basically:
+         * - UI5 IDs,
+         * - metadata and component information.
+         *
+         * If {bFull === true}, the data is enhanced with the information on:
+         * - parents,
+         * - parents at levels 1–4,
+         * - view,
+         * - bindings and binding contexts, and
+         * - simple properties.
+         *
+         * The data is cached for easier and faster retrieval.
+         *
+         * @param {*} oControl the UI5 control to obtain information for
+         * @param {*} oDOMNode the DOM node of the UI5 control
+         * @param {*} bFull flag whether to obtain full information (see above)
+         *
+         * @returns {object} an object containing the listed information
+         */
         function getElementInformationDetails(oItem, oDomNode, bFull = true) {
+
+            // construct default return value
             var oReturn = {
                 property: {},
                 aggregation: {},
@@ -433,61 +457,74 @@ class TestItem {
                 dom: null
             };
 
+            // no item to inspect, return right away
             if (!oItem) {
                 return oReturn;
             }
+
+            // check cache to return potentially existing cached result
             if (TestItem._oTestGlobalCache["fnGetElement"][bFull][oItem.getId()]) {
                 return TestItem._oTestGlobalCache["fnGetElement"][bFull][oItem.getId()];
             }
+
+            // if DOM node is not defined, use DOM reference of the item as a start
             if (!oDomNode && oItem.getDomRef) {
                 oDomNode = oItem.getDomRef();
             }
 
+            // store default information and UI5 IDs
             oReturn.control = oItem;
             oReturn.dom = oDomNode;
+            oReturn.identifier.domId = oDomNode.id;
             oReturn.identifier.ui5Id = UI5ControlHelper.getUi5Id(oItem);
             oReturn.identifier.ui5LocalId = UI5ControlHelper.getUi5LocalId(oItem);
+            oReturn.identifier.ui5AbsoluteId = oItem.getId();
 
-
+            // get class names from metadata
             oReturn.classArray = [];
             var oMeta = oItem.getMetadata();
             while (oMeta) {
-                oReturn.classArray.push({
-                    elementName: oMeta._sClassName
-                });
+                oReturn.classArray.push({ elementName: oMeta._sClassName });
                 oMeta = oMeta.getParent();
             }
 
-            //does the ui5Id contain a "-" with a following number? it is most likely a dependn control (e.g. based from aggregation or similar)
-            if (RegExp("([A-Z,a-z,0-9])-([0-9])").test(oReturn.identifier.ui5Id) === true) {
+            // identify whether the element has been cloned:
+            // 1) if the UI5 ID contains a "-" with a following number, it is most likely a dependent control (e.g., based on aggregation or similar) and, thus, cloned
+            if (RegExp("([A-Z,a-z,0-9])-([0-9])").test(oReturn.identifier.ui5Id)) {
                 oReturn.identifier.idCloned = true;
-            } else {
-                //check as per metadata..
+            }
+            // 2) check via metadata
+            else {
                 var oMetadata = oItem.getMetadata();
                 while (oMetadata) {
+                    // if there is no class name available, we can stop searching
                     if (!oMetadata._sClassName) {
                         break;
                     }
-                    if (["sap.ui.core.Item", "sap.ui.table.Row", "sap.m.ObjectListItem"].indexOf(oMetadata._sClassName) !== -1) {
+
+                    // item is cloned if it is an Item, a Row, or an ObjectListItem
+                    if (["sap.ui.core.Item", "sap.ui.table.Row", "sap.m.ObjectListItem"].includes(oMetadata._sClassName)) {
                         oReturn.identifier.idCloned = true;
                     }
+
                     oMetadata = oMetadata.getParent();
                 }
             }
-            //does the ui5id contain a "__"? it is most likely a generated id which should NOT BE USESD!!
-            //check might be enhanced, as it seems to be that all controls are adding "__[CONTORLNAME] as dynamic view..
-            if (oReturn.identifier.ui5Id.indexOf("__") !== -1) {
+
+            // identify whether the element ID has been generated:
+            // if the ui5id contains a "__", it is most likely a generated ID which should NOT BE USESD LATER!
+            // TODO check might be enhanced, as it seems to be that all controls are adding "__[CONTORLNAME] as dynamic view..
+            if (oReturn.identifier.ui5Id.includes("__")) {
                 oReturn.identifier.idGenerated = true;
             }
-            if (oDomNode) {
-                oReturn.identifier.domId = oDomNode.id;
-            }
-            if (oReturn.identifier.idCloned === true || oReturn.identifier.ui5LocalId.indexOf("__") !== -1) {
+
+            // identify whether the local element ID is cloned or generated
+            if (oReturn.identifier.idCloned || oReturn.identifier.ui5LocalId.includes("__")) {
                 oReturn.identifier.localIdClonedOrGenerated = true;
             }
-            oReturn.identifier.ui5AbsoluteId = oItem.getId();
 
-            //get metadata..
+            // get metadata:
+            // 1) basic information and structure
             oReturn.metadata = {
                 elementName: oItem.getMetadata().getElementName(),
                 componentName: UI5ControlHelper.getOwnerComponent(oItem),
@@ -496,21 +533,32 @@ class TestItem {
                 componentDescription: "",
                 componentDataSource: {}
             };
-            //enhance component information..
+            // 2) enhance component information
             var oComponent = sap.ui.getCore().getComponent(oReturn.metadata.componentName);
             if (oComponent) {
+                // get manifest of component
                 var oManifest = oComponent.getManifest();
+
                 if (oManifest && oManifest["sap.app"]) {
+                    // get the app from manifest
                     var oApp = oManifest["sap.app"];
+
+                    // store app metadata in return value
                     oReturn.metadata.componentId = oApp.id;
                     oReturn.metadata.componentTitle = oApp.title;
                     oReturn.metadata.componentDescription = oApp.description;
+
+                    // get component data sources (only OData)
                     if (oApp.dataSources) {
                         for (var sDs in oApp.dataSources) {
                             var oDS = oApp.dataSources[sDs];
+
+                            // skip any non-OData sources as only those are relevant
                             if (oDS.type !== "OData") {
                                 continue;
                             }
+
+                            // store data source in return value
                             oReturn.metadata.componentDataSource[sDs] = {
                                 uri: oDS.uri,
                                 localUri: (oDS.settings && oDS.settings.localUri) ? oDS.settings.localUri : ""
@@ -520,71 +568,30 @@ class TestItem {
                 }
             }
 
+            // if we do not perform a full retrieval, we can cache now and return
             if (bFull === false) {
                 TestItem._oTestGlobalCache["fnGetElement"][bFull][oItem.getId()] = oReturn;
                 return oReturn;
             }
 
-            //view..
-            var oView = UI5ControlHelper.getParentControlAtLevel(oItem, 1, true);
-            if (oView) {
-                if (oView.getProperty("viewName")) {
-                    oReturn.viewProperty.viewName = oView.getProperty("viewName");
-                    oReturn.viewProperty.localViewName = oReturn.viewProperty.viewName.split(".").pop();
-                    if (oReturn.viewProperty.localViewName.length) {
-                        oReturn.viewProperty.localViewName = oReturn.viewProperty.localViewName.charAt(0).toUpperCase() + oReturn.viewProperty.localViewName.substring(1);
-                    }
+            // get view information
+            var oView = UI5ControlHelper.getParentControlAtLevel(oItem, 1, true); // get the view!
+            if (oView && oView.getProperty("viewName")) {
+                oReturn.viewProperty.viewName = oView.getProperty("viewName");
+                oReturn.viewProperty.localViewName = oReturn.viewProperty.viewName.split(".").pop();
+                if (oReturn.viewProperty.localViewName.length) {
+                    oReturn.viewProperty.localViewName = oReturn.viewProperty.localViewName.charAt(0).toUpperCase() + oReturn.viewProperty.localViewName.substring(1);
                 }
             }
 
-            //bindings..
+            // get binding information
+            // 1) all bindings
             for (var sBinding in oItem.mBindingInfos) {
-                //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 oReturn.binding[sBinding] = UI5ControlHelper.getBindingInformation(oItem, sBinding);
-                /*@Adrian - Start
-                var oBindingInfo = oItem.getBindingInfo(sBinding);
-                var oBinding = oItem.getBinding(sBinding);
-                if (!oBindingInfo) {
-                    continue;
-                }
-
-                //not really perfect for composite bindings (what we are doing here) - we are just returning the first for that..
-                //in case of a real use case --> enhance
-                var oRelevantPart = oBindingInfo;
-                if (oBindingInfo.parts && oBindingInfo.parts.length > 0 ) {
-                    oRelevantPart = oBindingInfo.parts[0];
-                }
-
-                if (oBinding) {
-                    oReturn.binding[sBinding] = {
-                        model: oRelevantPart.model,
-                        path: oBinding.sPath && oBinding.getPath(),
-                        static: oBinding.oModel && oBinding.getModel() instanceof sap.ui.model.resource.ResourceModel
-                    };
-                } else {
-                    oReturn.binding[sBinding] = {
-                        path: oBindingInfo.path,
-                        model: oRelevantPart.model,
-                        static: true
-                    };
-                    //if (oBindingInfo.parts && oBindingInfo.parts.length > 0) {
-                        for (var i = 0; i < oBindingInfo.parts.length; i++) {
-                            if (!oBindingInfo.parts[i].path) {
-                                continue;
-                            }
-                            if (!oReturn.binding[sBinding]) {
-                                oReturn.binding[sBinding] = { path: oBindingInfo.parts[i].path, "static": true };
-                            } else {
-                                oReturn.binding[sBinding].path += ";" + oBindingInfo.parts[i].path;
-                            }
-                        }
-                    }//
-                }
-                @Adrian - End*/
             }
-
-            //very special for "sap.m.Label"..
+            // 2) special binding information for "sap.m.Label" if not existing already
             if (oReturn.metadata.elementName === "sap.m.Label" && !oReturn.binding.text) {
+                // if the label is part of a FormElement, we may obtain further binding information based on the parent
                 if (oItem.getParent() && oItem.getParent().getMetadata()._sClassName === "sap.ui.layout.form.FormElement") {
                     var oParentBndg = oItem.getParent().getBinding("label");
                     if (oParentBndg) {
@@ -596,20 +603,16 @@ class TestItem {
                 }
             }
 
-            //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-            /*@Adrian - Start*/
-            //binding context
-            var aModels = UI5ControlHelper.getContextModels(oItem);
-            for (var sModel in aModels) {
+            // get binding contexts
+            for (var sModel in  UI5ControlHelper.getContextModels(oItem)) {
                 var oBndg = UI5ControlHelper.getBindingContextInformation(oItem, sModel);
                 if (!oBndg) {
                     continue;
                 }
                 oReturn.bindingContext[sModel] = oBndg;
             }
-            /*@Adrian - End*/
 
-            //return all simple properties
+            // get all simple properties
             for (var sProperty in oItem.mProperties) {
                 var fnGetter = oItem["get" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1)];
                 if (fnGetter) {
@@ -619,43 +622,54 @@ class TestItem {
                 }
             }
 
-            //return all binding contexts
+            // get all binding contexts
             oReturn.context = UI5ControlHelper.getContexts(oItem);
 
-            //get model information..
-            var oMetadata = oItem.getMetadata();
+            // get model information
             oReturn.model = {};
 
-            //return length of all aggregations
-            var aMetadata = oItem.getMetadata().getAllAggregations();
-            for (var sAggregation in aMetadata) {
-                if (aMetadata[sAggregation].multiple === false) {
+            // get lengths of aggregation
+            var aAggregations = oItem.getMetadata().getAllAggregations();
+            for (var sAggregation in aAggregations) {
+
+                // if there are not multiple items aggregated, this is not interesting
+                if (!aAggregations[sAggregation].multiple) {
                     continue;
                 }
-                var aAggregation = oItem["get" + sAggregation.charAt(0).toUpperCase() + sAggregation.substr(1)]();
+
+                // construct raw aggregation info
                 var oAggregationInfo = {
                     rows: [],
                     filled: false,
                     name: sAggregation,
                     length: 0
                 };
-                if (typeof aAggregation !== "undefined" && aAggregation !== null) {
+
+                // get data of current aggregation
+                var aAggregationData = oItem["get" + sAggregation.charAt(0).toUpperCase() + sAggregation.substr(1)]();
+
+                // check whether the aggregation data is filled
+                if (typeof aAggregationData !== "undefined" && aAggregationData !== null) {
                     oAggregationInfo.filled = true;
-                    oAggregationInfo.length = aAggregation.length;
+                    oAggregationInfo.length = aAggregationData.length;
                 }
 
-                //for every single line, get the binding context, and the row id, which can later on be analyzed again..
-                for (var i = 0; i < aAggregation.length; i++) {
-                    oAggregationInfo.rows.push({
-                        context: UI5ControlHelper.getContexts(aAggregation[i]),
-                        ui5Id: UI5ControlHelper.getUi5Id(aAggregation[i]),
-                        ui5AbsoluteId: aAggregation[i].getId()
-                    });
-                }
+                // for every single line in aggregation data, get the binding context and UI5 IDs
+                oAggregationInfo.rows = aAggregationData.map(function(oAggregationRow) {
+                    return {
+                        context: UI5ControlHelper.getContexts(oAggregationRow),
+                        ui5Id: UI5ControlHelper.getUi5Id(oAggregationRow),
+                        ui5AbsoluteId: oAggregationRow.getId()
+                    };
+                });
+
+                // store aggregation information by name
                 oReturn.aggregation[oAggregationInfo.name] = oAggregationInfo;
             }
 
+            // cache element information
             TestItem._oTestGlobalCache["fnGetElement"][bFull][oItem.getId()] = oReturn;
+
             return oReturn;
         }
 
