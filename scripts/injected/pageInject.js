@@ -405,6 +405,29 @@ class TestItem {
 
     // #region Information retrieval
 
+    /**
+     * Obtains general information on the given control (available at the given DOM node).
+     *
+     * The data includes basically:
+     * - UI5 IDs,
+     * - metadata and component information.
+     *
+     * If {bFull === true}, the data is enhanced with the information on:
+     * - parents,
+     * - parents at levels 1–4,
+     * - view,
+     * - bindings and binding contexts,
+     * - simple properties,
+     * - label and item data.
+     *
+     * The data is obtained recursively (where applicable) and cached for easier and faster retrieval.
+     *
+     * @param {*} oControl the UI5 control to obtain information for
+     * @param {*} oDOMNode the DOM node of the UI5 control
+     * @param {*} bFull flag whether to obtain full information (see above)
+     *
+     * @returns {object} an object containing the listed information
+     */
     static _getElementInformation(oControl, oDOMNode, bFull = true) {
 
         /**
@@ -673,6 +696,12 @@ class TestItem {
             return oReturn;
         }
 
+        // check cache to return potentially existing cached result
+        if (TestItem._oTestGlobalCache["fnGetElementInfo"][bFull][oControl.getId()]) {
+            return TestItem._oTestGlobalCache["fnGetElementInfo"][bFull][oControl.getId()];
+        }
+
+        // construct raw return value
         var oReturn = {
             property: {},
             aggregation: {},
@@ -699,30 +728,32 @@ class TestItem {
             dom: null
         };
 
-        // return cached item rightaway
-        if (TestItem._oTestGlobalCache["fnGetElementInfo"][bFull][oControl.getId()]) {
-            return TestItem._oTestGlobalCache["fnGetElementInfo"][bFull][oControl.getId()];
-        }
-
         // if there is no control given, return empty information object
         if (!oControl) {
             return oReturn;
         }
 
-        //local methods on purpose (even if duplicated) (see above)
+        // get detailed information on given control
+        // TODO remove JQuery call
         oReturn = $.extend(true, oReturn, getElementInformationDetails(oControl, oDOMNode, bFull));
+
+        // if we do not perform a full retrieval, we can cache now and return
         if (bFull === false) {
             TestItem._oTestGlobalCache["fnGetElementInfo"][bFull][oControl.getId()] = oReturn;
             return oReturn;
         }
-        //get all parents, and attach the same information in the same structure
+
+        // get information on all parents
         oReturn.parent = getElementInformationDetails(UI5ControlHelper.getParentControlAtLevel(oControl, 1), bFull);
         oReturn.parentL2 = getElementInformationDetails(UI5ControlHelper.getParentControlAtLevel(oControl, 2), bFull);
         oReturn.parentL3 = getElementInformationDetails(UI5ControlHelper.getParentControlAtLevel(oControl, 3), bFull);
         oReturn.parentL4 = getElementInformationDetails(UI5ControlHelper.getParentControlAtLevel(oControl, 4), bFull);
+
+        // get information on label and item data
         oReturn.label = getElementInformationDetails(UI5ControlHelper.getLabelForItem(oControl), bFull);
         oReturn.itemdata = getElementInformationDetails(UI5ControlHelper.getItemDataForItem(oControl), bFull);
 
+        // cache result
         TestItem._oTestGlobalCache["fnGetElementInfo"][bFull][oControl.getId()] = oReturn;
 
         return oReturn;
