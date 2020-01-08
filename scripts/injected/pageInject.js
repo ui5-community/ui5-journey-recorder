@@ -320,7 +320,6 @@ class TestItem {
         var oItem = TestItem._getElementInformation(this._oControl, this._oDOMNode);
         oItem = TestItem._setUniqunessInformationElement(oItem);
         this._oOriginalDOMNode = this._oOriginalDOMNode ? this._oOriginalDOMNode : this._oDOMNode;
-        oItem.aggregationArray = [];
         oItem.parents = [];
         oItem.identifier.domIdOriginal = this._oOriginalDOMNode.id;
 
@@ -332,10 +331,6 @@ class TestItem {
                 isInput: $(aNode[i]).is("input") || $(aNode[i]).is("textarea"),
                 domChildWith: aNode[i].id.substr(oItem.control.getId().length)
             });
-        }
-
-        for (var sKey in oItem.aggregation) {
-            oItem.aggregationArray.push(oItem.aggregation[sKey]);
         }
         var oItemCur = oItem.control;
         while (oItemCur) {
@@ -407,7 +402,7 @@ class TestItem {
         function getElementInformationDetails(oItem, oDomNode, bFull = true) {
             var oReturn = {
                 property: {},
-                aggregation: [],
+                aggregation: {},
                 association: {},
                 binding: {},
                 //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25

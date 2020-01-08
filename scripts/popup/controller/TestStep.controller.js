@@ -744,20 +744,7 @@ sap.ui.define([
         _findItemAndExclude: function (oSelector) {
             //ensure "offline" editing.
             if (RecordController.getInstance().isRecording() || RecordController.getInstance().isInjected()) {
-                return new Promise(function (resolve, reject) {
-                    ConnectionMessages.findElements(Connection.getInstance(), oSelector).then(function (aItemsEnhanced) {
-                        for (var i = 0; i < aItemsEnhanced.length; i++) {
-                            var oItem = aItemsEnhanced[i];
-                            if (oItem.aggregationArray) {
-                                oItem.aggregation = {};
-                                for (var j = 0; j < oItem.aggregationArray.length; j++) {
-                                    oItem.aggregation[oItem.aggregationArray[j].name] = oItem.aggregationArray[j];
-                                }
-                            }
-                        }
-                        resolve(aItemsEnhanced);
-                    });
-                });
+                return ConnectionMessages.findElements(Connection.getInstance(), oSelector);
             } else {
                 return new Promise(function (resolve, reject) {
                     resolve([]);
@@ -1153,12 +1140,6 @@ sap.ui.define([
         _setItem: function (oItem) {
             this._suspendPerformanceBindings();
 
-            if (oItem.aggregationArray) {
-                oItem.aggregation = {};
-                for (var i = 0; i < oItem.aggregationArray.length; i++) {
-                    oItem.aggregation[oItem.aggregationArray[i].name] = oItem.aggregationArray[i];
-                }
-            }
             this._oModel.setProperty("/element/item", oItem);
             this._oModel.setProperty("/element/attributeFilter", []);
             this._oModel.setProperty("/element/assertFilter", []);
