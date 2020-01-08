@@ -304,6 +304,9 @@ class TestItem {
         this._oOriginalDomNode = oOriginalDomNode;
         this._testItem = null;
 
+        // correct original DOM not if not existing
+        this._oOriginalDOMNode = this._oOriginalDOMNode ? this._oOriginalDOMNode : this._oDOMNode;
+
         TestItem._resetCache();
     }
 
@@ -315,34 +318,39 @@ class TestItem {
      * on parents) and removes unserializable content.
      */
     initializeTestItem() {
-        // TODO: @Adrian - Fix bnd-ctxt uiveri5 2019/06/25
 
+        // enrich with element information
         var oItem = TestItem._getElementInformation(this._oControl, this._oDOMNode);
+
+        // enrich with uniqueness information
         oItem = TestItem._setUniqunessInformationElement(oItem);
-        this._oOriginalDOMNode = this._oOriginalDOMNode ? this._oOriginalDOMNode : this._oDOMNode;
-        oItem.parents = [];
+
+        // save original DOM-node ID to identifier information
         oItem.identifier.domIdOriginal = this._oOriginalDOMNode.id;
 
-        var aNode = UI5ControlHelper.getAllChildrenOfDom(oItem.control.getDomRef(), oItem.control);
-        oItem.children = [];
+        // enrich with information on child nodes within same control
+        var aChildNodes = UI5ControlHelper.getAllChildrenOfDom(oItem.control.getDomRef(), oItem.control);
+        oItem.children = aChildNodes.map(function (oChild) {
+            return {
+                isInput: ["input", "textarea"].indexOf(oChild.tagName.toLowerCase()),
+                domChildWith: oChild.id.substr(oItem.control.getId().length)
+            }
+        });
 
-        for (var i = 0; i < aNode.length; i++) {
-            oItem.children.push({
-                isInput: $(aNode[i]).is("input") || $(aNode[i]).is("textarea"),
-                domChildWith: aNode[i].id.substr(oItem.control.getId().length)
-            });
-        }
-        var oItemCur = oItem.control;
+        // enrich with information on all parent nodes
+        oItem.parents = [];
+        var oItemCur = UI5ControlHelper.getParentControlAtLevel(oItem.control, 1);
         while (oItemCur) {
+            // only add current item as parent if we get a DOM reference
+            if (oItemCur.getDomRef && oItemCur.getDomRef()) {
+                oItem.parents.push(TestItem._getElementInformation(oItemCur, oItemCur.getDomRef(), false));
+            }
+
+            // go to next parent
             oItemCur = UI5ControlHelper.getParentControlAtLevel(oItemCur, 1);
-            if (!oItemCur) {
-                break;
-            }
-            if (oItemCur && oItemCur.getDomRef && oItemCur.getDomRef()) {
-                oItem.parents.push(TestItem._getElementInformation(oItemCur, oItemCur.getDomRef ? oItemCur.getDomRef() : null, false));
-            }
         }
 
+        // remove any non-serializable information, so we can send the item in a message
         oItem = TestItem._removeNonSerializable(oItem);
 
         this._testItem = oItem;
