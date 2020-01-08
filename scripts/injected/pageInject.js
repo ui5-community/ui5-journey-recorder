@@ -1047,11 +1047,11 @@ class UI5ControlHelper {
     // #region Control identification (i.e., from DOM, parents, children)
 
     /**
-     * Retrieve the UI5 control for the given DOM node (i.e., HTML element)
+     * Retrieves the UI5 control for the given DOM node (i.e., HTML element).
      *
      * @param {HTMLElement} oDOMNode a DOM node (e.g., selected in UI)
      *
-     * @returns {sap.ui.core.Element} the UI5 element associated with the given DOM node
+     * @returns {sap.ui.core.Element} the UI5 controls associated with the given DOM node
      *
      * @see sap/ui/dom/jquery/control-dbg.js
      */
@@ -1092,6 +1092,19 @@ class UI5ControlHelper {
     }
 
     /**
+     * Retrieves the UI5 controls for the given DOM nodes (i.e., HTML elements).
+     *
+     * @param {Array} oDOMNodes an Array of DOM nodes
+     *
+     * @returns {Array(sap.ui.core.Element)} the UI5 controls associated with the given DOM nodes
+     *
+     * @see sap/ui/dom/jquery/control-dbg.js
+     */
+    static getControlsFromDom(oDOMNodes) {
+        return oDOMNodes.map(UI5ControlHelper.getControlFromDom);
+    }
+
+    /**
      * Returns all children of the given DOM node within the same UI5 control.
      *
      * @param {*} oDom the DOM node to inspect
@@ -1123,7 +1136,7 @@ class UI5ControlHelper {
     static findControlsBySelector(oSelector) {
 
         // collect all string selectors
-        var sSelectorStringForJQuery = [];
+        var aSelectorStrings = [];
 
         if (typeof oSelector !== "string") {
             if (JSON.stringify(oSelector) == JSON.stringify({})) {
@@ -1188,7 +1201,7 @@ class UI5ControlHelper {
 
                 // add DOM-reference query to selector strings
                 var sDOMId = "*[id$='" + oItem.getDomRef().id + "']";
-                sSelectorStringForJQuery.push(sDOMId);
+                aSelectorStrings.push(sDOMId);
             }
 
         } else {
@@ -1203,22 +1216,25 @@ class UI5ControlHelper {
 
             // add selector string as query to selector strings
             var sSearchId = "*[id$='" + oSelector + "']";
-            sSelectorStringForJQuery.push(sSearchId);
+            aSelectorStrings.push(sSearchId);
 
         }
 
-        // join selector string to use with JQuery
-        sSelectorStringForJQuery = sSelectorStringForJQuery.join(",");
-        // select items via JQuery based on selector strings
-        var aItem = $(sSelectorStringForJQuery);
+        // select DOM nodes based on selector strings
+        var aDOMNodes = aSelectorStrings.map(function(sIdSelector) {
+            return document.querySelector(sIdSelector);
+        });
+
+        // obtain controls for the DOM nodes
+        var aItemsControls = UI5ControlHelper.getControlsFromDom(aDOMNodes);
 
         // if the result does not make sense or is no UI5 control, return empty
-        if (!aItem || !aItem.length || !aItem.control() || !aItem.control().length) {
+        if (!aDOMNodes || !aDOMNodes.length || !aItemsControls || !aItemsControls.length) {
             return [];
         }
 
         // return control for item
-        return aItem.control();
+        return aItemsControls;
     }
 
     static getOwnerComponent(oItem) {
