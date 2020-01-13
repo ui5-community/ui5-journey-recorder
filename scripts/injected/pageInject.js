@@ -734,8 +734,7 @@ class TestItem {
         }
 
         // get detailed information on given control
-        // TODO remove JQuery call
-        oReturn = $.extend(true, oReturn, getElementInformationDetails(oControl, oDOMNode, bFull));
+        oReturn = deepExtend(oReturn, getElementInformationDetails(oControl, oDOMNode, bFull));
 
         // if we do not perform a full retrieval, we can cache now and return
         if (bFull === false) {
@@ -1369,9 +1368,7 @@ class UI5ControlHelper {
         }
 
         var oModel = {};
-        oModel = $.extend(true, oModel, oItem.oModels);
-        oModel = $.extend(true, oModel, oItem.oPropagatedProperties.oModels);
-
+        oModel = deepExtend(oModel, oItem.oModels, oItem.oPropagatedProperties.oModels);
         return oModel;
     }
 
@@ -1732,7 +1729,7 @@ class UI5ControlHelper {
                 }
                 oMetadata = oMetadata.getParent();
             }
-            return $.extend(true, [], aReturn);
+            return aReturn;
         }
 
         var aClassArray = __getControlClassArray(oItem);
@@ -1913,6 +1910,130 @@ UI5ControlHelper._oElementMix = {
 // #endregion
 
 // #region Utility functions
+
+/**
+ * Checks whether the object is a plain object (created using "{}" or "new Object").
+ *
+ * @param {Object} obj the object which is checked
+ * @returns {Boolean} whether or not the object is a plain object (created using "{}" or "new Object")
+ *
+ * @see OpenUI5 module sap/base/util/isPlainObject
+ */
+function isPlainObject(obj) {
+    /*
+     * The code in this function is taken from OpenUI5 "isPlainObject" and got modified.
+     *
+     * OpenUI5 v1.72.4
+     * https://openui5.org/
+     *
+     * Copyright OpenUI5 and other contributors
+     * Released under the Apache-2.0 license
+     * https://github.com/SAP/openui5/blob/master/LICENSE.txt
+     *
+     * Changes:
+     * - inline variable declarations,
+     * - remove unnecessary JSdoc strings, and
+     * - adjust function declaration
+     */
+
+    // Detect obvious negatives
+    // Use toString instead of jQuery.type to catch host objects
+    if ( !obj || {}.toString.call( obj ) !== "[object Object]" ) {
+        return false;
+    }
+
+    var proto = Object.getPrototypeOf( obj );
+
+    // Objects with no prototype (e.g., `Object.create( null )`) are plain
+    if ( !proto ) {
+        return true;
+    }
+
+    // Objects with a prototype are considered plain only if they were constructed by a global Object function
+    var Ctor = {}.hasOwnProperty.call( proto, "constructor" ) && proto.constructor;
+    return typeof Ctor === "function" && {}.hasOwnProperty.toString.call( Ctor ) === {}.hasOwnProperty.toString.call( Object );
+}
+
+/**
+ * Merge the contents of two or more objects recursively together into the first object.
+ *
+ * @param {*} target an object that will receive the new properties of additionally passed objects, an empty object by default
+ *
+ * @license MIT
+ */
+function deepExtend(target) {
+    /**
+     * The code in this function is taken from jQuery 3.4.1 "jQuery.extend" and got modified.
+     * Furthermore, code from "You might not need jQuery" (deep extend) is used.
+     *
+     * jQuery JavaScript Library v3.4.1
+     * https://jquery.com/
+     *
+     * Copyright jQuery Foundation and other contributors
+     * Released under the MIT license
+     * https://jquery.org/license
+     *
+     * You might not need jQuery
+     * http://youmightnotneedjquery.com/#deep_extend
+     *
+     * Copyright HubSpot and other contributors
+     * Released under the MIT license
+     * https://github.com/HubSpot/youmightnotneedjquery/blob/gh-pages/LICENSE
+     */
+
+    // get target, empty object by default
+    target = target || {};
+
+    // Handle case when target is a string or something (possible in deep copy)
+    if (typeof target !== "object" && typeof target !== "function") {
+        target = {};
+    }
+
+    // define temporary variables
+    var key, obj, src, copy, clone;
+
+    // get properties of all further arguments
+    for (var i = 1; i < arguments.length; i++) {
+        obj = arguments[i];
+
+        // ignore any non-object arguments
+        if (!obj) {
+            continue;
+        }
+
+        // loop over all properties of current object
+        for (key in obj) {
+
+            src = target[key];
+            copy = obj[key];
+
+            // skip undefined values, overriding the same value, and the __proto__ key
+            if (copy === undefined || target === copy || key === "__proto__") {
+                continue;
+            }
+
+            // recurse if merging plain objects or arrays
+            if (copy && ($.isPlainObject(copy) || Array.isArray(copy))) {
+
+                if (Array.isArray(copy)) {
+                    clone = src && Array.isArray(src) ? src : [];
+                } else {
+                    clone = src && $.isPlainObject(src) ? src : {};
+                }
+
+                // Never move original objects, clone them
+                target[key] = deepExtend(clone, copy);
+
+            } else {
+                // override anything else
+                target[key] = copy;
+            }
+
+        }
+    }
+
+    return target;
+}
 
 // #endregion
 
