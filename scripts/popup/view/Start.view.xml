@@ -52,7 +52,7 @@
                                 <ColumnListItem type="Navigation" press="onStartNewRecording">
                                     <cells>
                                         <core:Icon src="sap-icon://record" color="red"/>
-                                        <Text text="{viewModel>url}"/>
+                                        <Text text="{viewModel>url} (Tab ID {viewModel>id})"/>
                                         <Button icon="sap-icon://display" press="onDisplayPage"/>
                                         <!--<Button icon="sap-icon://database" press="onMockserver"/>-->
                                     </cells>
