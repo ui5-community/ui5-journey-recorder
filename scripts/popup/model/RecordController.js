@@ -2,12 +2,11 @@
 sap.ui.define([
     "sap/ui/base/Object",
     "sap/ui/model/json/JSONModel",
-    "com/ui5/testing/model/Communication",
     "com/ui5/testing/model/Connection",
     "com/ui5/testing/model/ConnectionMessages",
     "sap/m/MessageToast",
     "sap/m/MessageBox"
-], function (UI5Object, JSONModel, Communication, Connection, ConnectionMessages, MessageToast, MessageBox) {
+], function (UI5Object, JSONModel, Connection, ConnectionMessages, MessageToast, MessageBox) {
     "use strict";
 
     /**
@@ -111,8 +110,10 @@ sap.ui.define([
 
         stopRecording: function () {
             if (this._oModel.getProperty("/isRecording") === true) {
-                Communication.fireEvent("stop");
-                Communication.fireEvent("unlock");
+                ConnectionMessages.stopRecording(Connection.getInstance())
+                .then(function() {
+                    ConnectionMessages.unlockPage(Connection.getInstance());
+                });
                 this._onStopped();
             }
         },

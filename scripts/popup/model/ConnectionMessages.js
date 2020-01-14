@@ -28,6 +28,16 @@ sap.ui.define([], function () {
         /**
          *
          * @param {com.ui5.testing.model.Connection} connection the connection to use for sending messages
+         */
+        static stopRecording(oConnection) {
+            return oConnection.syncMessage({
+                action: "stopRecording"
+            });
+        }
+
+        /**
+         *
+         * @param {com.ui5.testing.model.Connection} connection the connection to use for sending messages
          * @param {object} oItemSelector selector information
          */
         static findElements(oConnection, oItemSelector) {
@@ -48,6 +58,17 @@ sap.ui.define([], function () {
                 data: oInformation
             });
         }
+
+        /**
+         *
+         * @param {com.ui5.testing.model.Connection} connection the connection to use for sending messages
+         */
+        static unlockPage(oConnection) {
+            return oConnection.syncMessage({
+                action: "unlockPage"
+            });
+        }
+
     }
 
     return ConnectionMessages;
