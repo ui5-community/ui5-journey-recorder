@@ -99,9 +99,11 @@ class PageCommunication {
             //     return this._getDataModelInformation();
             // case "replay-steps":
             //     return this._doReplaySteps(oEventData);
-            // case "execute":
-            //     this._executeAction(oEventData);
-            //     break;
+            case "executeAction":
+                _executeAction(oMessage.data.data);
+                PageCommunication.getInstance().messageFromPage(sEventType, {}, iMessageID);
+                break;
+
             // case "setWindowLocation":
             //     this._setWindowLocation(oEventData);
             //     break;
@@ -123,6 +125,100 @@ class PageCommunication {
 
 function _findItemsBySelector(oSelector) {
     return TestItem.findItemsBySelector(oSelector);
+}
+
+function _executeAction(oEventData) {
+    // make screen available again
+    unlockScreen();
+
+    // get element and DOM node from event data
+    var oItem = oEventData.element;
+    var oDOMNode = UI5ControlHelper.getDomForControl(oItem);
+
+    // reveal DOM node by using CSS classes and add fade-out effect
+    revealDOMNode(oDOMNode);
+    setTimeout(function () {
+        revealDOMNode(null);
+    }, 500);
+
+    // for mouse-press events
+    if (oItem.property.actKey === "PRS") {
+
+        //send touch event..
+        var event = new MouseEvent('mousedown', {
+            view: window,
+            bubbles: true,
+            cancelable: true
+        });
+        event.originalEvent = event; //self refer
+        oDOMNode.dispatchEvent(event);
+
+        var event = new MouseEvent('mouseup', {
+            view: window,
+            bubbles: true,
+            cancelable: true
+        });
+        event.originalEvent = event; //self refer
+        oDOMNode.dispatchEvent(event);
+
+        var event = new MouseEvent('click', {
+            view: window,
+            bubbles: true,
+            cancelable: true
+        });
+        event.originalEvent = event; //self refer
+        oDOMNode.dispatchEvent(event);
+
+    } else
+    // for typing events
+    if (oItem.property.actKey === "TYP") {
+
+        var sText = oItem.property.selectActInsert;
+        oDOMNode.focus();
+        if (sText.length > 0 && oItem.property.actionSettings.replaceText === false) {
+            oDOMNode.val(oDOMNode.val() + sText);
+        } else {
+            oDOMNode.val(sText);
+        }
+
+        //first simulate a dummy input (NO! ENTER! - that is different)
+        //this will e.g. trigger the liveChange evnts
+        var event = new KeyboardEvent('input', {
+            view: window,
+            data: '',
+            bubbles: true,
+            cancelable: true
+        });
+        event.originalEvent = event;
+        oDOMNode.dispatchEvent(event);
+
+        //afterwards trigger the blur event, in order to trigger the change event (enter is not really the same.. but ya..)
+        if (oItem.property.actionSettings.blur === true) {
+            var event = new MouseEvent('blur', {
+                view: window,
+                bubbles: true,
+                cancelable: true
+            });
+            event.originalEvent = event;
+            oDOMNode.dispatchEvent(event);
+        }
+
+        if (oItem.property.actionSettings.enter === true) {
+            var event = new KeyboardEvent('keydown', {
+                view: window,
+                data: '',
+                charCode: 0,
+                code: "Enter",
+                key: "Enter",
+                keyCode: 13,
+                which: 13,
+                bubbles: true,
+                cancelable: true
+            });
+            event.originalEvent = event;
+            oDOMNode.dispatchEvent(event);
+        }
+    }
 }
 
 function _getWindowInfo() {
@@ -1139,6 +1235,25 @@ class UI5ControlHelper {
      */
     static getControlsFromDom(oDOMNodes) {
         return oDOMNodes.map(UI5ControlHelper.getControlFromDom);
+    }
+
+    /**
+     * Retrieves the HTML/DOM node for the given UI5 control data.
+     *
+     * @param {object} oControlData an object with UI5-control data
+     *
+     * @returns {HTMLNode} the DOM node associated with the given UI5 control
+     */
+    static getDomForControl(oControlData) {
+        // check whether the given control is not embedded into another one
+        var sExtension = oControlData.property.domChildWith;
+        if (!sExtension.length) {
+            return sap.ui.getCore().byId(oControlData.item.identifier.ui5AbsoluteId).getDomRef();
+        }
+
+        // return a default query for the combined ID
+        var sIdSelector = "*[id$='" + (oControlData.item.identifier.ui5AbsoluteId + sExtension) + "']";
+        return document.querySelector(sIdSelector);
     }
 
     /**

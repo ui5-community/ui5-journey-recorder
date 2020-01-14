@@ -578,7 +578,7 @@ sap.ui.define([
                         return;
                     }
                     oElement.item.identifier = aElements[0].identifier;
-                    Communication.fireEvent("execute", {
+                    ConnectionMessages.executeAction(Connection.getInstance(), {
                         element: oElement
                     }).then(resolve);
                 });
