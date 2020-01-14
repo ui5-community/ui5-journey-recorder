@@ -78,9 +78,13 @@ class PageCommunication {
     _handleIncomingMessage(oMessage) {
         console.debug("Find suitable event handling strategy for event: %o", oMessage);
 
+        // unpack message data
         var sEventType = oMessage.data.type;
         var iMessageID = oMessage.data.messageID;
         var oEventData = oMessage.data.data;
+
+        // execute event action based on type and gather return value
+        var oReturn = {};
         switch (sEventType) {
             case "startRecording":
                 _startRecording(oEventData);
@@ -93,8 +97,7 @@ class PageCommunication {
             //     this.unlockScreen();
             //     break;
             case "findItemsBySelector":
-                var oElements = _findItemsBySelector(oEventData);
-                PageCommunication.getInstance().messageFromPage(sEventType, oElements, iMessageID);
+                oReturn = _findItemsBySelector(oEventData);
                 break;
 
             // case "mockserver":
@@ -102,8 +105,7 @@ class PageCommunication {
             // case "replay-steps":
             //     return this._doReplaySteps(oEventData);
             case "executeAction":
-                _executeAction(oEventData);
-                PageCommunication.getInstance().messageFromPage(sEventType, {}, iMessageID);
+                oReturn = _executeAction(oEventData);
                 break;
 
             // case "setWindowLocation":
@@ -115,13 +117,19 @@ class PageCommunication {
             // case "runSupportAsssistant":
             //     return this._runSupportAssistant(oEventData);
             case "getWindowInfo":
-                var oWindowInfo = _getWindowInfo();
-                PageCommunication.getInstance().messageFromPage(sEventType, oWindowInfo, iMessageID);
+                oReturn = _getWindowInfo();
                 break;
 
             default:
                 break;
         }
+
+        if (!oReturn) {
+            oReturn = {};
+        }
+
+        // send word that the action has been executed
+        PageCommunication.getInstance().messageFromPage(sEventType, oReturn, iMessageID);
     }
 }
 
