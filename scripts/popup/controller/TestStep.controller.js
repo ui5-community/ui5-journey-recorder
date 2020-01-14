@@ -523,7 +523,7 @@ sap.ui.define([
          *
          */
         _onSave: function () {
-            this._save(function () {
+            this._save().then(function () {
                 //navigate backwards to the screen, and immediatly start recording..
                 if (this._bReplayMode === true) {
                     this.getRouter().navTo("testReplay", {
@@ -542,22 +542,24 @@ sap.ui.define([
          *
          * @param {*} fnCallback
          */
-        _save: function (fnCallback) {
-            this._checkAndDisplay(function () {
-                var oCurrentElement = this._oModel.getProperty("/element");
-                this._adjustBeforeSaving(oCurrentElement).then(function (oElementFinal) {
-                    var aElements = this.getModel("navModel").getProperty("/elements");
-                    if (this._bReplayMode === true) {
-                        aElements[this._sElementId] = oElementFinal;
-                    } else {
-                        aElements.push(oElementFinal);
-                    }
-                    this.getModel("navModel").setProperty("/elements", aElements);
-                    this.getModel("navModel").setProperty("/elementLength", aElements.length);
+        _save: function () {
+            return new Promise(function (resolve, reject) {
+                this._checkAndDisplay().then(function () {
+                    var oCurrentElement = this._oModel.getProperty("/element");
+                    this._adjustBeforeSaving(oCurrentElement).then(function (oElementFinal) {
+                        var aElements = this.getModel("navModel").getProperty("/elements");
+                        if (this._bReplayMode === true) {
+                            aElements[this._sElementId] = oElementFinal;
+                        } else {
+                            aElements.push(oElementFinal);
+                        }
+                        this.getModel("navModel").setProperty("/elements", aElements);
+                        this.getModel("navModel").setProperty("/elementLength", aElements.length);
 
-                    this._executeAction(this._oModel.getProperty("/element")).then(function () {
-                        fnCallback();
-                    });
+                        this._executeAction(this._oModel.getProperty("/element")).then(function () {
+                            resolve();
+                        });
+                    }.bind(this));
                 }.bind(this));
             }.bind(this));
         },
@@ -688,28 +690,30 @@ sap.ui.define([
          *(3) DOM-ID is used (should be avoided where possible)
          * (4) No or >1 Element is selected..
          */
-        _checkAndDisplay: function (fnCallback) {
-            this._check().then(function (oResult) {
-                if (oResult.rating !== 5) {
-                    MessageBox.show(oResult.message, {
-                        styleClass: "sapUiCompact",
-                        icon: MessageBox.Icon.WARNING,
-                        title: "There are open issues - Are you sure you want to save?",
-                        actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-                        /**
-                         *
-                         * @param {*} oAction
-                         */
-                        onClose: function (oAction) {
-                            if (oAction === MessageBox.Action.OK) {
-                                fnCallback();
+        _checkAndDisplay: function () {
+            return new Promise(function (resolve, reject) {
+                this._check().then(function (oResult) {
+                    if (oResult.rating !== 5) {
+                        MessageBox.show(oResult.message, {
+                            styleClass: "sapUiCompact",
+                            icon: MessageBox.Icon.WARNING,
+                            title: "There are open issues - Are you sure you want to save?",
+                            actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+                            /**
+                             *
+                             * @param {*} oAction
+                             */
+                            onClose: function (oAction) {
+                                if (oAction === MessageBox.Action.OK) {
+                                    resolve();
+                                }
                             }
-                        }
-                    });
-                } else {
-                    fnCallback();
-                }
-            });
+                        });
+                    } else {
+                        resolve();
+                    }
+                });
+            }.bind(this));
         },
 
         /**
