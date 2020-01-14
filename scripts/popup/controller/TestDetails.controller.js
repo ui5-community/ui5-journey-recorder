@@ -678,9 +678,8 @@ sap.ui.define([
 
         /**
          *
-         * @param {*} bImmediate
          */
-        _initTestCreate: function (bImmediate) {
+        _initTestCreate: function () {
             this._oModel.setProperty("/replayMode", false);
 
             this.getModel("navModel").setProperty("/test", {
@@ -699,13 +698,13 @@ sap.ui.define([
                     this._oModel.setProperty("/codeSettings/testUrl", oData.url);
                     this._oModel.setProperty("/codeSettings/ui5Version", oData.ui5Version);
 
-                    // start recording
-                    this._startRecording(bImmediate);
-
                     // close record dialog if we have an immediate start
-                    if (bImmediate === true) {
+                    if (Connection.getInstance().isStartImmediately()) {
                         this._oRecordDialog.close();
                     }
+
+                    // start recording
+                    RecordController.getInstance().startRecording();
 
                     this.getRouter().navTo("TestDetails", {
                         TestId: this.getModel("navModel").getProperty("/test/uuid")
@@ -725,7 +724,7 @@ sap.ui.define([
             }
 
             Navigation.setSelectedItem(oData);
-            this._focusPopup();
+            RecordController.getInstance().focusPopup();
 
             var sRouterTarget = this._bQuickMode ? "elementCreateQuick" : "elementCreate";
             this.getRouter().navTo(sRouterTarget, {
@@ -840,52 +839,5 @@ sap.ui.define([
             this._oModel.setProperty("/codes", CodeHelper.getFullCode(codeSettings, aStoredItems));
         },
 
-        /**
-         * Focus the popup.
-         */
-        _focusPopup: function () {
-            var iWindowId = Connection.getInstance().getConnectingWindowId();
-            if (iWindowId) {
-                console.debug("changing to window: " + iWindowId)
-                chrome.windows.update(iWindowId, {
-                    focused: true
-                });
-            }
-        },
-
-        /**
-         * Focus the target window.
-         */
-        _focusTargetWindow: function () {
-            chrome.tabs.update(
-                Connection.getInstance().getConnectedTabId(),
-                {
-                    "active": true
-                },
-                function (tab) {
-                    chrome.windows.update(tab.windowId, {
-                        focused: true
-                    });
-                }
-            );
-        },
-
-        _startRecording: function () {
-            var bStartForControl = Connection.getInstance().isStartImmediately();
-            Connection.getInstance().setStartImmediately(false); // disable consecutive immediate starts
-
-            // send word to the injection that recording starts
-            ConnectionMessages.startRecording(
-                Connection.getInstance(),
-                {
-                    startImmediate: bStartForControl ? bStartForControl : false
-                }
-            );
-
-            this.getModel("recordModel").setProperty("/isRecording", true);
-            if (bStartForControl !== true) {
-                this._focusTargetWindow();
-            }
-        }
     });
 });
