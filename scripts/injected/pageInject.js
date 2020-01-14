@@ -233,20 +233,8 @@ class PageListener {
 
         console.debug("pageInject.onClick – Found control: %o", oDOMNode);
 
-        // highlight found DOM element of control on the site:
-        // 1) remove all previously enabled highlightings
-        var prevFoundElements = document.getElementsByClassName("UI5TR_ControlFound");
-        Array.prototype.forEach.call(prevFoundElements, function (oElement) {
-            oElement.classList.remove("UI5TR_ControlFound");
-            oElement.classList.remove("UI5TR_ControlFound_InlineFix");
-        });
-        // 2) highlight the new element
-        oDOMNode.classList.add("UI5TR_ControlFound");
-        // 3) ensure that class is displayed properly (e.g., DIV elements with 'display: inline'
-        // do not display background)
-        if (window.getComputedStyle(oDOMNode)["display"] === "inline") {
-            oDOMNode.classList.add("UI5TR_ControlFound_InlineFix");
-        }
+        // reveal DOM node by using CSS classes
+        revealDOMNode(oDOMNode);
 
         // send control to extension for testing:
         // 0) construct test item
@@ -2072,6 +2060,34 @@ function lockScreen() {
 
 function unlockScreen() {
     _bScreenLocked = false;
+}
+
+/**
+ * Highlight the given DOM element of a control on the site using CSS classes.
+ *
+ * @param {HTMLElement} oDOMNode the corresponding selected DOM node
+ */
+function revealDOMNode(oDOMNode) {
+    // 1) remove all previously enabled highlightings
+    var prevFoundElements = document.getElementsByClassName("UI5TR_ControlFound");
+    Array.prototype.forEach.call(prevFoundElements, function (oElement) {
+        oElement.classList.remove("UI5TR_ControlFound");
+        oElement.classList.remove("UI5TR_ControlFound_InlineFix");
+    });
+
+    // 2) do not add CSS classes if there is no DOM node
+    if (!oDOMNode) {
+        return;
+    }
+
+    // 2) highlight the new element
+    oDOMNode.classList.add("UI5TR_ControlFound");
+
+    // 3) ensure that class is displayed properly (e.g., DIV elements with 'display: inline'
+    // do not display background)
+    if (window.getComputedStyle(oDOMNode)["display"] === "inline") {
+        oDOMNode.classList.add("UI5TR_ControlFound_InlineFix");
+    }
 }
 
 // #endregion
