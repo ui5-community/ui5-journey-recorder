@@ -80,10 +80,12 @@ class PageCommunication {
 
         var sEventType = oMessage.data.type;
         var iMessageID = oMessage.data.messageID;
+        var oEventData = oMessage.data.data;
         switch (sEventType) {
-            // case "start":
-            //     this._start(oEventData);
-            //     break;
+            case "startRecording":
+                _startRecording(oEventData);
+                break;
+
             // case "stop":
             //     this._stop();
             //     break;
@@ -91,7 +93,7 @@ class PageCommunication {
             //     this.unlockScreen();
             //     break;
             case "findItemsBySelector":
-                var oElements = _findItemsBySelector(oMessage.data.data);
+                var oElements = _findItemsBySelector(oEventData);
                 PageCommunication.getInstance().messageFromPage(sEventType, oElements, iMessageID);
                 break;
 
@@ -100,7 +102,7 @@ class PageCommunication {
             // case "replay-steps":
             //     return this._doReplaySteps(oEventData);
             case "executeAction":
-                _executeAction(oMessage.data.data);
+                _executeAction(oEventData);
                 PageCommunication.getInstance().messageFromPage(sEventType, {}, iMessageID);
                 break;
 
@@ -121,6 +123,34 @@ class PageCommunication {
                 break;
         }
     }
+}
+
+function _startRecording(oInformation) {
+    // start recording
+    _bActive = true;
+    _bStarted = true;
+
+    lockScreen(); // we are locked until the next step occurs, or the overall test is stopped..
+
+    // unhighlight any previously selected DOM nodes
+    revealDOMNode(null);
+
+    if (oInformation && oInformation.startImmediate === true) {
+        if (!oLastDom && oInformation.domId) {
+            oLastDom = document.getElementById(oInformation.domId);
+        }
+        if (!oLastDom) {
+            oLastDom = document.activeElement;
+        }
+
+        //Directly select again (woop)
+        setTimeout(function () {
+            PageListener.getInstance().handleClickOn(oLastDom);
+            oLastDom = null;
+            this._bActive = false;
+        }.bind(this), 10);
+    }
+
 }
 
 function _findItemsBySelector(oSelector) {
@@ -268,6 +298,12 @@ class PageListener {
             }
         };
 
+        document.addEventListener("mousedown", function (event) {
+            if (event.button == 2) {
+                oLastDom = event.target;
+            }
+        }, true);
+
         document.onclick = function (e) {
             var e = e || window.event,
                 el = e.target || e.srcElement;
@@ -284,7 +320,7 @@ class PageListener {
             }
 
             _bActive = false;
-            this._handleClickOn(el);
+            this.handleClickOn(el);
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
@@ -293,7 +329,7 @@ class PageListener {
         sap.m.MessageToast.show("UI5-Testrecorder fully injected!");
     }
 
-    _handleClickOn(oDOMNode) {
+    handleClickOn(oDOMNode) {
 
         console.debug("pageInject.onClick – Clicked on: %o", oDOMNode);
 
@@ -2162,12 +2198,8 @@ function deepExtend(target) {
 var _bActive = false,
     _bScreenLocked = false,
     _bStarted = false,
-    _oDialog = null;
-
-function startRecording() {
-    _bActive = true;
-    _bStarted = true;
-}
+    _oDialog = null,
+    oLastDom = null;
 
 function lockScreen() {
     _bScreenLocked = true;
@@ -2268,7 +2300,6 @@ function setupTestRecorderFunctions() {
     //setup listener for messages from the Extension
     PageCommunication.getInstance().start();
     PageListener.getInstance().setupPageListener();
-    startRecording();
 }
 
 // Finished setting up the coding now check if UI5 is loaded on the page.
