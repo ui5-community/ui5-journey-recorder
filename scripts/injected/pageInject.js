@@ -1046,6 +1046,56 @@ class UI5ControlHelper {
     // #region Control identification (i.e., from DOM, parents, children)
 
     /**
+     * Retrieves the fully initialized instance of the current SAPUI5 Core (and not only its interface).
+     *
+     * Using the returned element, it is possible to retrieve all registered UI5 elements (see {UI5ControlHelper.getRegisteredElements}) before UI5 v1.67.
+     *
+     * @returns {sap.ui.core.Core} the fully initialized Core instance
+     *
+     * @see UI5ControlHelper.getRegisteredElements
+     *
+     * @license CC-BY-SA-4.0 <https://creativecommons.org/licenses/by-sa/4.0/>
+     * @see https://stackoverflow.com/a/44510152
+     */
+    static getInitializedCore() {
+        var oCoreObject;
+
+        // construct fake plugin to retrieve initialized core
+        var fakePlugin = {
+            startPlugin: function (core) {
+                oCoreObject = core;
+                return core;
+            }
+        };
+
+        // register plugin to retrieve core and unregister it immediately
+        sap.ui.getCore().registerPlugin(fakePlugin);
+        sap.ui.getCore().unregisterPlugin(fakePlugin);
+
+        return oCoreObject;
+    }
+
+    /**
+     * Retrieves all registered UI5 elements from the Core object.
+     *
+     * @returns {Object.<sap.ui.core.ID, sap.ui.core.Element>} object with all registered elements, keyed by their ID
+     */
+    static getRegisteredElements() {
+        var oElements = {};
+
+        // try to use registry (UI5 >= v1.67)
+        if (sap.ui.core.Element && sap.ui.core.Element.registry) {
+            oElements = sap.ui.core.Element.registry.all();
+        }
+        // use workaround with fully initialized core otherwise
+        else {
+            oElements = UI5ControlHelper.getInitializedCore().mElements;
+        }
+
+        return oElements;
+    }
+
+    /**
      * Retrieves the UI5 control for the given DOM node (i.e., HTML element).
      *
      * @param {HTMLElement} oDOMNode a DOM node (e.g., selected in UI)
@@ -1142,24 +1192,9 @@ class UI5ControlHelper {
                 return [];
             }
 
+            var aElements = UI5ControlHelper.getRegisteredElements();
+
             // TODO can we reuse UI5ControlHelper.getLabelForItem._getAllLabels here?
-            var oCoreObject = null;
-            var fakePlugin = {
-                startPlugin: function (core) {
-                    oCoreObject = core;
-                    return core;
-                }
-            };
-            sap.ui.getCore().registerPlugin(fakePlugin);
-            sap.ui.getCore().unregisterPlugin(fakePlugin);
-
-            var aElements = {};
-            if (sap.ui.core.Element && sap.ui.core.Element.registry) {
-                aElements = sap.ui.core.Element.registry.all();
-            } else {
-                aElements = oCoreObject.mElements;
-            }
-
             //search for identifier of every single object..
             for (var sElement in aElements) {
 
@@ -1418,27 +1453,9 @@ class UI5ControlHelper {
             }
 
             TestItem._oTestGlobalCache.label = {};
-            var oCoreObject = null;
-            // TODO https://stackoverflow.com/a/44510152
-            var fakePlugin = {
-                startPlugin: function (core) {
-                    oCoreObject = core;
-                    return core;
-                }
-            };
-            sap.ui.getCore().registerPlugin(fakePlugin);
-            sap.ui.getCore().unregisterPlugin(fakePlugin);
-
-            var aElements = {};
-            if (sap.ui.core.Element && sap.ui.core.Element.registry) {
-                aElements = sap.ui.core.Element.registry.all();
-            } else {
-                aElements = oCoreObject.mElements;
-            }
-
-
-            for (var sCoreObject in aElements) {
-                var oObject = aElements[sCoreObject];
+            var aElements = UI5ControlHelper.getRegisteredElements();
+            for (var sElement in aElements) {
+                var oObject = aElements[sElement];
                 if (oObject.getMetadata()._sClassName === "sap.m.Label") {
                     var oLabelFor = oObject.getLabelFor ? oObject.getLabelFor() : null;
                     if (oLabelFor) {
