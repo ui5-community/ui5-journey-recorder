@@ -77,13 +77,22 @@ sap.ui.define([
         },
 
         /**
+         * Check whether the connection is established.
+         *
+         * @returns {boolean} true if the connection is established, false otherwise
+         */
+        isConnected: function() {
+            return !!this._port;
+        },
+
+        /**
          * Handle incomming connection and adjusts the port listening to
          *
          * @param {chrome.runtime.Port} port the port which is calling
          */
         _handleIncommingConnections: function (port) {
             console.log('connection incomming');
-            if (!this._port) {
+            if (!this.isConnected()) {
                 this._port = port;
                 this._port.onDisconnect.addListener(function () {
                     this.resetConnection();
