@@ -701,6 +701,8 @@ sap.ui.define([
                     // close record dialog if we have an immediate start
                     if (Connection.getInstance().isStartImmediately()) {
                         this._oRecordDialog.close();
+                    } else {
+                        this._oRecordDialog.open();
                     }
 
                     // start recording
