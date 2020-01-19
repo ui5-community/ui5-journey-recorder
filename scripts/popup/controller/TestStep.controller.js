@@ -9,7 +9,6 @@ sap.ui.define([
     "com/ui5/testing/model/ConnectionMessages",
     "com/ui5/testing/model/Connection",
     "com/ui5/testing/model/Navigation",
-    "com/ui5/testing/model/Communication",
     "com/ui5/testing/model/RecordController",
     "com/ui5/testing/model/CodeHelper",
     "com/ui5/testing/model/Utils"
@@ -23,7 +22,6 @@ sap.ui.define([
     ConnectionMessages,
     Connection,
     Navigation,
-    Communication,
     RecordController,
     CodeHelper,
     Utils) {
