@@ -86,7 +86,7 @@ sap.ui.define([
                             }.bind(this));
                         }.bind(this));
                     } else {
-                        return new Promise(function () {});
+                        return new Promise(function () { });
                     }
                 }.bind(this)
             }
@@ -118,10 +118,10 @@ sap.ui.define([
         stopRecording: function () {
             if (this._oModel.getProperty("/isRecording") === true) {
                 ConnectionMessages.stopRecording(Connection.getInstance())
-                .then(function() {
-                    ConnectionMessages.unlockPage(Connection.getInstance());
-                });
-                this._onStopped();
+                    .then(function () {
+                        ConnectionMessages.unlockPage(Connection.getInstance());
+                        this._onStopped();
+                    }.bind(this));
             }
         },
 
