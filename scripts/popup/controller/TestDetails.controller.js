@@ -87,6 +87,15 @@ sap.ui.define([
 
             // add event listener for item selections on page
             sap.ui.getCore().getEventBus().subscribe("Internal", "itemSelected", this._onItemSelected.bind(this));
+
+            // trigger prompt on unload!
+            // TODO insert function here that asks for saving the changes → which can be used also on connection losses
+            window.addEventListener('beforeunload', function (e) {
+                // cancel the event
+                e.preventDefault();
+                // set 'returnValue' as required by Chrome
+                e.returnValue = '';
+            });
         },
 
         /**

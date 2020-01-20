@@ -24,6 +24,14 @@ sap.ui.define([
             this._bIsInjected = false;
 
             sap.ui.getCore().getEventBus().subscribe("Internal", "recordingStopped", this._onStopped.bind(this));
+
+            // trigger prompt on unload!
+            window.addEventListener('beforeunload', function (e) {
+                // cancel the event
+                e.preventDefault();
+                // set 'returnValue' as required by Chrome
+                e.returnValue = '';
+            });
         },
 
         // FIXME add reset functionality!
