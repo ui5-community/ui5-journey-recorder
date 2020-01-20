@@ -70,7 +70,6 @@ sap.ui.define([
         onInit: function () {
             // set models
             this.getView().setModel(this._oModel, "viewModel");
-            this.getView().setModel(RecordController.getInstance().getModel(), "recordModel");
             this.getView().setModel(Navigation.getModel(), "navModel");
             this.getView().setModel(GlobalSettings.getModel(), "settings");
 
@@ -648,7 +647,6 @@ sap.ui.define([
                 this
             );
             this._oRecordDialog.setModel(this._oModel, "viewModel");
-            this._oRecordDialog.setModel(RecordController.getInstance().getModel(), "recordModel");
         },
 
         /**
@@ -823,9 +821,7 @@ sap.ui.define([
                         this._updatePreview();
                     }.bind(this)
                 });
-            } else
-            // TODO remove direct access to property of recordModel here
-            if (this.getModel("recordModel").getProperty("/isRecording") === true && this._bQuickMode === false) {
+            } else if (RecordController.getInstance().isRecording() && this._bQuickMode === false) {
                 setTimeout(function () {
                     this._oRecordDialog.open();
                 }.bind(this), 100);
