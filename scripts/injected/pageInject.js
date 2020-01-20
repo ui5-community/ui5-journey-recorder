@@ -385,7 +385,7 @@ class PageListener {
         // 1) enhance with meta data
         oTestItem.initializeTestItem();
         // 3) send item to extension
-        PageCommunication.getInstance().messageFromPage("itemSelected", oTestItem.getTestItem());
+        PageCommunication.getInstance().messageFromPage("itemSelected", oTestItem.getData());
 
         // lock screen to indicate switch to extension
         lockScreen();
@@ -402,7 +402,7 @@ class PageListener {
  * There are three steps to perform:
  * 1. Construct a new object.
  * 2. Call .initializeTestItem() on object.
- * 3. Call .getTestItem() on object to retrieve initialized item.
+ * 3. Call .getData() on object to retrieve initialized item.
  *
  * @constructor
  * @param {sap.ui.core.Element} oControl the UI5 control to handle
@@ -488,13 +488,11 @@ class TestItem {
     }
 
     /**
-     * Return inialized test item.
-     *
-     * // TODO rename to getData
+     * Return inialized test-item data.
      *
      * @returns {Object} the initalized test-item data
      */
-    getTestItem() {
+    getData() {
         if (!this._testItem) {
             console.log("Test item not initalized. Initializing now...");
             this.initializeItem();
