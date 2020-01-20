@@ -24,7 +24,6 @@ sap.ui.define([
             this._bIsInjected = false;
 
             sap.ui.getCore().getEventBus().subscribe("Internal", "recordingStopped", this._onStopped.bind(this));
-            sap.ui.getCore().getEventBus().subscribe("Internal", "injectDone", this._onInjectionDone.bind(this));
         },
 
         // FIXME add reset functionality!
@@ -121,20 +120,6 @@ sap.ui.define([
         _onStopped: function () {
             this._oModel.setProperty("/isRecording", false);
             this._bIsInjected = false;
-        },
-
-        // FIXME remove!
-        _onInjectionDone: function (oData) {
-            debugger;
-            if (oData.ok === true) {
-                window.onbeforeunload = function () {
-                    //inform our window, to clean up!
-                    this.stopRecording();
-                }.bind(this);
-                MessageToast.show("Initialization for " + this._sCurrentURL + " succeed. UI5 " + oData.version + " is used");
-            } else {
-                MessageToast.show("Recording for " + this._sCurrentURL + " not possible. UI5 is not used on that page.");
-            }
         },
 
         isInjected: function () {
