@@ -214,6 +214,7 @@ sap.ui.define([
          */
         _rejectConnection: function () {
             RecordController.getInstance().stopRecording();
+            // TODO close tab?
         },
 
         /**
@@ -822,7 +823,9 @@ sap.ui.define([
                         this._updatePreview();
                     }.bind(this)
                 });
-            } else if (this.getModel("recordModel").getProperty("/isRecording") === true && this._bQuickMode === false) {
+            } else
+            // TODO remove direct access to property of recordModel here
+            if (this.getModel("recordModel").getProperty("/isRecording") === true && this._bQuickMode === false) {
                 setTimeout(function () {
                     this._oRecordDialog.open();
                 }.bind(this), 100);

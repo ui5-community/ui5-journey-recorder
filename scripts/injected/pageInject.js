@@ -30,7 +30,7 @@ class PageCommunication {
      * Start connection by opening ports and application of listeners.
      */
     start() {
-        // add listener for incoming and outgoing messages
+        // add listener for incoming messages
         window.addEventListener("message", this._messageFromExtension.bind(this));
     }
 
@@ -152,6 +152,7 @@ function _startRecording(oInformation) {
         }
 
         //Directly select again (woop)
+        // TODO rework as Promise or async function!
         setTimeout(function () {
             PageListener.getInstance().handleClickOn(oLastDom);
             oLastDom = null;
@@ -162,6 +163,7 @@ function _startRecording(oInformation) {
 }
 
 function _findItemsBySelector(oSelector) {
+    // TODO create and use TestItem instance here
     return TestItem.findItemsBySelector(oSelector);
 }
 
@@ -312,6 +314,7 @@ class PageListener {
             }
         }, true);
 
+        // FIXME event prevention does not work properly (see also above): use addEventListener instead?
         document.onclick = function (e) {
             var e = e || window.event,
                 el = e.target || e.srcElement;
@@ -487,7 +490,9 @@ class TestItem {
     /**
      * Return inialized test item.
      *
-     * @returns {Object} the initalized test item
+     * // TODO rename to getData
+     *
+     * @returns {Object} the initalized test-item data
      */
     getTestItem() {
         if (!this._testItem) {
@@ -1236,6 +1241,7 @@ class UI5ControlHelper {
         // predefine resulting element ID
         var sResultID;
 
+        // TODO test this with LTS releases! (see version overview)
         // traverse up in the DOM tree until finding a proper UI5 control,
         // starting with the given DOM node
         var oCurrentCandidate = oDOMNode;
@@ -2210,6 +2216,7 @@ var _bActive = false,
     oLastDom = null;
 
 function lockScreen() {
+    // TODO show a DIV element with high z-index to block complete screen!
     _bScreenLocked = true;
 }
 

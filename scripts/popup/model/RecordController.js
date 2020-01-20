@@ -123,7 +123,7 @@ sap.ui.define([
             this._bIsInjected = false;
         },
 
-
+        // FIXME remove!
         _onInjectionDone: function (oData) {
             debugger;
             if (oData.ok === true) {

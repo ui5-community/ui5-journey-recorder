@@ -227,6 +227,7 @@
         }
     }
 
+    // TODO refactor as global variable
     // PageInjector element ID
     PageInjector.ID = "ui5-testrecorder-functions";
 
