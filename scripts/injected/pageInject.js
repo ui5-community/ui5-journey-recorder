@@ -87,12 +87,13 @@ class PageCommunication {
         var oReturn = {};
         switch (sEventType) {
             case "startRecording":
-                _startRecording(oEventData);
+                oReturn = _startRecording(oEventData);
                 break;
 
-            // case "stop":
-            //     this._stop();
-            //     break;
+            case "stopRecording":
+                oReturn = _stopRecording();
+                break;
+
             // case "unlock":
             //     this.unlockScreen();
             //     break;
@@ -160,6 +161,14 @@ function _startRecording(oInformation) {
         }.bind(this), 10);
     }
 
+}
+
+function _stopRecording() {
+    _bActive = false;
+    _bStarted = false;
+
+    // remove all DOM-node highlights
+    revealDOMNode(null);
 }
 
 function _findItemsBySelector(oSelector) {
