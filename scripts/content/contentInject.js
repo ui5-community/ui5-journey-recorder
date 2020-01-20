@@ -1,6 +1,9 @@
 (function () {
     "use strict";
 
+    // prefix for any created DOM-node tags
+    const TAG_ID_PREFIX = "ui5-testrecorder-functions";
+
     /**
      * ConnectionProxy class to handle any page–extension messaging.
      *
@@ -198,7 +201,7 @@
         static injectJS() {
             console.log("- Inject page script and wait until UI5 is loaded");
             var script = document.createElement('script');
-            script.id = PageInjector.ID;
+            script.id = TAG_ID_PREFIX + "-js";
             script.src = chrome.extension.getURL('/scripts/injected/pageInject.js');
             script.defer = "defer";
             var head = document.head;
@@ -206,7 +209,7 @@
         }
 
         static removeJS() {
-            var oJSTag = document.getElementById(PageInjector.ID);
+            var oJSTag = document.getElementById(TAG_ID_PREFIX + "-js");
             if (oJSTag) {
                 oJSTag.remove();
             }
@@ -218,7 +221,7 @@
         static injectCSS() {
             //add the UI5-Testrecorder formatting
             var link = document.createElement('link');
-            link.id = "testing_ui5";
+            link.id = TAG_ID_PREFIX + "-css";
             link.rel = 'stylesheet';
             link.type = 'text/css';
             link.href = chrome.extension.getURL('/scripts/injected/pageInject.css');
@@ -226,10 +229,6 @@
             document.head.appendChild(link);
         }
     }
-
-    // TODO refactor as global variable
-    // PageInjector element ID
-    PageInjector.ID = "ui5-testrecorder-functions";
 
     // open connections and inject JS
     ConnectionProxy.getInstance().start();
