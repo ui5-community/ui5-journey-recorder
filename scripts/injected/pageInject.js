@@ -94,32 +94,27 @@ class PageCommunication {
                 oReturn = _stopRecording();
                 break;
 
-            // case "unlock":
-            //     this.unlockScreen();
-            //     break;
             case "findItemsBySelector":
                 oReturn = _findItemsBySelector(oEventData);
                 break;
 
-            // case "mockserver":
-            //     return this._getDataModelInformation();
-            // case "replay-steps":
-            //     return this._doReplaySteps(oEventData);
             case "executeAction":
                 oReturn = _executeAction(oEventData);
                 break;
 
-            // case "setWindowLocation":
-            //     this._setWindowLocation(oEventData);
-            //     break;
+            case "getWindowInfo":
+                oReturn = _getWindowInfo();
+                break;
+
             // case "selectItem":
             //     this._selectItem(oEventData);
             //     break;
             // case "runSupportAsssistant":
             //     return this._runSupportAssistant(oEventData);
-            case "getWindowInfo":
-                oReturn = _getWindowInfo();
-                break;
+            // case "mockserver":
+            //     return this._getDataModelInformation();
+
+            // events that are not handled: "setWindowLocation", "unlock"/"unlockScreen"
 
             default:
                 break;
