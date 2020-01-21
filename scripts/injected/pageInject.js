@@ -467,7 +467,7 @@ class TestItem {
         var aChildNodes = UI5ControlHelper.getAllChildrenOfDom(oItem.control.getDomRef(), oItem.control);
         oItem.children = aChildNodes.map(function (oChild) {
             return {
-                isInput: ["input", "textarea"].indexOf(oChild.tagName.toLowerCase()),
+                isInput: ["input", "textarea"].includes(oChild.tagName.toLowerCase()),
                 domChildWith: oChild.id.substr(oItem.control.getId().length)
             }
         });
