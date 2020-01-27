@@ -433,10 +433,10 @@ class TestItem {
         };
     }
 
-    constructor(oControl, oDOMNode, oOriginalDomNode) {
+    constructor(oControl, oDOMNode, oOriginalDOMNode) {
         this._oControl = oControl;
         this._oDOMNode = oDOMNode;
-        this._oOriginalDomNode = oOriginalDomNode;
+        this._oOriginalDOMNode = oOriginalDOMNode;
         this._testItem = null;
 
         // correct original DOM not if not existing
