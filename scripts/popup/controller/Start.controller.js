@@ -1,13 +1,12 @@
 sap.ui.define([
     "com/ui5/testing/controller/BaseController",
-    "com/ui5/testing/model/Navigation",
     "sap/ui/model/json/JSONModel",
     "com/ui5/testing/model/ChromeStorage",
     "sap/m/MessageToast",
     "com/ui5/testing/model/Connection",
     "com/ui5/testing/model/Utils",
     "sap/m/MessageBox"
-], function (BaseController, Navigation, JSONModel, ChromeStorage, MessageToast, Connection, Utils, MessageBox) {
+], function (BaseController, JSONModel, ChromeStorage, MessageToast, Connection, Utils, MessageBox) {
     "use strict";
 
     return BaseController.extend("com.ui5.testing.controller.Start", {
@@ -20,7 +19,6 @@ sap.ui.define([
                 currentUrl: ""
             });
             this.getView().setModel(this._oModel, "viewModel");
-            this.getView().setModel(Navigation.getModel(), "navModel");
             this.getRouter().getRoute("start").attachPatternMatched(this._loadTableItems, this);
         },
 
@@ -170,8 +168,6 @@ sap.ui.define([
             oConnection.establishConnection(iId)
             .then((oData) => {
                 MessageToast.show(`Connection established: Page use ${oData.name} at version ${oData.version}`);
-                this.getModel("navModel").setProperty("/elements", []);
-                this.getModel("navModel").setProperty("/elementLength", 0);
                 this.getRouter().navTo("TestDetailsCreate");
             })
             .catch((oData) => {

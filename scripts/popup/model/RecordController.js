@@ -14,6 +14,20 @@ sap.ui.define([
      */
     var oInstance;
 
+    var _iUUIDSuffix = 0;
+
+    /**
+     *
+     */
+    function _uuidv4() {
+        var sStr = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0,
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        }) + _iUUIDSuffix++;
+        return sStr;
+    }
+
     var RecordController = UI5Object.extend("com.ui5.testing.model.RecordController", /** @lends com.ui5.testing.model.RecordController.prototype */ {
 
         constructor: function () {
@@ -35,7 +49,14 @@ sap.ui.define([
          */
         reset: function () {
             var oJSON = {
-                isRecording: false
+                isRecording: false,
+                item: {},
+                elements: [],
+                elementLength: 0,
+                test: {
+                    uuid: 0,
+                    createdAt: 0
+                }
             };
             this._oModel = new JSONModel(oJSON);
         },
@@ -98,6 +119,82 @@ sap.ui.define([
 
         getModel: function () {
             return this._oModel;
+        },
+
+        setSelectedItem: function (oItem) {
+            this._oModel.setProperty("/item", oItem);
+        },
+
+        getSelectedItem: function () {
+            return this._oModel.getProperty("/item");
+        },
+
+        getTestElements: function () {
+            return this._oModel.getProperty("/elements");
+        },
+
+       /**
+         *
+         * @param {string|integer} idx the index to obtain from the test elements
+         */
+        getTestElementById: function (idx) {
+            return this._oModel.getProperty("/elements/" + idx);
+        },
+
+        /**
+         *
+         * @param {string|integer} idx the index to remove from the test elements
+         */
+        removeTestElementById: function (idx) {
+            var aElements = this.getTestElements();
+            aElements.splice(idx, 1);
+            this.setTestElements(aElements);
+        },
+
+        setTestElements: function (aElements) {
+            this._oModel.setProperty("/elements", aElements);
+            this._oModel.setProperty("/elementLength", aElements.length);
+        },
+
+        getTestDetails: function () {
+            return this._oModel.getProperty("/test");
+        },
+
+        setTestDetails: function (oTestDetails) {
+            this._oModel.setProperty("/test", oTestDetails);
+        },
+
+        initializeTestDetails: function () {
+            this._oModel.setProperty("/test", {
+                uuid: _uuidv4(),
+                createdAt: new Date().getTime()
+            });
+        },
+
+        getTestUUID: function () {
+            return this._oModel.getProperty("/test/uuid");
+        },
+
+        isTestStepExecuted: function (iStepID) {
+            return this._oModel.getProperty("/elements/" + iStepID + "/stepExecuted") === true;
+        },
+
+        /**
+         *
+         * // FIXME the current ID should be hold by the RecordController!
+         *
+         * @param {string|integer} idx
+         */
+        showPlayOnTestElementById: function (idx) {
+
+            if (!idx) {
+                return;
+            }
+
+            var iNumElements = this._oModel.getProperty("/elementLength");
+            for (var i = 0; i < iNumElements; i++) {
+                this._oModel.setProperty("/elements/" + i + "/showPlay", i === idx);
+            }
         },
 
         startRecording: function () {

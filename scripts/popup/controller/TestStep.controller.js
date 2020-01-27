@@ -8,7 +8,6 @@ sap.ui.define([
     "com/ui5/testing/model/GlobalSettings",
     "com/ui5/testing/model/ConnectionMessages",
     "com/ui5/testing/model/Connection",
-    "com/ui5/testing/model/Navigation",
     "com/ui5/testing/model/RecordController",
     "com/ui5/testing/model/CodeHelper",
     "com/ui5/testing/model/Utils"
@@ -21,7 +20,6 @@ sap.ui.define([
     GlobalSettings,
     ConnectionMessages,
     Connection,
-    Navigation,
     RecordController,
     CodeHelper,
     Utils) {
@@ -104,7 +102,6 @@ sap.ui.define([
             this._getCriteriaTypes();
             this._initMessagePopover();
             this.getView().setModel(this._oModel, "viewModel");
-            this.getView().setModel(Navigation.getModel(), "navModel");
 
             this.getRouter().getRoute("elementCreate").attachPatternMatched(this._onObjectMatched, this);
             this.getRouter().getRoute("elementCreateQuick").attachPatternMatched(this._onObjectMatchedQuick, this);
@@ -122,7 +119,7 @@ sap.ui.define([
             this._bReplayMode = false;
             this._oModel.setProperty("/quickMode", false);
             this._oModel.setProperty("/replayMode", false);
-            var oItem = Navigation.getSelectedItem();
+            var oItem = RecordController.getInstance().getSelectedItem();
             if (!oItem || JSON.stringify(oItem) == "{}") {
                 this.getRouter().navTo("start");
                 return;
@@ -140,7 +137,7 @@ sap.ui.define([
             this._bReplayMode = false;
             this._oModel.setProperty("/quickMode", true);
             this._oModel.setProperty("/replayMode", false);
-            var oItem = Navigation.getSelectedItem();
+            var oItem = RecordController.getInstance().getSelectedItem();
             if (!oItem || JSON.stringify(oItem) == "{}") {
                 this.getRouter().navTo("start");
                 return;
@@ -156,7 +153,7 @@ sap.ui.define([
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._sElementId = oEvent.getParameter("arguments").ElementId;
 
-            this.getModel('viewModel').setProperty('/element', this.getModel('navModel').getProperty('/elements/' + this._sElementId));
+            this.getModel('viewModel').setProperty('/element', RecordController.getInstance().getTestElementById(this._sElementId));
             this.getModel('viewModel').setProperty('/blocked', true);
             this._setValidAttributeTypes();
             this._updatePreview();
@@ -445,7 +442,7 @@ sap.ui.define([
             var bRecording = RecordController.getInstance().isRecording();
 
             //adjust the technical name if duplicates..
-            var aProp = this.getModel("navModel").getProperty("/elements");
+            var aProp = RecordController.getInstance().getTestElements();
             var bFound = true;
             var iIndex = 1;
             var sNameOriginal = oReturn.property.technicalName;
@@ -544,14 +541,13 @@ sap.ui.define([
                 this._checkAndDisplay().then(function () {
                     var oCurrentElement = this._oModel.getProperty("/element");
                     this._adjustBeforeSaving(oCurrentElement).then(function (oElementFinal) {
-                        var aElements = this.getModel("navModel").getProperty("/elements");
+                        var aElements = RecordController.getInstance().getTestElements();
                         if (this._bReplayMode === true) {
                             aElements[this._sElementId] = oElementFinal;
                         } else {
                             aElements.push(oElementFinal);
                         }
-                        this.getModel("navModel").setProperty("/elements", aElements);
-                        this.getModel("navModel").setProperty("/elementLength", aElements.length);
+                        RecordController.getInstance().setTestElements(aElements);
 
                         this._executeAction(this._oModel.getProperty("/element")).then(function () {
                             resolve();

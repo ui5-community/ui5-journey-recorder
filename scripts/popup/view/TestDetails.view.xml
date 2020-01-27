@@ -62,7 +62,7 @@
                         <Panel expandable="false" expanded="true" width="auto">
                             <headerToolbar>
                                 <Toolbar press="onExpandControl" height="3rem" active="true" style="Clear">
-                                    <Title titleStyle="H5" text="Steps ( {= ${navModel>/elementLength} } )" />
+                                    <Title titleStyle="H5" text="Steps ( {= ${recordModel>/elementLength} } )" />
                                     <ToolbarSpacer />
                                     <Label text="Replay" tooltip="Replay.." visible="false" />
                                     <!--<Button icon="sap-icon://play" text="{i18n>replayAuto}" press="onReplayAutomatic" />-->
@@ -76,7 +76,7 @@
                                 </Toolbar>
                             </headerToolbar>
                             <content>
-                                <Table fixedLayout="false" id="tblPerformedSteps" inset="false" items="{path: 'navModel>/elements', templateShareable: false}" noDataText="{i18n>notFoundTitle}">
+                                <Table fixedLayout="false" id="tblPerformedSteps" inset="false" items="{path: 'recordModel>/elements', templateShareable: false}" noDataText="{i18n>notFoundTitle}">
                                     <columns>
                                         <Column visible="{viewModel>/replayMode}">
                                             <Text text="Play" />
@@ -100,15 +100,15 @@
                                     <items>
                                         <ColumnListItem type="Navigation" press="onStepClick">
                                             <cells>
-                                                <Button visible="{= ${navModel>showPlay} &amp;&amp; ${viewModel>/replayMode}}" icon="sap-icon://play" type="Accept" press="onReplaySingleStep" />
-                                                <Select items="{path: 'constants>/stepTypes', templateShareable: false}" enabled="false" selectedKey="{navModel>property/type}">
+                                                <Button visible="{= ${recordModel>showPlay} &amp;&amp; ${viewModel>/replayMode}}" icon="sap-icon://play" type="Accept" press="onReplaySingleStep" />
+                                                <Select items="{path: 'constants>/stepTypes', templateShareable: false}" enabled="false" selectedKey="{recordModel>property/type}">
                                                     <items>
                                                         <core:Item text="{constants>text}" key="{constants>key}" />
                                                     </items>
                                                 </Select>
                                                 <HBox width="100%">
                                                     <HBox width="100%" visible="{= ( ${viewModel>property/type} === 'ACT' ) }">
-                                                        <Select enabled="false" items="{path: 'constants>/stepActions', templateShareable: false}" width="100%" selectedKey="{navModel>property/actKey}">
+                                                        <Select enabled="false" items="{path: 'constants>/stepActions', templateShareable: false}" width="100%" selectedKey="{recordModel>property/actKey}">
                                                             <items>
                                                                 <core:Item text="{constants>text}" key="{constants>key}" />
                                                             </items>
@@ -119,15 +119,15 @@
                                                         <Input editable="false" value="{viewModel>domChildWith}" />
                                                     </HBox>
                                                     <HBox width="100%" visible="{= ( ${viewModel>property/type} === 'ASS' ) }">
-                                                        <Select items="{path: 'constants>/assertTypes', templateShareable: false}" enabled="false" selectedKey="{navModel>property/assKey}">
+                                                        <Select items="{path: 'constants>/assertTypes', templateShareable: false}" enabled="false" selectedKey="{recordModel>property/assKey}">
                                                             <items>
                                                                 <core:Item text="{constants>text}" key="{constants>key}" />
                                                             </items>
                                                         </Select>
                                                     </HBox>
                                                 </HBox>
-                                                <Text text="{navModel>item/identifier/ui5Id}" />
-                                                <Text text="{navModel>item/metadata/elementName}" />
+                                                <Text text="{recordModel>item/identifier/ui5Id}" />
+                                                <Text text="{recordModel>item/metadata/elementName}" />
                                                 <HBox alignContent="Start" alignItems="Start">
                                                     <Button icon="sap-icon://delete" press="onDeleteStep" />
                                                 </HBox>

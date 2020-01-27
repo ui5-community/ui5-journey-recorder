@@ -1,9 +1,6 @@
 sap.ui.define([
     "com/ui5/testing/controller/BaseController",
     "sap/ui/model/json/JSONModel",
-    'sap/m/MessagePopover',
-    'sap/m/MessageItem',
-    "com/ui5/testing/model/Navigation",
     "com/ui5/testing/model/Connection",
     "com/ui5/testing/model/ConnectionMessages",
     "com/ui5/testing/model/RecordController",
@@ -19,9 +16,6 @@ sap.ui.define([
     "com/ui5/testing/libs/FileSaver.min"
 ], function (Controller,
     JSONModel,
-    MessagePopover,
-    MessageItem,
-    Navigation,
     Connection,
     ConnectionMessages,
     RecordController,
@@ -59,7 +53,6 @@ sap.ui.define([
             },
             activeTab: 'settings'
         }),
-        _iGlobal: 0,
 
         /**
          *
@@ -67,7 +60,7 @@ sap.ui.define([
         onInit: function () {
             // set models
             this.getView().setModel(this._oModel, "viewModel");
-            this.getView().setModel(Navigation.getModel(), "navModel");
+            this.getView().setModel(RecordController.getInstance().getModel(), "recordModel");
             this.getView().setModel(GlobalSettings.getModel(), "settings");
 
             // initialize some model properties
@@ -123,7 +116,7 @@ sap.ui.define([
                             this.getModel("viewModel").setProperty("/replayMode", false);
                             RecordController.getInstance().stopRecording();
                             this.getRouter().navTo("TestDetails", {
-                                TestId: this.getModel("navModel").getProperty("/test/uuid")
+                                TestId: RecordController.getInstance().getTestUUID()
                             });
                             break;
                         default:
@@ -151,7 +144,7 @@ sap.ui.define([
          *
          */
         replayNextStep: function () {
-            var aEvent = this.getModel("navModel").getProperty("/elements");
+            var aEvent = RecordController.getInstance().getTestElements();
             this._iCurrentStep += 1;
             this._updatePlayButton();
             if (this._iCurrentStep >= aEvent.length) {
@@ -160,7 +153,7 @@ sap.ui.define([
                 //RecordController.getInstance().startRecording();
                 this.checkRecordContinuing();
                 this.getRouter().navTo("TestDetails", {
-                    TestId: this.getModel("navModel").getProperty("/test/uuid")
+                    TestId: RecordController.getInstance().getTestUUID()
                 });
             }
         },
@@ -224,11 +217,9 @@ sap.ui.define([
          *
          */
         onDeleteStep: function (oEvent) {
-            var aItem = oEvent.getSource().getBindingContext("navModel").getPath().split("/");
-            var sNumber = parseInt(aItem[aItem.length - 1], 10);
-            var aElements = this.getModel("navModel").getProperty("/elements");
-            aElements.splice(sNumber, 1);
-            this.getModel("navModel").setProperty("/elements", aElements);
+            var sPath = oEvent.getSource().getBindingContext("recordModel").getPath();
+            var sNumber = sPath.split("/").pop();
+            RecordController.getInstance().removeTestElementById(sNumber);
             this._updatePlayButton();
         },
 
@@ -280,8 +271,8 @@ sap.ui.define([
             var oSave = {
                 versionId: "0.2.0",
                 codeSettings: this._oModel.getProperty("/codeSettings"),
-                elements: this.getModel("navModel").getProperty("/elements"),
-                test: this.getModel("navModel").getProperty("/test")
+                elements: RecordController.getInstance().getTestElements(),
+                test: RecordController.getInstance().getTestDetails()
             };
 
             //fix for cycling object
@@ -331,11 +322,11 @@ sap.ui.define([
          *
          */
         onSave: function () {
-            //save /codesettings & /test & navModel>/elements - optimiazion potential..
+            //save /codesettings & /test & /elements - optimiazion potential..
             var oSave = {
                 codeSettings: this._oModel.getProperty("/codeSettings"),
-                elements: this.getModel("navModel").getProperty("/elements"),
-                test: this.getModel("navModel").getProperty("/test")
+                elements: RecordController.getInstance().getTestElements(),
+                test: RecordController.getInstance().getTestDetails()
             };
             ChromeStorage.saveRecord(oSave);
         },
@@ -344,7 +335,7 @@ sap.ui.define([
          *
          */
         onDelete: function () {
-            var sId = this.getModel("navModel").getProperty("/test/uuid");
+            var sId = RecordController.getInstance().getTestUUID();
             ChromeStorage.deleteTest(sId).then(this.getRouter().navTo("start"));
         },
 
@@ -458,7 +449,7 @@ sap.ui.define([
          *
          */
         onStepClick: function (oEvent) {
-            var sPath = oEvent.getSource().getBindingContext('navModel').getPath();
+            var sPath = oEvent.getSource().getBindingContext('recordModel').getPath();
             sPath = sPath.substring(sPath.lastIndexOf('/') + 1);
             this.getRouter().navTo("elementDisplay", {
                 TestId: this._sTestId,
@@ -534,7 +525,7 @@ sap.ui.define([
          *
          */
         _executeAction: function () {
-            var aEvent = this.getModel("navModel").getProperty("/elements");
+            var aEvent = RecordController.getInstance().getTestElements();
             var oElement = aEvent[this._iCurrentStep];
 
             return new Promise(function (resolve) {
@@ -608,11 +599,9 @@ sap.ui.define([
             if (!this._oModel.getProperty("/replayMode")) {
                 this._oModel.setProperty("/replayMode", true);
             }
-            var oNavModel = this.getModel('navModel');
-            var iNumElements = oNavModel.getProperty("/elements").length;
-            for (var i = 0; i < iNumElements; i++) {
-                oNavModel.setProperty("/elements/" + i + "/showPlay", i === this._iCurrentStep);
-            }
+
+            RecordController.getInstance().showPlayOnTestElementById(this._iCurrentStep);
+
             //Here the test should work automatically
             var iReplayType = this.getModel('settings').getProperty('/settings/replayType');
             if (iReplayType !== 0) {
@@ -627,19 +616,6 @@ sap.ui.define([
                     this.onReplaySingleStep();
                 }.bind(this));
             }
-        },
-
-        /**
-         *
-         */
-        _uuidv4: function () {
-            var sStr = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                var r = Math.random() * 16 | 0,
-                    v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            }) + this._iGlobal;
-            this._iGlobal = this._iGlobal + 1;
-            return sStr;
         },
 
         /**
@@ -685,10 +661,7 @@ sap.ui.define([
         _initTestCreate: function () {
             this._oModel.setProperty("/replayMode", false);
 
-            this.getModel("navModel").setProperty("/test", {
-                uuid: this._uuidv4(),
-                createdAt: new Date().getTime()
-            });
+            RecordController.getInstance().initializeTestDetails();
             this._oModel.setProperty("/codeSettings/language", this.getModel("settings").getProperty("/settings/defaultLanguage"));
             this._oModel.setProperty("/codeSettings/authentification", this.getModel("settings").getProperty("/settings/defaultAuthentification"));
             ConnectionMessages.getWindowInfo(Connection.getInstance())
@@ -712,7 +685,7 @@ sap.ui.define([
                     RecordController.getInstance().startRecording();
 
                     this.getRouter().navTo("TestDetails", {
-                        TestId: this.getModel("navModel").getProperty("/test/uuid")
+                        TestId: RecordController.getInstance().getTestUUID()
                     });
                 }.bind(this));
         },
@@ -728,12 +701,12 @@ sap.ui.define([
                 return; //NO!
             }
 
-            Navigation.setSelectedItem(oData);
+            RecordController.getInstance().setSelectedItem(oData);
             RecordController.getInstance().focusPopup();
 
             var sRouterTarget = this._bQuickMode ? "elementCreateQuick" : "elementCreate";
             this.getRouter().navTo(sRouterTarget, {
-                TestId: this.getModel("navModel").getProperty("/test/uuid"),
+                TestId: RecordController.getInstance().getTestUUID(),
                 ElementId: oData.identifier.ui5AbsoluteId
             });
         },
@@ -748,9 +721,9 @@ sap.ui.define([
                 oStep.setHighlight(sap.ui.core.MessageType.None);
             });
             var sTargetUUID = oEvent.getParameter("arguments").TestId;
-            var sCurrentUUID = this.getModel("navModel").getProperty("/test/uuid");
+            var sCurrentUUID = RecordController.getInstance().getTestUUID();
             if (sTargetUUID === this._oTestId && this._oModel.getProperty("/replayMode")) {
-                if (this.getModel("navModel").getProperty("/elements/" + this._iCurrentStep + "/stepExecuted") === true) {
+                if (RecordController.getInstance().isTestStepExecuted(this._iCurrentStep)) {
                     this.replayNextStep();
                 }
                 return;
@@ -769,9 +742,8 @@ sap.ui.define([
                         }
                         oSave = JSON.parse(oSave);
                         this._oModel.setProperty("/codeSettings", oSave.codeSettings);
-                        this.getModel("navModel").setProperty("/elements", oSave.elements);
-                        this.getModel("navModel").setProperty("/elementLength", oSave.elements.length);
-                        this.getModel("navModel").setProperty("/test", oSave.test);
+                        RecordController.getInstance().setTestElements(oSave.elements);
+                        RecordController.getInstance().setTestDetails(oSave.test);
                         this._updatePreview();
                         //this._updatePlayButton();
                         this._replay();
@@ -807,7 +779,7 @@ sap.ui.define([
             this._oModel.setProperty("/replayMode", false);
             this._sTestId = oEvent.getParameter("arguments").TestId;
             var sTargetUUID = this._sTestId;
-            var sCurrentUUID = this.getModel("navModel").getProperty("/test/uuid");
+            var sCurrentUUID = RecordController.getInstance().getTestUUID();
             if (sCurrentUUID !== sTargetUUID) {
                 //we have to read the current data..
                 ChromeStorage.get({
@@ -819,9 +791,8 @@ sap.ui.define([
                         }
                         oSave = JSON.parse(oSave);
                         this._oModel.setProperty("/codeSettings", oSave.codeSettings);
-                        this.getModel("navModel").setProperty("/elements", oSave.elements);
-                        this.getModel("navModel").setProperty("/elementLength", oSave.elements.length);
-                        this.getModel("navModel").setProperty("/test", oSave.test);
+                        RecordController.getInstance().setTestElements(oSave.elements);
+                        RecordController.getInstance().setTestDetails(oSave.test);
                         this._updatePreview();
                     }.bind(this)
                 });
@@ -837,7 +808,7 @@ sap.ui.define([
          *
          */
         _updatePreview: function () {
-            var aStoredItems = this.getModel("navModel").getProperty("/elements");
+            var aStoredItems = RecordController.getInstance().getTestElements();
             var codeSettings = this.getModel('viewModel').getProperty('/codeSettings');
             codeSettings.language = this.getModel('settings').getProperty('/settings/defaultLanguage');
             codeSettings.execComponent = this.getOwnerComponent();
