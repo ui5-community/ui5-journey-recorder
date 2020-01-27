@@ -10,7 +10,6 @@
             title="{i18n>appTitle}"
             busy="{viewModel>/busy}">
         <semantic:customHeaderContent>
-            <Button icon="sap-icon://busy" press="checkConnection"/>
             <Button icon="sap-icon://settings" text="{i18n>settings}" press="onOpenSettings"/>
         </semantic:customHeaderContent>
         <semantic:content>
