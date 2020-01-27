@@ -17,10 +17,7 @@ sap.ui.define([
     var RecordController = UI5Object.extend("com.ui5.testing.model.RecordController", /** @lends com.ui5.testing.model.RecordController.prototype */ {
 
         constructor: function () {
-            var oJSON = {
-                recording: false
-            };
-            this._oModel = new JSONModel(oJSON);
+            this.reset();
 
             sap.ui.getCore().getEventBus().subscribe("Internal", "recordingStopped", this._onStopped.bind(this));
 
@@ -33,7 +30,15 @@ sap.ui.define([
             });
         },
 
-        // FIXME add reset functionality!
+        /**
+         * Reset the RecordController to defaults.
+         */
+        reset: function () {
+            var oJSON = {
+                isRecording: false
+            };
+            this._oModel = new JSONModel(oJSON);
+        },
 
         /**
          * Focus the popup.
