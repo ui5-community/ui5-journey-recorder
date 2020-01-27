@@ -59,10 +59,7 @@ sap.ui.define([
             },
             activeTab: 'settings'
         }),
-        _bActive: false,
         _iGlobal: 0,
-        _bStarted: false,
-        _bReplayMode: false,
 
         /**
          *
@@ -123,7 +120,6 @@ sap.ui.define([
                             this.getModel("viewModel").setProperty("/replayMode", false);
                             MessageToast.show('Assertion not met, check your setup!');
                             performedStep.setHighlight(sap.ui.core.MessageType.Error);
-                            this._bReplayMode = false;
                             this.getModel("viewModel").setProperty("/replayMode", false);
                             RecordController.getInstance().stopRecording();
                             this.getRouter().navTo("TestDetails", {
@@ -159,7 +155,6 @@ sap.ui.define([
             this._iCurrentStep += 1;
             this._updatePlayButton();
             if (this._iCurrentStep >= aEvent.length) {
-                this._bReplayMode = false;
                 this.getModel("viewModel").setProperty("/replayMode", false);
                 RecordController.getInstance().stopRecording();
                 //RecordController.getInstance().startRecording();
@@ -244,7 +239,7 @@ sap.ui.define([
             //console.log('ReplayStart, have to close former tab: ' + RecordController.getInstance().isInjected());
             if (RecordController.getInstance().isInjected()) {
                 RecordController.getInstance().closeTab().then(function () {
-                    this._bReplayMode = false;
+                    this._oModel.setProperty("/replayMode", false);
                     var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
                     this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
                         oStep.setHighlight(sap.ui.core.MessageType.None);
@@ -498,8 +493,8 @@ sap.ui.define([
                     if (tTab.url.indexOf(sUrl) > -1 && !bInjectRequested) {
                         RecordController.getInstance().injectScript(tabId).then(function (oData) {
                             //console.log('Injection done: ' + RecordController.isInjected());
-                            if (RecordController.getInstance().isInjected() && !this._bReplayMode) {
-                                this._bReplayMode = true;
+                            if (RecordController.getInstance().isInjected() && !this._oModel.getProperty("/replayMode")) {
+                                this._oModel.setProperty("/replayMode", true)
                                 this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
                                     oStep.setHighlight(sap.ui.core.MessageType.None);
                                 });
@@ -729,7 +724,7 @@ sap.ui.define([
          * @param {*} oData the data on the selected element
          */
         _onItemSelected: function (sChannel, sEventId, oData) {
-            if (this._bReplayMode === true) {
+            if (this._oModel.getProperty("/replayMode")) {
                 return; //NO!
             }
 
@@ -754,7 +749,7 @@ sap.ui.define([
             });
             var sTargetUUID = oEvent.getParameter("arguments").TestId;
             var sCurrentUUID = this.getModel("navModel").getProperty("/test/uuid");
-            if (sTargetUUID === this._oTestId && this._oModel.getProperty("/replayMode") === true) {
+            if (sTargetUUID === this._oTestId && this._oModel.getProperty("/replayMode")) {
                 if (this.getModel("navModel").getProperty("/elements/" + this._iCurrentStep + "/stepExecuted") === true) {
                     this.replayNextStep();
                 }

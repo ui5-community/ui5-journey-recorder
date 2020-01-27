@@ -21,7 +21,6 @@ sap.ui.define([
                 recording: false
             };
             this._oModel = new JSONModel(oJSON);
-            this._bIsInjected = false;
 
             sap.ui.getCore().getEventBus().subscribe("Internal", "recordingStopped", this._onStopped.bind(this));
 
@@ -80,7 +79,6 @@ sap.ui.define([
                                 if (chrome.runtime.lastError) {
                                     reject();
                                 }
-                                this._bIsInjected = false;
                                 Connection.getInstance().resetConnection();
                                 resolve();
                             }.bind(this));
@@ -116,7 +114,7 @@ sap.ui.define([
         },
 
         stopRecording: function () {
-            if (this._oModel.getProperty("/isRecording") === true) {
+            if (this.isRecording()) {
                 ConnectionMessages.stopRecording(Connection.getInstance())
                     .then(function () {
                         ConnectionMessages.unlockPage(Connection.getInstance());
@@ -127,11 +125,10 @@ sap.ui.define([
 
         _onStopped: function () {
             this._oModel.setProperty("/isRecording", false);
-            this._bIsInjected = false;
         },
 
         isInjected: function () {
-            return this._bIsInjected;
+            return Connection.getInstance().isConnected();
         },
 
         isRecording: function () {

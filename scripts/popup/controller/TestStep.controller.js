@@ -95,7 +95,6 @@ sap.ui.define([
             codeLines: [] //currently maintained code-lines
         }),
         _bActive: false,
-        _bStarted: false,
         _sTestId: "",
 
         /**
@@ -1787,7 +1786,6 @@ sap.ui.define([
          */
         switch: function () {
             this._bActive = this._bActive !== true;
-            this._bStarted = this._bActive;
             if (this._bActive === false) {
                 //show code after finalizing
                 this.showCode();
