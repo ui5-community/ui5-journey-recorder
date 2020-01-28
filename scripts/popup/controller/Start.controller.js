@@ -3,10 +3,10 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "com/ui5/testing/model/ChromeStorage",
     "sap/m/MessageToast",
-    "com/ui5/testing/model/Connection",
+    "com/ui5/testing/model/RecordController",
     "com/ui5/testing/model/Utils",
     "sap/m/MessageBox"
-], function (BaseController, JSONModel, ChromeStorage, MessageToast, Connection, Utils, MessageBox) {
+], function (BaseController, JSONModel, ChromeStorage, MessageToast, RecordController, Utils, MessageBox) {
     "use strict";
 
     return BaseController.extend("com.ui5.testing.controller.Start", {
@@ -164,10 +164,9 @@ sap.ui.define([
                 sUrl = oEvent.getSource().getBindingContext('viewModel').getObject().url;
             }
 
-            var oConnection = Connection.getInstance();
-            oConnection.establishConnection(iId)
+            RecordController.getInstance().injectScript(iId)
             .then((oData) => {
-                MessageToast.show(`Connection established: Page use ${oData.name} at version ${oData.version}`);
+                MessageToast.show(`Script injected: Page uses ${oData.name} at version ${oData.version}.`);
                 this.getRouter().navTo("TestDetailsCreate");
             })
             .catch((oData) => {

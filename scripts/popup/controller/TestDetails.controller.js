@@ -473,16 +473,17 @@ sap.ui.define([
             var lastCreatedTab = "";
 
             /**
-             * @param {string} tabId tab id the event comes from
+             * @param {string} tabId ID of the tab the event comes from
              * @param {object} oChangeInfo the object containing the update information
-             * @param {chrome.tabs.Tab} tTab the tab updated
+             * @param {chrome.tabs.Tab} tTab the updated tab
              */
             function fnListenerFunction(tabId, oChangeInfo, tTab) {
                 //console.log('Tabs: ' + lastCreatedTab + ' === ' + tabId + ', ' + (lastCreatedTab === tabId) + ', currentStatus: ' + oChangeInfo.status);
                 if (oChangeInfo.status === "complete" && lastCreatedTab === tabId) {
                     //console.log(tTab.url + ', already injected: ' + bInjectRequested + ' and Replay mode activated: ' + this._bReplayMode);
                     if (tTab.url.indexOf(sUrl) > -1 && !bInjectRequested) {
-                        RecordController.getInstance().injectScript(tabId).then(function (oData) {
+                        RecordController.getInstance().injectScript(tabId)
+                        .then(function (oData) {
                             //console.log('Injection done: ' + RecordController.isInjected());
                             if (RecordController.getInstance().isInjected() && !this._oModel.getProperty("/replayMode")) {
                                 this._oModel.setProperty("/replayMode", true)

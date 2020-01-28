@@ -234,6 +234,17 @@ sap.ui.define([
             this._oModel.setProperty("/isRecording", false);
         },
 
+        /**
+         * Inject recording script into tab.
+         *
+         * @param {integer} iTabId the tab ID to prepare recording for
+         *
+         * @returns {Promise} promise whether the injection succeeded or not
+         */
+        injectScript: function (iTabId) {
+            return Connection.getInstance().establishConnection(iTabId);
+        },
+
         isInjected: function () {
             return Connection.getInstance().isConnected();
         },
