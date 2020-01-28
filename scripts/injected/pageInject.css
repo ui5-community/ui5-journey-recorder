@@ -1,11 +1,9 @@
-.UI5TR_ElementHover {
-    background-color: rgba(132, 20, 57, 0.5) !important;
+.UI5TR_ElementHover,
+.UI5TR_ElementHover * {
+    background: rgb(193, 137, 156) !important;
 }
 
-.UI5TR_ControlFound {
-    background-color: rgba(113, 148, 175, 1) !important;
-}
-
-.UI5TR_ControlFound_InlineFix {
-    display: inline-block;
+.UI5TR_ControlFound,
+.UI5TR_ControlFound * {
+    background: rgb(113, 148, 175) !important;
 }
