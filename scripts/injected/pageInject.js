@@ -418,7 +418,7 @@ class TestItem {
     /**
      * Resets the static variable {@link _oTestGlobalCache}.
      */
-    static _resetCache() {
+    static resetCache() {
         TestItem._oTestGlobalCache = {
             fnGetElement: {
                 true: {},
@@ -442,7 +442,7 @@ class TestItem {
         // correct original DOM not if not existing
         this._oOriginalDOMNode = this._oOriginalDOMNode ? this._oOriginalDOMNode : this._oDOMNode;
 
-        TestItem._resetCache();
+        TestItem.resetCache();
     }
 
     /**
@@ -1171,6 +1171,8 @@ class TestItem {
  * @see _resetCache initialization
  */
 TestItem._oTestGlobalCache = null;
+
+TestItem.resetCache();
 
 // #endregion
 
