@@ -18,7 +18,7 @@
                 <menu>
                     <Menu itemSelected="onMenuAction">
                         <items>
-                            <MenuItem text="Parent" items="{viewModel>/element/item/parents}">
+                            <MenuItem text="Parent" items="{viewModel>/element/item/parents}" enabled="{= ${viewModel>/element/item/parents}.length > 0 }">
                                 <items>
                                     <MenuItem text="{viewModel>identifier/ui5Id}" press="onSelectItem"/>
                                 </items>
