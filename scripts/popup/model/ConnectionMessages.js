@@ -50,6 +50,18 @@ sap.ui.define([], function () {
         /**
          *
          * @param {com.ui5.testing.model.Connection} connection the connection to use for sending messages
+         * @param {object} oItemSelector selector information
+         */
+        static selectItem(oConnection, oItemSelector) {
+            return oConnection.syncMessage({
+                action: "selectItem",
+                data: oItemSelector
+            });
+        }
+
+        /**
+         *
+         * @param {com.ui5.testing.model.Connection} connection the connection to use for sending messages
          * @param {object} oInformation parameters for the execute message
          */
         static executeAction(oConnection, oInformation) {

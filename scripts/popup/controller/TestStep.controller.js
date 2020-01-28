@@ -1068,7 +1068,7 @@ sap.ui.define([
          */
         onSelectItem: function (oEvent) {
             var oObj = oEvent.getSource().getBindingContext("viewModel").getObject();
-            Communication.fireEvent("selectItem", {
+            ConnectionMessages.selectItem(Connection.getInstance(), {
                 element: oObj.ui5AbsoluteId ? oObj.ui5AbsoluteId : oObj.identifier.ui5AbsoluteId
             });
         },

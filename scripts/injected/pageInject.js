@@ -98,6 +98,10 @@ class PageCommunication {
                 oReturn = _findItemsBySelector(oEventData);
                 break;
 
+            case "selectItem":
+                oReturn = _selectItem(oEventData);
+                break;
+
             case "executeAction":
                 oReturn = _executeAction(oEventData);
                 break;
@@ -106,9 +110,6 @@ class PageCommunication {
                 oReturn = _getWindowInfo();
                 break;
 
-            // case "selectItem":
-            //     this._selectItem(oEventData);
-            //     break;
             // case "runSupportAsssistant":
             //     return this._runSupportAssistant(oEventData);
             // case "mockserver":
@@ -169,6 +170,16 @@ function _stopRecording() {
 function _findItemsBySelector(oSelector) {
     // TODO create and use TestItem instance here
     return TestItem.findItemsBySelector(oSelector);
+}
+
+function _selectItem(oEventData) {
+    var oCtrl = sap.ui.getCore().byId(oEventData.element);
+
+    if (!oCtrl) {
+        return;
+    }
+
+    PageListener.getInstance().handleClickOn(oCtrl.getDomRef());
 }
 
 function _executeAction(oEventData) {
