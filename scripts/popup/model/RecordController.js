@@ -48,6 +48,11 @@ sap.ui.define([
          * Reset the RecordController to defaults.
          */
         reset: function () {
+
+            if (!this._oModel) {
+                this._oModel = new JSONModel();
+            }
+
             var oJSON = {
                 isRecording: false,
                 item: {},
@@ -58,7 +63,7 @@ sap.ui.define([
                     createdAt: 0
                 }
             };
-            this._oModel = new JSONModel(oJSON);
+            this._oModel.setData(oJSON);
         },
 
         /**

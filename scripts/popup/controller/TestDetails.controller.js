@@ -661,6 +661,7 @@ sap.ui.define([
         _initTestCreate: function () {
             this._oModel.setProperty("/replayMode", false);
 
+            RecordController.getInstance().reset();
             RecordController.getInstance().initializeTestDetails();
             this._oModel.setProperty("/codeSettings/language", this.getModel("settings").getProperty("/settings/defaultLanguage"));
             this._oModel.setProperty("/codeSettings/authentification", this.getModel("settings").getProperty("/settings/defaultAuthentification"));
