@@ -116,7 +116,6 @@ sap.ui.define([
         _onObjectMatched: function (oEvent) {
             this.getModel('viewModel').setProperty('/blocked', false);
             this._sTestId = oEvent.getParameter("arguments").TestId;
-            this._bReplayMode = false;
             this._oModel.setProperty("/quickMode", false);
             this._oModel.setProperty("/replayMode", false);
             var oItem = RecordController.getInstance().getSelectedItem();
@@ -134,7 +133,6 @@ sap.ui.define([
         _onObjectMatchedQuick: function (oEvent) {
             this.getModel('viewModel').setProperty('/blocked', false);
             this._sTestId = oEvent.getParameter("arguments").TestId;
-            this._bReplayMode = false;
             this._oModel.setProperty("/quickMode", true);
             this._oModel.setProperty("/replayMode", false);
             var oItem = RecordController.getInstance().getSelectedItem();
@@ -486,7 +484,7 @@ sap.ui.define([
          *
          */
         _onCancelStep: function () {
-            if (this._bReplayMode === true) {
+            if (this._oModel.getProperty("/replayMode")) {
                 this.getRouter().navTo("testReplay", {
                     TestId: this._sTestId
                 }, true);
@@ -519,7 +517,7 @@ sap.ui.define([
         _onSave: function () {
             this._save().then(function () {
                 //navigate backwards to the screen, and immediatly start recording..
-                if (this._bReplayMode === true) {
+                if (this._oModel.getProperty("/replayMode")) {
                     this.getRouter().navTo("testReplay", {
                         TestId: this._sTestId
                     }, true);
@@ -542,7 +540,7 @@ sap.ui.define([
                     var oCurrentElement = this._oModel.getProperty("/element");
                     this._adjustBeforeSaving(oCurrentElement).then(function (oElementFinal) {
                         var aElements = RecordController.getInstance().getTestElements();
-                        if (this._bReplayMode === true) {
+                        if (this._oModel.getProperty("/replayMode")) {
                             aElements[this._sElementId] = oElementFinal;
                         } else {
                             aElements.push(oElementFinal);
