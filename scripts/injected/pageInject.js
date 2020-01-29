@@ -2305,12 +2305,12 @@ function deepExtend(target) {
             }
 
             // recurse if merging plain objects or arrays
-            if (copy && ($.isPlainObject(copy) || Array.isArray(copy))) {
+            if (copy && (isPlainObject(copy) || Array.isArray(copy))) {
 
                 if (Array.isArray(copy)) {
                     clone = src && Array.isArray(src) ? src : [];
                 } else {
-                    clone = src && $.isPlainObject(src) ? src : {};
+                    clone = src && isPlainObject(src) ? src : {};
                 }
 
                 // Never move original objects, clone them
