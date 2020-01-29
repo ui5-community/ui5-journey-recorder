@@ -207,7 +207,7 @@
                             <Label text="Ignore Global Context"/>
                             <CheckBox selected="{viewModel>/element/property/supportAssistant/ignoreGlobal}" select="onRunSupportAssistant"/>
                             <Label text="Exclude Rules"/>
-                            <MultiComboBox selectedKeys="{viewModel>/element/supportAssistant/supportRules}" selectionFinish="onRunSupportAssistant" items="{ path: 'viewModel>/statics/supportRules',
+                            <MultiComboBox selectedKeys="{viewModel>/element/property/supportAssistant/supportRules}" selectionFinish="onRunSupportAssistant" items="{ path: 'viewModel>/statics/supportRules',
                                          sorter: { path: 'libName' }}">
                                 <core:Item key="{viewModel>libName}/{viewModel>ruleId}" text="{viewModel>libName} - {viewModel>ruleId}"/>
                             </MultiComboBox>

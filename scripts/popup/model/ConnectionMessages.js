@@ -74,6 +74,18 @@ sap.ui.define([], function () {
         /**
          *
          * @param {com.ui5.testing.model.Connection} connection the connection to use for sending messages
+         * @param {object} oInformation component information for the support-assistant message
+         */
+        static runSupportAssistant(oConnection, oComponent) {
+            return oConnection.syncMessage({
+                action: "runSupportAssistant",
+                data: oComponent
+            });
+        }
+
+        /**
+         *
+         * @param {com.ui5.testing.model.Connection} connection the connection to use for sending messages
          */
         static unlockPage(oConnection) {
             return oConnection.syncMessage({

@@ -110,8 +110,10 @@ class PageCommunication {
                 oReturn = _getWindowInfo();
                 break;
 
-            // case "runSupportAsssistant":
-            //     return this._runSupportAssistant(oEventData);
+            case "runSupportAssistant":
+                oReturn = _runSupportAssistant(oEventData);
+                break;
+
             // case "mockserver":
             //     return this._getDataModelInformation();
 
@@ -125,8 +127,18 @@ class PageCommunication {
             oReturn = {};
         }
 
-        // send word that the action has been executed
-        PageCommunication.getInstance().messageFromPage(sEventType, oReturn, iMessageID);
+        // send word that the action has been executed:
+        // 1) we need for Promises to be finished as they cannot be serialized into a message
+        if (oReturn instanceof Promise) {
+            oReturn.then(function (oData) {
+                PageCommunication.getInstance().messageFromPage(sEventType, oData, iMessageID);
+            });
+        }
+        // 2) return directly otherwise
+        else {
+            PageCommunication.getInstance().messageFromPage(sEventType, oReturn, iMessageID);
+        }
+
     }
 }
 
@@ -283,6 +295,101 @@ function _getWindowInfo() {
         hash: window.location.hash,
         ui5Version: sap.ui.version
     };
+}
+
+var _cachedSupportAssistantRules = []; // list of support-assistant rules being cached
+function _runSupportAssistant(oComponent) {
+
+    return new Promise(function (resolve, reject) {
+
+        var oSupSettings = oComponent.rules;
+        var sComponent = oComponent.component;
+
+        sap.ui.require(["sap/ui/support/Bootstrap"], function (Bootstrap) {
+            Bootstrap.initSupportRules(["silent"]);
+
+            // exclude rules that are selected in UI from being run:
+            // as the set of cached rules is empty on the first run, all rules will be applied.
+            // an exclusion of rules can only be applied on consecutive runs
+            var aExclude = oSupSettings.supportRules; // excluded rules
+            var appliedSupportAssistantRules = _cachedSupportAssistantRules.filter(function(oRule) {
+                return !aExclude.includes(oRule.libName + "/" + oRule.ruleId)
+            });
+
+            // call the support-assistant analysis asynchonously, so we ensure that the results can actually be retrieved
+            setTimeout(function () {
+
+                // run support assistant with the given set of rules (or no rules at all if none have been cached yet)
+                // TODO this function is deprecated for UI5 >= 1.60. "Please use sap/ui/support/RuleAnalyzer instead."
+                jQuery.sap.support.analyze({
+                    type: "components",
+                    components: [sComponent]
+                }, appliedSupportAssistantRules.length > 0 ? appliedSupportAssistantRules : undefined)
+                // post-process results
+                .then(function () {
+                    var aIssues = jQuery.sap.support.getLastAnalysisHistory();
+
+                    var aStoreIssue = [];
+                    for (var i = 0; i < aIssues.issues.length; i++) {
+                        var oIssue = aIssues.issues[i];
+
+                        // remove issues of global context if filtered out
+                        if (oSupSettings.ignoreGlobal === true && oIssue.context.id === "WEBPAGE") {
+                            continue;
+                        }
+
+                        // properly set states and importance
+                        var sState = "Error";
+                        var iImportance = 3;
+                        if (oIssue.severity === "Medium") {
+                            sState = "Warning";
+                            iImportance = 2;
+                        } else if (oIssue.severity === "Low") {
+                            sState = "None";
+                            iImportance = 1;
+                        }
+
+                        // add issue to list that is sent to extension
+                        aStoreIssue.push({
+                            severity: oIssue.severity,
+                            details: oIssue.details,
+                            context: oIssue.context.id,
+                            rule: oIssue.rule.id,
+                            ruleText: oIssue.rule.description,
+                            state: sState,
+                            importance: iImportance
+                        });
+                    }
+
+                    // sort issues by importance, ascending
+                    aStoreIssue = aStoreIssue.sort(function (aObj, bObj) {
+                        if (aObj.importance <= bObj.importance) {
+                            return 1;
+                        }
+
+                        return -1;
+                    });
+
+                    // retrieve available rules and update cache (this cannot be done earlier, as the analysis triggers the
+                    // loading of the rules itself; see excluded rules above)
+                    var oLoader = sap.ui.require("sap/ui/support/supportRules/RuleSetLoader");
+                    if (oLoader) { //only as of 1.52.. so ignore that for the moment
+                        _cachedSupportAssistantRules = oLoader.getAllRuleDescriptors();
+                    }
+
+                    // return the analysis results to the extension
+                    resolve({
+                        results: aStoreIssue,
+                        rules: _cachedSupportAssistantRules
+                    });
+
+                }.bind(this));
+            }.bind(this), 0);
+
+
+        }.bind(this));
+    }.bind(this));
+
 }
 
 // #endregion

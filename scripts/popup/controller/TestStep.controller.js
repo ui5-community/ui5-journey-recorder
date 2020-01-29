@@ -890,16 +890,15 @@ sap.ui.define([
          *
          */
         _runSupportAssistant: function () {
-            Communication.fireEvent("runSupportAsssistant", {
+            ConnectionMessages.runSupportAssistant(Connection.getInstance(), {
                 component: this._oModel.getProperty("/element/item/metadata/componentName"),
                 rules: this._oModel.getProperty("/element/property/supportAssistant")
-            }).then(
-                function (oStoreIssue) {
-                    this._oModel.setProperty("/statics/supportRules", oStoreIssue.rules);
-                    this._oModel.setProperty("/element/supportAssistantResult", oStoreIssue.results);
-                    this._oModel.setProperty("/element/supportAssistantResultLength", oStoreIssue.results.length);
-                    this._updatePreview();
-                }.bind(this));
+            }).then(function (oStoreIssue) {
+                this._oModel.setProperty("/statics/supportRules", oStoreIssue.rules);
+                this._oModel.setProperty("/element/supportAssistantResult", oStoreIssue.results);
+                this._oModel.setProperty("/element/supportAssistantResultLength", oStoreIssue.results.length);
+                this._updatePreview();
+            }.bind(this));
         },
 
         /**
