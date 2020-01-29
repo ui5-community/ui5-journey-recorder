@@ -469,49 +469,30 @@ sap.ui.define([
          */
         _replay: function () {
             var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
-            var bInjectRequested = false;
-            var lastCreatedTab = "";
-
-            /**
-             * @param {string} tabId ID of the tab the event comes from
-             * @param {object} oChangeInfo the object containing the update information
-             * @param {chrome.tabs.Tab} tTab the updated tab
-             */
-            function fnListenerFunction(tabId, oChangeInfo, tTab) {
-                //console.log('Tabs: ' + lastCreatedTab + ' === ' + tabId + ', ' + (lastCreatedTab === tabId) + ', currentStatus: ' + oChangeInfo.status);
-                if (oChangeInfo.status === "complete" && lastCreatedTab === tabId) {
-                    //console.log(tTab.url + ', already injected: ' + bInjectRequested + ' and Replay mode activated: ' + this._bReplayMode);
-                    if (tTab.url.indexOf(sUrl) > -1 && !bInjectRequested) {
-                        RecordController.getInstance().injectScript(tabId)
-                        .then(function (oData) {
-                            //console.log('Injection done: ' + RecordController.isInjected());
-                            if (RecordController.getInstance().isInjected() && !this._oModel.getProperty("/replayMode")) {
-                                this._oModel.setProperty("/replayMode", true)
-                                this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                                    oStep.setHighlight(sap.ui.core.MessageType.None);
-                                });
-                                //console.log("_startReplay");
-                                this._startReplay();
-                            }
-                            if (oData) {
-                                this._oModel.setProperty('/ui5Version', oData.version);
-                            }
-                        }.bind(this));
-                        bInjectRequested = true;
-                        chrome.tabs.onUpdated.removeListener(fnListenerFunction.bind(this));
-                    }
-                }
-            }
-
-            chrome.tabs.onUpdated.addListener(fnListenerFunction.bind(this));
 
             chrome.tabs.create({
                 url: sUrl,
                 active: true
             }, function (oTab) {
-                //console.log('Now created: ' + oTab.id);
-                lastCreatedTab = oTab.id;
-            });
+
+                // it is not necessary to explicitly wait for the tab being completely loaded (e.g., using the function 'tabs.onUpdated.addListener')
+                // as the script injection only happens after the page is loaded
+                // see https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/extensionTypes/RunAt
+                RecordController.getInstance().injectScript(oTab.id)
+                    .then(function (oData) {
+                        if (!this._oModel.getProperty("/replayMode")) {
+                            this._oModel.setProperty("/replayMode", true)
+                            this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
+                                oStep.setHighlight(sap.ui.core.MessageType.None);
+                            });
+                            //console.log("_startReplay");
+                            this._startReplay();
+                        }
+                        if (oData) {
+                            this._oModel.setProperty('/ui5Version', oData.version);
+                        }
+                    }.bind(this));
+            }.bind(this));
         },
 
         /**
