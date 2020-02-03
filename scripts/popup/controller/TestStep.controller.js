@@ -898,7 +898,10 @@ sap.ui.define([
                 this._oModel.setProperty("/element/supportAssistantResult", oStoreIssue.results);
                 this._oModel.setProperty("/element/supportAssistantResultLength", oStoreIssue.results.length);
                 this._updatePreview();
+                this.byId("pnlSupAssistantRule").setBusy(false);
             }.bind(this));
+
+            this.byId("pnlSupAssistantRule").setBusy(true);
         },
 
         /**
