@@ -43,7 +43,6 @@ sap.ui.define([
             quickSelect: false,
             code: "",
             elements: [],
-            elementLength: 0,
             elementDefault: {
                 property: {
                     assKeyMatchingCount: 1,

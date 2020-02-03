@@ -62,7 +62,7 @@
                         <Panel expandable="false" expanded="true" width="auto">
                             <headerToolbar>
                                 <Toolbar press="onExpandControl" height="3rem" active="true" style="Clear">
-                                    <Title titleStyle="H5" text="Steps ( {= ${recordModel>/elementLength} } )" />
+                                    <Title titleStyle="H5" text="Steps ( {= ${recordModel>/elements}.length } )" />
                                     <ToolbarSpacer />
                                     <Label text="Replay" tooltip="Replay.." visible="false" />
                                     <!--<Button icon="sap-icon://play" text="{i18n>replayAuto}" press="onReplayAutomatic" />-->

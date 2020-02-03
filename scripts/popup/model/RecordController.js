@@ -57,7 +57,6 @@ sap.ui.define([
                 isRecording: false,
                 item: {},
                 elements: [],
-                elementLength: 0,
                 test: {
                     uuid: 0,
                     createdAt: 0
@@ -158,7 +157,6 @@ sap.ui.define([
 
         setTestElements: function (aElements) {
             this._oModel.setProperty("/elements", aElements);
-            this._oModel.setProperty("/elementLength", aElements.length);
         },
 
         getTestDetails: function () {
