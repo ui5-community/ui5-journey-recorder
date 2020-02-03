@@ -192,14 +192,16 @@ sap.ui.define([
          */
         showPlayOnTestElementById: function (idx) {
 
-            if (!idx) {
+            if (idx === undefined || idx === null) {
                 return;
             }
 
-            var iNumElements = this._oModel.getProperty("/elementLength");
-            for (var i = 0; i < iNumElements; i++) {
-                this._oModel.setProperty("/elements/" + i + "/showPlay", i === idx);
-            }
+            this.getTestElements().forEach(function (oElement, iIndex) {
+                oElement["showPlay"] = iIndex == idx;
+            });
+
+            // ensure that all changes are synchronized with bindings
+            this._oModel.updateBindings(true);
         },
 
         startRecording: function () {
