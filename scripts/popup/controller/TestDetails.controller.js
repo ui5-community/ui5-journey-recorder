@@ -113,7 +113,6 @@ sap.ui.define([
                             this.getModel("viewModel").setProperty("/replayMode", false);
                             MessageToast.show('Assertion not met, check your setup!');
                             performedStep.setHighlight(sap.ui.core.MessageType.Error);
-                            this.getModel("viewModel").setProperty("/replayMode", false);
                             RecordController.getInstance().stopRecording();
                             this.getRouter().navTo("TestDetails", {
                                 TestId: RecordController.getInstance().getTestUUID()
@@ -241,7 +240,6 @@ sap.ui.define([
                         origins: [sUrl]
                     }, function (granted) {
                         if (granted) {
-                            this._oModel.setProperty("/replayMode", true);
                             this._replay();
                         }
                     }.bind(this));
@@ -257,7 +255,6 @@ sap.ui.define([
                     origins: [sUrl]
                 }, function (granted) {
                     if (granted) {
-                        this._oModel.setProperty("/replayMode", true);
                         this._replay();
                     }
                 }.bind(this));
