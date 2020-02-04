@@ -8,7 +8,7 @@ sap.ui.define([
     "com/ui5/testing/model/CodeHelper",
     "com/ui5/testing/model/ChromeStorage",
     "com/ui5/testing/model/Utils",
-    "sap/m/MessageToast",
+    "sap/m/MessageBox",
     "sap/m/Dialog",
     "sap/m/Button",
     "sap/m/Text",
@@ -23,7 +23,7 @@ sap.ui.define([
     CodeHelper,
     ChromeStorage,
     Utils,
-    MessageToast,
+    MessageBox,
     Dialog,
     Button,
     Text) {
@@ -96,7 +96,9 @@ sap.ui.define([
             //var oLine = oEvent.getSource().getParent();
             RecordController.getInstance().focusTargetWindow();
             var oTableLine = this.getView().byId('tblPerformedSteps').getItems()[this._iCurrentStep];
+            this.getView().byId('tblPerformedSteps').setBusy(true);
             this._executeAction().then(function (oResult) {
+                this.getView().byId('tblPerformedSteps').setBusy(false);
                 var performedStep = oTableLine;
                 //this is our custom object
                 if (oResult && oResult.type && oResult.type === "ASS") {
@@ -107,11 +109,18 @@ sap.ui.define([
                             break;
                         case "warning":
                             performedStep.setHighlight(sap.ui.core.MessageType.Warning);
+                            MessageBox.warning('A warning was issued during replay!', {
+                                title: "Replay warning",
+                                details: oResult.messages && oResult.messages.length ? "<ul><li>" + oResult.messages.join("</li><li>") + "</li></ul>" : ""
+                            });
                             this.replayNextStep();
                             break;
                         case "error":
                             this.getModel("viewModel").setProperty("/replayMode", false);
-                            MessageToast.show('Assertion not met, check your setup!');
+                            MessageBox.error('An assertion was not met!', {
+                                title: "Replay error",
+                                details: oResult.messages && oResult.messages.length ? "<ul><li>" + oResult.messages.join("</li><li>") + "</li></ul>" : ""
+                            });
                             performedStep.setHighlight(sap.ui.core.MessageType.Error);
                             RecordController.getInstance().stopRecording();
                             this.getRouter().navTo("TestDetails", {
@@ -127,11 +136,18 @@ sap.ui.define([
                         performedStep.setHighlight(sap.ui.core.MessageType.Success);
                         this.replayNextStep();
                     } else if (oResult.result === "warning") {
+                        MessageBox.warning('A warning was issued during replay!', {
+                            title: "Replay warning",
+                            details: oResult.messages && oResult.messages.length ? "<ul><li>" + oResult.messages.join("</li><li>") + "</li></ul>" : ""
+                        });
                         performedStep.setHighlight(sap.ui.core.MessageType.Warning);
                         this.replayNextStep();
                     } else {
                         this.getModel("viewModel").setProperty("/replayMode", false);
-                        MessageToast.show('Action can not be performed, check your setup!');
+                        MessageBox.error('An action could not be performed!', {
+                            title: "Replay error",
+                            details: oResult.messages && oResult.messages.length ? "<ul><li>" + oResult.messages.join("</li><li>") + "</li></ul>" : ""
+                        });
                         performedStep.setHighlight(sap.ui.core.MessageType.Error);
                     }
                 }
