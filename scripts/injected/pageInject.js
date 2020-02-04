@@ -213,22 +213,50 @@ function _executeAction(oEventData) {
     var oDOMNode = UI5ControlHelper.getDomForControl(oItem);
 
     // prepare temporary variables for processing and returning
-    var sResult = "";
-    var sMessage = "";
+    var aResolutions = [];
+
+    function testEvent(oDOMNode, sListener, oEvent) {
+
+        return new Promise(function(resolve, reject) {
+
+            function handleIssuedEvent (oEventCaught) {
+                if (oEventCaught.ui5tr === "UI5TR" && oEvent === oEventCaught) {
+                    resolve({
+                        result: "success"
+                    });
+                }
+            }
+
+            oEvent.ui5tr = "UI5TR";
+            oDOMNode.addEventListener(sListener, handleIssuedEvent);
+            oDOMNode.dispatchEvent(oEvent);
+
+            // resolve the promise with an error message after 5 seconds
+            setTimeout(function() {
+                resolve({
+                    result: "error",
+                    message: "There was a timeout after 5 seconds."
+                });
+            }.bind(this), 5000);
+        });
+    }
 
     // potentially, there are several DOM nodes found or even none:
     if (oDOMNode instanceof NodeList) {
         // 1) several DOM nodes are found: issue warning, proceed with first found node
         if (oDOMNode.length > 1) { // length > 1
-            sResult = "warning";
             oDOMNode = oDOMNode.item(0);
-            sMessage = "Several elements found, using first one matched!"
+            aResolutions.push({
+                result: "warning",
+                message: "Several elements found, using first one matched!"
+            });
         }
-        // 3) no DOM node found: return immediately with error
+        // 2) no DOM node found: return immediately with error
         else if (oDOMNodes.length === 0) {
             return {
                 result: "error",
-                message: "No element found to execute action on!"
+                messages: ["No element found to execute action on!"],
+                type: "ACT"
             }
         }
     }
@@ -242,6 +270,8 @@ function _executeAction(oEventData) {
     // for mouse-press events
     if (oItem.property.actKey === "PRS") {
 
+        var aEvents = [];
+
         //send touch event..
         var event = new MouseEvent('mousedown', {
             view: window,
@@ -249,7 +279,7 @@ function _executeAction(oEventData) {
             cancelable: true
         });
         event.originalEvent = event; //self refer
-        oDOMNode.dispatchEvent(event);
+        aEvents.push(testEvent(oDOMNode, "mousedown", event));
 
         var event = new MouseEvent('mouseup', {
             view: window,
@@ -257,7 +287,7 @@ function _executeAction(oEventData) {
             cancelable: true
         });
         event.originalEvent = event; //self refer
-        oDOMNode.dispatchEvent(event);
+        aEvents.push(testEvent(oDOMNode, "mouseup", event));
 
         var event = new MouseEvent('click', {
             view: window,
@@ -265,8 +295,7 @@ function _executeAction(oEventData) {
             cancelable: true
         });
         event.originalEvent = event; //self refer
-        oDOMNode.dispatchEvent(event);
-
+        aEvents.push(testEvent(oDOMNode, "click", event));
     } else
     // for typing events
     if (oItem.property.actKey === "TYP") {
@@ -280,7 +309,7 @@ function _executeAction(oEventData) {
         }
 
         //first simulate a dummy input (NO! ENTER! - that is different)
-        //this will e.g. trigger the liveChange evnts
+        //this will e.g. trigger the liveChange events
         var event = new KeyboardEvent('input', {
             view: window,
             data: '',
@@ -288,7 +317,7 @@ function _executeAction(oEventData) {
             cancelable: true
         });
         event.originalEvent = event;
-        oDOMNode.dispatchEvent(event);
+        aEvents.push(testEvent(oDOMNode, "input", event));
 
         //afterwards trigger the blur event, in order to trigger the change event (enter is not really the same.. but ya..)
         if (oItem.property.actionSettings.blur === true) {
@@ -298,7 +327,7 @@ function _executeAction(oEventData) {
                 cancelable: true
             });
             event.originalEvent = event;
-            oDOMNode.dispatchEvent(event);
+            aEvents.push(testEvent(oDOMNode, "blur", event));
         }
 
         if (oItem.property.actionSettings.enter === true) {
@@ -314,17 +343,54 @@ function _executeAction(oEventData) {
                 cancelable: true
             });
             event.originalEvent = event;
-            oDOMNode.dispatchEvent(event);
+            aEvents.push(testEvent(oDOMNode, "keydown", event));
         }
     }
 
-    // TODO set result value based on whether the event got handled appropriately!
-    sResult = "success";
+    return new Promise(function(resolve) {
 
-    return {
-        result: sResult,
-        message: sMessage
-    };
+        // gather results:
+        Promise.all(aEvents).then(function (aPromiseResolutions) {
+
+            // 1) add resolutions to global set of results (e.g., upfront warnings)
+            aResolutions = aResolutions.concat(aPromiseResolutions);
+
+            // 2) construct overall result value:
+            // 2.1) collect results
+            var aResults = aResolutions.map(function(oResult) {
+                return oResult.result;
+            });
+            // 2.2) check for warnings and errors
+            var bWarningIssued = false;
+            var bErrorIssued = false;
+            aResults.forEach(function(sResult) {
+                if (sResult === "error") {
+                    bErrorIssued = true;
+                } else if (sResult === "warning") {
+                    bWarningIssued = true;
+                }
+            });
+            // 2.3) compute result value
+            var sResult = bErrorIssued ? "error" : bWarningIssued ? "warning" : "success";
+
+            // 3) gather messages:
+            // 3.1) collect messages
+            var aMessages = aResolutions.map(function(oResult) {
+                return oResult.message;
+            });
+            // 3.2) remove duplicate and empty messages
+            aMessages = aMessages.filter(function(sMessage, pos) {
+                return !!sMessage && aMessages.indexOf(sMessage) === pos;
+            });
+
+            resolve({
+                result: sResult,
+                messages: aMessages,
+                type: "ACT"
+            });
+        }.bind(this));
+
+    }.bind(this));
 }
 
 function _executeAssert(oEventData) {
@@ -340,7 +406,7 @@ function _executeAssert(oEventData) {
     if (aFoundElements === 0) {
         return {
             result: "error",
-            message: "No element found to run assertion on."
+            messages: ["No element found to run assertion on."]
         };
     }
 
@@ -363,7 +429,7 @@ function _executeAssert(oEventData) {
 
     return {
         result: sResult,
-        message: sMessage
+        messages: sMessage ? [sMessage] : []
     }
 }
 
