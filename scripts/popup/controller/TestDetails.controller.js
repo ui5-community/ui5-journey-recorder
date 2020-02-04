@@ -95,9 +95,9 @@ sap.ui.define([
         onReplaySingleStep: function (oEvent) {
             //var oLine = oEvent.getSource().getParent();
             RecordController.getInstance().focusTargetWindow();
-            var oLine = this.getView().byId('tblPerformedSteps').getItems()[this._iCurrentStep];
+            var oTableLine = this.getView().byId('tblPerformedSteps').getItems()[this._iCurrentStep];
             this._executeAction().then(function (oResult) {
-                var performedStep = oLine;
+                var performedStep = oTableLine;
                 //this is our custom object
                 if (oResult && oResult.type && oResult.type === "ASS") {
                     switch (oResult.result) {
@@ -123,8 +123,11 @@ sap.ui.define([
                     }
                     //This is the object back from the Communication object.
                 } else if (oResult && oResult.uuid) {
-                    if (oResult.processed) {
+                    if (oResult.result === "success") {
                         performedStep.setHighlight(sap.ui.core.MessageType.Success);
+                        this.replayNextStep();
+                    } else if (oResult.result === "warning") {
+                        performedStep.setHighlight(sap.ui.core.MessageType.Warning);
                         this.replayNextStep();
                     } else {
                         this.getModel("viewModel").setProperty("/replayMode", false);
@@ -504,23 +507,15 @@ sap.ui.define([
          *
          */
         _executeAction: function () {
-            var aEvent = RecordController.getInstance().getTestElements();
-            var oElement = aEvent[this._iCurrentStep];
+            var oElement = RecordController.getInstance().getTestElementById(this._iCurrentStep);
 
             return new Promise(function (resolve) {
                 if (oElement && oElement.property.type === "ACT") {
-                    this._getFoundElements(oElement).then(function (aElements) {
-                        if (aElements.length === 0) {
-                            resolve({
-                                result: "error",
-                                type: "ACT"
-                            });
-                            return;
-                        }
-                        oElement.item.identifier = aElements[0].identifier;
-                        ConnectionMessages.executeAction(Connection.getInstance(), {
-                            element: oElement
-                        }).then(resolve);
+                    ConnectionMessages.executeAction(Connection.getInstance(), {
+                        element: oElement
+                    }).then(function(oData) {
+                        oData.type = "ACT";
+                        resolve(oData);
                     });
                 } else if (oElement && oElement.property.type === "ASS") {
                     this._getFoundElements(oElement).then(function (aElements) {

@@ -103,7 +103,10 @@ class PageCommunication {
                 break;
 
             case "executeAction":
+                // execute action synchronously
                 oReturn = _executeAction(oEventData);
+                // package return value for this action to trigger correct handling in replay functionality
+                oReturn.uuid = iMessageID;
                 break;
 
             case "getWindowInfo":
@@ -202,6 +205,27 @@ function _executeAction(oEventData) {
     var oItem = oEventData.element;
     var oDOMNode = UI5ControlHelper.getDomForControl(oItem);
 
+    // prepare temporary variables for processing and returning
+    var sResult = "";
+    var sMessage = "";
+
+    // potentially, there are several DOM nodes found or even none:
+    if (oDOMNode instanceof NodeList) {
+        // 1) several DOM nodes are found: issue warning, proceed with first found node
+        if (oDOMNode.length > 1) { // length > 1
+            sResult = "warning";
+            oDOMNode = oDOMNode.item(0);
+            sMessage = "Several elements found, using first one matched!"
+        }
+        // 3) no DOM node found: return immediately with error
+        else if (oDOMNodes.length === 0) {
+            return {
+                result: "error",
+                message: "No element found to execute action on!"
+            }
+        }
+    }
+
     // reveal DOM node by using CSS classes and add fade-out effect
     revealDOMNode(oDOMNode);
     setTimeout(function () {
@@ -286,6 +310,14 @@ function _executeAction(oEventData) {
             oDOMNode.dispatchEvent(event);
         }
     }
+
+    // TODO set result value based on whether the event got handled appropriately!
+    sResult = "success";
+
+    return {
+        result: sResult,
+        message: sMessage
+    };
 }
 
 function _getWindowInfo() {
@@ -316,7 +348,7 @@ function _runSupportAssistant(oComponent) {
                 return !aExclude.includes(oRule.libName + "/" + oRule.ruleId)
             });
 
-            // call the support-assistant analysis asynchonously, so we ensure that the results can actually be retrieved
+            // call the support-assistant analysis asynchronously, so we ensure that the results can actually be retrieved
             setTimeout(function () {
 
                 // run support assistant with the given set of rules (or no rules at all if none have been cached yet)
@@ -1414,7 +1446,7 @@ class UI5ControlHelper {
      *
      * @param {object} oControlData an object with UI5-control data
      *
-     * @returns {HTMLNode} the DOM node associated with the given UI5 control
+     * @returns {HTMLElement|NodeList} if only one element is found, the DOM node associated with the given UI5 control; a NodeList instance otherwise
      */
     static getDomForControl(oControlData) {
         // check whether the given control is not embedded into another one
@@ -1423,9 +1455,16 @@ class UI5ControlHelper {
             return sap.ui.getCore().byId(oControlData.item.identifier.ui5AbsoluteId).getDomRef();
         }
 
-        // return a default query for the combined ID
+        // construct a default query for the combined ID
         var sIdSelector = "*[id$='" + (oControlData.item.identifier.ui5AbsoluteId + sExtension) + "']";
-        return document.querySelector(sIdSelector);
+        var aDomNodes = document.querySelectorAll(sIdSelector);
+
+        // unwrap single item to establish compatibility with 'sap.ui.getCore().byId' as used above
+        if (aDomNodes.length === 1) {
+            return aDomNodes.item(0);
+        } else {
+            return aDomNodes;
+        }
     }
 
     /**
