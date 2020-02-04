@@ -232,11 +232,13 @@ sap.ui.define([
             //console.log('ReplayStart, have to close former tab: ' + RecordController.getInstance().isInjected());
             if (RecordController.getInstance().isInjected()) {
                 RecordController.getInstance().closeTab().then(function () {
+                    // TODO should this not be a property of the RecordController?!
                     this._oModel.setProperty("/replayMode", false);
                     var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
                     this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
                         oStep.setHighlight(sap.ui.core.MessageType.None);
                     });
+                    // TODO should this not be a property of the RecordController?!
                     this._iCurrentStep = -1;
                     chrome.permissions.request({
                         permissions: ['tabs'],
@@ -552,7 +554,7 @@ sap.ui.define([
 
             return new Promise(function (resolve, reject) {
                 this._findItemAndExclude(oDefinition.selectorAttributes).then(function (aItemsEnhanced) {
-                    //make an assert check..
+                    // FIXME make an assert check!
                     resolve(aItemsEnhanced);
                 });
             }.bind(this));
@@ -570,12 +572,14 @@ sap.ui.define([
          *
          */
         _updatePlayButton: function () {
+            // TODO is this if-block necessary?!
             if (!this._oModel.getProperty("/replayMode")) {
                 this._oModel.setProperty("/replayMode", true);
             }
 
             RecordController.getInstance().showPlayOnTestElementById(this._iCurrentStep);
 
+            // FIXME this is not something that needs to be in this very method!
             //Here the test should work automatically
             var iReplayType = this.getModel('settings').getProperty('/settings/replayType');
             if (iReplayType !== 0) {
