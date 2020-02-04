@@ -3,7 +3,7 @@ sap.ui.define([
 ], function(UI5Object) {
     "use strict";
 
-    var ParentMatcherBuilder = UI5Object.extend("com.ui5.testing.model.opa5.ParentMatcherBuilder", {
+    var ParentMatcherBuilder = UI5Object.extend("com.ui5.testing.model.code-generation.opa5.ParentMatcherBuilder", {
         /**
          * Simple constructor instantiating all the member variables
          *

@@ -1,12 +1,12 @@
 sap.ui.define([
     "sap/ui/base/Object",
-    "com/ui5/testing/model/opa5/PageBuilder",
-    "com/ui5/testing/model/opa5/ParentMatcherBuilder",
-    "com/ui5/testing/model/opa5/ItemBindingMatcherBuilder",
+    "com/ui5/testing/model/code-generation/opa5/PageBuilder",
+    "com/ui5/testing/model/code-generation/opa5/ParentMatcherBuilder",
+    "com/ui5/testing/model/code-generation/opa5/ItemBindingMatcherBuilder",
     "com/ui5/testing/model/Utils"
 ], function (UI5Object, PageBuilder, ParentMatcherBuilder, ItemBindingMatcherBuilder, Utils) {
     "use strict";
-    var OPA5CodeStrategy = UI5Object.extend("com.ui5.testing.model.OPA5CodeStrategy", {
+    var OPA5CodeStrategy = UI5Object.extend("com.ui5.testing.model.code-generation.OPA5CodeStrategy", {
         jsonKeyRegex: /\"(\w+)\"\:/g,
         /**
          *
@@ -324,7 +324,7 @@ sap.ui.define([
 
         //var sSelectorParts = this.__createSelectorProperties(selectors);
         //aParts.push(sSelectorParts);
-    
+
 
         aParts.push('{');
         if (oStep.property.selectItemBy === "UI5") {

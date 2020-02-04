@@ -3,7 +3,7 @@ sap.ui.define([
 ], function (UI5Object) {
     "use strict";
 
-    var PageBuilder = UI5Object.extend("com.ui5.testing.model.opa5.PageBuilder", {
+    var PageBuilder = UI5Object.extend("com.ui5.testing.model.code-generation.opa5.PageBuilder", {
         /**
          * Simple constructor instantiating all the member variables
          *

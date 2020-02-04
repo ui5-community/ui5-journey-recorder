@@ -3,7 +3,7 @@ sap.ui.define([
 ], function (UI5Object) {
     "use strict";
 
-    var NaturalCodeStrategy = UI5Object.extend("com.ui5.testing.model.NaturalCodeStrategy", {
+    var NaturalCodeStrategy = UI5Object.extend("com.ui5.testing.model.code-generation.NaturalCodeStrategy", {
         constructor: function () {
             this._templates = {
                 EN: {

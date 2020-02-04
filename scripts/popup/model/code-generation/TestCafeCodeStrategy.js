@@ -2,7 +2,7 @@ sap.ui.define([
     "sap/ui/base/Object"
 ], function (UI5Object) {
     "use strict";
-    var TestCafeCodeStrategy = UI5Object.extend("com.ui5.testing.model.TestCafeCodeStrategy", {});
+    var TestCafeCodeStrategy = UI5Object.extend("com.ui5.testing.model.code-generation.TestCafeCodeStrategy", {});
 
     TestCafeCodeStrategy.prototype.generate = function (oCodeSettings, aElements, oCodeHelper) {
         var aCodes = [];

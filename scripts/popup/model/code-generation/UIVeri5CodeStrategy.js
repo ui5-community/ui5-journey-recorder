@@ -4,19 +4,19 @@ sap.ui.define([
 ], function (UI5Object, Utils) {
     "use strict";
 
-    return UI5Object.extend("com.ui5.testing.model.UIVeri5CodeStrategy", {
+    return UI5Object.extend("com.ui5.testing.model.code-generation.UIVeri5CodeStrategy", {
         /**
-         * 
+         *
          */
         constructor: function () {
             this._aNameStack = {};
         },
 
         /**
-         * 
-         * @param {*} oCodeSettings 
-         * @param {*} aElements 
-         * @param {*} oCodeHelper 
+         *
+         * @param {*} oCodeSettings
+         * @param {*} aElements
+         * @param {*} oCodeHelper
          */
         generate: function (oCodeSettings, aElements, oCodeHelper) {
             var aCodes = [];
@@ -111,9 +111,9 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oCodeSettings 
-         * @param {*} oElement 
+         *
+         * @param {*} oCodeSettings
+         * @param {*} oElement
          */
         createTestStep: function (oCodeSettings, oElement) {
             var sCode = "";
@@ -340,10 +340,10 @@ sap.ui.define([
         },
 
         /**
-         * 
-         * @param {*} oElement 
-         * @param {*} oUI5Selector 
-         * @param {*} oAssert 
+         *
+         * @param {*} oElement
+         * @param {*} oUI5Selector
+         * @param {*} oAssert
          */
         _getUI5Element: function (oElement, oUI5Selector, oAssert) {
             var bMulti = false;
