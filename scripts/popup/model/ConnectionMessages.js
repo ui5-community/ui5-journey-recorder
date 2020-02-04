@@ -74,6 +74,18 @@ sap.ui.define([], function () {
         /**
          *
          * @param {com.ui5.testing.model.Connection} connection the connection to use for sending messages
+         * @param {object} oInformation parameters for the assert message
+         */
+        static executeAssert(oConnection, oInformation) {
+            return oConnection.syncMessage({
+                action: "executeAssert",
+                data: oInformation
+            });
+        }
+
+        /**
+         *
+         * @param {com.ui5.testing.model.Connection} connection the connection to use for sending messages
          * @param {object} oInformation component information for the support-assistant message
          */
         static runSupportAssistant(oConnection, oComponent) {

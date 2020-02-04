@@ -122,7 +122,7 @@ sap.ui.define([
                             jQuery.sap.log.info(`No handling for no event`);
                     }
                     //This is the object back from the Communication object.
-                } else if (oResult && oResult.uuid) {
+                } else if (oResult && oResult.type === "ACT") {
                     if (oResult.result === "success") {
                         performedStep.setHighlight(sap.ui.core.MessageType.Success);
                         this.replayNextStep();
@@ -134,10 +134,6 @@ sap.ui.define([
                         MessageToast.show('Action can not be performed, check your setup!');
                         performedStep.setHighlight(sap.ui.core.MessageType.Error);
                     }
-                } else if (oResult && oResult.type && oResult.type === "ACT" && oResult.result === "error") {
-                    this.getModel("viewModel").setProperty("/replayMode", false);
-                    MessageToast.show('Action can not be performed, check your setup!');
-                    performedStep.setHighlight(sap.ui.core.MessageType.Error);
                 }
             }.bind(this));
         },
@@ -516,56 +512,20 @@ sap.ui.define([
                     ConnectionMessages.executeAction(Connection.getInstance(), {
                         element: oElement
                     }).then(function(oData) {
-                        oData.type = "ACT";
                         resolve(oData);
                     });
                 } else if (oElement && oElement.property.type === "ASS") {
-                    this._getFoundElements(oElement).then(function (aElements) {
-                        if (aElements.length === 1) {
-                            resolve({
-                                result: "success",
-                                type: "ASS"
-                            });
-                        } else if (aElements.length > 1) {
-                            resolve({
-                                result: "warning",
-                                type: "ASS"
-                            });
-                        } else {
-                            resolve({
-                                result: "error",
-                                type: "ASS"
-                            });
-                        }
+                    ConnectionMessages.executeAssert(Connection.getInstance(), {
+                        element: oElement.selector.selectorAttributes,
+                        assert: oElement.assertion
+                    }).then(function (oData) {
+                        resolve(oData);
                     });
                 } else {
                     resolve();
                     return false;
                 }
             }.bind(this));
-        },
-
-        /**
-         *
-         * @param {*} oElement
-         */
-        _getFoundElements: function (oElement) {
-            var oDefinition = oElement.selector;
-
-            return new Promise(function (resolve, reject) {
-                this._findItemAndExclude(oDefinition.selectorAttributes).then(function (aItemsEnhanced) {
-                    // FIXME make an assert check!
-                    resolve(aItemsEnhanced);
-                });
-            }.bind(this));
-        },
-
-        /**
-         *
-         * @param {*} oSelector
-         */
-        _findItemAndExclude: function (oSelector) {
-            return ConnectionMessages.findElements(Connection.getInstance(), oSelector);
         },
 
         /**

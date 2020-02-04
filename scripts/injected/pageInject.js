@@ -106,7 +106,14 @@ class PageCommunication {
                 // execute action synchronously
                 oReturn = _executeAction(oEventData);
                 // package return value for this action to trigger correct handling in replay functionality
-                oReturn.uuid = iMessageID;
+                oReturn.type = "ACT";
+                break;
+
+            case "executeAssert":
+                // execute action synchronously (no return value)
+                oReturn = _executeAssert(oEventData);
+                // package return value for this action to trigger correct handling in replay functionality
+                oReturn.type = "ASS";
                 break;
 
             case "getWindowInfo":
@@ -318,6 +325,46 @@ function _executeAction(oEventData) {
         result: sResult,
         message: sMessage
     };
+}
+
+function _executeAssert(oEventData) {
+
+    // unpack event data
+    var oElementSelector = oEventData.element;
+    var oAssertionData = oEventData.assert;
+
+    // find elements to assert on
+    var aFoundElements = TestItem.findItemsBySelector(oElementSelector);
+
+    // if no elements are found, return early
+    if (aFoundElements === 0) {
+        return {
+            result: "error",
+            message: "No element found to run assertion on."
+        };
+    }
+
+    // prepare return values
+    var sResult = "";
+    var sMessage = "";
+    var oElement = aFoundElements[0]; // always use first item for assertion
+
+    // if several items are found, use first one, but issue a warning
+    // TODO this may be wanted as there are also assertions on the number of found elements!
+    if (aFoundElements.length > 1) {
+        sResult = "warning";
+        sMessage = "Several elements for assertion found, using first one.";
+    }
+
+    // FIXME run actual assertion
+    if (aFoundElements.length === 1) {
+        sResult = "success";
+    }
+
+    return {
+        result: sResult,
+        message: sMessage
+    }
 }
 
 function _getWindowInfo() {
