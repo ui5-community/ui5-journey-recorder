@@ -42,6 +42,15 @@
                         </items>
                     </Select>
 
+                    <Label text="Default Replay Timeout" />
+                    <Select id="tstReplayTimeout"
+                            items="{settings>/replayTimeouts}"
+                            selectedKey="{settings>/settings/defaultReplayTimeout}">
+                        <items>
+                            <core:Item text="{settings>mode}" key="{settings>key}" />
+                        </items>
+                    </Select>
+
                     <Label text="Clear Settings"/>
                     <Button id="btDel" type="Reject" text="Delete" press="onClearSettings"/>
                 </f:content>

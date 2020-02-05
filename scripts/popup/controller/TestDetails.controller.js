@@ -63,8 +63,9 @@ sap.ui.define([
             this.getView().setModel(RecordController.getInstance().getModel(), "recordModel");
             this.getView().setModel(GlobalSettings.getModel(), "settings");
 
-            // due to the binding, the settings value gets overridden, so a retrieval of the default value for the replay type is needed
+            // due to the binding, the settings value gets overridden, so a retrieval of the default value for the replay type/timeout is needed
             this.getModel("settings").setProperty("/settings/defaultReplayType", this.getModel("settings").getProperty("/settingsDefault/defaultReplayType"));
+            this.getModel("settings").setProperty("/settings/defaultReplayTimeout", this.getModel("settings").getProperty("/settingsDefault/defaultReplayTimeout"));
 
             // initialize recording dialog
             this._createDialog();
@@ -526,7 +527,8 @@ sap.ui.define([
             return new Promise(function (resolve) {
                 if (oElement && oElement.property.type === "ACT") {
                     ConnectionMessages.executeAction(Connection.getInstance(), {
-                        element: oElement
+                        element: oElement,
+                        timeout: this.getModel("settings").getProperty("/settings/defaultReplayTimeout")
                     }).then(function(oData) {
                         resolve(oData);
                     });

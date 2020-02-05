@@ -2,12 +2,6 @@
 
 "use strict";
 
-// #region Configuration options
-
-const REPLAY_TIMEOUT_SECONDS = 5;
-
-// #endregion
-
 // #region Page communication
 
 /**
@@ -216,6 +210,7 @@ function _executeAction(oEventData) {
 
     // get element and DOM node from event data
     var oItem = oEventData.element;
+    var iTimeout = oEventData.timeout;
     var oDOMNode = UI5ControlHelper.getDomForControl(oItem);
 
     // prepare temporary variables for processing and returning
@@ -237,13 +232,15 @@ function _executeAction(oEventData) {
             oDOMNode.addEventListener(sListener, handleIssuedEvent);
             oDOMNode.dispatchEvent(oEvent);
 
-            // resolve the promise with an error message after 5 seconds
-            setTimeout(function() {
-                resolve({
-                    result: "error",
-                    message: "There was a timeout after " + REPLAY_TIMEOUT_SECONDS + " seconds."
-                });
-            }.bind(this), REPLAY_TIMEOUT_SECONDS * 1000);
+            if (iTimeout != 0) {
+                // resolve the promise with an error message after 5 seconds
+                setTimeout(function() {
+                    resolve({
+                        result: "error",
+                        message: "There was a timeout after " + iTimeout + " seconds."
+                    });
+                }.bind(this), iTimeout * 1000);
+            }
         });
     }
 

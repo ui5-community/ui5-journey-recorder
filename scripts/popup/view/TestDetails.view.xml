@@ -67,6 +67,14 @@
                                     <Label text="Replay" tooltip="Replay.." visible="false" />
                                     <!--<Button icon="sap-icon://play" text="{i18n>replayAuto}" press="onReplayAutomatic" />-->
 
+                                    <Label text="Replay timeout:" />
+                                    <Select id="sReplayTimeout" items="{settings>/replayTimeouts}" selectedKey="{settings>/settings/defaultReplayTimeout}">
+                                        <items>
+                                            <core:Item text="{settings>mode}" key="{settings>key}" />
+                                        </items>
+                                    </Select>
+
+                                    <Label text="Replay type:" />
                                     <Select id="sReplayMode" items="{settings>/replayModes}" selectedKey="{settings>/settings/defaultReplayType}">
                                         <items>
                                             <core:Item text="{settings>mode}" key="{settings>key}" />
