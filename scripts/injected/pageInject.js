@@ -2,6 +2,12 @@
 
 "use strict";
 
+// #region Configuration options
+
+const REPLAY_TIMEOUT_SECONDS = 5;
+
+// #endregion
+
 // #region Page communication
 
 /**
@@ -235,9 +241,9 @@ function _executeAction(oEventData) {
             setTimeout(function() {
                 resolve({
                     result: "error",
-                    message: "There was a timeout after 5 seconds."
+                    message: "There was a timeout after " + REPLAY_TIMEOUT_SECONDS + " seconds."
                 });
-            }.bind(this), 5000);
+            }.bind(this), REPLAY_TIMEOUT_SECONDS * 1000);
         });
     }
 
