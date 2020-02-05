@@ -63,8 +63,8 @@ sap.ui.define([
             this.getView().setModel(RecordController.getInstance().getModel(), "recordModel");
             this.getView().setModel(GlobalSettings.getModel(), "settings");
 
-            // initialize some model properties
-            this.getModel("settings").setProperty("/settings/replayType", this.getModel("settings").getProperty("/settingsDefault/replayType"));
+            // due to the binding, the settings value gets overridden, so a retrieval of the default value for the replay type is needed
+            this.getModel("settings").setProperty("/settings/defaultReplayType", this.getModel("settings").getProperty("/settingsDefault/defaultReplayType"));
 
             // initialize recording dialog
             this._createDialog();
@@ -557,7 +557,7 @@ sap.ui.define([
 
             // FIXME this is not something that needs to be in this very method!
             //Here the test should work automatically
-            var iReplayType = this.getModel('settings').getProperty('/settings/replayType');
+            var iReplayType = this.getModel('settings').getProperty('/settings/defaultReplayType');
             if (iReplayType !== 0) {
                 const timeout = 500 * iReplayType;
 
