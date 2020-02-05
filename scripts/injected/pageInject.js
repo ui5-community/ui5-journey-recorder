@@ -1512,6 +1512,11 @@ class UI5ControlHelper {
         // predefine resulting element ID
         var sResultID;
 
+        // if we do not have DOM node to work with
+        if (!oDOMNode) {
+            return null;
+        }
+
         // TODO test this with LTS releases! (see version overview)
         // traverse up in the DOM tree until finding a proper UI5 control,
         // starting with the given DOM node
