@@ -117,7 +117,7 @@ sap.ui.define([
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._oModel.setProperty("/quickMode", false);
             this._oModel.setProperty("/replayMode", false);
-            var oItem = RecordController.getInstance().getSelectedItem();
+            var oItem = RecordController.getInstance().getCurrentElement();
             if (!oItem || JSON.stringify(oItem) == "{}") {
                 this.getRouter().navTo("start");
                 return;
@@ -134,7 +134,7 @@ sap.ui.define([
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._oModel.setProperty("/quickMode", true);
             this._oModel.setProperty("/replayMode", false);
-            var oItem = RecordController.getInstance().getSelectedItem();
+            var oItem = RecordController.getInstance().getCurrentElement();
             if (!oItem || JSON.stringify(oItem) == "{}") {
                 this.getRouter().navTo("start");
                 return;
@@ -150,7 +150,7 @@ sap.ui.define([
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._sElementId = oEvent.getParameter("arguments").ElementId;
 
-            this.getModel('viewModel').setProperty('/element', RecordController.getInstance().getTestElementById(this._sElementId));
+            this.getModel('viewModel').setProperty('/element', RecordController.getInstance().getTestElementByIdx(this._sElementId));
             this.getModel('viewModel').setProperty('/blocked', true);
             this._setValidAttributeTypes();
             this._updatePreview();

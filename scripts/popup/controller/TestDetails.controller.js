@@ -506,7 +506,7 @@ sap.ui.define([
          *
          */
         _executeAction: function () {
-            var oElement = RecordController.getInstance().getTestElementById(this._iCurrentStep);
+            var oElement = RecordController.getInstance().getTestElementByIdx(this._iCurrentStep);
 
             return new Promise(function (resolve) {
                 if (oElement && oElement.property.type === "ACT") {
@@ -539,7 +539,7 @@ sap.ui.define([
                 this._oModel.setProperty("/replayMode", true);
             }
 
-            RecordController.getInstance().showPlayOnTestElementById(this._iCurrentStep);
+            RecordController.getInstance().showPlayOnTestElementByIdx(this._iCurrentStep);
 
             // FIXME this is not something that needs to be in this very method!
             //Here the test should work automatically
@@ -642,7 +642,7 @@ sap.ui.define([
                 return; //NO!
             }
 
-            RecordController.getInstance().setSelectedItem(oData);
+            RecordController.getInstance().setCurrentElement(oData);
             RecordController.getInstance().focusPopup();
 
             var sRouterTarget = this._bQuickMode ? "elementCreateQuick" : "elementCreate";
