@@ -329,13 +329,6 @@ sap.ui.define([
         /**
          *
          */
-        onRecord: function () {
-            RecordController.getInstance().startRecording();
-        },
-
-        /**
-         *
-         */
         onSave: function () {
             //save /codesettings & /test & /elements - optimiazion potential..
             var oSave = {
@@ -485,29 +478,20 @@ sap.ui.define([
         _replay: function () {
             var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
 
-            chrome.tabs.create({
-                url: sUrl,
-                active: true
-            }, function (oTab) {
-
-                // it is not necessary to explicitly wait for the tab being completely loaded (e.g., using the function 'tabs.onUpdated.addListener')
-                // as the script injection only happens after the page is loaded
-                // see https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/extensionTypes/RunAt
-                RecordController.getInstance().injectScript(oTab.id)
-                    .then(function (oData) {
-                        if (!this._oModel.getProperty("/replayMode")) {
-                            this._oModel.setProperty("/replayMode", true)
-                            this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                                oStep.setHighlight(sap.ui.core.MessageType.None);
-                            });
-                            //console.log("_startReplay");
-                            this._startReplay();
-                        }
-                        if (oData) {
-                            this._oModel.setProperty('/ui5Version', oData.version);
-                        }
-                    }.bind(this));
-            }.bind(this));
+            RecordController.getInstance().createTabAndInjectScript(sUrl)
+                .then(function (oData) {
+                    if (!this._oModel.getProperty("/replayMode")) {
+                        this._oModel.setProperty("/replayMode", true)
+                        this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
+                            oStep.setHighlight(sap.ui.core.MessageType.None);
+                        });
+                        //console.log("_startReplay");
+                        this._startReplay();
+                    }
+                    if (oData) {
+                        this._oModel.setProperty('/ui5Version', oData.version);
+                    }
+                }.bind(this));
         },
 
         /**

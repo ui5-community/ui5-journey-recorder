@@ -245,6 +245,28 @@ sap.ui.define([
             return Connection.getInstance().establishConnection(iTabId);
         },
 
+        /**
+         * Create a tab for the given URL and inject recording script into tab.
+         *
+         * @param {string} sURL the URL to open in the new tab
+         *
+         * @returns {Promise} a promise whether the inject worked or not
+         */
+        createTabAndInjectScript: function (sURL) {
+            return new Promise(function (resolve, reject) {
+                chrome.tabs.create({
+                    url: sURL,
+                    active: true
+                }, function (oTab) {
+                    // it is not necessary to explicitly wait for the tab being completely loaded (e.g., using the function 'tabs.onUpdated.addListener')
+                    // as the script injection only happens after the page is loaded
+                    // see https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/extensionTypes/RunAt
+                    this.injectScript(oTab.id).then(resolve).catch(reject);
+                }.bind(this));
+            }.bind(this));
+        },
+
+
         isInjected: function () {
             return Connection.getInstance().isConnected();
         },
