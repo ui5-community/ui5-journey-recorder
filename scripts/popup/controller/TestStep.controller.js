@@ -559,21 +559,27 @@ sap.ui.define([
          * @param {*} oElement
          */
         _executeAction: function (oElement) {
+            // FIXME this method is a direct copy of TestDetails._executeAction. Common superclass needed?
             return new Promise(function (resolve, reject) {
-                if (oElement.property.type !== "ACT") {
-                    resolve();
-                    return false;
-                }
-                this._getFoundElements().then(function (aElements) {
-                    if (aElements.length === 0) {
-                        resolve();
-                        return;
-                    }
-                    oElement.item.identifier = aElements[0].identifier;
+                if (oElement && oElement.property.type === "ACT") {
                     ConnectionMessages.executeAction(Connection.getInstance(), {
-                        element: oElement
-                    }).then(resolve);
-                });
+                        element: oElement,
+                        timeout: this.getModel("settings").getProperty("/settings/defaultReplayTimeout")
+                    }).then(function(oData) {
+                        resolve(oData);
+                    });
+                } else if (oElement && oElement.property.type === "ASS") {
+                    ConnectionMessages.executeAssert(Connection.getInstance(), {
+                        element: this._getSelectorDefinition(oElement),
+                        assert: this._getAssertDefinition(oElement)
+                    }).then(function (oData) {
+                        resolve(oData);
+                    });
+                } else {
+                    resolve({
+                        result: "error"
+                    });
+                }
             }.bind(this));
         },
 

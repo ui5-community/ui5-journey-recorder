@@ -214,6 +214,7 @@ function _executeAction(oEventData) {
     var oDOMNode = UI5ControlHelper.getDomForControl(oItem);
 
     // prepare temporary variables for processing and returning
+    var aEvents = [];
     var aResolutions = [];
 
     function testEvent(oDOMNode, sListener, oEvent) {
@@ -273,8 +274,6 @@ function _executeAction(oEventData) {
     // for mouse-press events
     if (oItem.property.actKey === "PRS") {
 
-        var aEvents = [];
-
         //send touch event..
         var event = new MouseEvent('mousedown', {
             view: window,
@@ -305,10 +304,12 @@ function _executeAction(oEventData) {
 
         var sText = oItem.property.selectActInsert;
         oDOMNode.focus();
+
+        // insert text: either replace or append
         if (sText.length > 0 && oItem.property.actionSettings.replaceText === false) {
-            oDOMNode.val(oDOMNode.val() + sText);
+            oDOMNode.value = oDOMNode.value + sText;
         } else {
-            oDOMNode.val(sText);
+            oDOMNode.value = sText;
         }
 
         //first simulate a dummy input (NO! ENTER! - that is different)
