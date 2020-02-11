@@ -78,6 +78,7 @@ sap.ui.define([
 
             // add event listener for item selections on page
             sap.ui.getCore().getEventBus().subscribe("Internal", "itemSelected", this._onItemSelected.bind(this));
+            sap.ui.getCore().getEventBus().subscribe("Internal", "replayFinished", this._checkRecordContinuing.bind(this));
 
             // trigger prompt on unload!
             // TODO insert function here that asks for saving the changes → which can be used also on connection losses
@@ -91,92 +92,8 @@ sap.ui.define([
 
         /**
          *
-         * @param {*} oEvent
          */
-        onReplaySingleStep: function (oEvent) {
-            //var oLine = oEvent.getSource().getParent();
-            RecordController.getInstance().focusTargetWindow();
-            var oTableLine = this.getView().byId('tblPerformedSteps').getItems()[this._iCurrentStep];
-            this.getView().byId('tblPerformedSteps').setBusy(true);
-            this._executeAction().then(function (oResult) {
-                this.getView().byId('tblPerformedSteps').setBusy(false);
-                var performedStep = oTableLine;
-                //this is our custom object
-                if (oResult && oResult.type && oResult.type === "ASS") {
-                    switch (oResult.result) {
-                        case "success":
-                            performedStep.setHighlight(sap.ui.core.MessageType.Success);
-                            this.replayNextStep();
-                            break;
-                        case "warning":
-                            performedStep.setHighlight(sap.ui.core.MessageType.Warning);
-                            MessageBox.warning('A warning was issued during replay!', {
-                                title: "Replay warning",
-                                details: oResult.messages && oResult.messages.length ? "<ul><li>" + oResult.messages.join("</li><li>") + "</li></ul>" : ""
-                            });
-                            this.replayNextStep();
-                            break;
-                        case "error":
-                            this.getModel("viewModel").setProperty("/replayMode", false);
-                            MessageBox.error('An assertion was not met!', {
-                                title: "Replay error",
-                                details: oResult.messages && oResult.messages.length ? "<ul><li>" + oResult.messages.join("</li><li>") + "</li></ul>" : ""
-                            });
-                            performedStep.setHighlight(sap.ui.core.MessageType.Error);
-                            RecordController.getInstance().stopRecording();
-                            this.getRouter().navTo("TestDetails", {
-                                TestId: RecordController.getInstance().getTestUUID()
-                            });
-                            break;
-                        default:
-                            jQuery.sap.log.info(`No handling for no event`);
-                    }
-                    //This is the object back from the Communication object.
-                } else if (oResult && oResult.type === "ACT") {
-                    if (oResult.result === "success") {
-                        performedStep.setHighlight(sap.ui.core.MessageType.Success);
-                        this.replayNextStep();
-                    } else if (oResult.result === "warning") {
-                        MessageBox.warning('A warning was issued during replay!', {
-                            title: "Replay warning",
-                            details: oResult.messages && oResult.messages.length ? "<ul><li>" + oResult.messages.join("</li><li>") + "</li></ul>" : ""
-                        });
-                        performedStep.setHighlight(sap.ui.core.MessageType.Warning);
-                        this.replayNextStep();
-                    } else {
-                        this.getModel("viewModel").setProperty("/replayMode", false);
-                        MessageBox.error('An action could not be performed!', {
-                            title: "Replay error",
-                            details: oResult.messages && oResult.messages.length ? "<ul><li>" + oResult.messages.join("</li><li>") + "</li></ul>" : ""
-                        });
-                        performedStep.setHighlight(sap.ui.core.MessageType.Error);
-                    }
-                }
-            }.bind(this));
-        },
-
-        /**
-         *
-         */
-        replayNextStep: function () {
-            var aEvent = RecordController.getInstance().getTestElements();
-            this._iCurrentStep += 1;
-            this._updatePlayButton();
-            if (this._iCurrentStep >= aEvent.length) {
-                this.getModel("viewModel").setProperty("/replayMode", false);
-                RecordController.getInstance().stopRecording();
-                //RecordController.getInstance().startRecording();
-                this.checkRecordContinuing();
-                this.getRouter().navTo("TestDetails", {
-                    TestId: RecordController.getInstance().getTestUUID()
-                });
-            }
-        },
-
-        /**
-         *
-         */
-        checkRecordContinuing: function () {
+        _checkRecordContinuing: function () {
             var dialog = new Dialog({
                 title: 'Start Recording?',
                 type: 'Message',
@@ -188,9 +105,6 @@ sap.ui.define([
                     tooltip: 'Starts the recording process',
                     press: function () {
                         RecordController.getInstance().startRecording();
-                        this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                            oStep.setHighlight(sap.ui.core.MessageType.None);
-                        });
                         dialog.close();
                     }.bind(this)
                 }),
@@ -241,42 +155,67 @@ sap.ui.define([
         /**
          *
          */
-        onReplayAll: function (oEvent) {
-            //console.log('ReplayStart, have to close former tab: ' + RecordController.getInstance().isInjected());
-            if (RecordController.getInstance().isInjected()) {
-                RecordController.getInstance().closeTab().then(function () {
-                    // TODO should this not be a property of the RecordController?!
-                    this._oModel.setProperty("/replayMode", false);
-                    var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
-                    this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                        oStep.setHighlight(sap.ui.core.MessageType.None);
-                    });
-                    // TODO should this not be a property of the RecordController?!
-                    this._iCurrentStep = -1;
-                    chrome.permissions.request({
-                        permissions: ['tabs'],
-                        origins: [sUrl]
-                    }, function (granted) {
-                        if (granted) {
-                            this._replay();
+        onReplay: function () {
+
+            // store URL to test for easier access
+            var sURL = this._oModel.getProperty("/codeSettings/testUrl");
+
+            // construct a promise whether to start replaying right away:
+            // resolve indicates replaying can start, reject otherwise
+            var replayablePromise = new Promise(function(resolve, reject) {
+
+                // make sure that no recording is going on now
+                if (RecordController.getInstance().isRecording()) {
+
+                    // ask user whether to stop recording in favor of replay
+                    MessageBox.error(
+                        "You are recording right now. Do you want start replaying instead?",
+                        {
+                            icon: MessageBox.Icon.QUESTION,
+                            title: "Stop recording?",
+                            actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                            onClose: function (sAction) {
+                                if (sAction === MessageBox.Action.YES) {
+                                    resolve(sURL);
+                                } else {
+                                    reject();
+                                }
+                            }
                         }
-                    }.bind(this));
-                }.bind(this));
-            } else {
-                var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
-                this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                    oStep.setHighlight(sap.ui.core.MessageType.None);
-                });
-                this._iCurrentStep = -1;
-                chrome.permissions.request({
-                    permissions: ['tabs'],
-                    origins: [sUrl]
-                }, function (granted) {
-                    if (granted) {
-                        this._replay();
-                    }
-                }.bind(this));
-            }
+                    );
+
+                } else
+                // check whether there is a replay right now
+                if (RecordController.getInstance().isReplaying()) {
+                    reject("You are replaying already. Finish the current replay first before starting another one.");
+                }
+                // if no recording is going on, go to replaying right away
+                else {
+                    resolve(sURL);
+                }
+
+            });
+
+            // what to do after resolving/rejecting replay-indication promise
+            replayablePromise
+            .then(function(sURL) {
+                RecordController.getInstance().startReplaying(sURL);
+            })
+            .catch(function(sMessage) {
+                if (sMessage) {
+                    MessageBox.error(sMessage, {
+                        title: "Replay error"
+                    });
+                }
+            });
+        },
+
+        /**
+         *
+         * @param {*} oEvent
+         */
+        onReplaySingleStep: function () {
+            RecordController.getInstance().replayNextStep();
         },
 
         /**
@@ -463,99 +402,6 @@ sap.ui.define([
                 TestId: this._sTestId,
                 ElementId: sPath
             });
-        },
-
-        /**
-         *
-         */
-        _lengthStatusFormatter: function (iLength) {
-            return "Success";
-        },
-
-        /**
-         *
-         */
-        _replay: function () {
-            var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
-
-            RecordController.getInstance().createTabAndInjectScript(sUrl)
-                .then(function (oData) {
-                    if (!this._oModel.getProperty("/replayMode")) {
-                        this._oModel.setProperty("/replayMode", true)
-                        this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                            oStep.setHighlight(sap.ui.core.MessageType.None);
-                        });
-                        //console.log("_startReplay");
-                        this._startReplay();
-                    }
-                    if (oData) {
-                        this._oModel.setProperty('/ui5Version', oData.version);
-                    }
-                }.bind(this));
-        },
-
-        /**
-         *
-         */
-        _startReplay: function () {
-            this._iCurrentStep = 0;
-            this._updatePlayButton();
-        },
-
-        /**
-         *
-         */
-        _executeAction: function () {
-            var oElement = RecordController.getInstance().getTestElementByIdx(this._iCurrentStep);
-
-            return new Promise(function (resolve) {
-                if (oElement && oElement.property.type === "ACT") {
-                    ConnectionMessages.executeAction(Connection.getInstance(), {
-                        element: oElement,
-                        timeout: this.getModel("settings").getProperty("/settings/defaultReplayTimeout")
-                    }).then(function(oData) {
-                        resolve(oData);
-                    });
-                } else if (oElement && oElement.property.type === "ASS") {
-                    ConnectionMessages.executeAssert(Connection.getInstance(), {
-                        element: oElement.selector.selectorAttributes,
-                        assert: oElement.assertion
-                    }).then(function (oData) {
-                        resolve(oData);
-                    });
-                } else {
-                    resolve();
-                    return false;
-                }
-            }.bind(this));
-        },
-
-        /**
-         *
-         */
-        _updatePlayButton: function () {
-            // TODO is this if-block necessary?!
-            if (!this._oModel.getProperty("/replayMode")) {
-                this._oModel.setProperty("/replayMode", true);
-            }
-
-            RecordController.getInstance().showPlayOnTestElementByIdx(this._iCurrentStep);
-
-            // FIXME this is not something that needs to be in this very method!
-            //Here the test should work automatically
-            var iReplayType = this.getModel('settings').getProperty('/settings/defaultReplayType');
-            if (iReplayType !== 0) {
-                const timeout = 500 * iReplayType;
-
-                new Promise((resolve, reject) => {
-                    var wait = setTimeout(() => {
-                        clearTimeout(wait);
-                        resolve();
-                    }, timeout);
-                }).then(function () {
-                    this.onReplaySingleStep();
-                }.bind(this));
-            }
         },
 
         /**

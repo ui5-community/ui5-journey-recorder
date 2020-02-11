@@ -80,13 +80,13 @@
                                             <core:Item text="{settings>mode}" key="{settings>key}" />
                                         </items>
                                     </Select>
-                                    <Button icon="sap-icon://play" text="{i18n>replay}" press="onReplayAll" />
+                                    <Button icon="sap-icon://play" text="{i18n>replay}" press="onReplay" />
                                 </Toolbar>
                             </headerToolbar>
                             <content>
                                 <Table fixedLayout="false" id="tblPerformedSteps" inset="false" items="{path: 'recordModel>/elements', templateShareable: false}" noDataText="{i18n>notFoundTitle}">
                                     <columns>
-                                        <Column visible="{viewModel>/replayMode}">
+                                        <Column visible="{recordModel>/isReplaying}">
                                             <Text text="Play" />
                                         </Column>
                                         <Column>
@@ -106,9 +106,11 @@
                                         </Column>
                                     </columns>
                                     <items>
-                                        <ColumnListItem type="Navigation" press="onStepClick">
+                                        <ColumnListItem type="Navigation" press="onStepClick" highlight="{recordModel>replay/executionState}">
                                             <cells>
-                                                <Button visible="{= ${recordModel>showPlay} &amp;&amp; ${viewModel>/replayMode}}" icon="sap-icon://play" type="Accept" press="onReplaySingleStep" />
+                                                <Button icon="sap-icon://play" type="Accept" press="onReplaySingleStep"
+                                                    visible="{= ${recordModel>/isReplaying} &amp;&amp; ${recordModel>replay/isCurrentStep}}"
+                                                    busy="{recordModel>replay/isExecuting}" />
                                                 <Select items="{path: 'constants>/stepTypes', templateShareable: false}" enabled="false" selectedKey="{recordModel>property/type}">
                                                     <items>
                                                         <core:Item text="{constants>text}" key="{constants>key}" />

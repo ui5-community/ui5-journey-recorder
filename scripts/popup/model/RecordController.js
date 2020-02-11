@@ -4,9 +4,10 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "com/ui5/testing/model/Connection",
     "com/ui5/testing/model/ConnectionMessages",
+    "com/ui5/testing/model/GlobalSettings",
     "sap/m/MessageToast",
     "sap/m/MessageBox"
-], function (UI5Object, JSONModel, Connection, ConnectionMessages, MessageToast, MessageBox) {
+], function (UI5Object, JSONModel, Connection, ConnectionMessages, GlobalSettings, MessageToast, MessageBox) {
     "use strict";
 
     // #region Helper functions
@@ -62,19 +63,28 @@ sap.ui.define([
          * Reset the RecordController to defaults.
          */
         reset: function () {
+            // store global settings
+            this._settingsModel = GlobalSettings.getModel();
 
+            // initialize model if not existing
             if (!this._oModel) {
                 this._oModel = new JSONModel();
             }
 
+            // override already initialized model
             var oJSON = {
+                // Recording
                 isRecording: false,
-                item: {},
-                elements: [],
+                // Test details and elements
                 test: {
                     uuid: 0,
                     createdAt: 0
-                }
+                },
+                item: {},
+                elements: [],
+                // Replaying
+                isReplaying: false,
+                currentReplayStep: 0
             };
             this._oModel.setData(oJSON);
         },
@@ -129,8 +139,10 @@ sap.ui.define([
          * @param {string} sURL the URL to open in the new tab
          *
          * @returns {Promise} a promise whether the inject worked or not
+         *
+         * @private
          */
-        createTabAndInjectScript: function (sURL) {
+        _createTabAndInjectScript: function (sURL) {
             return new Promise(function (resolve, reject) {
                 chrome.tabs.create({
                     url: sURL,
@@ -190,6 +202,8 @@ sap.ui.define([
          * Start recording, triggering the event "startRecording".
          */
         startRecording: function () {
+            this._resetReplaying();
+
             var bStartForControl = Connection.getInstance().isStartImmediately();
             Connection.getInstance().setStartImmediately(false); // disable consecutive immediate starts
 
@@ -200,7 +214,7 @@ sap.ui.define([
                     startImmediate: bStartForControl ? bStartForControl : false
                 }
             ).then(function () {
-                this._oModel.setProperty("/isRecording", true);
+                this._setRecording();
                 if (bStartForControl !== true) {
                     this.focusTargetWindow();
                 }
@@ -230,13 +244,29 @@ sap.ui.define([
         },
 
         /**
+         * Set the state of recording: true for starting, false for stopping.
+         *
+         * If true is given (i.e., starting recording), also replaying is stopped.
+         *
+         * @param {boolean} bIsRecording flag whether to start or stop recording
+         *
+         * @private
+         */
+        _setRecording: function(bIsRecording = true) {
+            this._oModel.setProperty("/isRecording", bIsRecording);
+            if (bIsRecording) {
+                this._setReplaying(false);
+            }
+        },
+
+        /**
          * Event handling of the event 'recordingStopped'.
          *
          * @see RecordController.constructor
          * @private
          */
         _onRecordingStopped: function () {
-            this._oModel.setProperty("/isRecording", false);
+            this._setRecording(false);
         },
 
         // #endregion
@@ -341,6 +371,117 @@ sap.ui.define([
         // #region Replaying
 
         /**
+         * Start replaying by opening a new tab with the given URL, while stopping any current recording.
+         *
+         * @param {string} sURL the URL to open for the replay
+         */
+        startReplaying: function (sURL) {
+
+            // first, stop any recording, so we do not break anything
+            this.stopRecording();
+
+            // check whether there is a connection already
+            if (this.isInjected()) {
+
+                this.closeTab().then(function () {
+
+                    // TODO what do we need to reset here?
+                    Connection.getInstance().resetConnection();
+                    this.stopReplaying();
+
+                    chrome.permissions.request({
+                        permissions: ['tabs'],
+                        origins: [sURL]
+                    }, function (granted) {
+                        if (granted) {
+                            this._createTabAndInjectScript(sURL)
+                                .then(function () {
+                                    this._executeReplay();
+                                }.bind(this));
+                        }
+                    }.bind(this));
+
+                }.bind(this));
+
+            } else {
+
+                chrome.permissions.request({
+                    permissions: ['tabs'],
+                    origins: [sURL]
+                }, function (granted) {
+
+                    if (granted) {
+                        this._createTabAndInjectScript(sURL)
+                        .then(function () {
+                            this._executeReplay();
+                        }.bind(this));
+                    }
+
+                }.bind(this));
+            }
+
+        },
+
+        /**
+         * Execute the replay by initializing the model properly and triggering any potential first step.
+         *
+         * @private
+         */
+        _executeReplay: function () {
+            // reset state of all recorded elements
+            this._resetTestElementsForReplay();
+            // reset replay state
+            this._oModel.setProperty("/currentReplayStep", 0);
+            this._setReplaying(true);
+            this._updateCurrentStepIndicator();
+
+            // automatically start replay if enabled and possible
+            this._replayNextStepWithTimeout();
+        },
+
+        /**
+         * Stop replaying.
+         */
+        stopReplaying: function () {
+            this._setReplaying(false);
+        },
+
+        /**
+         * Resets the model parts belonging to the replay functionality and stops replaying.
+         *
+         * @private
+         */
+        _resetReplaying: function () {
+            this._resetTestElementsForReplay();
+            this.stopReplaying();
+        },
+
+        /**
+         * Return the current state of replaying.
+         *
+         * @returns {boolean} true if currently replaying, false otherwise
+         */
+        isReplaying: function () {
+            return this._oModel.getProperty("/isReplaying");
+        },
+
+        /**
+         * Set the state of replaying: true for starting, false for stopping.
+         *
+         * If true is given (i.e., starting replay), also recording is stopped.
+         *
+         * @param {boolean} bIsReplaying flag whether to start or stop replaying
+         *
+         * @private
+         */
+        _setReplaying: function(bIsReplaying = true) {
+            this._oModel.setProperty("/isReplaying", bIsReplaying);
+            if (bIsReplaying) {
+                this._setRecording(false);
+            }
+        },
+
+        /**
          * Check whether the test step with the given index has been executed already.
          *
          * @param {integer|string} iStepIdx the step to check by index
@@ -348,28 +489,197 @@ sap.ui.define([
          * @returns {boolean} true if the step at the given index has been executed already, false otherwise
          */
         isTestStepExecuted: function (iStepIdx) {
-            return this._oModel.getProperty("/elements/" + iStepIdx + "/stepExecuted") === true;
+            return this._oModel.getProperty("/elements/" + iStepIdx + "/replay/isExecuted");
         },
 
         /**
-         * Indicate on the test element with the given index that it can be played.
+         * Set the execution state of the the test step with the given index.
          *
-         * // TODO the current ID should be hold by the RecordController!
+         * The test step is explicitly marked as executed.
          *
-         * @param {string|integer} iIdx the index of the element to set the indicator on
+         * @param {integer|string} iStepIdx the step by index to modify
+         * @param {string} sState one of sap.ui.core.MessageType.*, indicating the state of the execution
          */
-        showPlayOnTestElementByIdx: function (iIdx) {
+        setTestStepExecuted: function (iStepIdx, sState) {
+            this._oModel.setProperty("/elements/" + iStepIdx + "/replay/isExecuting", false);
+            this._oModel.setProperty("/elements/" + iStepIdx + "/replay/isExecuted", true);
+            this._oModel.setProperty("/elements/" + iStepIdx + "/replay/isCurrentStep", false);
+            this._oModel.setProperty("/elements/" + iStepIdx + "/replay/executionState", sState);
 
-            if (iIdx === undefined || iIdx === null) {
+            // update current step index
+            this._oModel.setProperty("/currentReplayStep", this._oModel.getProperty("/currentReplayStep") + 1);
+            this._updateCurrentStepIndicator();
+        },
+
+        /**
+         * Update the indicator for the current step (i.e., the path 'replay/isCurrentStep' for the current element).
+         *
+         * @private
+         */
+        _updateCurrentStepIndicator: function () {
+            // do not do anything if not replaying
+            if (!this.isReplaying()) {
                 return;
             }
 
+            var iCurrentStep = this._oModel.getProperty("/currentReplayStep");
+
             this.getTestElements().forEach(function (oElement, iIndex) {
-                oElement["showPlay"] = iIndex == iIdx;
+                oElement.replay.isCurrentStep = iIndex == iCurrentStep;
             });
 
             // ensure that all changes are synchronized with bindings
             this._oModel.updateBindings(true);
+        },
+
+        /**
+         * Reset the test elements to a state right before replay.
+         *
+         * This explicitly adds/resets the property 'replay' of all test elements as follows:
+         * <pre><code>
+         *   replay = {
+         *       isExecuted: false,
+         *       isExecuting: false,
+         *       isCurrentStep: false,
+         *       executionState: sap.ui.core.MessageType.None
+         *   };
+         * </code></pre>
+         *
+         * @private
+         */
+        _resetTestElementsForReplay: function() {
+            this.getTestElements().forEach(function(oElement) {
+                oElement.replay = {
+                    isExecuted: false,
+                    isExecuting: false,
+                    isCurrentStep: false,
+                    executionState: sap.ui.core.MessageType.None
+                };
+            });
+        },
+
+        /**
+         * Replay the next step while respecting the replay type (i.e., the timeout for the next step).
+         *
+         * @private
+         */
+        _replayNextStepWithTimeout: function () {
+            var iReplayType = this._settingsModel.getProperty("/settings/defaultReplayType");
+
+            if (this.isReplaying() && iReplayType !== 0) {
+                setTimeout(() => {
+                    this.replayNextStep();
+                }, 500 * iReplayType);
+            }
+        },
+
+        /**
+         * Replay the next step in the recording without delay.
+         */
+        replayNextStep: function () {
+
+            var iCurrentStepIdx = this._oModel.getProperty("/currentReplayStep");
+
+            // focus the target window so the user can see what is going on
+            this.focusTargetWindow();
+
+            // indicate to bindings that the current step is executing
+            var oTestElement = this.getTestElementByIdx(iCurrentStepIdx);
+            oTestElement.replay.isExecuting = true;
+            this._oModel.updateBindings(true); // force update to bindings
+
+            // execute the next replay action and react to result
+            this._executeReplayStep().then(function (oResult) {
+
+                // react only if there is a result
+                if (oResult && oResult.result) {
+                    switch (oResult.result) {
+                        case "success":
+                            this.setTestStepExecuted(iCurrentStepIdx, sap.ui.core.MessageType.Success);
+                            break;
+                        case "warning":
+                            this.setTestStepExecuted(iCurrentStepIdx, sap.ui.core.MessageType.Warning);
+                            MessageBox.warning('A warning was issued during replay!', {
+                                title: "Replay warning",
+                                details: oResult.messages && oResult.messages.length ? "<ul><li>" + oResult.messages.join("</li><li>") + "</li></ul>" : ""
+                            });
+                            break;
+                        case "error":
+                            this.setTestStepExecuted(iCurrentStepIdx, sap.ui.core.MessageType.Error);
+                            MessageBox.error('An action/assertion was not met!', {
+                                title: "Replay error",
+                                details: oResult.messages && oResult.messages.length ? "<ul><li>" + oResult.messages.join("</li><li>") + "</li></ul>" : ""
+                            });
+                            this.stopReplaying();
+                            break;
+                        default:
+                            this.setTestStepExecuted(iCurrentStepIdx, sap.ui.core.MessageType.Error);
+                            MessageBox.error('An unknown result was returned for the current replay step.', {
+                                title: "Replay error",
+                                details: oResult.messages && oResult.messages.length ? "<ul><li>" + oResult.messages.join("</li><li>") + "</li></ul>" : ""
+                            });
+                            this.stopReplaying();
+                            break;
+                    }
+
+                    // stop replaying if no steps left and announce that
+                    if (iCurrentStepIdx >= this.getTestElements().length - 1) {
+                        this.stopReplaying();
+                        sap.ui.getCore().getEventBus().publish("Internal", "replayFinished", {});
+                    } else {
+                        // automatically continue replay if enabled and possible
+                        this._replayNextStepWithTimeout();
+                    }
+
+                }
+                // if no result is given, we need to react in a uniform way: stop replaying
+                else {
+                    this.setTestStepExecuted(iCurrentStepIdx, sap.ui.core.MessageType.Error);
+                    MessageBox.error('No result was returned for the current replay step.', { title: "Replay error" });
+                    this.stopReplaying();
+                }
+
+            }.bind(this));
+        },
+
+        /**
+         * Execute the action/assert in the current replay step.
+         *
+         * @returns {Promise} a promise with the result of the execution
+         *
+         * @private
+         */
+        _executeReplayStep: function () {
+            var oElement = this.getTestElementByIdx(this._oModel.getProperty("/currentReplayStep"));
+            var iTimeout = this._settingsModel.getProperty("/settings/defaultReplayTimeout");
+
+            return new Promise(function (resolve) {
+
+                // actions
+                if (oElement && oElement.property.type === "ACT") {
+                    ConnectionMessages.executeAction(Connection.getInstance(), {
+                        element: oElement,
+                        timeout: iTimeout
+                    }).then(function(oData) {
+                        resolve(oData);
+                    });
+                } else
+                // asserts
+                if (oElement && oElement.property.type === "ASS") {
+                    ConnectionMessages.executeAssert(Connection.getInstance(), {
+                        element: oElement.selector.selectorAttributes,
+                        assert: oElement.assertion
+                    }).then(function (oData) {
+                        resolve(oData);
+                    });
+                }
+                // everything else cannot be handled and is consequently returned right away
+                else {
+                    resolve();
+                    return false;
+                }
+
+            });
         },
 
         // #endregion
