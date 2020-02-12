@@ -32,7 +32,7 @@
         </semantic:customFooterContent>
 
         <semantic:content>
-            <IconTabBar id="idIconTabBarNoIcons" select="onTabChange" expanded="true" stretchContentHeight="true" applyContentPadding="false">
+            <IconTabBar id="idIconTabBarNoIcons" select="onTabChange" expandable="false" expanded="true" stretchContentHeight="true" applyContentPadding="false">
                 <items>
                     <IconTabFilter text="Test-Settings" key="settings">
                         <f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
@@ -150,7 +150,7 @@
                     </IconTabFilter>
 
                     <IconTabFilter text="Code" key="code">
-                        <IconTabBar id="codeTab" stretchContentHeight="true" backgroundDesign="Transparent" applyContentPadding="true" items="{ path:'viewModel>/codes', sorter: { path: 'order' }}">
+                        <IconTabBar id="codeTab" expanded="true" expandable="false" stretchContentHeight="true" backgroundDesign="Transparent" applyContentPadding="true" items="{ path:'viewModel>/codes', sorter: { path: 'order' }}">
                             <items>
                                 <IconTabFilter text="{viewModel>codeName}">
                                     <code:CodeEditor visible="{= ${viewModel>type} === 'CODE'}" value="{viewModel>code}" editable="true"></code:CodeEditor>

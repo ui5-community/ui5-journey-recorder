@@ -13,7 +13,7 @@
             <Button icon="sap-icon://settings" text="{i18n>settings}" press="onOpenSettings"/>
         </semantic:customHeaderContent>
         <semantic:content>
-            <IconTabBar id="startTabBar">
+            <IconTabBar id="startTabBar" expanded="true" expandable="false">
                 <items>
                     <IconTabFilter icon="sap-icon://record"
                                    text="{i18n>newRecording}"
