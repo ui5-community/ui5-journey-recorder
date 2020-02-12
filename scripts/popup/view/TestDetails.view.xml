@@ -28,7 +28,7 @@
             <Button id="beDelete" type="Reject" text="Delete" press="onDelete" visible="{= ${viewModel>/activeTab} === 'settings'}" />
             <Button id="btCancel" type="Emphasized" text="Cancel" press="onNavBack" visible="{= ${viewModel>/activeTab} === 'settings'}" />
             <Button id="btSave" type="Accept" text="Save" press="onSave" visible="{= ${viewModel>/activeTab} === 'settings'}" />
-            <Button id="btDownload" icon="sap-icon://download-from-cloud" text="Download Sources" press="downloadAll" visible="{= ${viewModel>/activeTab} === 'code'}" />
+            <Button id="btDownload" icon="sap-icon://download-from-cloud" text="Download Sources" press="onDownloadAll" visible="{= ${viewModel>/activeTab} === 'code'}" />
         </semantic:customFooterContent>
 
         <semantic:content>
@@ -61,7 +61,7 @@
 
                         <Panel expandable="false" expanded="true" width="auto">
                             <headerToolbar>
-                                <Toolbar press="onExpandControl" height="3rem" active="true" style="Clear">
+                                <Toolbar height="3rem" active="true" style="Clear">
                                     <Title titleStyle="H5" text="Steps ( {= ${recordModel>/elements}.length } )" />
                                     <ToolbarSpacer />
                                     <Label text="Replay" tooltip="Replay.." visible="false" />
@@ -156,7 +156,7 @@
                                     <code:CodeEditor visible="{= ${viewModel>type} === 'CODE'}" value="{viewModel>code}" editable="true"></code:CodeEditor>
                                     <FormattedText visible="{= ${viewModel>type} === 'FTXT'}" htmlText="{viewModel>code}" />
                                     <Text visible="{= ${viewModel>type} === 'CTXT'}" text="{viewModel>code}" />
-                                    <Button id="downloadButton" type="Transparent" class="btnFloat btnCircle" icon="sap-icon://download" press="downloadSource" visible="{= ${viewModel>type} === 'CODE' || ${settings>/settings/defaultLanguage} === 'NAT'}" />
+                                    <Button id="downloadButton" type="Transparent" class="btnFloat btnCircle" icon="sap-icon://download" press="onDownloadSource" visible="{= ${viewModel>type} === 'CODE' || ${settings>/settings/defaultLanguage} === 'NAT'}" />
                                 </IconTabFilter>
                             </items>
                         </IconTabBar>
