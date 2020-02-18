@@ -622,8 +622,8 @@ sap.ui.define([
                             break;
                     }
 
-                    // stop replaying if no steps left and announce that
-                    if (iCurrentStepIdx >= this.getTestElements().length - 1) {
+                    // stop replaying if no steps left and announce that (i.e., no error occurred yet!)
+                    if (this.isReplaying() && iCurrentStepIdx >= this.getTestElements().length - 1) {
                         this.stopReplaying();
                         sap.ui.getCore().getEventBus().publish("Internal", "replayFinished", {});
                     } else {

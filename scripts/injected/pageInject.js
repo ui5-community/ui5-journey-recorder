@@ -213,6 +213,15 @@ function _executeAction(oEventData) {
     var iTimeout = oEventData.timeout;
     var oDOMNode = UI5ControlHelper.getDomForControl(oItem);
 
+    // if we found no control for the given element selector, return immediately
+    if (!oDOMNode) {
+        return {
+            result: "error",
+            messages: ["No element found to execute action on!"],
+            type: "ACT"
+        }
+    }
+
     // prepare temporary variables for processing and returning
     var aEvents = [];
     var aResolutions = [];
@@ -256,7 +265,7 @@ function _executeAction(oEventData) {
             });
         }
         // 2) no DOM node found: return immediately with error
-        else if (oDOMNodes.length === 0) {
+        else if (oDOMNode.length === 0) {
             return {
                 result: "error",
                 messages: ["No element found to execute action on!"],
