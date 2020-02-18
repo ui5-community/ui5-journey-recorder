@@ -229,7 +229,14 @@ function __checkActionPreconditions(aDOMNodes, bReturnSelectedNode = false) {
         || !(aDOMNodes instanceof HTMLElement || aDOMNodes instanceof NodeList || Array.isArray(aDOMNodes)) ) {
         oResult = {
             result: "error",
-            message: "No element found on which the action can be executed!",
+            message: {
+                type: "Error",
+                title: "No element found for action",
+                subtitle: "No element found on which the action can be executed!",
+                description: "You have maintained an action to be executed. " +
+                    "For the selected attributes/ID, however, no item is found in the current screen. " +
+                    "Thus, the action could not be executed."
+            }
         }
     } else
     // 2) potentially, there are several DOM nodes found or even none:
@@ -240,8 +247,13 @@ function __checkActionPreconditions(aDOMNodes, bReturnSelectedNode = false) {
             oDOMNode = aDOMNodes.item ? aDOMNodes.item(0) : aDOMNodes[0];
             oResult = {
                 result: "warning",
-                message: "Your selector is returning " + aDOMNodes.length + " items, the action will be executed on the first one. " +
+                message: {
+                    type: "Warning",
+                    title: "More than one element found for action",
+                    subtitle: "The action will be executed on the first element",
+                    description:  "Your selector is returning " + aDOMNodes.length + " items, the action will be executed on the first one. " +
                     "Nevertheless, this may yield undesired results."
+                }
             }
         }
         // 2.2) else only one found: success (see below)
@@ -251,7 +263,7 @@ function __checkActionPreconditions(aDOMNodes, bReturnSelectedNode = false) {
     if (!oResult) {
         oResult = {
             result: "success",
-            message: ""
+            message: {}
         }
         oDOMNode = aDOMNodes;
     }
@@ -314,7 +326,12 @@ function _executeAction(oEventData) {
                 setTimeout(function() {
                     resolve({
                         result: "error",
-                        message: "There was a timeout after " + iTimeout + " seconds."
+                        message: {
+                            type: "Error",
+                            title: "Timeout during replay",
+                            subtitle: "Your action could not be executed within " + iTimeout + " seconds",
+                            description: "The current action could not be executed within " + iTimeout + " seconds. This is done for convenience to avoid potential deadlocks during replay."
+                        }
                     });
                 }.bind(this), iTimeout * 1000);
             }
@@ -466,7 +483,14 @@ function _executeAssert(oEventData) {
     if (aFoundElements === 0) {
         return {
             result: "error",
-            messages: ["No element found to run assertion on."]
+            messages: [{
+                type: "Error",
+                title: "No element found for assert",
+                subtitle: "No element found on which the assert can be executed!",
+                description: "You have maintained an assert to be executed. " +
+                    "For the selected attributes/ID, however, no item is found in the current screen. " +
+                    "Thus, the assert could not be executed."
+            }]
         };
     }
 
@@ -479,7 +503,13 @@ function _executeAssert(oEventData) {
     // TODO this may be wanted as there are also assertions on the number of found elements!
     if (aFoundElements.length > 1) {
         sResult = "warning";
-        sMessage = "Several elements for assertion found, using first one.";
+        sMessage = {
+            type: "Warning",
+            title: "More than one element found for assert",
+            subtitle: "The assert will be executed on the first element",
+            description:  "Your selector is returning " + aFoundElements.length + " items, the assert will be executed on the first one. " +
+            "Nevertheless, this may yield undesired results."
+        }
     }
 
     // FIXME run actual assertion

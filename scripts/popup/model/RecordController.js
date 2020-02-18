@@ -591,6 +591,12 @@ sap.ui.define([
             // execute the next replay action and react to result
             this._executeReplayStep().then(function (oResult) {
 
+                // collect messages' description for now
+                // TODO use message items in a MessagePopover for this
+                var aMessages = oResult.messages.map(function(oMsg) {
+                    return oMsg.description;
+                });
+
                 // react only if there is a result
                 if (oResult && oResult.result) {
                     switch (oResult.result) {
@@ -601,14 +607,14 @@ sap.ui.define([
                             this.setTestStepExecuted(iCurrentStepIdx, sap.ui.core.MessageType.Warning);
                             MessageBox.warning('A warning was issued during replay!', {
                                 title: "Replay warning",
-                                details: oResult.messages && oResult.messages.length ? "<ul><li>" + oResult.messages.join("</li><li>") + "</li></ul>" : ""
+                                details: aMessages && aMessages.length ? "<ul><li>" + aMessages.join("</li><li>") + "</li></ul>" : ""
                             });
                             break;
                         case "error":
                             this.setTestStepExecuted(iCurrentStepIdx, sap.ui.core.MessageType.Error);
                             MessageBox.error('An action/assertion was not met!', {
                                 title: "Replay error",
-                                details: oResult.messages && oResult.messages.length ? "<ul><li>" + oResult.messages.join("</li><li>") + "</li></ul>" : ""
+                                details: aMessages && aMessages.length ? "<ul><li>" + aMessages.join("</li><li>") + "</li></ul>" : ""
                             });
                             this.stopReplaying();
                             break;
@@ -616,7 +622,7 @@ sap.ui.define([
                             this.setTestStepExecuted(iCurrentStepIdx, sap.ui.core.MessageType.Error);
                             MessageBox.error('An unknown result was returned for the current replay step.', {
                                 title: "Replay error",
-                                details: oResult.messages && oResult.messages.length ? "<ul><li>" + oResult.messages.join("</li><li>") + "</li></ul>" : ""
+                                details: aMessages && aMessages.length ? "<ul><li>" + aMessages.join("</li><li>") + "</li></ul>" : ""
                             });
                             this.stopReplaying();
                             break;
