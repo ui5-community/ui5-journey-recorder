@@ -46,6 +46,7 @@
             <Button visible="{= ${viewModel>/quickMode} === false }" type="Accept" text="Save Step" press="onSave"/>
         </semantic:customFooterContent>
 
+        <!-- What to hide when {= ( ${viewModel>/element/property/type} === 'SUP' ) }? atrElementsPnl? Code preview? tstSelectedBy? -->
         <semantic:content>
             <MessageStrip id="offlineStrip" text="You will see recorded information about a test step. The functionality for changes are limited." type="Warning" showIcon="true" visible="{viewModel>/blocked}"/>
             <Panel expandable="false" expanded="true" width="auto">
