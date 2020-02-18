@@ -60,6 +60,19 @@ sap.ui.define([], function () {
         }
 
         /**
+         * Check the preconditions for an action based on the given item selector.
+         *
+         * @param {com.ui5.testing.model.Connection} connection the connection to use for sending messages
+         * @param {object} oItemSelector selector information
+         */
+        static checkAction(oConnection, oItemSelector) {
+            return oConnection.syncMessage({
+                action: "checkAction",
+                data: oItemSelector
+            });
+        }
+
+        /**
          *
          * @param {com.ui5.testing.model.Connection} connection the connection to use for sending messages
          * @param {object} oInformation parameters for the execute message

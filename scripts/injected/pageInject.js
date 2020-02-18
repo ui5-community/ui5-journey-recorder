@@ -102,6 +102,11 @@ class PageCommunication {
                 oReturn = _selectItem(oEventData);
                 break;
 
+            case "checkAction":
+                // check preconditions for action
+                oReturn = _checkAction(oEventData);
+                break;
+
             case "executeAction":
                 // execute action synchronously
                 oReturn = _executeAction(oEventData);
@@ -204,6 +209,61 @@ function _selectItem(oEventData) {
     PageListener.getInstance().handleClickOn(oCtrl.getDomRef());
 }
 
+function _checkAction(oSelector, bReturnSelectedNode = false) {
+    var aDOMNodes = UI5ControlHelper.findDOMNodesBySelector(oSelector);
+    return __checkActionPreconditions(aDOMNodes, bReturnSelectedNode);
+}
+
+function __checkActionPreconditions(aDOMNodes, bReturnSelectedNode = false) {
+
+    var oResult;
+    var oDOMNode; // pre-set resulting selected DOM node
+
+    // construct result:
+    // 1) return an error immediately, if we
+    //    (1) found no control for the given element selector,
+    //    (2) the given list is empty,
+    //    (3) the given parameter is neither an HTMLElement nor a NodeList
+    if (!aDOMNodes
+        || (aDOMNodes.length && aDOMNodes.length === 0)
+        || !(aDOMNodes instanceof HTMLElement || aDOMNodes instanceof NodeList || Array.isArray(aDOMNodes)) ) {
+        oResult = {
+            result: "error",
+            message: "No element found on which the action can be executed!",
+        }
+    } else
+    // 2) potentially, there are several DOM nodes found or even none:
+    if (Array.isArray(aDOMNodes) || aDOMNodes instanceof NodeList) {
+        // 2.1) several DOM nodes are found: issue warning, proceed with first found node and issue a warning
+        if (aDOMNodes.length > 1) {
+            // use method 'get' for NodeLists, otherwise access the array
+            oDOMNode = aDOMNodes.item ? aDOMNodes.item(0) : aDOMNodes[0];
+            oResult = {
+                result: "warning",
+                message: "Your selector is returning " + aDOMNodes.length + " items, the action will be executed on the first one. " +
+                    "Nevertheless, this may yield undesired results."
+            }
+        }
+        // 2.2) else only one found: success (see below)
+    }
+
+    // if nothing weird happened, indicate success and select the single DOM node
+    if (!oResult) {
+        oResult = {
+            result: "success",
+            message: ""
+        }
+        oDOMNode = aDOMNodes;
+    }
+
+    // add DOM node to result if configured
+    if (bReturnSelectedNode) {
+        oResult.domNode = oDOMNode;
+    }
+
+    return oResult;
+}
+
 function _executeAction(oEventData) {
     // make screen available again
     unlockScreen();
@@ -211,20 +271,27 @@ function _executeAction(oEventData) {
     // get element and DOM node from event data
     var oItem = oEventData.element;
     var iTimeout = oEventData.timeout;
-    var oDOMNode = UI5ControlHelper.getDomForControl(oItem);
+    var oDOMNodeCandidates = UI5ControlHelper.getDomForControl(oItem);
 
-    // if we found no control for the given element selector, return immediately
-    if (!oDOMNode) {
-        return {
-            result: "error",
-            messages: ["No element found to execute action on!"],
-            type: "ACT"
-        }
-    }
+    // check preconditions for action and retrieve DOM node
+    var oCheckResult = __checkActionPreconditions(oDOMNodeCandidates, true);
 
     // prepare temporary variables for processing and returning
     var aEvents = [];
     var aResolutions = [];
+    // retrieve DOM node
+    var oDOMNode = oCheckResult.domNode;
+    delete oCheckResult.domNode;
+
+    // check result of action check
+    switch (oCheckResult.result) {
+        case "error":
+            return oCheckResult;
+
+        case "warning":
+            aResolutions.push(oCheckResult);
+            break;
+    }
 
     function testEvent(oDOMNode, sListener, oEvent) {
 
@@ -252,26 +319,6 @@ function _executeAction(oEventData) {
                 }.bind(this), iTimeout * 1000);
             }
         });
-    }
-
-    // potentially, there are several DOM nodes found or even none:
-    if (oDOMNode instanceof NodeList) {
-        // 1) several DOM nodes are found: issue warning, proceed with first found node
-        if (oDOMNode.length > 1) { // length > 1
-            oDOMNode = oDOMNode.item(0);
-            aResolutions.push({
-                result: "warning",
-                message: "Several elements found, using first one matched!"
-            });
-        }
-        // 2) no DOM node found: return immediately with error
-        else if (oDOMNode.length === 0) {
-            return {
-                result: "error",
-                messages: ["No element found to execute action on!"],
-                type: "ACT"
-            }
-        }
     }
 
     // reveal DOM node by using CSS classes and add fade-out effect
