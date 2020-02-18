@@ -1627,7 +1627,7 @@ class UI5ControlHelper {
         return aReturn;
     }
 
-    static findControlsBySelector(oSelector) {
+    static findDOMNodesBySelector(oSelector) {
 
         // collect all string selectors
         var aSelectorStrings = [];
@@ -1703,6 +1703,19 @@ class UI5ControlHelper {
         var aDOMNodes = aSelectorStrings.map(function(sIdSelector) {
             return document.querySelector(sIdSelector);
         });
+
+        // if the result does not make sense or is no UI5 control, return empty
+        if (!aDOMNodes || !aDOMNodes.length) {
+            aDOMNodes = [];
+        }
+
+        return aDOMNodes;
+    }
+
+    static findControlsBySelector(oSelector) {
+
+        // select DOM nodes based on selector strings
+        var aDOMNodes = UI5ControlHelper.findDOMNodesBySelector(oSelector);
 
         // obtain controls for the DOM nodes
         var aItemsControls = UI5ControlHelper.getControlsFromDom(aDOMNodes);
