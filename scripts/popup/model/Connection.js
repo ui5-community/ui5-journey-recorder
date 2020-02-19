@@ -71,6 +71,9 @@ sap.ui.define([
          */
         resetConnection: function () {
             this._sTabId = "";
+            if (this.isConnected()) {
+                this._port.disconnect();
+            }
             this._port = null;
             this._oMessageMap = {};
             this._iMessageID = 0;
@@ -102,6 +105,7 @@ sap.ui.define([
                     MessageBox.error("Connection to the webpage lost, try to reconnect.");
                 }.bind(this));
                 this._port.onMessage.addListener(this._handleIncommingMessage.bind(this));
+                this._port.onDisconnect.addListener(this._onDisconnect.bind(this));
             } else {
                 // TODO publish appropriate event to event bus instead of showing message box
                 MessageBox.warning("There is already a connection, please stop before opening a new one.");
@@ -121,6 +125,15 @@ sap.ui.define([
                 sap.ui.getCore().getEventBus().publish("Internal", oMsg.data.reason, oMsg.data.data);
                 console.debug("Message incomming without callback", JSON.stringify(oMsg));
             }
+        },
+
+        /**
+         * Resets the connection.
+         */
+        _onDisconnect: function () {
+            this.resetConnection();
+            // TODO publish appropriate event to event bus instead of showing message box
+            MessageBox.error("Connection to the webpage lost, try to reconnect.");
         },
 
         /**
