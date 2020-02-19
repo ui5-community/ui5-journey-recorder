@@ -532,7 +532,11 @@ sap.ui.define([
             var iCurrentStep = this._oModel.getProperty("/currentReplayStep");
 
             this.getTestElements().forEach(function (oElement, iIndex) {
-                oElement.replay.isCurrentStep = iIndex == iCurrentStep;
+                var bIsCurrentStep = iIndex == iCurrentStep;
+                oElement.replay.isCurrentStep = bIsCurrentStep;
+                if (bIsCurrentStep) {
+                    oElement.replay.executionState = sap.ui.core.MessageType.Information;
+                }
             });
 
             // ensure that all changes are synchronized with bindings

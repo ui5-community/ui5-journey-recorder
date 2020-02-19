@@ -86,18 +86,17 @@
                                 <Table fixedLayout="false" id="tblPerformedSteps" inset="false" items="{path: 'recordModel>/elements', templateShareable: false}" noDataText="{i18n>notFoundTitle}">
                                     <headerToolbar>
                                         <Toolbar height="3rem" active="true" design="Solid" visible="{= ${recordModel>/isReplaying} || !!${viewModel>/replayMessages}.length }">
+                                            <Button icon="sap-icon://step" text="Replay next step" type="Accept" press="onReplaySingleStep" visible="{recordModel>/isReplaying}" />
+                                            <Button icon="sap-icon://stop" text="Stop replay" type="Reject" press="onReplayStop" visible="{recordModel>/isReplaying}" />
+
+                                            <ToolbarSpacer />
+
                                             <Button id="replayMessagePopoverBtn" icon="sap-icon://message-popup" type="Emphasized"
                                                     text="{= ${viewModel>/replayMessages}.length }"
                                                     press="onShowReplayMessages" />
-
-                                            <Button icon="sap-icon://stop" text="Stop replay" visible="{recordModel>/isReplaying}" press="onReplayStop" />
-                                            <!-- TODO add button for "Execute next step" -->
                                         </Toolbar>
                                     </headerToolbar>
                                     <columns>
-                                        <Column visible="{recordModel>/isReplaying}">
-                                            <Text text="Play" />
-                                        </Column>
                                         <Column>
                                             <Text text="Type" />
                                         </Column>
@@ -115,11 +114,8 @@
                                         </Column>
                                     </columns>
                                     <items>
-                                        <ColumnListItem type="Navigation" press="onStepClick" highlight="{recordModel>replay/executionState}">
+                                        <ColumnListItem type="Navigation" press="onStepClick" highlight="{recordModel>replay/executionState}" selected="true">
                                             <cells>
-                                                <Button icon="sap-icon://play" type="Accept" press="onReplaySingleStep"
-                                                    visible="{= ${recordModel>/isReplaying} &amp;&amp; ${recordModel>replay/isCurrentStep}}"
-                                                    busy="{recordModel>replay/isExecuting}" />
                                                 <Select items="{path: 'constants>/stepTypes', templateShareable: false}" enabled="false" selectedKey="{recordModel>property/type}">
                                                     <items>
                                                         <core:Item text="{constants>text}" key="{constants>key}" />
