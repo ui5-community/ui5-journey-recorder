@@ -10,6 +10,8 @@ sap.ui.define([
     "com/ui5/testing/model/ChromeStorage",
     "com/ui5/testing/model/Utils",
     "sap/m/MessageBox",
+    'sap/m/MessagePopover',
+    'sap/m/MessageItem',
     "sap/m/Dialog",
     "sap/m/Button",
     "sap/m/Text",
@@ -26,6 +28,8 @@ sap.ui.define([
     ChromeStorage,
     Utils,
     MessageBox,
+    MessagePopover,
+    MessageItem,
     Dialog,
     Button,
     Text) {
@@ -33,11 +37,14 @@ sap.ui.define([
 
     return Controller.extend("com.ui5.testing.controller.TestDetails", {
         utils: Utils,
+        _oRecordDialog: null,
+        _oMessagePopover: null,
         _oModel: new JSONModel({
             codes: [],
             test: {},
             replayMode: false,
             replayType: 0,
+            replayMessages: [],
             routeName: "",
             codeSettings: {
                 language: "UI5",
@@ -69,8 +76,9 @@ sap.ui.define([
             this.getModel("settings").setProperty("/settings/defaultReplayType", this.getModel("settings").getProperty("/settingsDefault/defaultReplayType"));
             this.getModel("settings").setProperty("/settings/defaultReplayTimeout", this.getModel("settings").getProperty("/settingsDefault/defaultReplayTimeout"));
 
-            // initialize recording dialog
+            // initialize recording dialog and reset replay messages
             this._createDialog();
+            this._resetReplayMessages();
 
             // attach routes
             this.getOwnerComponent().getRouter().getRoute("TestDetails").attachPatternMatched(this._onTestDisplay, this);
@@ -80,6 +88,7 @@ sap.ui.define([
 
             // add event listener for item selections on page
             sap.ui.getCore().getEventBus().subscribe("Internal", "itemSelected", this._onItemSelected.bind(this));
+            sap.ui.getCore().getEventBus().subscribe("Internal", "replayMessages", this._onReceiveReplayMessages.bind(this));
             sap.ui.getCore().getEventBus().subscribe("Internal", "replayFinished", this._onCheckRecordContinuing.bind(this));
 
             // trigger prompt on unload!
@@ -128,6 +137,7 @@ sap.ui.define([
                 }.bind(this), 100);
             }
             this._updatePreview();
+            this._resetReplayMessages();
         },
 
         /**
@@ -297,7 +307,8 @@ sap.ui.define([
             replayablePromise
             .then(function(sURL) {
                 RecordController.getInstance().startReplaying(sURL);
-            })
+                this._resetReplayMessages();
+            }.bind(this))
             .catch(function(sMessage) {
                 if (sMessage) {
                     MessageBox.error(sMessage, {
@@ -468,6 +479,10 @@ sap.ui.define([
                 .then(content => saveAs(content, "testCode.zip"));
         },
 
+        onShowReplayMessages: function(oEvent) {
+            this._oMessagePopover.toggle(oEvent.getSource());
+        },
+
         // #endregion
 
         // #region Event handling regarding event bus
@@ -532,6 +547,32 @@ sap.ui.define([
             dialog.open();
         },
 
+        /**
+         *
+         * @param {string} sChannel the channel name of the incoming event (ignored)
+         * @param {string} sEventId the event ID of the incoming event (ignored)
+         * @param {*} oMessages the messages sent during replay
+         */
+        _onReceiveReplayMessages: function(sChannel, sEventId, oMessages) {
+
+            this._oModel.setProperty("/replayMessages", this._oModel.getProperty("/replayMessages").concat(oMessages));
+
+            oMessages.forEach(function(oMsg) {
+                this._oMessagePopover.addItem(new MessageItem(oMsg));
+
+                if (oMsg.type === "Error") {
+                    this._oMessagePopover.openBy(this.byId("replayMessagePopoverBtn"));
+                }
+            }.bind(this));
+
+        },
+
+        _resetReplayMessages: function() {
+            // remove previously gathered replay messages
+            this._oModel.setProperty("/replayMessages", []);
+            this._oMessagePopover.destroyItems();
+        },
+
         // #endregion
 
         // #region Miscellaneous
@@ -546,6 +587,8 @@ sap.ui.define([
             }).then(function(oRecordDialog) {
                 this._oRecordDialog = oRecordDialog;
             }.bind(this));
+
+            this._oMessagePopover = new MessagePopover();
         },
 
         /**
@@ -564,6 +607,7 @@ sap.ui.define([
          */
         _initTestCreate: function () {
             this._oModel.setProperty("/replayMode", false);
+            this._resetReplayMessages();
 
             RecordController.getInstance().reset();
             RecordController.getInstance().initializeTestDetails();

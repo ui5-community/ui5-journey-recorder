@@ -612,28 +612,19 @@ sap.ui.define([
                             break;
                         case "warning":
                             this.setTestStepExecuted(iCurrentStepIdx, sap.ui.core.MessageType.Warning);
-                            MessageBox.warning('A warning was issued during replay!', {
-                                title: "Replay warning",
-                                details: aMessages && aMessages.length ? "<ul><li>" + aMessages.join("</li><li>") + "</li></ul>" : ""
-                            });
                             break;
                         case "error":
                             this.setTestStepExecuted(iCurrentStepIdx, sap.ui.core.MessageType.Error);
-                            MessageBox.error('An action/assertion was not met!', {
-                                title: "Replay error",
-                                details: aMessages && aMessages.length ? "<ul><li>" + aMessages.join("</li><li>") + "</li></ul>" : ""
-                            });
                             this.stopReplaying();
                             break;
                         default:
                             this.setTestStepExecuted(iCurrentStepIdx, sap.ui.core.MessageType.Error);
-                            MessageBox.error('An unknown result was returned for the current replay step.', {
-                                title: "Replay error",
-                                details: aMessages && aMessages.length ? "<ul><li>" + aMessages.join("</li><li>") + "</li></ul>" : ""
-                            });
                             this.stopReplaying();
                             break;
                     }
+
+                    // publish any messages from the result
+                    sap.ui.getCore().getEventBus().publish("Internal", "replayMessages", oResult.messages);
 
                     // stop replaying if no steps left and announce that (i.e., no error occurred yet!)
                     if (this.isReplaying() && iCurrentStepIdx >= this.getTestElements().length - 1) {

@@ -64,28 +64,36 @@
                                 <Toolbar height="3rem" active="true" style="Clear">
                                     <Title titleStyle="H5" text="Steps ( {= ${recordModel>/elements}.length } )" />
                                     <ToolbarSpacer />
-                                    <Label text="Replay" tooltip="Replay.." visible="false" />
-                                    <!--<Button icon="sap-icon://play" text="{i18n>replayAuto}" press="onReplayAutomatic" />-->
 
                                     <Label text="Replay timeout:" />
-                                    <Select id="sReplayTimeout" items="{settings>/replayTimeouts}" selectedKey="{settings>/settings/defaultReplayTimeout}">
+                                    <Select id="sReplayTimeout" items="{settings>/replayTimeouts}" selectedKey="{settings>/settings/defaultReplayTimeout}" enabled="{= !${recordModel>/isReplaying} }">
                                         <items>
                                             <core:Item text="{settings>mode}" key="{settings>key}" />
                                         </items>
                                     </Select>
 
                                     <Label text="Replay type:" />
-                                    <Select id="sReplayMode" items="{settings>/replayModes}" selectedKey="{settings>/settings/defaultReplayType}">
+                                    <Select id="sReplayMode" items="{settings>/replayModes}" selectedKey="{settings>/settings/defaultReplayType}" enabled="{= !${recordModel>/isReplaying} }">
                                         <items>
                                             <core:Item text="{settings>mode}" key="{settings>key}" />
                                         </items>
                                     </Select>
-                                    <Button icon="sap-icon://play" text="{i18n>replay}" visible="{= !${recordModel>/isReplaying} }" press="onReplayStart" />
-                                    <Button icon="sap-icon://play" text="Stop replay" visible="{recordModel>/isReplaying}" press="onReplayStop" />
+
+                                    <Button icon="sap-icon://play" text="{i18n>replay}" enabled="{= !${recordModel>/isReplaying} }" press="onReplayStart" />
                                 </Toolbar>
                             </headerToolbar>
                             <content>
                                 <Table fixedLayout="false" id="tblPerformedSteps" inset="false" items="{path: 'recordModel>/elements', templateShareable: false}" noDataText="{i18n>notFoundTitle}">
+                                    <headerToolbar>
+                                        <Toolbar height="3rem" active="true" design="Solid" visible="{= ${recordModel>/isReplaying} || !!${viewModel>/replayMessages}.length }">
+                                            <Button id="replayMessagePopoverBtn" icon="sap-icon://message-popup" type="Emphasized"
+                                                    text="{= ${viewModel>/replayMessages}.length }"
+                                                    press="onShowReplayMessages" />
+
+                                            <Button icon="sap-icon://stop" text="Stop replay" visible="{recordModel>/isReplaying}" press="onReplayStop" />
+                                            <!-- TODO add button for "Execute next step" -->
+                                        </Toolbar>
+                                    </headerToolbar>
                                     <columns>
                                         <Column visible="{recordModel>/isReplaying}">
                                             <Text text="Play" />
