@@ -252,7 +252,7 @@ sap.ui.define([
         /**
          *
          */
-        onReplay: function () {
+        onReplayStart: function () {
 
             // store URL to test for easier access
             var sURL = this._oModel.getProperty("/codeSettings/testUrl");
@@ -305,6 +305,14 @@ sap.ui.define([
                     });
                 }
             });
+        },
+
+
+        /**
+         *
+         */
+        onReplayStop: function () {
+            RecordController.getInstance().stopReplaying();
         },
 
         /**

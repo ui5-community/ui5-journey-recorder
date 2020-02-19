@@ -80,7 +80,8 @@
                                             <core:Item text="{settings>mode}" key="{settings>key}" />
                                         </items>
                                     </Select>
-                                    <Button icon="sap-icon://play" text="{i18n>replay}" press="onReplay" />
+                                    <Button icon="sap-icon://play" text="{i18n>replay}" visible="{= !${recordModel>/isReplaying} }" press="onReplayStart" />
+                                    <Button icon="sap-icon://play" text="Stop replay" visible="{recordModel>/isReplaying}" press="onReplayStop" />
                                 </Toolbar>
                             </headerToolbar>
                             <content>
