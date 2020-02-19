@@ -42,7 +42,6 @@ sap.ui.define([
         _oModel: new JSONModel({
             codes: [],
             test: {},
-            replayMode: false,
             replayType: 0,
             replayMessages: [],
             routeName: "",
@@ -111,7 +110,7 @@ sap.ui.define([
             this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
                 oStep.setHighlight(sap.ui.core.MessageType.None);
             });
-            this._oModel.setProperty("/replayMode", false);
+            RecordController.getInstance().stopReplaying();
             this._sTestId = oEvent.getParameter("arguments").TestId;
             var sTargetUUID = this._sTestId;
             var sCurrentUUID = RecordController.getInstance().getTestUUID();
@@ -177,7 +176,8 @@ sap.ui.define([
             });
             var sTargetUUID = oEvent.getParameter("arguments").TestId;
             var sCurrentUUID = RecordController.getInstance().getTestUUID();
-            if (sTargetUUID === this._oTestId && this._oModel.getProperty("/replayMode")) {
+            if (sTargetUUID === this._oTestId && RecordController.getInstance().isReplaying()) {
+                debugger;
                 if (RecordController.getInstance().isTestStepExecuted(this._iCurrentStep)) {
                     this.replayNextStep();
                 }
@@ -346,15 +346,17 @@ sap.ui.define([
          *
          */
         onNavBack: function () {
-            // stop recording
-            RecordController.getInstance().stopRecording();
-            this._oRecordDialog.close();
-            // close automatically opened tab if we currently are in a replay
-            if (this._oModel.getProperty("/replayMode")) {
-                RecordController.getInstance().closeTab();
-            }
-            // go to start page
-            this.getRouter().navTo("start");
+            // close the tab if any is open
+            RecordController.getInstance().closeTab().finally(function() {
+                // reset RecordController
+                RecordController.getInstance().reset(true);
+
+                // close open dialogs
+                this._oRecordDialog.close();
+
+                // go to start page
+                this.getRouter().navTo("start");
+            }.bind(this));
         },
 
         /**
@@ -375,7 +377,7 @@ sap.ui.define([
          */
         onDelete: function () {
             var sId = RecordController.getInstance().getTestUUID();
-            ChromeStorage.deleteTest(sId).then(this.getRouter().navTo("start"));
+            ChromeStorage.deleteTest(sId).finally(this.onNavBack.bind(this));
         },
 
         /**
@@ -494,8 +496,9 @@ sap.ui.define([
          * @param {*} oData the data on the selected element
          */
         _onItemSelected: function (sChannel, sEventId, oData) {
-            if (this._oModel.getProperty("/replayMode")) {
-                return; //NO!
+            // while replaying, items get selected continuously, so we do not respect such notifications
+            if (RecordController.getInstance().isReplaying()) {
+                return;
             }
 
             RecordController.getInstance().setCurrentElement(oData);
@@ -606,7 +609,7 @@ sap.ui.define([
          *
          */
         _initTestCreate: function () {
-            this._oModel.setProperty("/replayMode", false);
+            RecordController.getInstance().stopReplaying();
             this._resetReplayMessages();
 
             RecordController.getInstance().reset();

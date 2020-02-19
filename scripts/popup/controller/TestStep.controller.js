@@ -202,6 +202,10 @@ sap.ui.define([
 
         },
 
+        onNavBack: function () {
+            this.onCancelStep();
+        },
+
         /**
          *
          */

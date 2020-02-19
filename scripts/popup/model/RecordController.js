@@ -61,8 +61,10 @@ sap.ui.define([
 
         /**
          * Reset the RecordController to defaults.
+         *
+         * @param {boolean} bDisconnect flag whether to disconnect also from the tab
          */
-        reset: function () {
+        reset: function (bDisconnect) {
             // store global settings
             this._settingsModel = GlobalSettings.getModel();
 
@@ -87,6 +89,11 @@ sap.ui.define([
                 currentReplayStep: 0
             };
             this._oModel.setData(oJSON);
+
+            // disconnect?
+            if (bDisconnect) {
+                Connection.getInstance().resetConnection();
+            }
         },
 
         // #region Window and tab management
@@ -165,31 +172,44 @@ sap.ui.define([
          */
         closeTab: function () {
             return new Promise(function (resolve, reject) {
-                MessageBox.show(
-                    "You are about to close the current session, do you want to close also the involved tab?",
-                    {
-                        icon: MessageBox.Icon.QUESTION,
-                        title: "Close current tab?",
-                        actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-                        onClose: function (sAction) {
-                            if (sAction === MessageBox.Action.YES) {
-                                chrome.tabs.remove(Connection.getInstance().getConnectedTabId(), function () {
-                                    // if an error occurred while closing the tab, do not proceed
-                                    if (chrome.runtime.lastError) {
-                                        reject();
-                                    }
-                                    else {
-                                        resolve();
-                                    }
-                                });
-                            } else {
-                                // resolve in any case
-                                resolve();
+
+                if (this.isInjected()) {
+
+                    MessageBox.show(
+                        "The test recorder is already connected to a tab. This may be the case because you have been recording or replaying. " +
+                        "To replay reliably, a new tab needs to be opened." +
+                        "\n" +
+                        "Do you want to close the already connected tab?\n" +
+                        "\n" +
+                        "In any case, the connected tab is disconnected. You can start recording again where you left off after replaying all steps.",
+                        {
+                            icon: MessageBox.Icon.QUESTION,
+                            title: "Close current tab?",
+                            actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                            onClose: function (sAction) {
+                                if (sAction === MessageBox.Action.YES) {
+                                    chrome.tabs.remove(Connection.getInstance().getConnectedTabId(), function () {
+                                        // if an error occurred while closing the tab, do not proceed
+                                        if (chrome.runtime.lastError) {
+                                            reject();
+                                        }
+                                        else {
+                                            resolve();
+                                        }
+                                    });
+                                } else {
+                                    // resolve in any case
+                                    resolve();
+                                }
                             }
                         }
-                    }
-                );
-            });
+                    );
+
+                } else {
+                    resolve();
+                }
+
+            }.bind(this));
         },
 
         /**
@@ -387,31 +407,10 @@ sap.ui.define([
             // first, stop any recording, so we do not break anything
             this.stopRecording();
 
-            // check whether there is a connection already
-            if (this.isInjected()) {
+            this.closeTab().then(function () {
 
-                this.closeTab().then(function () {
-
-                    // FIXME we need to *kill* the connection here (i.e., no user notification!)
-                    Connection.getInstance().resetConnection();
-                    this.stopReplaying();
-
-                    Utils.requestTabsPermission()
-                        .then(
-                            function () {
-                                this._createTabAndInjectScript(sURL)
-                                    .then(function () {
-                                        this._executeReplay();
-                                    }.bind(this));
-                            }.bind(this)
-                        )
-                        .catch(function () {
-                            // FIXME permission not granted, send message via event bus!
-                        });
-
-                }.bind(this));
-
-            } else {
+                Connection.getInstance().resetConnection();
+                this.stopReplaying();
 
                 Utils.requestTabsPermission()
                     .then(
@@ -425,7 +424,9 @@ sap.ui.define([
                     .catch(function () {
                         // FIXME permission not granted, send message via event bus!
                     });
-            }
+
+            }.bind(this));
+
         },
 
         /**
