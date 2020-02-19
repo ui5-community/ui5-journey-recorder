@@ -10,7 +10,7 @@ sap.ui.define([
          */
         constructor: function () {
             this.resetConnection();
-            chrome.runtime.onConnect.addListener(this._handleIncommingConnections.bind(this));
+            chrome.runtime.onConnect.addListener(this._handleIncomingConnections.bind(this));
 
             // get window info for popup window
             this._iWindowId = null;
@@ -51,7 +51,6 @@ sap.ui.define([
 
                 sap.ui.getCore().getEventBus().subscribe("Internal", "injectDone", fnCallback.bind(this));
 
-                console.log("Create connection");
                 if (!this._sTabId) {
                     this._sTabId = sTabId;
 
@@ -91,21 +90,15 @@ sap.ui.define([
         },
 
         /**
-         * Handle incomming connection and adjusts the port listening to
+         * Handle incoming connection and adjusts the port listening to
          *
          * @param {chrome.runtime.Port} port the port which is calling
          */
-        _handleIncommingConnections: function (port) {
-            console.log('connection incomming');
+        _handleIncomingConnections: function (port) {
             if (!this.isConnected()) {
                 this._port = port;
-                this._port.onDisconnect.addListener(function () {
-                    this.resetConnection();
-                    // TODO publish appropriate event to event bus instead of showing message box
-                    MessageBox.error("Connection to the webpage lost, try to reconnect.");
-                }.bind(this));
-                this._port.onMessage.addListener(this._handleIncommingMessage.bind(this));
                 this._port.onDisconnect.addListener(this._onDisconnect.bind(this));
+                this._port.onMessage.addListener(this._handleIncomingMessage.bind(this));
             } else {
                 // TODO publish appropriate event to event bus instead of showing message box
                 MessageBox.warning("There is already a connection, please stop before opening a new one.");
@@ -117,13 +110,11 @@ sap.ui.define([
          *
          * @param {object} oMsg the message send from the injected code.
          */
-        _handleIncommingMessage: function (oMsg) {
+        _handleIncomingMessage: function (oMsg) {
             if (oMsg.data.messageID && this._oMessageMap[oMsg.data.messageID]) {
                 this._oMessageMap[oMsg.data.messageID].resolve(oMsg.data.data);
-                console.debug("Message incomming with callback: ", JSON.stringify(oMsg));
             } else {
                 sap.ui.getCore().getEventBus().publish("Internal", oMsg.data.reason, oMsg.data.data);
-                console.debug("Message incomming without callback", JSON.stringify(oMsg));
             }
         },
 
@@ -145,7 +136,6 @@ sap.ui.define([
             this._port.postMessage(oInformation);
         },
 
-        //test for "promised-Request"
         /**
          * Sends a synchronous handled message to the page.
          *
@@ -154,16 +144,16 @@ sap.ui.define([
          * @returns {Promise}
          */
         syncMessage: function (oInformation) {
-            var oSyncronizer = {};
+            var oSynchronizer = {};
 
             oInformation.messageID = ++this._iMessageID;
             var oReturn = new Promise(function (resolve, reject) {
-                oSyncronizer.resolve = resolve;
-                oSyncronizer.reject = reject;
+                oSynchronizer.resolve = resolve;
+                oSynchronizer.reject = reject;
                 this._sendMessage(oInformation);
             }.bind(this));
 
-            this._oMessageMap[oInformation.messageID] = oSyncronizer;
+            this._oMessageMap[oInformation.messageID] = oSynchronizer;
 
             return oReturn;
         },
