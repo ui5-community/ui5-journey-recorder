@@ -76,6 +76,8 @@ sap.ui.define([
             this._iMessageID = 0;
         },
 
+        // FIXME killConnection (like resetConnection but without user notification)
+
         /**
          * Check whether the connection is established.
          *

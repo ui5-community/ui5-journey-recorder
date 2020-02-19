@@ -444,6 +444,7 @@ sap.ui.define([
          */
         stopReplaying: function () {
             this._setReplaying(false);
+            // TODO disconnect here?!
         },
 
         /**
