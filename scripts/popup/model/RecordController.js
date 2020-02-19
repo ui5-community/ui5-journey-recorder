@@ -158,31 +158,38 @@ sap.ui.define([
 
         /**
          * Close the tab currently associated with the RecordController.
+         *
+         * The user is asked whether to close the currently associated tab is to be closed.
+         *
+         * @returns {Promise} promise whether the tab closing worked or not
          */
         closeTab: function () {
-            MessageBox.show(
-                "You closed the session, the tab involved also?",
-                {
-                    icon: MessageBox.Icon.QUESTION,
-                    title: "Close current Tab?",
-                    actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-                    onClose: function (sAction) {
-                        if (sAction === MessageBox.Action.YES) {
-                            return new Promise(function (resolve, reject) {
+            return new Promise(function (resolve, reject) {
+                MessageBox.show(
+                    "You are about to close the current session, do you want to close also the involved tab?",
+                    {
+                        icon: MessageBox.Icon.QUESTION,
+                        title: "Close current tab?",
+                        actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                        onClose: function (sAction) {
+                            if (sAction === MessageBox.Action.YES) {
                                 chrome.tabs.remove(Connection.getInstance().getConnectedTabId(), function () {
+                                    // if an error occurred while closing the tab, do not proceed
                                     if (chrome.runtime.lastError) {
                                         reject();
                                     }
-                                    Connection.getInstance().resetConnection();
-                                    resolve();
-                                }.bind(this));
-                            }.bind(this));
-                        } else {
-                            return new Promise(function () { });
+                                    else {
+                                        resolve();
+                                    }
+                                });
+                            } else {
+                                // resolve in any case
+                                resolve();
+                            }
                         }
-                    }.bind(this)
-                }
-            );
+                    }
+                );
+            });
         },
 
         /**
