@@ -129,7 +129,46 @@ sap.ui.define([
         getSelectorToJSONString: function (oObject) {
             this._oJSRegex = /^[_$a-zA-Z\xA0-\uFFFF][_$a-zA-Z0-9\xA0-\uFFFF]*$/; //this is not perfect - we are working with predefined names, which are not getting "any" syntax though
             return "{ " + Utils._getSelectorToJSONStringRec(oObject) + " }";
+        },
+
+        /**
+         * Request the browser permission 'tabs'.
+         *
+         * @returns {Promise} a promise whether the permission is granted (resolve) or not (reject)
+         */
+        requestTabsPermission: function () {
+
+            var aPermissions = ["tabs"];
+            var aOrigins = ["https://*/*", "http://*/*"];
+
+            return new Promise(function (resolve, reject) {
+
+                chrome.permissions.contains(
+                    {
+                        permissions: aPermissions,
+                        origins: aOrigins
+                    },
+                    function (bGranted) {
+                        if (bGranted) {
+                            resolve();
+                        } else {
+                            // if the permission is not granted yet, request it!
+                            chrome.permissions.request({
+                                permissions: aPermissions,
+                                origins: aOrigins
+                            }, function (bGranted) {
+                                if (bGranted) {
+                                    resolve();
+                                } else {
+                                    reject();
+                                }
+                            });
+                        }
+                    }
+                );
+            });
         }
+
     };
 
     return Utils;

@@ -101,29 +101,22 @@ sap.ui.define([
         _getUI5Urls: function () {
             var bRequestUI5 = this.getView().byId('ui5Switch').getState();
 
-            chrome.permissions.contains({
-                permissions: ['tabs'],
-                origins: ["https://*/*", "http://*/*"]
-            }, function (result) {
-                if (!bRequestUI5) {
-                    this._getTabsForAll();
-                } else if (result) {
-                    this._getTabsForUI5();
-                } else {
-                    chrome.permissions.request({
-                        permissions: ['tabs'],
-                        origins: ["https://*/*", "http://*/*"]
-                    }, function (result) {
-                        if (result) {
-                            //extract to method
+            if (!bRequestUI5) {
+                this._getTabsForAll();
+            } else {
+                Utils.requestTabsPermission()
+                    .then(
+                        function () {
                             this._getTabsForUI5();
-                        } else {
+                        }.bind(this)
+                    )
+                    .catch(
+                        function () {
                             MessageToast.show('No permissions granted! Showing only active tabs');
                             this._getTabsForAll();
-                        }
-                    }.bind(this));
-                }
-            }.bind(this));
+                        }.bind(this)
+                    );
+            }
         },
 
         /**

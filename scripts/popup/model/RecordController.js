@@ -5,9 +5,9 @@ sap.ui.define([
     "com/ui5/testing/model/Connection",
     "com/ui5/testing/model/ConnectionMessages",
     "com/ui5/testing/model/GlobalSettings",
-    "sap/m/MessageToast",
+    "com/ui5/testing/model/Utils",
     "sap/m/MessageBox"
-], function (UI5Object, JSONModel, Connection, ConnectionMessages, GlobalSettings, MessageToast, MessageBox) {
+], function (UI5Object, JSONModel, Connection, ConnectionMessages, GlobalSettings, Utils, MessageBox) {
     "use strict";
 
     // #region Helper functions
@@ -392,41 +392,40 @@ sap.ui.define([
 
                 this.closeTab().then(function () {
 
-                    // TODO what do we need to reset here?
+                    // FIXME we need to *kill* the connection here (i.e., no user notification!)
                     Connection.getInstance().resetConnection();
                     this.stopReplaying();
 
-                    chrome.permissions.request({
-                        permissions: ['tabs'],
-                        origins: [sURL]
-                    }, function (granted) {
-                        if (granted) {
-                            this._createTabAndInjectScript(sURL)
-                                .then(function () {
-                                    this._executeReplay();
-                                }.bind(this));
-                        }
-                    }.bind(this));
+                    Utils.requestTabsPermission()
+                        .then(
+                            function () {
+                                this._createTabAndInjectScript(sURL)
+                                    .then(function () {
+                                        this._executeReplay();
+                                    }.bind(this));
+                            }.bind(this)
+                        )
+                        .catch(function () {
+                            // FIXME permission not granted, send message via event bus!
+                        });
 
                 }.bind(this));
 
             } else {
 
-                chrome.permissions.request({
-                    permissions: ['tabs'],
-                    origins: [sURL]
-                }, function (granted) {
-
-                    if (granted) {
-                        this._createTabAndInjectScript(sURL)
-                        .then(function () {
-                            this._executeReplay();
-                        }.bind(this));
-                    }
-
-                }.bind(this));
+                Utils.requestTabsPermission()
+                    .then(
+                        function () {
+                            this._createTabAndInjectScript(sURL)
+                                .then(function () {
+                                    this._executeReplay();
+                                }.bind(this));
+                        }.bind(this)
+                    )
+                    .catch(function () {
+                        // FIXME permission not granted, send message via event bus!
+                    });
             }
-
         },
 
         /**
