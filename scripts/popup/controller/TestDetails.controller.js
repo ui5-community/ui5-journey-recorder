@@ -42,7 +42,6 @@ sap.ui.define([
         _oModel: new JSONModel({
             codes: [],
             test: {},
-            replayType: 0,
             replayMessages: [],
             routeName: "",
             codeSettings: {
@@ -179,7 +178,7 @@ sap.ui.define([
             if (sTargetUUID === this._oTestId && RecordController.getInstance().isReplaying()) {
                 debugger;
                 if (RecordController.getInstance().isTestStepExecuted(this._iCurrentStep)) {
-                    this.replayNextStep();
+                    this.onReplayNextStep();
                 }
                 return;
             }

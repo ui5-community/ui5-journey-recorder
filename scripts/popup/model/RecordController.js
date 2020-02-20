@@ -86,7 +86,9 @@ sap.ui.define([
                 elements: [],
                 // Replaying
                 isReplaying: false,
-                currentReplayStep: 0
+                isExecuting: false,
+                currentReplayStep: 0,
+                replayType: 0
             };
             this._oModel.setData(oJSON);
 
@@ -450,6 +452,7 @@ sap.ui.define([
          * Stop replaying.
          */
         stopReplaying: function () {
+            this._oModel.setProperty("/isExecuting", false);
             this._setReplaying(false);
             // TODO disconnect here?!
         },
@@ -509,12 +512,12 @@ sap.ui.define([
          * @param {string} sState one of sap.ui.core.MessageType.*, indicating the state of the execution
          */
         setTestStepExecuted: function (iStepIdx, sState) {
-            this._oModel.setProperty("/elements/" + iStepIdx + "/replay/isExecuting", false);
             this._oModel.setProperty("/elements/" + iStepIdx + "/replay/isExecuted", true);
             this._oModel.setProperty("/elements/" + iStepIdx + "/replay/isCurrentStep", false);
             this._oModel.setProperty("/elements/" + iStepIdx + "/replay/executionState", sState);
 
             // update current step index
+            this._oModel.setProperty("/isExecuting", false);
             this._oModel.setProperty("/currentReplayStep", this._oModel.getProperty("/currentReplayStep") + 1);
             this._updateCurrentStepIndicator();
         },
@@ -551,7 +554,6 @@ sap.ui.define([
          * <pre><code>
          *   replay = {
          *       isExecuted: false,
-         *       isExecuting: false,
          *       isCurrentStep: false,
          *       executionState: sap.ui.core.MessageType.None
          *   };
@@ -563,7 +565,6 @@ sap.ui.define([
             this.getTestElements().forEach(function(oElement) {
                 oElement.replay = {
                     isExecuted: false,
-                    isExecuting: false,
                     isCurrentStep: false,
                     executionState: sap.ui.core.MessageType.None
                 };
@@ -577,6 +578,7 @@ sap.ui.define([
          */
         _replayNextStepWithTimeout: function () {
             var iReplayType = this._settingsModel.getProperty("/settings/defaultReplayType");
+            this._oModel.setProperty("/replayType", iReplayType);
 
             if (this.isReplaying() && iReplayType !== 0) {
                 setTimeout(() => {
@@ -595,10 +597,8 @@ sap.ui.define([
             // focus the target window so the user can see what is going on
             this.focusTargetWindow();
 
-            // indicate to bindings that the current step is executing
-            var oTestElement = this.getTestElementByIdx(iCurrentStepIdx);
-            oTestElement.replay.isExecuting = true;
-            this._oModel.updateBindings(true); // force update to bindings
+            // indicate to bindings that a step is executing now
+            this._oModel.setProperty("/isExecuting", true);
 
             // execute the next replay action and react to result
             this._executeReplayStep().then(function (oResult) {
