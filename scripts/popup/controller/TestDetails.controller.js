@@ -42,7 +42,6 @@ sap.ui.define([
         _oModel: new JSONModel({
             codes: [],
             test: {},
-            replayMessages: [],
             routeName: "",
             codeSettings: {
                 language: "UI5",
@@ -76,7 +75,6 @@ sap.ui.define([
 
             // initialize recording dialog and reset replay messages
             this._createDialog();
-            this._resetReplayMessages();
 
             // attach routes
             this.getOwnerComponent().getRouter().getRoute("TestDetails").attachPatternMatched(this._onTestDisplay, this);
@@ -86,7 +84,6 @@ sap.ui.define([
 
             // add event listener for item selections on page
             sap.ui.getCore().getEventBus().subscribe("Internal", "itemSelected", this._onItemSelected.bind(this));
-            sap.ui.getCore().getEventBus().subscribe("Internal", "replayMessages", this._onReceiveReplayMessages.bind(this));
             sap.ui.getCore().getEventBus().subscribe("Internal", "replayFinished", this._onCheckRecordContinuing.bind(this));
 
             // trigger prompt on unload!
@@ -135,7 +132,6 @@ sap.ui.define([
                 }.bind(this), 100);
             }
             this._updatePreview();
-            this._resetReplayMessages();
         },
 
         /**
@@ -306,7 +302,7 @@ sap.ui.define([
             replayablePromise
             .then(function(sURL) {
                 RecordController.getInstance().startReplaying(sURL);
-                this._resetReplayMessages();
+                this._oMessagePopover.close();
             }.bind(this))
             .catch(function(sMessage) {
                 if (sMessage) {
@@ -550,29 +546,21 @@ sap.ui.define([
         },
 
         /**
+         * Handle incoming messages during replay.
          *
-         * @param {string} sChannel the channel name of the incoming event (ignored)
-         * @param {string} sEventId the event ID of the incoming event (ignored)
-         * @param {*} oMessages the messages sent during replay
+         * @param {*} oEvent the event indicating a new message
          */
-        _onReceiveReplayMessages: function(sChannel, sEventId, oMessages) {
+        _onReceiveMessageDuringReplay: function(oEvent) {
 
-            this._oModel.setProperty("/replayMessages", this._oModel.getProperty("/replayMessages").concat(oMessages));
+            var oMessages = this.getView().getModel("recordModel").getProperty("/replayMessages");
 
+            // open the message popover if there is an error in any message
             oMessages.forEach(function(oMsg) {
-                this._oMessagePopover.addItem(new MessageItem(oMsg));
-
                 if (oMsg.type === "Error") {
                     this._oMessagePopover.openBy(this.byId("replayMessagePopoverBtn"));
                 }
             }.bind(this));
 
-        },
-
-        _resetReplayMessages: function() {
-            // remove previously gathered replay messages
-            this._oModel.setProperty("/replayMessages", []);
-            this._oMessagePopover.destroyItems();
         },
 
         // #endregion
@@ -590,7 +578,19 @@ sap.ui.define([
                 this._oRecordDialog = oRecordDialog;
             }.bind(this));
 
-            this._oMessagePopover = new MessagePopover();
+            this._oMessagePopover = new MessagePopover({
+                items: {
+                    path: 'recordModel>/replayMessages',
+                    template: new MessageItem({
+                        type: '{recordModel>type}',
+                        title: '{recordModel>title}',
+                        description: '{recordModel>description}',
+                        subtitle: '{recordModel>subtitle}'
+                    })
+                }
+            });
+            this._oMessagePopover.setModel(this.getView().getModel("recordModel"), "recordModel");
+            this._oMessagePopover.getBinding("items").attachChange(this._onReceiveMessageDuringReplay, this);
         },
 
         /**
@@ -609,7 +609,6 @@ sap.ui.define([
          */
         _initTestCreate: function () {
             RecordController.getInstance().stopReplaying();
-            this._resetReplayMessages();
 
             RecordController.getInstance().reset();
             RecordController.getInstance().initializeTestDetails();

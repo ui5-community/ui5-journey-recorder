@@ -88,7 +88,8 @@ sap.ui.define([
                 isReplaying: false,
                 isExecuting: false,
                 currentReplayStep: 0,
-                replayType: 0
+                replayType: 0,
+                replayMessages: []
             };
             this._oModel.setData(oJSON);
 
@@ -419,6 +420,7 @@ sap.ui.define([
                         function () {
                             this._createTabAndInjectScript(sURL)
                                 .then(function () {
+                                    this._oModel.setProperty("/replayMessages", []);
                                     this._executeReplay();
                                 }.bind(this));
                         }.bind(this)
@@ -604,7 +606,6 @@ sap.ui.define([
             this._executeReplayStep().then(function (oResult) {
 
                 // collect messages' description for now
-                // TODO use message items in a MessagePopover for this
                 var aMessages = oResult.messages.map(function(oMsg) {
                     return oMsg.description;
                 });
@@ -629,7 +630,7 @@ sap.ui.define([
                     }
 
                     // publish any messages from the result
-                    sap.ui.getCore().getEventBus().publish("Internal", "replayMessages", oResult.messages);
+                    this._oModel.setProperty("/replayMessages", this._oModel.getProperty("/replayMessages").concat(oResult.messages));
 
                     // stop replaying if no steps left and announce that (i.e., no error occurred yet!)
                     if (this.isReplaying() && iCurrentStepIdx >= this.getTestElements().length - 1) {
