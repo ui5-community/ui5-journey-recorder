@@ -3,6 +3,8 @@ sap.ui.define([
 ], function(){
     "use strict";
 
+    var _iUUIDSuffix = 0;
+
     var Utils = {
         statics: {
             stepTypes: [
@@ -64,13 +66,13 @@ sap.ui.define([
         replaceUnsupportedFileSigns: function(sString, sReplacement) {
             return sString.replace(/[\s\/\\\:\*\?\"\<\>\|\-]+/gm, sReplacement);
         },
-        getUUIDv4: function (oCaller) {
-            var vGlobal = oCaller.getModel('settings').getProperty('/globalInt');
+
+        getUUIDv4: function () {
             var sStr = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                var r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
-            }) + vGlobal;
-            oCaller.getModel('settings').setProperty('/globalInt', vGlobal + 1);
+            }) + _iUUIDSuffix++;
             return sStr;
         },
 

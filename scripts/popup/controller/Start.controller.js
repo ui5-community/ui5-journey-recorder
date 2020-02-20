@@ -238,7 +238,7 @@ sap.ui.define([
          *
          */
         _importDone: function (oData) {
-            oData.test.uuid = Utils.getUUIDv4(this);
+            oData.test.uuid = Utils.getUUIDv4();
             oData.test.createdAt = new Date().getTime();
             ChromeStorage.saveRecord(oData).then(function () {
                 ChromeStorage.getRecords({

@@ -10,24 +10,6 @@ sap.ui.define([
 ], function (UI5Object, JSONModel, Connection, ConnectionMessages, GlobalSettings, Utils, MessageBox) {
     "use strict";
 
-    // #region Helper functions
-
-    var _iUUIDSuffix = 0;
-
-    /**
-     *
-     */
-    function _uuidv4() {
-        var sStr = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0,
-                v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        }) + _iUUIDSuffix++;
-        return sStr;
-    }
-
-    // #endregion
-
     // #region RecordController
 
     /**
@@ -326,7 +308,7 @@ sap.ui.define([
          */
         initializeTestDetails: function () {
             this._oModel.setProperty("/test", {
-                uuid: _uuidv4(),
+                uuid: Utils.getUUIDv4(),
                 createdAt: new Date().getTime()
             });
         },
