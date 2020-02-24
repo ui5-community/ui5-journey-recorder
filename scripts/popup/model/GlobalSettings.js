@@ -12,7 +12,7 @@ sap.ui.define([
             var oJSON = {
                 settings: {},
                 settingsDefault: {
-                    defaultReplayType: 0,
+                    defaultReplayInterval: 0,
                     defaultReplayTimeout: 5,
                     defaultLanguage: "UI5",
                     defaultNatLanguage: "EN",

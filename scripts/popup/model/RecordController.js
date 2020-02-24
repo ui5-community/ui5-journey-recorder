@@ -70,7 +70,7 @@ sap.ui.define([
                 isReplaying: false,
                 isExecuting: false,
                 currentReplayStep: 0,
-                replayType: 0,
+                replayInterval: 0,
                 replayMessages: []
             };
             this._oModel.setData(oJSON);
@@ -556,18 +556,18 @@ sap.ui.define([
         },
 
         /**
-         * Replay the next step while respecting the replay type (i.e., the timeout for the next step).
+         * Replay the next step while respecting the replay interval (i.e., the timeout for the next step).
          *
          * @private
          */
         _replayNextStepWithTimeout: function () {
-            var iReplayType = this._settingsModel.getProperty("/settings/defaultReplayType");
-            this._oModel.setProperty("/replayType", iReplayType);
+            var iReplayInterval = this._settingsModel.getProperty("/settings/defaultReplayInterval");
+            this._oModel.setProperty("/replayInterval", iReplayInterval);
 
-            if (this.isReplaying() && iReplayType !== 0) {
+            if (this.isReplaying() && iReplayInterval !== 0) {
                 setTimeout(() => {
                     this.replayNextStep();
-                }, 500 * iReplayType);
+                }, 500 * iReplayInterval);
             }
         },
 

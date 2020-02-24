@@ -72,8 +72,8 @@
                                         </items>
                                     </Select> -->
 
-                                    <Label text="Replay type:" />
-                                    <Select id="sReplayMode" items="{settings>/replayModes}" selectedKey="{settings>/settings/defaultReplayType}" enabled="{= !${recordModel>/isReplaying} }">
+                                    <Label text="Replay interval:" />
+                                    <Select id="sReplayMode" items="{settings>/replayModes}" selectedKey="{settings>/settings/defaultReplayInterval}" enabled="{= !${recordModel>/isReplaying} }">
                                         <items>
                                             <core:Item text="{settings>mode}" key="{settings>key}" />
                                         </items>
@@ -87,7 +87,7 @@
                                     <headerToolbar>
                                         <Toolbar height="3rem" active="true" design="Solid" visible="{= ${recordModel>/isReplaying} || !!${recordModel>/replayMessages}.length }">
                                             <Button icon="sap-icon://step" text="Replay next step" type="Accept" press="onReplaySingleStep"
-                                                visible="{= ${recordModel>/isReplaying} &amp;&amp; ${recordModel>/replayType} === 0 }"
+                                                visible="{= ${recordModel>/isReplaying} &amp;&amp; ${recordModel>/replayInterval} === 0 }"
                                                 enabled="{= ${recordModel>/currentReplayStep} !== 0 || !${recordModel>/isExecuting} }" />
                                             <Button icon="sap-icon://stop" text="Stop replay" type="Reject" press="onReplayStop" visible="{recordModel>/isReplaying}" />
 

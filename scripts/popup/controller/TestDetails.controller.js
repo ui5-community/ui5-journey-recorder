@@ -69,8 +69,8 @@ sap.ui.define([
             this.getView().setModel(RecordController.getInstance().getModel(), "recordModel");
             this.getView().setModel(GlobalSettings.getModel(), "settings");
 
-            // due to the binding, the settings value gets overridden, so a retrieval of the default value for the replay type/timeout is needed
-            this.getModel("settings").setProperty("/settings/defaultReplayType", this.getModel("settings").getProperty("/settingsDefault/defaultReplayType"));
+            // due to the binding, the settings value gets overridden, so a retrieval of the default value for the replay interval/timeout is needed
+            this.getModel("settings").setProperty("/settings/defaultReplayInterval", this.getModel("settings").getProperty("/settingsDefault/defaultReplayInterval"));
             this.getModel("settings").setProperty("/settings/defaultReplayTimeout", this.getModel("settings").getProperty("/settingsDefault/defaultReplayTimeout"));
 
             // initialize recording dialog and reset replay messages

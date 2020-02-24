@@ -33,10 +33,10 @@
                             <core:Item text="{settings>text}" key="{settings>key}"/>
                         </items>
                     </Select>
-                    <Label text="Default Replay Type"/>
-                    <Select id="tstReplayType"
+                    <Label text="Default Replay Interval"/>
+                    <Select id="tstReplayInterval"
                             items="{settings>/replayModes}"
-                            selectedKey="{settings>/settings/defaultReplayType}">
+                            selectedKey="{settings>/settings/defaultReplayInterval}">
                         <items>
                             <core:Item text="{settings>mode}" key="{settings>key}"/>
                         </items>
