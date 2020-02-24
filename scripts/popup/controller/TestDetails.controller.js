@@ -103,9 +103,7 @@ sap.ui.define([
          */
         _onTestDisplay: function (oEvent) {
             this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
-            this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                oStep.setHighlight(sap.ui.core.MessageType.None);
-            });
+
             RecordController.getInstance().stopReplaying();
             this._sTestId = oEvent.getParameter("arguments").TestId;
             var sTargetUUID = this._sTestId;
@@ -140,9 +138,6 @@ sap.ui.define([
          */
         _onTestCreate: function (oEvent) {
             this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
-            this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                oStep.setHighlight(sap.ui.core.MessageType.None);
-            });
             this._bQuickMode = false;
             this._initTestCreate(false);
         },
@@ -153,9 +148,6 @@ sap.ui.define([
          */
         _onTestCreateQuick: function (oEvent) {
             this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
-            this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                oStep.setHighlight(sap.ui.core.MessageType.None);
-            });
             this._bQuickMode = true;
             this._initTestCreate(true);
         },
@@ -166,9 +158,7 @@ sap.ui.define([
          */
         _onTestReplay: function (oEvent) {
             this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
-            this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                oStep.setHighlight(sap.ui.core.MessageType.None);
-            });
+
             var sTargetUUID = oEvent.getParameter("arguments").TestId;
             var sCurrentUUID = RecordController.getInstance().getTestUUID();
             if (sTargetUUID === this._oTestId && RecordController.getInstance().isReplaying()) {
