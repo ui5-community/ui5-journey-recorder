@@ -211,7 +211,12 @@ function _selectItem(oEventData) {
 
 function _checkAction(oSelector, bReturnSelectedNode = false) {
     var aDOMNodes = UI5ControlHelper.findDOMNodesBySelector(oSelector);
-    return __checkActionPreconditions(aDOMNodes, bReturnSelectedNode);
+    var oCheckResult = __checkActionPreconditions(aDOMNodes, bReturnSelectedNode);
+
+    return {
+        result: oCheckResult.result,
+        messages: oCheckResult.message ? [oCheckResult.message] : []
+    };
 }
 
 function __checkActionPreconditions(aDOMNodes, bReturnSelectedNode = false) {
@@ -262,8 +267,7 @@ function __checkActionPreconditions(aDOMNodes, bReturnSelectedNode = false) {
     // if nothing weird happened, indicate success and select the single DOM node
     if (!oResult) {
         oResult = {
-            result: "success",
-            message: {}
+            result: "success"
         }
         oDOMNode = aDOMNodes;
     }
