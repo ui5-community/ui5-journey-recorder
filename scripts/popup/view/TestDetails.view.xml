@@ -116,7 +116,7 @@
                                         </Column>
                                     </columns>
                                     <items>
-                                        <ColumnListItem type="Navigation" press="onStepClick" highlight="{recordModel>replay/executionState}" selected="true">
+                                        <ColumnListItem type="{= ${recordModel>/isReplaying} ? 'Inactive' : 'Navigation' }" press="onStepClick" highlight="{recordModel>replay/executionState}" selected="true">
                                             <cells>
                                                 <Select items="{path: 'constants>/stepTypes', templateShareable: false}" enabled="false" selectedKey="{recordModel>property/type}">
                                                     <items>
@@ -146,7 +146,7 @@
                                                 <Text text="{recordModel>item/identifier/ui5Id}" />
                                                 <Text text="{recordModel>item/metadata/elementName}" />
                                                 <HBox alignContent="Start" alignItems="Start">
-                                                    <Button icon="sap-icon://delete" press="onDeleteStep" />
+                                                    <Button icon="sap-icon://delete" press="onDeleteStep" enabled="{= !${recordModel>/isReplaying} }" />
                                                 </HBox>
                                             </cells>
                                         </ColumnListItem>
