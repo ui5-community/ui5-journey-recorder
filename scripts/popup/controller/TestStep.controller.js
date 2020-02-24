@@ -1520,6 +1520,7 @@ sap.ui.define([
                 this._checkAndDisplay().then(function () {
                     var oCurrentElement = this._oModel.getProperty("/element");
                     this._adjustBeforeSaving(oCurrentElement).then(function (oElementFinal) {
+
                         var aElements = RecordController.getInstance().getTestElements();
                         if (this._oModel.getProperty("/replayMode")) {
                             aElements[this._sElementId] = oElementFinal;
@@ -1528,9 +1529,11 @@ sap.ui.define([
                         }
                         RecordController.getInstance().setTestElements(aElements);
 
-                        this._executeAction(this._oModel.getProperty("/element")).then(function () {
-                            resolve();
-                        });
+                        RecordController.getInstance().executeTestStep(oElementFinal)
+                            .then(function (oResult) {
+                                // TODO act on result, maybe an error is returned
+                                resolve(oResult);
+                            });
                     }.bind(this));
                 }.bind(this));
             }.bind(this));
@@ -1602,35 +1605,6 @@ sap.ui.define([
 
         // #region Actions and asserts
         // TODO try to remove this region (move to RecordController)
-
-        /**
-         *
-         * @param {*} oElement
-         */
-        _executeAction: function (oElement) {
-            // FIXME this method is a direct copy of TestDetails._executeAction. Common superclass needed?
-            return new Promise(function (resolve, reject) {
-                if (oElement && oElement.property.type === "ACT") {
-                    ConnectionMessages.executeAction(Connection.getInstance(), {
-                        element: oElement,
-                        timeout: this.getModel("settings").getProperty("/settings/defaultReplayTimeout")
-                    }).then(function(oData) {
-                        resolve(oData);
-                    });
-                } else if (oElement && oElement.property.type === "ASS") {
-                    ConnectionMessages.executeAssert(Connection.getInstance(), {
-                        element: this._getSelectorDefinition(oElement),
-                        assert: this._getAssertDefinition(oElement)
-                    }).then(function (oData) {
-                        resolve(oData);
-                    });
-                } else {
-                    resolve({
-                        result: "error"
-                    });
-                }
-            }.bind(this));
-        },
 
         /**
          *

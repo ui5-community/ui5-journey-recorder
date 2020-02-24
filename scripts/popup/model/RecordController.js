@@ -577,6 +577,7 @@ sap.ui.define([
         replayNextStep: function () {
 
             var iCurrentStepIdx = this._oModel.getProperty("/currentReplayStep");
+            var oElement = this.getTestElementByIdx(iCurrentStepIdx);
 
             // focus the target window so the user can see what is going on
             this.focusTargetWindow();
@@ -585,7 +586,7 @@ sap.ui.define([
             this._oModel.setProperty("/isExecuting", true);
 
             // execute the next replay action and react to result
-            this._executeReplayStep().then(function (oResult) {
+            this.executeTestStep(oElement).then(function (oResult) {
 
                 // collect messages' description for now
                 var aMessages = oResult.messages.map(function(oMsg) {
@@ -635,39 +636,40 @@ sap.ui.define([
         },
 
         /**
-         * Execute the action/assert in the current replay step.
+         * Execute the action/assert in the given test step.
+         *
+         * @param {object} oTestStep the test step to be executed (e.g., obtained via 'getTestElementByIdx')
          *
          * @returns {Promise} a promise with the result of the execution
-         *
-         * @private
          */
-        _executeReplayStep: function () {
-            var oElement = this.getTestElementByIdx(this._oModel.getProperty("/currentReplayStep"));
+        executeTestStep: function (oTestStep) {
             var iTimeout = this._settingsModel.getProperty("/settings/defaultReplayTimeout");
 
             return new Promise(function (resolve) {
 
                 // actions
-                if (oElement && oElement.property.type === "ACT") {
+                if (oTestStep && oTestStep.property.type === "ACT") {
                     ConnectionMessages.executeAction(Connection.getInstance(), {
-                        element: oElement,
+                        element: oTestStep,
                         timeout: iTimeout
                     }).then(function(oData) {
                         resolve(oData);
                     });
                 } else
                 // asserts
-                if (oElement && oElement.property.type === "ASS") {
+                if (oTestStep && oTestStep.property.type === "ASS") {
                     ConnectionMessages.executeAssert(Connection.getInstance(), {
-                        element: oElement.selector.selectorAttributes,
-                        assert: oElement.assertion
+                        element: oTestStep.selector.selectorAttributes,
+                        assert: oTestStep.assertion
                     }).then(function (oData) {
                         resolve(oData);
                     });
                 }
                 // everything else cannot be handled and is consequently returned right away
                 else {
-                    resolve();
+                    resolve({
+                        result: "error"
+                    });
                     return false;
                 }
 
