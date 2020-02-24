@@ -65,12 +65,12 @@
                                     <Title titleStyle="H5" text="Steps ( {= ${recordModel>/elements}.length } )" />
                                     <ToolbarSpacer />
 
-                                    <Label text="Replay timeout:" />
+                                    <!-- <Label text="Replay timeout:" />
                                     <Select id="sReplayTimeout" items="{settings>/replayTimeouts}" selectedKey="{settings>/settings/defaultReplayTimeout}" enabled="{= !${recordModel>/isReplaying} }">
                                         <items>
                                             <core:Item text="{settings>mode}" key="{settings>key}" />
                                         </items>
-                                    </Select>
+                                    </Select> -->
 
                                     <Label text="Replay type:" />
                                     <Select id="sReplayMode" items="{settings>/replayModes}" selectedKey="{settings>/settings/defaultReplayType}" enabled="{= !${recordModel>/isReplaying} }">
