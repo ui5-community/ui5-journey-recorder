@@ -88,7 +88,7 @@
                                         <Toolbar height="3rem" active="true" design="Solid" visible="{= ${recordModel>/isReplaying} || !!${recordModel>/replayMessages}.length }">
                                             <Button icon="sap-icon://step" text="Replay next step" type="Accept" press="onReplaySingleStep"
                                                 visible="{= ${recordModel>/isReplaying} &amp;&amp; ${recordModel>/replayInterval} === 0 }"
-                                                enabled="{= ${recordModel>/currentReplayStep} !== 0 || !${recordModel>/isExecuting} }" />
+                                                enabled="{= !${recordModel>/isExecuting} }" />
                                             <Button icon="sap-icon://stop" text="Stop replay" type="Reject" press="onReplayStop" visible="{recordModel>/isReplaying}" />
 
                                             <ToolbarSpacer />
