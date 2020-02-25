@@ -588,11 +588,6 @@ sap.ui.define([
             // execute the next replay action and react to result
             this.executeTestStep(oElement).then(function (oResult) {
 
-                // collect messages' description for now
-                var aMessages = oResult.messages.map(function(oMsg) {
-                    return oMsg.description;
-                });
-
                 // react only if there is a result
                 if (oResult && oResult.result) {
                     switch (oResult.result) {
