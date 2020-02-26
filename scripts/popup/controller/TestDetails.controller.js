@@ -162,7 +162,6 @@ sap.ui.define([
             var sTargetUUID = oEvent.getParameter("arguments").TestId;
             var sCurrentUUID = RecordController.getInstance().getTestUUID();
             if (sTargetUUID === this._oTestId && RecordController.getInstance().isReplaying()) {
-                debugger;
                 if (RecordController.getInstance().isTestStepExecuted(this._iCurrentStep)) {
                     this.onReplayNextStep();
                 }

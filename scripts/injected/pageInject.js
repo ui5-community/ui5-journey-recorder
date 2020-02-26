@@ -483,48 +483,208 @@ function _executeAssert(oEventData) {
     // find elements to assert on
     var aFoundElements = TestItem.findItemsBySelector(oElementSelector);
 
-    // if no elements are found, return early
-    if (aFoundElements === 0) {
-        return {
-            result: "error",
-            messages: [{
-                type: "Error",
-                title: "No element found for assert",
-                subtitle: "No element found on which the assert can be executed!",
-                description: "You have maintained an assert to be executed. " +
-                    "For the selected attributes/ID, however, no item is found in the current screen. " +
-                    "Thus, the assert could not be executed."
-            }]
-        };
+    // define return value to be filled later
+    var oResult;
+
+    // execute assertion based on its type
+    var sAssType = oAssertionData.assertType; // ATTR | EXS | MTC
+    switch(sAssType) {
+        case "ATTR":
+
+            // get the asserts to ensure
+            var aAsserts = oAssertionData.asserts;
+
+            // if there are no asserts given, this happens likely due to an old test record for which this information is not stored.
+            // the user needs to be informed that their test is somehow "broken" and, likely, the test need to be re-recorded
+            if (!aAsserts) {
+                oResult = {
+                    result: "error",
+                    messages: [{
+                        type: "Error",
+                        title: "Attribute-based assert is not complete",
+                        subtitle: "Assert details cannot be found",
+                        description: "The configuration details for the list of attribute-based asserts cannot be found. Therefore, no assert can be carried out. Please contact the developer or re-record the test."
+                    }]
+                };
+
+                break;
+            }
+
+            // check asserts for all found elements
+            aFoundElements.forEach(function(oFoundElement) {
+
+                // temporary variables for current element
+                var aAllErrors = []; // storage for all error messages
+                var bAssertFailed = false; //
+
+                // check all asserts for the current element
+                aAsserts.forEach(function(oAssert) {
+
+                    var bAttributeCheckFailed = false;
+                    var sCurrentError = "";
+
+                    var sAssertLocalScope = oAssert.localScope;
+                    var oAssertSpec = oAssert.spec;
+
+                    // check for invalid line
+                    if (!oAssertSpec) {
+                        return;
+                    }
+
+                    var sAssert = sAssertLocalScope + oAssertSpec;
+
+                    var oCurItem = oFoundElement;
+                    var aSplit = sAssert.split(".");
+                    for (var x = 0; x < aSplit.length; x++) {
+                        if (typeof oCurItem[aSplit[x]] === "undefined") {
+                            bAttributeCheckFailed = true;
+                            break;
+                        }
+                        oCurItem = oCurItem[aSplit[x]];
+                    }
+
+                    if (bAttributeCheckFailed === false) {
+                        // depending on the operator, everything okay or nothing okay:
+                        // 1) "equals"
+                        if (oAssert.operatorType === "EQ" && oAssert.criteriaValue !== oCurItem) {
+                            bAttributeCheckFailed = true;
+                            sCurrentError = "Value '" + oAssert.criteriaValue + "' of '" + sAssert + "' does not match '" + oCurItem + "'.";
+                        } else
+                        // 2) "does not equal"
+                        if (oAssert.operatorType === "NE" && oAssert.criteriaValue === oCurItem) {
+                            bAttributeCheckFailed = true;
+                            sCurrentError = "Value '" + oAssert.criteriaValue + "' of '" + sAssert + "' does match '" + oCurItem + "'.";
+                        } else
+                        // 3) "contains" and "does not contain":
+                        if (oAssert.operatorType === "CP" || oAssert.operatorType === "NP") {
+                            // convert both to string if required
+                            var sStringContains = oAssert.criteriaValue;
+                            var sStringCheck = oCurItem;
+                            if (typeof sStringCheck !== "string") {
+                                sStringCheck = sStringCheck.toString();
+                            }
+                            if (typeof sStringContains !== "string") {
+                                sStringContains = sStringContains.toString();
+                            }
+                            // 3.1) "contains"
+                            if (oAssert.operatorType === "CP" && sStringCheck.indexOf(sStringContains) === -1) {
+                                bAttributeCheckFailed = true;
+                                sCurrentError = "Value '" + oCurItem + "' of '" + sAssert + "' does not contain '" + oAssert.criteriaValue + "'.";
+                            } else
+                            // 3.2) "does not contain"
+                            if (oAssert.operatorType === "NP" && sStringCheck.indexOf(sStringContains) !== -1) {
+                                bAttributeCheckFailed = true;
+                                sCurrentError = "Value '" + oCurItem + "' of '" + sAssert + "' does contain '" + oAssert.criteriaValue + "'.";
+                            }
+                        }
+                    }
+
+                    if (bAttributeCheckFailed === true) {
+                        oAssert.assertionOK = false;
+                        bAssertFailed = true;
+                        aAllErrors.push({
+                            type: "Error",
+                            title: "Assertion error",
+                            subtitle: sCurrentError,
+                            description: sCurrentError
+                        });
+                    }
+
+                });
+
+                oFoundElement.assertMessages = aAllErrors;
+                oFoundElement.assertionOK = !bAssertFailed;
+            });
+
+            // check if any assertion has assertionOK === false
+            var bFound = aAsserts.some(function(oAssert) {
+                return oAssert.assertionOK === false;
+            });
+
+            // indicate overall error
+            if (bFound === true) {
+                oResult = {
+                    result: "error",
+                    messages: [{
+                        type: "Error",
+                        title: "Attribute-based assert is failing",
+                        subtitle: "At least, one attribute-based assert is failing",
+                        description: "At least, one of the configured attribute-based assertions is failing. Please see the details on the found items within the test step."
+                    }]
+                };
+            }
+
+            break;
+
+        case "EXS":
+
+            // check whether there is no found element
+            if (aFoundElements.length === 0) {
+
+                oResult = {
+                    result: "error",
+                    messages: [{
+                        type: "Error",
+                        title: "Assert is failing",
+                        subtitle: "No item found",
+                        description: "For the selected attributes/ID, no item is found. Thus, assertions cannot be performed."
+                    }]
+                };
+
+            }
+
+            break;
+
+        case "MTC":
+
+            // match number of found elements against expected number
+            var iExpectedCount = oAssertionData.assertMatchingCount;
+            if (aFoundElements.length !== iExpectedCount) {
+
+                // create single error message for proper re-use
+                var oErrorMessage = {
+                    type: "Error",
+                    title: "Assert is failing",
+                    subtitle: aFoundElements.length + " items found but " + iExpectedCount + " expected",
+                    description: "Your selector is returning " + aFoundElements.length + " items but " + iExpectedCount + " are expected. The configured assertion fails as the expected value is different."
+                };
+
+                // indicate failed assertion for all identified elements
+                aFoundElements.forEach(function(oItem) {
+                    oItem.assertMessages = [oErrorMessage];
+                    oItem.assertionOK = false;
+                });
+
+                oResult = {
+                    result: "error",
+                    messages: [oErrorMessage]
+                };
+
+            } else {
+
+                // indicate successful assertion for all identified elements
+                aFoundElements.forEach(function(oItem) {
+                    oItem.assertMessages = [];
+                    oItem.assertionOK = true;
+                });
+
+            }
+
+            break;
+
+        default:
+            break;
     }
 
-    // prepare return values
-    var sResult = "";
-    var sMessage = "";
-    var oElement = aFoundElements[0]; // always use first item for assertion
-
-    // if several items are found, use first one, but issue a warning
-    // TODO this may be wanted as there are also assertions on the number of found elements!
-    if (aFoundElements.length > 1) {
-        sResult = "warning";
-        sMessage = {
-            type: "Warning",
-            title: "More than one element found for assert",
-            subtitle: "The assert will be executed on the first element",
-            description:  "Your selector is returning " + aFoundElements.length + " items, the assert will be executed on the first one. " +
-            "Nevertheless, this may yield undesired results."
+    // if nothing weird happened, indicate success and select the single DOM node
+    if (!oResult) {
+        oResult = {
+            result: "success",
+            messages: []
         }
     }
 
-    // FIXME run actual assertion
-    if (aFoundElements.length === 1) {
-        sResult = "success";
-    }
-
-    return {
-        result: sResult,
-        messages: sMessage ? [sMessage] : []
-    }
+    return oResult;
 }
 
 function _getWindowInfo() {

@@ -264,7 +264,7 @@ sap.ui.define([
          *
          * @private
          */
-        _setRecording: function(bIsRecording = true) {
+        _setRecording: function (bIsRecording = true) {
             this._oModel.setProperty("/isRecording", bIsRecording);
             if (bIsRecording) {
                 this._setReplaying(false);
@@ -361,9 +361,19 @@ sap.ui.define([
         /**
          * Set the full list of elements under test.
          *
-         * @param {Array<object>} the list of elements under test to set
+         * @param {Array<object>} aElements the list of elements under test to set
          */
         setTestElements: function (aElements) {
+            // for newer versions of the test recorder (>0.5.2), the detailed assert configurations are stored for attribute-based asserts
+            // as those are needed to execute such asserts properly; therefore, we need to regenerate the assert details here again for
+            // test record that have been recorded using an older version of the test recorder
+            aElements.forEach(function (oElement) {
+                if (oElement.property.type === "ASS" && !oElement.assertion.asserts) {
+                    var oAssertion = Utils.getAssertDefinition(oElement);
+                    oElement.assertion.asserts = oAssertion.asserts;
+                }
+            });
+
             this._oModel.setProperty("/elements", aElements);
         },
 
@@ -469,7 +479,7 @@ sap.ui.define([
          *
          * @private
          */
-        _setReplaying: function(bIsReplaying = true) {
+        _setReplaying: function (bIsReplaying = true) {
             this._oModel.setProperty("/isReplaying", bIsReplaying);
             if (bIsReplaying) {
                 this._setRecording(false);
@@ -545,8 +555,8 @@ sap.ui.define([
          *
          * @private
          */
-        _resetTestElementsForReplay: function() {
-            this.getTestElements().forEach(function(oElement) {
+        _resetTestElementsForReplay: function () {
+            this.getTestElements().forEach(function (oElement) {
                 oElement.replay = {
                     isExecuted: false,
                     isCurrentStep: false,
@@ -647,26 +657,26 @@ sap.ui.define([
                     ConnectionMessages.executeAction(Connection.getInstance(), {
                         element: oTestStep,
                         timeout: iTimeout
-                    }).then(function(oData) {
-                        resolve(oData);
-                    });
-                } else
-                // asserts
-                if (oTestStep && oTestStep.property.type === "ASS") {
-                    ConnectionMessages.executeAssert(Connection.getInstance(), {
-                        element: oTestStep.selector.selectorAttributes,
-                        assert: oTestStep.assertion
                     }).then(function (oData) {
                         resolve(oData);
                     });
-                }
-                // everything else cannot be handled and is consequently returned right away
-                else {
-                    resolve({
-                        result: "error"
-                    });
-                    return false;
-                }
+                } else
+                    // asserts
+                    if (oTestStep && oTestStep.property.type === "ASS") {
+                        ConnectionMessages.executeAssert(Connection.getInstance(), {
+                            element: oTestStep.selector.selectorAttributes,
+                            assert: oTestStep.assertion
+                        }).then(function (oData) {
+                            resolve(oData);
+                        });
+                    }
+                    // everything else cannot be handled and is consequently returned right away
+                    else {
+                        resolve({
+                            result: "error"
+                        });
+                        return false;
+                    }
 
             });
         },

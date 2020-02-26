@@ -6,7 +6,6 @@ sap.ui.define([
     'sap/m/MessagePopover',
     'sap/m/MessageItem',
     "sap/m/MessageBox",
-    "com/ui5/testing/model/GlobalSettings",
     "com/ui5/testing/model/ConnectionMessages",
     "com/ui5/testing/model/Connection",
     "com/ui5/testing/model/RecordController",
@@ -19,7 +18,6 @@ sap.ui.define([
     MessagePopover,
     MessageItem,
     MessageBox,
-    GlobalSettings,
     ConnectionMessages,
     Connection,
     RecordController,
@@ -99,9 +97,9 @@ sap.ui.define([
          *
          */
         onInit: function () {
-            this._criteriaTypes = GlobalSettings.getCriteriaTypes(),
-            this._attributeTypes = GlobalSettings.getAttributeTypes(),
-            this._oElementMix = GlobalSettings.getElementMix(),
+            this._criteriaTypes = Utils.getCriteriaTypes();
+            this._attributeTypes = Utils.getAttributeTypes();
+            this._oElementMix = Utils.getElementMix();
 
             this._initMessagePopovers();
             this.getView().setModel(this._oModel, "viewModel");
@@ -183,7 +181,7 @@ sap.ui.define([
                 Fragment.load({
                     name: "com.ui5.testing.fragment.PopoverActionSettings",
                     controller: this
-                }).then(function(oPopoverAction) {
+                }).then(function (oPopoverAction) {
                     this._oPopoverAction = oPopoverAction;
                     this._oPopoverAction.setModel(this._oModel, "viewModel");
                     this._oPopoverAction.attachBeforeClose(function () {
@@ -930,8 +928,8 @@ sap.ui.define([
 
             //check if the current criteraType value is valid - if yes, keep it, otherwise reset it..
             if (oAttribute.criteriaTypes.filter(function (e) {
-                    return e.criteriaKey === oAttribute.criteriaType;
-                }).length === 0) {
+                return e.criteriaKey === oAttribute.criteriaType;
+            }).length === 0) {
                 oAttribute.criteriaType = oAttribute.criteriaTypes[0].criteriaKey;
             }
 
@@ -954,8 +952,8 @@ sap.ui.define([
             oAttribute.subCriteriaTypes = aSubCriteriaSettings;
             if (oAttribute.subCriteriaTypes.length > 0) {
                 if (oAttribute.subCriteriaTypes.filter(function (e) {
-                        return e.subCriteriaType === oAttribute.subCriteriaType;
-                    }).length === 0) {
+                    return e.subCriteriaType === oAttribute.subCriteriaType;
+                }).length === 0) {
                     oAttribute.subCriteriaType = oAttribute.subCriteriaTypes[0].subCriteriaType;
                 }
             } else {
@@ -1015,6 +1013,7 @@ sap.ui.define([
          */
         _updatePreview: function () {
             var oItem = this._oModel.getProperty("/element");
+            this._suspendBindings();
             this._adjustBeforeSaving(oItem).then(function (oElementFinal) {
                 this._getFoundElements().then(function (aElements) {
                     this._oModel.setProperty("/element/identifiedElements", aElements);
@@ -1095,7 +1094,7 @@ sap.ui.define([
                 for (var i = 0; i < aAttributes.length; i++) {
                     var oAttribute = aAttributes[i];
                     var oItemLocal = this._attributeTypes[oAttribute.attributeType].getItem(oItem);
-                    var oSpec = this._getValueSpec(oAttribute, oItemLocal);
+                    var oSpec = Utils.getValueSpec(oAttribute, oItemLocal);
                     if (oSpec === null) {
                         continue;
                     }
@@ -1211,16 +1210,47 @@ sap.ui.define([
         _getAttributeRating: function (oAttr) {
             return new Promise(function (resolve, reject) {
                 var aAttributes = this._oModel.getProperty("/element/attributeFilter");
-                var aAssertions = this._oModel.getProperty("/element/assertFilter");
                 var oItem = this._oModel.getProperty("/element/item");
                 var oElement = this._oModel.getProperty("/element");
                 var iGrade = 5; //we are starting with a 5..
                 var aMessages = [];
                 var sType = oElement.property.type; // SEL | ACT | ASS
-                var sAssType = oElement.property.assKey; // SEL | ACT | ASS
                 var sSelectType = oElement.property.selectItemBy; //DOM | UI5 | ATTR
                 this.byId("tblIdentifiedElements").setBusy(true);
+
+                var oRatingPromise;
+                switch (sType) {
+                    case "ACT":
+                        oRatingPromise = ConnectionMessages.checkAction(
+                            Connection.getInstance(),
+                            this._getSelectorDefinition(oElement).selectorAttributes
+                        );
+                        break;
+                    case "ASS":
+                        oRatingPromise = ConnectionMessages.executeAssert(Connection.getInstance(), {
+                            element: this._getSelectorDefinition(oElement).selectorAttributes,
+                            assert: Utils.getAssertDefinition(oElement),
+                        });
+                    case "SUP":
+                        // FIXME implement "runSupportAssistant" here (see below for existing code)
+                        break;
+                }
+
+                oRatingPromise.then(function (oResult) {
+
+                    if (oResult.result === "error") {
+                        iGrade = 1;
+                    } else if (oResult.result === "warning") {
+                        iGrade = 3;
+                    }
+
+                    Array.prototype.push.apply(aMessages, oResult.messages);
+
+                });
+
+                // FIXME remove unneeded promise here and resolve the outer promise inside the oRatingPromise body!
                 this._getFoundElements().then(function (aFound) {
+
                     if (oItem.identifier) {
                         if (oItem.identifier.idGenerated == true && sSelectType === "UI5") {
                             aMessages.push({
@@ -1238,23 +1268,6 @@ sap.ui.define([
                                 description: "You are probably using a cloned ID which will be unstable.\nPlease provide a static id if possible, or use attribute Selectors."
                             });
                         }
-                    }
-                    if (aFound.length === 0 && sType === "ACT") {
-                        iGrade = 1;
-                        aMessages.push({
-                            type: "Error",
-                            title: "No Item Found",
-                            subtitle: "Your Action will not be executed",
-                            description: "You have maintained an action to be executed. For the selected attributes/id however no item is found in the current screen. The action will therefore not work."
-                        });
-                    } else if (aFound.length > 1 && sType === "ACT") {
-                        iGrade = 1;
-                        aMessages.push({
-                            type: "Error",
-                            title: ">1 Item Found",
-                            subtitle: "Your Action will be executed randomly",
-                            description: "Your selector is returning " + aFound.length + " items. The action will be executed on the first found. That is normally an error - only in very few cases (e.g. identical launchpad tiles), that might be acceptable."
-                        });
                     }
 
                     //check the attributes.. for attributes we are at least expecting ONE element with a static id..
@@ -1332,148 +1345,7 @@ sap.ui.define([
                         }
                     }
 
-                    //check of assertions..
-                    if (sType === "ASS") {
-                        switch(sAssType) {
-                            case "ATTR":
-
-                                var aAssertDef = this._oModel.getProperty("/element/assertFilter");
-                                for (var i = 0; i < aFound.length; i++) {
-                                    var bAssertFailed = false;
-                                    var aAllErrors = [];
-                                    //check for every single assert, and store result..
-                                    for (var j = 0; j < aAssertDef.length; j++) {
-                                        var bAttributeCheckFailed = false;
-                                        var oAssertScope = {};
-                                        var oAssert = aAssertDef[j];
-                                        var sAssertLocalScope = this._attributeTypes[oAssert.attributeType].getAssertScope(oAssertScope);
-                                        var oAssertSpec = this._getValueSpec(oAssert, aFound[i]);
-                                        if (!oAssertSpec) {
-                                            continue; //non valid line..
-                                        }
-                                        var sAssert = sAssertLocalScope + oAssertSpec.assert();
-                                        var aSplit = sAssert.split(".");
-                                        var oCurItem = aFound[i];
-                                        var sCurrentError = "";
-                                        for (var x = 0; x < aSplit.length; x++) {
-                                            if (typeof oCurItem[aSplit[x]] === "undefined") {
-                                                bAttributeCheckFailed = true;
-                                                break;
-                                            }
-                                            oCurItem = oCurItem[aSplit[x]];
-                                        }
-                                        if (bAttributeCheckFailed === false) {
-                                            //depending on the operator, all ok or nothing ok :-)
-                                            if (oAssert.operatorType === "EQ" && oAssert.criteriaValue !== oCurItem) {
-                                                bAttributeCheckFailed = true;
-                                                sCurrentError = "Value '" + oAssert.criteriaValue + "' of '" + sAssert + "' does not match '" + oCurItem + "'.";
-                                            } else if (oAssert.operatorType === "NE" && oAssert.criteriaValue === oCurItem) {
-                                                bAttributeCheckFailed = true;
-                                                sCurrentError = "Value '" + oAssert.criteriaValue + "' of '" + sAssert + "' does match '" + oCurItem + "'.";
-                                            } else if (oAssert.operatorType === "CP" || oAssert.operatorType === "NP") {
-                                                //convert both to string if required..
-                                                var sStringContains = oAssert.criteriaValue;
-                                                var sStringCheck = oCurItem;
-                                                if (typeof sStringCheck !== "string") {
-                                                    sStringCheck = sStringCheck.toString();
-                                                }
-                                                if (typeof sStringContains !== "string") {
-                                                    sStringContains = sStringContains.toString();
-                                                }
-                                                if (sStringCheck.indexOf(sStringContains) === -1 && oAssert.operatorType === "CP") {
-                                                    bAttributeCheckFailed = true;
-                                                } else if (sStringCheck.indexOf(sStringContains) !== -1 && oAssert.operatorType === "NP") {
-                                                    bAttributeCheckFailed = true;
-                                                }
-                                            }
-                                        }
-
-                                        if (bAttributeCheckFailed === true) {
-                                            oAssert.assertionOK = false;
-                                            bAssertFailed = true;
-                                            aAllErrors.push({
-                                                type: "Error",
-                                                title: "Assertion error",
-                                                subtitle: sCurrentError,
-                                                description: sCurrentError
-                                            });
-                                        }
-                                    }
-
-                                    aFound[i].assertMessages = aAllErrors;
-                                    aFound[i].assertionOK = !bAssertFailed;
-                                }
-
-                                // check if any assertion has assertionOK === false
-                                bFound = aAssertions.some(function(oAssert) {
-                                    return oAssert.assertionOK === false;
-                                });
-
-                                // indicate overall error
-                                // TODO what is the expected result if no element has been found (aFound.length === 0)?
-                                if (bFound === true) {
-                                    iGrade = 1;
-                                    aMessages.push({
-                                        type: "Error",
-                                        title: "Assert is failing",
-                                        subtitle: "At least one assert is failing",
-                                        description: "At least, one of the configured attribute-related assertions is failing."
-                                    });
-                                    this.byId("pnlFoundElements").setExpanded(true);
-                                }
-
-                                break;
-
-                            case "EXS":
-
-                                if (aFound.length === 0) {
-
-                                    // indicate overall error
-                                    iGrade = 1;
-                                    aMessages.push({
-                                        type: "Error",
-                                        title: "Assert is failing",
-                                        subtitle: "No item found",
-                                        description: "For the selected attributes/ID, no item is found. Thus, assertions cannot be performed."
-                                    });
-                                    this.byId("pnlFoundElements").setExpanded(true);
-                                }
-
-                                break;
-
-                            case "MTC":
-
-                                var iExpectedCount = this._oModel.getProperty("/element/property/assKeyMatchingCount");
-
-                                if (aFound.length !== iExpectedCount) {
-
-                                    // create single error message for proper re-use
-                                    var oErrorMessage = {
-                                        type: "Error",
-                                        title: "Assert is failing",
-                                        subtitle: aFound.length + " items found but " + iExpectedCount + " expected",
-                                        description: "Your selector is returning " + aFound.length + " items but " + iExpectedCount + " are expected. The configured assertion fails as the expected value is different."
-                                    };
-
-                                    // indicate failed assertion for all identified elements
-                                    aFound.forEach(function(oItem) {
-                                        oItem.assertMessages = [oErrorMessage];
-                                        oItem.assertionOK = false;
-                                    });
-
-                                    // indicate overall error
-                                    iGrade = 1;
-                                    aMessages.push(oErrorMessage);
-                                    this.byId("pnlFoundElements").setExpanded(true);
-                                }
-
-                                break;
-
-                            default:
-                                break;
-                        }
-                    }
-
+                    // these are "runSupportAssistant" steps
                     if (sType === "SUP") {
                         //check if there are any critical issues (maybe in future also, for certain issues or contexts.. let's see)
                         var aIssues = this._oModel.getProperty("/element/supportAssistantResult");
@@ -1552,7 +1424,7 @@ sap.ui.define([
                 assertFilter: oElement.assertFilter,
                 subActionTypes: oElement.subActionTypes,
                 selector: this._getSelectorDefinition(oElement),
-                assertion: this._getAssertDefinition(oElement),
+                assertion: Utils.getAssertDefinition(oElement),
                 href: "",
                 hash: "",
                 stepExecuted: true
@@ -1626,8 +1498,8 @@ sap.ui.define([
                 //check if sIdChild is part of our current "domChildWith"
                 // eslint-disable-next-line no-loop-func
                 if (aRows.filter(function (e) {
-                        return e.domChildWith === sIdChild;
-                    }).length === 0) {
+                    return e.domChildWith === sIdChild;
+                }).length === 0) {
                     aRows.push({
                         text: aSubObjects[i].isInput === true ? "In Input-Field" : sIdChild,
                         domChildWith: sIdChild,
@@ -1645,102 +1517,13 @@ sap.ui.define([
 
             //check if the current value is fine..
             if (aRows.filter(function (e) {
-                    return e.domChildWith === sDomChildWith;
-                }).length === 0) {
+                return e.domChildWith === sDomChildWith;
+            }).length === 0) {
                 sDomChildWith = aRows.length >= 0 ? aRows[0].domChildWith : "";
                 this._oModel.setProperty("/element/property/domChildWith", sDomChildWith);
             }
             //we now have a valid value - check if there is any preferred value for the currently selected
             this._oModel.setProperty("/element/subActionTypes", aRows);
-        },
-
-        /**
-         *
-         * @param {*} oElement
-         */
-        _getAssertDefinition: function (oElement) {
-            var sBasisCode = "";
-            var sCode = "";
-            var aAsserts = oElement.assertFilter;
-            var oAssertScope = {};
-            var sAssertType = oElement.property.assKey;
-            var sAssertMsg = oElement.property.assertMessage;
-            var aCode = [];
-            var sAssertCount = oElement.property.assKeyMatchingCount;
-            var aReturnCodeSimple = [];
-
-            if (sAssertType === 'ATTR') {
-                sBasisCode += ".getUI5(" + "({ element }) => element.";
-                for (var x = 0; x < aAsserts.length; x++) {
-                    oAssertScope = {}; //reset per line..
-                    var oAssert = aAsserts[x];
-
-                    var oAssertLocalScope = this._attributeTypes[oAssert.attributeType].getAssertScope(oAssertScope);
-                    var oAssertSpec = this._getValueSpec(oAssert, oElement.item);
-                    if (oAssertSpec === null) {
-                        continue;
-                    }
-
-                    var sAssertFunc = "";
-                    if (oAssert.operatorType == 'EQ') {
-                        sAssertFunc = 'eql';
-                    } else if (oAssert.operatorType === 'NE') {
-                        sAssertFunc = 'notEql';
-                    } else if (oAssert.operatorType === 'CP') {
-                        sAssertFunc = 'contains';
-                    } else if (oAssert.operatorType === 'NP') {
-                        sAssertFunc = 'notContains';
-                    }
-
-
-                    var sAddCode = sBasisCode;
-                    var sAssertCode = oAssertSpec.assert();
-                    sAddCode += sAssertCode;
-
-                    var oUI5Spec = {};
-                    oAssertSpec.getUi5Spec(oUI5Spec, oElement.item, oAssert.criteriaValue);
-
-                    aReturnCodeSimple.push({
-                        assertType: oAssert.operatorType,
-                        assertLocation: sAssertCode,
-                        assertOperator: oAssert.operatorType,
-                        assertValue: oAssert.criteriaValue,
-                        assertField: oAssertSpec.assertField(),
-                        assertUI5Spec: oUI5Spec,
-                        assertMsg: sAssertMsg
-                    });
-
-                    sAddCode += "))" + "." + sAssertFunc + "(" + "'" + oAssert.criteriaValue + "'";
-                    if (sAssertMsg !== "") {
-                        sAddCode += "," + '"' + sAssertMsg + '"';
-                    }
-                    sAddCode += ")";
-                    aCode.push(sAddCode);
-                }
-            } else if (sAssertType === "EXS") {
-                sCode = sBasisCode + ".exists).ok(";
-                if (sAssertMsg !== "") {
-                    sCode += '"' + sAssertMsg + '"';
-                }
-                sCode += ")";
-                aCode.push(sCode);
-            } else if (sAssertType === "MTC") {
-                sCode = sBasisCode + ".count).eql(" + parseInt(sAssertCount, 10) + "";
-                if (sAssertMsg !== "") {
-                    sCode += "," + '"' + sAssertMsg + '"';
-                }
-                sCode += ")";
-                aCode.push(sCode);
-            }
-
-            return {
-                code: aCode,
-                assertType: sAssertType,
-                assertMsg: sAssertMsg,
-                assertCode: aReturnCodeSimple,
-                assertMatchingCount: sAssertCount,
-                assertScope: oAssertLocalScope
-            };
         },
 
         // #endregion
@@ -1928,21 +1711,6 @@ sap.ui.define([
             });
 
             this._oSelectDialog.addStyleClass("sapUiSizeCompact");
-        },
-
-        /**
-         *
-         * @param {*} oLine
-         * @param {*} oItem
-         */
-        _getValueSpec: function (oLine, oItem) {
-            var aCriteriaSettings = this._criteriaTypes[oLine.criteriaType].criteriaSpec(oItem);
-            for (var j = 0; j < aCriteriaSettings.length; j++) {
-                if (aCriteriaSettings[j].subCriteriaType === oLine.subCriteriaType) {
-                    return aCriteriaSettings[j];
-                }
-            }
-            return null;
         },
 
         /**
