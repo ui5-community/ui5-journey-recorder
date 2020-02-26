@@ -118,32 +118,12 @@
                                     <items>
                                         <ColumnListItem type="{= ${recordModel>/isReplaying} ? 'Inactive' : 'Navigation' }" press="onStepClick" highlight="{recordModel>replay/executionState}" selected="true">
                                             <cells>
-                                                <Select items="{path: 'constants>/stepTypes', templateShareable: false}" enabled="false" selectedKey="{recordModel>property/type}">
-                                                    <items>
-                                                        <core:Item text="{constants>text}" key="{constants>key}" />
-                                                    </items>
-                                                </Select>
-                                                <HBox width="100%">
-                                                    <HBox width="100%" visible="{= ( ${viewModel>property/type} === 'ACT' ) }">
-                                                        <Select enabled="false" items="{path: 'constants>/stepActions', templateShareable: false}" width="100%" selectedKey="{recordModel>property/actKey}">
-                                                            <items>
-                                                                <core:Item text="{constants>text}" key="{constants>key}" />
-                                                            </items>
-                                                            <layoutData>
-                                                                <FlexItemData growFactor="1" />
-                                                            </layoutData>
-                                                        </Select>
-                                                        <Input editable="false" value="{viewModel>domChildWith}" />
-                                                    </HBox>
-                                                    <HBox width="100%" visible="{= ( ${viewModel>property/type} === 'ASS' ) }">
-                                                        <Select items="{path: 'constants>/assertTypes', templateShareable: false}" enabled="false" selectedKey="{recordModel>property/assKey}">
-                                                            <items>
-                                                                <core:Item text="{constants>text}" key="{constants>key}" />
-                                                            </items>
-                                                        </Select>
-                                                    </HBox>
+                                                <Text text="{parts: ['recordModel>property/type', 'constants>/stepTypes'], formatter: '._formatTestStepDetails'}" />
+                                                <HBox>
+                                                    <Text visible="{= ( ${recordModel>property/type} === 'ACT' ) }" text="{parts: ['recordModel>property/actKey', 'constants>/stepActions'], formatter: '._formatTestStepDetails'}" />
+                                                    <Text visible="{= ( ${recordModel>property/type} === 'ASS' ) }" text="{parts: ['recordModel>property/assKey', 'constants>/assertTypes'], formatter: '._formatTestStepDetails'}" />
                                                 </HBox>
-                                                <Text text="{recordModel>item/identifier/ui5Id}" />
+                                                <Text text="{recordModel>item/identifier/ui5Id}{recordModel>property/domChildWith}" />
                                                 <Text text="{recordModel>item/metadata/elementName}" />
                                                 <HBox alignContent="Start" alignItems="Start">
                                                     <Button icon="sap-icon://delete" press="onDeleteStep" enabled="{= !${recordModel>/isReplaying} }" />

@@ -629,6 +629,12 @@ sap.ui.define([
                 }.bind(this));
         },
 
+        _formatTestStepDetails: function (sKey, oItems) {
+            return oItems.find(function(oItem) {
+                return oItem.key === sKey;
+            }).text;
+        },
+
         // #endregion
 
     });
