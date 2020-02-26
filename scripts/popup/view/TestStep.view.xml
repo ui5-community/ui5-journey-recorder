@@ -197,9 +197,9 @@
                 <headerToolbar>
                     <Toolbar active="true" press="onExpandControl" height="3em" style="Clear">
                         <content>
-                            <ObjectStatus text="Support-Assistant ( {viewModel>/element/supportAssistantResultLength} )" state="{viewModel>/element/property/elementState}"/>
+                            <ObjectStatus text="Support Assistant ( {= ${viewModel>/element/supportAssistantResult/issues}.length } )" state="{viewModel>/element/property/elementState}"/>
                             <ToolbarSpacer/>
-                            <Button press="onRunSupportAssistant" icon="sap-icon://media-play" tooltip="Run Support Assistant or selected component"/>
+                            <Button press="onRunSupportAssistant" icon="sap-icon://media-play" tooltip="Run Support Assistant on selected component" />
                         </content>
                     </Toolbar>
                 </headerToolbar>
@@ -216,7 +216,7 @@
                         </f:content>
                     </f:SimpleForm>
 
-                    <Table id="idSupportAssistantTable" inset="false" items="{viewModel>/element/supportAssistantResult}">
+                    <Table id="idSupportAssistantTable" inset="false" items="{viewModel>/element/supportAssistantResult/issues}">
                         <columns>
                             <Column width="4em">
                                 <Text text="Severity"/>

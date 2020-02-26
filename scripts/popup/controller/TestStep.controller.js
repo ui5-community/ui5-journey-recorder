@@ -71,7 +71,7 @@ sap.ui.define([
                 attributeFilter: [],
                 assertFilter: [],
                 subActionTypes: [],
-                supportAssistantResult: []
+                supportAssistantResult: {}
             },
             dynamic: {
                 attrType: []
@@ -1207,175 +1207,169 @@ sap.ui.define([
         /**
          *
          */
-        _getAttributeRating: function (oAttr) {
+        _getAttributeRating: function () {
             return new Promise(function (resolve, reject) {
-                var aAttributes = this._oModel.getProperty("/element/attributeFilter");
-                var oItem = this._oModel.getProperty("/element/item");
+
+                // indicate that the rating may take some time
+                this.getView().setBusy(true);
+
+                // prepare result values
+                var iGrade = 5; // overall star rating
+                var aMessages = []; // structure for obtained messages while rating
+
+                // obtain temporary data used while rating
                 var oElement = this._oModel.getProperty("/element");
-                var iGrade = 5; //we are starting with a 5..
-                var aMessages = [];
-                var sType = oElement.property.type; // SEL | ACT | ASS
+                var oItem = this._oModel.getProperty("/element/item");
                 var sSelectType = oElement.property.selectItemBy; //DOM | UI5 | ATTR
-                this.byId("tblIdentifiedElements").setBusy(true);
+
+                if (oItem.identifier) {
+                    if (oItem.identifier.idGenerated == true && sSelectType === "UI5") {
+                        aMessages.push({
+                            type: "Error",
+                            title: "ID generated",
+                            subtitle: "Used identifer is cloned (not static)",
+                            description: "You are probably using a cloned ID which will be unstable.\nPlease provide a static id if possible, or use attribute Selectors."
+                        });
+                    } else if (oItem.identifier.idCloned === true && sSelectType === "UI5") {
+                        iGrade = 2;
+                        aMessages.push({
+                            type: "Error",
+                            title: "ID generated",
+                            subtitle: "Used identifer is generated (not static)",
+                            description: "You are probably using a cloned ID which will be unstable.\nPlease provide a static id if possible, or use attribute Selectors."
+                        });
+                    }
+                }
+
+                //check the attributes.. for attributes we are at least expecting ONE element with a static id..
+                if (sSelectType === "ATTR") {
+                    var aAttributes = this._oModel.getProperty("/element/attributeFilter");
+
+                    // check whether an ID-based selector is defined
+                    var bIDFound = false;
+                    for (var i = 0; i < aAttributes.length; i++) {
+                        if (aAttributes[i].subCriteriaType === "LID" || aAttributes[i].subCriteriaType === "ID") {
+                            bIDFound = true;
+                            break;
+                        }
+                    }
+                    if (!bIDFound) {
+                        iGrade = iGrade - 1;
+                        aMessages.push({
+                            type: "Warning",
+                            title: "No ID in properties",
+                            subtitle: "At least, one identifier is strongly recommended",
+                            description: "In the selection attributes, there is no identifier configured. Please provide an identifier – at least, one at the parent levels, which is likely static."
+                        });
+                    }
+
+                    // check if the corresponding ID is generic. if yes, we also have an issue
+                    for (var i = 0; i < aAttributes.length; i++) {
+                        if (aAttributes[i].subCriteriaType === "LID" || aAttributes[i].subCriteriaType === "ID") {
+
+                            var oSubScope = this._attributeTypes[aAttributes[i].attributeType].getScope(oItem);
+                            if (oSubScope.metadata && (oSubScope.metadata.idCloned === true || oSubScope.metadata.idGenerated === true)) {
+                                iGrade = iGrade - 2;
+                                aMessages.push({
+                                    type: "Warning",
+                                    title: "Generic or cloned ID",
+                                    subtitle: "Generic or cloned ID used in the test",
+                                    description: "One of the attributes is using a generic or cloned identifier. This may affect your test."
+                                });
+
+                                break;
+                            }
+                        }
+                    }
+
+                    // check whether a binding context is used
+                    for (var i = 0; i < aAttributes.length; i++) {
+                        if (aAttributes[i].criteriaType === "BDG") {
+                            aMessages.push({
+                                type: "Information",
+                                title: "Binding context",
+                                subtitle: "Is the binding context static?",
+                                description: "When using a binding context, please ensure that the inherit value is either static or predefined by your test."
+                            });
+
+                            break;
+                        }
+                    }
+
+                    // check whether a text-based criterion is used
+                    for (var i = 0; i < aAttributes.length; i++) {
+                        if (aAttributes[i].criteriaType === "ATTR") {
+                            if (aAttributes[i].subCriteriaType === "title" || aAttributes[i].subCriteriaType === "text") {
+                                iGrade = iGrade - 1;
+                                aMessages.push({
+                                    type: "Warning",
+                                    title: "Text attribute",
+                                    subtitle: "Is the attribute static?",
+                                    description: "You are binding against a text/title property. Are you sure that this text is not language-specific and does not change depending on the selected language? Consider using the binding path for i18n texts instead."
+                                });
+
+                                break;
+                            }
+                        }
+                    }
+                }
 
                 var oRatingPromise;
-                switch (sType) {
+                switch (oElement.property.type) { // ACT | ASS | SUP
                     case "ACT":
+                        // check action
                         oRatingPromise = ConnectionMessages.checkAction(
                             Connection.getInstance(),
                             this._getSelectorDefinition(oElement).selectorAttributes
                         );
                         break;
                     case "ASS":
+                        // execute assert
                         oRatingPromise = ConnectionMessages.executeAssert(Connection.getInstance(), {
                             element: this._getSelectorDefinition(oElement).selectorAttributes,
                             assert: Utils.getAssertDefinition(oElement),
                         });
+                        break;
                     case "SUP":
-                        // FIXME implement "runSupportAssistant" here (see below for existing code)
+                        // inspect support-assistant results that already exist
+                        var aIssues = this._oModel.getProperty("/element/supportAssistantResult");
+                        oRatingPromise = new Promise(function(resolve) {
+                            resolve(aIssues);
+                        });
                         break;
                 }
 
                 oRatingPromise.then(function (oResult) {
 
+                    // set grade dependening on results
                     if (oResult.result === "error") {
                         iGrade = 1;
                     } else if (oResult.result === "warning") {
                         iGrade = 3;
                     }
 
-                    Array.prototype.push.apply(aMessages, oResult.messages);
-
-                });
-
-                // FIXME remove unneeded promise here and resolve the outer promise inside the oRatingPromise body!
-                this._getFoundElements().then(function (aFound) {
-
-                    if (oItem.identifier) {
-                        if (oItem.identifier.idGenerated == true && sSelectType === "UI5") {
-                            aMessages.push({
-                                type: "Error",
-                                title: "ID generated",
-                                subtitle: "Used identifer is cloned (not static)",
-                                description: "You are probably using a cloned ID which will be unstable.\nPlease provide a static id if possible, or use attribute Selectors."
-                            });
-                        } else if (oItem.identifier.idCloned === true && sSelectType === "UI5") {
-                            iGrade = 2;
-                            aMessages.push({
-                                type: "Error",
-                                title: "ID generated",
-                                subtitle: "Used identifer is generated (not static)",
-                                description: "You are probably using a cloned ID which will be unstable.\nPlease provide a static id if possible, or use attribute Selectors."
-                            });
-                        }
-                    }
-
-                    //check the attributes.. for attributes we are at least expecting ONE element with a static id..
-                    var bFound = false;
-                    if (sSelectType === "ATTR") {
-                        for (var i = 0; i < aAttributes.length; i++) {
-                            if (aAttributes[i].subCriteriaType === "LID" || aAttributes[i].subCriteriaType === "ID") {
-                                bFound = true;
-                                break;
-                            }
-                        }
-                        if (bFound === false) {
-                            iGrade = iGrade - 1;
-                            aMessages.push({
-                                type: "Warning",
-                                title: "No ID in Properties",
-                                subtitle: "At least one identifier is strongly recommended",
-                                description: "Please provide a identifier - at least one of the parent levels, which is static."
-                            });
-                        }
-
-                        bFound = false;
-                        for (var i = 0; i < aAttributes.length; i++) {
-                            if (aAttributes[i].subCriteriaType === "LID" || aAttributes[i].subCriteriaType === "ID") {
-                                //check if the corresponding id is generic.. if yes, we also have an issue..
-                                var oSubScope = this._attributeTypes[aAttributes[i].attributeType].getScope(oItem);
-                                if (oSubScope.metadata && (oSubScope.metadata.idCloned === true || oSubScope.metadata.idGenerated === true)) {
-                                    bFound = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (bFound === true) {
-                            iGrade = iGrade - 2;
-                            aMessages.push({
-                                type: "Warning",
-                                title: "Generic or Cloned ID",
-                                subtitle: "You are using a generic or cloned ID",
-                                description: "One of the attributes is using a generic or cloned identifier."
-                            });
-                        }
-
-                        bFound = false;
-                        for (var i = 0; i < aAttributes.length; i++) {
-                            if (aAttributes[i].criteriaType === "BDG") {
-                                bFound = true;
-                                break;
-                            }
-                        }
-                        if (bFound === true) {
-                            aMessages.push({
-                                type: "Information",
-                                title: "Binding Context",
-                                subtitle: "Is the binding context static?",
-                                description: "When using a binding context, please ensure that the value behind is either static, or predefined by your test."
-                            });
-                        }
-                        bFound = false;
-                        for (var i = 0; i < aAttributes.length; i++) {
-                            if (aAttributes[i].criteriaType === "ATTR") {
-                                if (aAttributes[i].subCriteriaType === "title" || aAttributes[i].subCriteriaType === "text") {
-                                    bFound = true;
-                                }
-                                break;
-                            }
-                        }
-                        if (bFound === true) {
-                            iGrade = iGrade - 1;
-                            aMessages.push({
-                                type: "Warning",
-                                title: "Text Attribute",
-                                subtitle: "Is the attribute static?",
-                                description: "You are binding against a text/title property. Are you sure that this text is not language specific and might destroy the test in other languages? Use Binding Path for text for i18n texts instead."
-                            });
-                        }
-                    }
-
-                    // these are "runSupportAssistant" steps
-                    if (sType === "SUP") {
-                        //check if there are any critical issues (maybe in future also, for certain issues or contexts.. let's see)
-                        var aIssues = this._oModel.getProperty("/element/supportAssistantResult");
-                        for (var j = 0; j < aIssues.length; j++) {
-                            if (aIssues[j].severity === "High") {
-                                iGrade = 1;
-                                this.byId("pnlSupAssistantRule").setExpanded(true);
-                                aMessages.push({
-                                    type: "Error",
-                                    title: "Support Assistants is failing",
-                                    subtitle: "At least one rule is failing",
-                                    description: "At least one of the maintained rules is failing - Adding this step doesn't make sense, as anyways it will fail."
-                                });
-                                break;
-                            }
-                        }
-                    }
-
+                    // if there is an invalid grade, correct this
                     if (iGrade < 0) {
                         iGrade = 0;
                     }
+
+                    // add messages to output
+                    Array.prototype.push.apply(aMessages, oResult.messages);
+
+                    // store messages and grade
                     this._oModel.setProperty("/element/messages", aMessages);
                     this._oModel.setProperty("/element/ratingOfAttributes", iGrade);
 
-                    this.byId("tblIdentifiedElements").setBusy(false);
+                    // unlock view
+                    this.getView().setBusy(false);
+
                     resolve({
                         rating: iGrade,
                         messages: aMessages
                     });
+
                 }.bind(this));
+
             }.bind(this));
         },
 
@@ -1537,10 +1531,9 @@ sap.ui.define([
             ConnectionMessages.runSupportAssistant(Connection.getInstance(), {
                 component: this._oModel.getProperty("/element/item/metadata/componentName"),
                 rules: this._oModel.getProperty("/element/property/supportAssistant")
-            }).then(function (oStoreIssue) {
-                this._oModel.setProperty("/statics/supportRules", oStoreIssue.rules);
-                this._oModel.setProperty("/element/supportAssistantResult", oStoreIssue.results);
-                this._oModel.setProperty("/element/supportAssistantResultLength", oStoreIssue.results.length);
+            }).then(function (oStoreResult) {
+                this._oModel.setProperty("/statics/supportRules", oStoreResult.rules);
+                this._oModel.setProperty("/element/supportAssistantResult", oStoreResult);
                 this._updatePreview();
                 this.byId("pnlSupAssistantRule").setBusy(false);
             }.bind(this));

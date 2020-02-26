@@ -776,11 +776,31 @@ function _runSupportAssistant(oComponent) {
                         _cachedSupportAssistantRules = oLoader.getAllRuleDescriptors();
                     }
 
-                    // return the analysis results to the extension
-                    resolve({
-                        results: aStoreIssue,
+                    // construct and compute result:
+                    // 0) construct intermediate return value
+                    var oReturn = {
+                        result: "success",
+                        messages: [],
+                        issues: aStoreIssue,
                         rules: _cachedSupportAssistantRules
-                    });
+                    };
+                    // 1) check if there are any critical issues (in the future, maybe also for certain issues or contexts... let's see)
+                    var iIdxError = aStoreIssue.findIndex(function(oIssue) {
+                        return oIssue.severity === "High";
+                    })
+                    // 2) there was a high-severity issue: error
+                    if (iIdxError !== -1) {
+                        oReturn.result = "error";
+                        oReturn.messages = [{
+                            type: "Error",
+                            title: "Support Assistant is failing",
+                            subtitle: "At least, one support-assistant rule is failing",
+                            description: "At least, one of the maintained support-assistant rules is failing. See the support-assistant results within the test step for details."
+                        }];
+                    }
+
+                    // return the analysis results to the extension
+                    resolve(oReturn);
 
                 }.bind(this));
             }.bind(this), 0);

@@ -661,22 +661,35 @@ sap.ui.define([
                         resolve(oData);
                     });
                 } else
-                    // asserts
-                    if (oTestStep && oTestStep.property.type === "ASS") {
-                        ConnectionMessages.executeAssert(Connection.getInstance(), {
-                            element: oTestStep.selector.selectorAttributes,
-                            assert: oTestStep.assertion
-                        }).then(function (oData) {
-                            resolve(oData);
-                        });
-                    }
-                    // everything else cannot be handled and is consequently returned right away
-                    else {
-                        resolve({
-                            result: "error"
-                        });
-                        return false;
-                    }
+                // asserts
+                if (oTestStep && oTestStep.property.type === "ASS") {
+                    ConnectionMessages.executeAssert(Connection.getInstance(), {
+                        element: oTestStep.selector.selectorAttributes,
+                        assert: oTestStep.assertion
+                    }).then(function (oData) {
+                        resolve(oData);
+                    });
+                } else
+                // support assistant
+                if (oTestStep && oTestStep.property.type === "SUP") {
+                    ConnectionMessages.runSupportAssistant(Connection.getInstance(), {
+                        component: oTestStep.item.metadata.componentName,
+                        rules: oTestStep.property.supportAssistant
+                    }).then(function (oData) {
+                        // store the result data within the test step so it can be retrieved later
+                        oTestStep.supportAssistantResult = oData;
+                        // resolve
+                        resolve(oData);
+                    });
+                }
+                // everything else cannot be handled and is consequently returned right away
+                else {
+                    resolve({
+                        result: "error",
+                        messages: []
+                    });
+                    return false;
+                }
 
             });
         },
