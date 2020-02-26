@@ -633,7 +633,17 @@ sap.ui.define([
                 // if no result is given, we need to react in a uniform way: stop replaying
                 else {
                     this.setTestStepExecuted(iCurrentStepIdx, sap.ui.core.MessageType.Error);
-                    MessageBox.error('No result was returned for the current replay step.', { title: "Replay error" });
+
+                    // publish any messages from the result
+                    var oMessage = {
+                        type: "Error",
+                        title: "Replay error",
+                        subtitle: "Test step returned no processable result",
+                        description: "No processable result was returned for the test step executed last. Stopping..."
+                    }
+                    this._oModel.getProperty("/replayMessages").push(oMessage);
+                    this._oModel.updateBindings(true); // force update as the array push in the previous line does not trigger one
+
                     this.stopReplaying();
                 }
 
