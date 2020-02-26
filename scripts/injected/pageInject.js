@@ -961,7 +961,6 @@ class TestItem {
                 true: {},
                 false: {}
             },
-            findItem: {},
             fnGetElementInfo: {
                 true: {},
                 false: {}
@@ -1050,13 +1049,7 @@ class TestItem {
      */
     static findItemsBySelector(oSelector) {
 
-        var sStringified = JSON.stringify(oSelector);
-
-        var aInformation = [];
-        if (!TestItem._oTestGlobalCache["findItem"][sStringified]) {
-            TestItem._oTestGlobalCache["findItem"][sStringified] = UI5ControlHelper.findControlsBySelector(oSelector);
-        }
-        aInformation = TestItem._oTestGlobalCache["findItem"][sStringified];
+        var aInformation = UI5ControlHelper.findControlsBySelector(oSelector);
 
         //remove all items, which are starting with "testDialog"..
         // TODO Is this needed anyway?! If yes: "!startWith" or "!includes"? "indexOf() === -1" is "!includes"...
