@@ -1395,11 +1395,13 @@ sap.ui.define([
                         }
                         RecordController.getInstance().setTestElements(aElements);
 
-                        RecordController.getInstance().executeTestStep(oElementFinal)
-                            .then(function (oResult) {
-                                // TODO act on result, maybe an error is returned
-                                resolve(oResult);
-                            });
+                        // execute test step now, but only if an action needs to be performed.
+                        // all other types do not need results (asserts and support assistant).
+                        if (oElementFinal.property.type === "ACT") {
+                            RecordController.getInstance().executeTestStep(oElementFinal).then(resolve);
+                        } else {
+                            resolve();
+                        }
                     }.bind(this));
                 }.bind(this));
             }.bind(this));
