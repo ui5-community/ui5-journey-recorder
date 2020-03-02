@@ -101,7 +101,7 @@ sap.ui.define([
 
             this.getRouter().getRoute("elementCreate").attachPatternMatched(this._onObjectMatched, this);
             this.getRouter().getRoute("elementCreateQuick").attachPatternMatched(this._onObjectMatchedQuick, this);
-            this.getRouter().getRoute("elementDisplay").attachPatternMatched(this._onObjectMatchedInReplay, this);
+            this.getRouter().getRoute("elementDisplay").attachPatternMatched(this._onObjectMatchedDisplay, this);
             //sap.ui.getCore().getEventBus().subscribe("RecordController", "windowFocusLost", this._recordStopped, this);
         },
 
@@ -113,6 +113,7 @@ sap.ui.define([
          */
         _onObjectMatched: function (oEvent) {
             this.getModel('viewModel').setProperty('/blocked', false);
+            this.getModel('viewModel').setProperty('/isInjected', RecordController.getInstance().isInjected());
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._oModel.setProperty("/quickMode", false);
             var oItem = RecordController.getInstance().getCurrentElement();
@@ -129,6 +130,7 @@ sap.ui.define([
          */
         _onObjectMatchedQuick: function (oEvent) {
             this.getModel('viewModel').setProperty('/blocked', false);
+            this.getModel('viewModel').setProperty('/isInjected', RecordController.getInstance().isInjected());
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._oModel.setProperty("/quickMode", true);
             var oItem = RecordController.getInstance().getCurrentElement();
@@ -143,16 +145,18 @@ sap.ui.define([
          *
          * @param {*} oEvent
          */
-        _onObjectMatchedInReplay: function (oEvent) {
+        _onObjectMatchedDisplay: function (oEvent) {
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._sElementId = oEvent.getParameter("arguments").ElementId;
 
             this.getModel('viewModel').setProperty('/element', RecordController.getInstance().getTestElementByIdx(this._sElementId));
             this.getModel('viewModel').setProperty('/blocked', true);
+            this.getModel('viewModel').setProperty('/isInjected', RecordController.getInstance().isInjected());
             this._setValidAttributeTypes();
             this._updatePreview();
-            if (RecordController.getInstance().isInjected()) {
-                this.getView().byId("offlineStrip").setVisible(false);
+
+            if (this.getModel('viewModel').setProperty('/isInjected')) {
+                this.getModel('viewModel').setProperty('/blocked', false);
             }
         },
 
