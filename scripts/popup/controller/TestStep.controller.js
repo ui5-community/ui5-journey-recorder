@@ -120,7 +120,6 @@ sap.ui.define([
             this.getModel('viewModel').setProperty('/blocked', false);
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._oModel.setProperty("/quickMode", false);
-            this._oModel.setProperty("/replayMode", false);
             var oItem = RecordController.getInstance().getCurrentElement();
             if (!oItem || JSON.stringify(oItem) == "{}") {
                 this.getRouter().navTo("start");
@@ -137,7 +136,6 @@ sap.ui.define([
             this.getModel('viewModel').setProperty('/blocked', false);
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._oModel.setProperty("/quickMode", true);
-            this._oModel.setProperty("/replayMode", false);
             var oItem = RecordController.getInstance().getCurrentElement();
             if (!oItem || JSON.stringify(oItem) == "{}") {
                 this.getRouter().navTo("start");
@@ -208,7 +206,7 @@ sap.ui.define([
          *
          */
         onCancelStep: function () {
-            if (this._oModel.getProperty("/replayMode")) {
+            if (RecordController.getInstance().isReplaying()) {
                 this.getRouter().navTo("testReplay", {
                     TestId: this._sTestId
                 }, true);
@@ -240,8 +238,8 @@ sap.ui.define([
          */
         onSave: function () {
             this._save().then(function () {
-                //navigate backwards to the screen, and immediatly start recording..
-                if (this._oModel.getProperty("/replayMode")) {
+                //navigate backwards to the screen, and immediately start recording..
+                if (RecordController.getInstance().isReplaying()) {
                     this.getRouter().navTo("testReplay", {
                         TestId: this._sTestId
                     }, true);
@@ -1396,7 +1394,7 @@ sap.ui.define([
                     this._adjustBeforeSaving(oCurrentElement).then(function (oElementFinal) {
 
                         var aElements = RecordController.getInstance().getTestElements();
-                        if (this._oModel.getProperty("/replayMode")) {
+                        if (RecordController.getInstance().isReplaying()) {
                             aElements[this._sElementId] = oElementFinal;
                         } else {
                             aElements.push(oElementFinal);
