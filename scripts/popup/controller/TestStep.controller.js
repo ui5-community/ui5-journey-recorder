@@ -38,7 +38,6 @@ sap.ui.define([
             codeSettings: {
                 language: "UI5"
             },
-            quickSelect: false,
             code: "",
             elements: [],
             elementDefault: {
@@ -79,14 +78,10 @@ sap.ui.define([
             statics: {
                 supportRules: []
             },
-            completeCode: "",
-            completeCodeSaved: "",
             ratingOfAttributes: 3,
-            isStretched: false,
             codes: [],
             idQualityState: ValueState.None,
-            idQualityStateText: "",
-            codeLines: [] //currently maintained code-lines
+            idQualityStateText: ""
         }),
         _criteriaTypes: null,
         _attributeTypes: null,
