@@ -1526,7 +1526,10 @@ class TestItem {
                             _totalAmount: 0
                         };
                     }
-                    var sValue = aItems[i][sGetter]();
+                    var sValue = undefined;
+                    if (typeof aItems[i][sGetter] === "function") {
+                        sValue = aItems[i][sGetter]();
+                    }
                     if (!oObjectProps[sProperty][sValue]) {
                         oObjectProps[sProperty][sValue] = 0;
                     }
