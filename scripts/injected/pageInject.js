@@ -129,10 +129,18 @@ class PageCommunication {
                 oReturn = _runSupportAssistant(oEventData);
                 break;
 
+            case "lockPage":
+                oReturn = lockPage();
+                break;
+
+            case "unlockPage":
+                oReturn = unlockPage();
+                break;
+
             // case "mockserver":
             //     return this._getDataModelInformation();
 
-            // events that are not handled: "setWindowLocation", "unlock"/"unlockScreen"
+            // events that are not handled: "setWindowLocation"
 
             default:
                 break;
@@ -160,11 +168,8 @@ class PageCommunication {
 function _startRecording(oInformation) {
     // start recording
     _bActive = true;
-    _bStarted = true;
 
-    lockScreen(); // we are locked until the next step occurs, or the overall test is stopped..
-
-    // unhighlight any previously selected DOM nodes
+    // un-highlight any previously selected DOM nodes
     revealDOMNode(null);
 
     if (oInformation && oInformation.startImmediate === true) {
@@ -188,7 +193,6 @@ function _startRecording(oInformation) {
 
 function _stopRecording() {
     _bActive = false;
-    _bStarted = false;
 
     // remove all DOM-node highlights
     revealDOMNode(null);
@@ -281,9 +285,6 @@ function __checkActionPreconditions(aDOMNodes, bReturnSelectedNode = false) {
 }
 
 function _executeAction(oEventData) {
-    // make screen available again
-    unlockScreen();
-
     // get element and DOM node from event data
     var oItem = oEventData.element;
     var iTimeout = oEventData.timeout;
@@ -861,13 +862,15 @@ class PageListener {
                 el = e.target || e.srcElement;
 
             if (_bActive === false) {
-                //no active recording, but still recording ongoing (e.g. in the other tab..)
-                if (_bScreenLocked === true) {
-                    sap.m.MessageToast.show("Please finalize the step in the Popup, before proceeding...");
+
+                // no active recording, but still recording ongoing (e.g., in the other extension part)
+                if (_bPageLocked === true) {
+                    // sap.m.MessageToast.show("Please finalize the test step in the test-recorder popup first.");
                     event.preventDefault();
                     event.stopPropagation();
                     event.stopImmediatePropagation();
                 }
+
                 return;
             }
 
@@ -927,9 +930,6 @@ class PageListener {
         oTestItem.initializeTestItem();
         // 3) send item to extension
         PageCommunication.getInstance().messageFromPage("itemSelected", oTestItem.getData());
-
-        // lock screen to indicate switch to extension
-        lockScreen();
     }
 }
 
@@ -2769,18 +2769,26 @@ function deepExtend(target) {
 // #region Record handling
 
 var _bActive = false,
-    _bScreenLocked = false,
-    _bStarted = false,
+    _bPageLocked = false,
     _oDialog = null,
     oLastDom = null;
 
-function lockScreen() {
-    // TODO show a DIV element with high z-index to block complete screen!
-    _bScreenLocked = true;
+var _oPageLockBusyDialog;
+
+function lockPage() {
+    _bPageLocked = true;
+
+    if (_oPageLockBusyDialog) {
+        _oPageLockBusyDialog.open();
+    }
 }
 
-function unlockScreen() {
-    _bScreenLocked = false;
+function unlockPage() {
+    _bPageLocked = false;
+
+    if (_oPageLockBusyDialog) {
+        _oPageLockBusyDialog.close();
+    }
 }
 
 /**
@@ -2864,6 +2872,12 @@ function initializePage() {
 }
 
 function setupTestRecorderFunctions() {
+    // create a BusyDialog for screen locking
+    _oPageLockBusyDialog = new sap.m.BusyDialog("UI5TR_BusyDialog", {
+        title: "Finalize test step",
+        text: "Waiting until user saves test step in test-recorder popup..."
+    });
+
     //setup listener for messages from the Extension
     PageCommunication.getInstance().start();
     PageListener.getInstance().setupPageListener();

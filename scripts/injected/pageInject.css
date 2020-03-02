@@ -7,3 +7,7 @@
 .UI5TR_ControlFound * {
     background: rgb(113, 148, 175) !important;
 }
+
+#UI5TR_BusyDialog-Dialog .sapUiLocalBusyIndicatorAnimation > div::before {
+    background: #a01441;
+}

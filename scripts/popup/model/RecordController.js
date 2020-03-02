@@ -94,6 +94,8 @@ sap.ui.define([
                     focused: true
                 });
             }
+
+            ConnectionMessages.lockPage(Connection.getInstance());
         },
 
         /**
@@ -112,6 +114,8 @@ sap.ui.define([
                     });
                 }
             );
+
+            ConnectionMessages.unlockPage(Connection.getInstance());
         },
 
         /**

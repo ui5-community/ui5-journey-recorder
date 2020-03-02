@@ -112,6 +112,16 @@ sap.ui.define([], function () {
          *
          * @param {com.ui5.testing.model.Connection} connection the connection to use for sending messages
          */
+        static lockPage(oConnection) {
+            return oConnection.syncMessage({
+                action: "lockPage"
+            });
+        }
+
+        /**
+         *
+         * @param {com.ui5.testing.model.Connection} connection the connection to use for sending messages
+         */
         static unlockPage(oConnection) {
             return oConnection.syncMessage({
                 action: "unlockPage"
