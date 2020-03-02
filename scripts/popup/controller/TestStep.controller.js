@@ -593,11 +593,11 @@ sap.ui.define([
 
                 this._getFoundElements().then(function (aReturn) {
                     if (this._oModel.getProperty("/element/property/selectItemBy") === "UI5" && aReturn.length > 1) {
-                        this._oModel.setProperty("/element/property/selectItemBy", "ATTR"); //change to attributee in case id is not sufficient..
+                        this._oModel.setProperty("/element/property/selectItemBy", "ATTR"); // change to attribute in case that the ID is not sufficient..
                     }
 
                     this._findBestAttributeDefaultSetting(oItem, false).then(function () {
-                        //adjust DOM node for action type "INP"..
+                        // adjust DOM node for action type "INP"..
                         this._adjustDomChildWith(oItem);
                         resolve();
                     }.bind(this));
@@ -796,10 +796,10 @@ sap.ui.define([
                 this._oModel.setProperty("/element/attributeFilter", []);
 
                 var bSufficientForStop = false;
-                //(1): we will ALWAYS add the property for metadata (class), as that just makes everyting so much faster and safer..
+                // 1) we will ALWAYS add the property for metadata (class), as that just makes everything so much faster and safer
                 this._add("/element/attributeFilter");
 
-                //(2) add our LOCAL Id in case the local id is ok..
+                // 2) add our LOCAL ID in case the local ID is okay
                 if (oItem.identifier.ui5LocalId && oItem.identifier.localIdClonedOrGenerated === false) {
                     this._add("/element/attributeFilter", {
                         attributeType: "OWN",
@@ -809,70 +809,77 @@ sap.ui.define([
                     bSufficientForStop = true;
                 }
 
+                var aReturn = this._oModel.getProperty("/element/identifiedElements");
+                if (aReturn.length === 1 && bSufficientForStop === true) { // early exit if possible: the less attributes the better
+                    resolve();
+                    return;
+                }
+
+                // 3) we add the parent or the parent of the parent id in case the ID is unique..
+                if (oItem.parent.identifier.ui5Id.length && oItem.parent.identifier.idGenerated === false && oItem.parent.identifier.idCloned === false) {
+                    this._add("/element/attributeFilter", {
+                        attributeType: "PRT",
+                        criteriaType: "ID",
+                        subCriteriaType: "ID"
+                    });
+                    bSufficientForStop = true;
+                } else if (oItem.parentL2.identifier.ui5Id.length && oItem.parentL2.identifier.idGenerated === false && oItem.parentL2.identifier.idCloned === false) {
+                    this._add("/element/attributeFilter", {
+                        attributeType: "PRT2",
+                        criteriaType: "ID",
+                        subCriteriaType: "ID"
+                    });
+                    bSufficientForStop = true;
+                } else if (oItem.parentL3.identifier.ui5Id.length && oItem.parentL3.identifier.idGenerated === false && oItem.parentL3.identifier.idCloned === false) {
+                    this._add("/element/attributeFilter", {
+                        attributeType: "PRT3",
+                        criteriaType: "ID",
+                        subCriteriaType: "ID"
+                    });
+                    bSufficientForStop = true;
+                } else if (oItem.parentL4.identifier.ui5Id.length && oItem.parentL4.identifier.idGenerated === false && oItem.parentL4.identifier.idCloned === false) {
+                    this._add("/element/attributeFilter", {
+                        attributeType: "PRT4",
+                        criteriaType: "ID",
+                        subCriteriaType: "ID"
+                    });
+                    bSufficientForStop = true;
+                }
+
+                var oMerged = this._getMergedClassArray(oItem);
+                if (oMerged.cloned === true) {
+                    bSufficientForStop = false;
+                }
+
+                // 4) now let's go for element-specific attributes
+                if (oMerged.defaultAttributes && oMerged.defaultAttributes.length > 0) {
+                    //add the elements from default attributes and stop.
+                    for (var i = 0; i < oMerged.defaultAttributes.length; i++) {
+                        this._add("/element/attributeFilter", oMerged.defaultAttributes[i]);
+                    }
+                }
+
+                // 5) retry and get the elements from the page again
                 this._getFoundElements().then(function (aReturn) {
-                    if (aReturn.length === 1 && bSufficientForStop === true) { //early exit if possible - the less attributes the better..
+
+                    if (aReturn.length === 1) { // early exit if possible: the less attributes the better
                         resolve();
                         return;
                     }
-                    //(3): we add the parent or the parent of the parent id in case the ID is unique..
-                    if (oItem.parent.identifier.ui5Id.length && oItem.parent.identifier.idGenerated === false && oItem.parent.identifier.idCloned === false) {
+
+                    // 6) now add the label text if possible and static
+                    if (oItem.label &&
+                        oItem.label.binding && oItem.label.binding.text && oItem.label.binding.text.static === true) {
                         this._add("/element/attributeFilter", {
-                            attributeType: "PRT",
-                            criteriaType: "ID",
-                            subCriteriaType: "ID"
+                            attributeType: "PLBL",
+                            criteriaType: "BNDG",
+                            subCriteriaType: "text"
                         });
-                        bSufficientForStop = true;
-                    } else if (oItem.parentL2.identifier.ui5Id.length && oItem.parentL2.identifier.idGenerated === false && oItem.parentL2.identifier.idCloned === false) {
-                        this._add("/element/attributeFilter", {
-                            attributeType: "PRT2",
-                            criteriaType: "ID",
-                            subCriteriaType: "ID"
-                        });
-                        bSufficientForStop = true;
-                    } else if (oItem.parentL3.identifier.ui5Id.length && oItem.parentL3.identifier.idGenerated === false && oItem.parentL3.identifier.idCloned === false) {
-                        this._add("/element/attributeFilter", {
-                            attributeType: "PRT3",
-                            criteriaType: "ID",
-                            subCriteriaType: "ID"
-                        });
-                        bSufficientForStop = true;
-                    } else if (oItem.parentL4.identifier.ui5Id.length && oItem.parentL4.identifier.idGenerated === false && oItem.parentL4.identifier.idCloned === false) {
-                        this._add("/element/attributeFilter", {
-                            attributeType: "PRT4",
-                            criteriaType: "ID",
-                            subCriteriaType: "ID"
-                        });
-                        bSufficientForStop = true;
-                    }
-                    var oMerged = this._getMergedClassArray(oItem);
-                    if (oMerged.cloned === true) {
-                        bSufficientForStop = false;
                     }
 
-                    //(4): now let's go for element specific attributes
-                    if (oMerged.defaultAttributes && oMerged.defaultAttributes.length > 0) {
-                        //add the elements from default attributes and stop.
-                        for (var i = 0; i < oMerged.defaultAttributes.length; i++) {
-                            this._add("/element/attributeFilter", oMerged.defaultAttributes[i]);
-                        }
-                    }
-                    this._getFoundElements().then(function (aReturn) {
-                        if (aReturn.length === 1) { //early exit if possible - the less attributes the better..
-                            resolve();
-                            return;
-                        }
+                    // 7) finally, resolve
+                    resolve();
 
-                        //(5): now add the label text if possible and static..
-                        if (oItem.label &&
-                            oItem.label.binding && oItem.label.binding.text && oItem.label.binding.text.static === true) {
-                            this._add("/element/attributeFilter", {
-                                attributeType: "PLBL",
-                                criteriaType: "BNDG",
-                                subCriteriaType: "text"
-                            });
-                        }
-                        resolve();
-                    }.bind(this));
                 }.bind(this));
             }.bind(this));
         },
@@ -1016,13 +1023,14 @@ sap.ui.define([
             this._suspendBindings();
             this._adjustBeforeSaving(oItem).then(function (oElementFinal) {
                 this._getFoundElements().then(function (aElements) {
-                    this._oModel.setProperty("/element/identifiedElements", aElements);
+
                     if (aElements.length !== 1) {
-                        //we are only expanding, in case we are in ACTION mode - reason: the user has to do sth. in case we are in action mode, as only one can be selected..
+                        // expand elements panel when in ACTION mode: the user has to do sth. as only one element can be selected for an action
                         if (this._oModel.getProperty("/element/property/type") === 'ACT') {
                             this.byId("atrElementsPnl").setExpanded(true);
                         }
                     }
+
                     this._checkElementNumber();
                     this._resumeBindings();
 
