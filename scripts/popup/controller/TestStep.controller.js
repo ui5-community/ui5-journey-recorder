@@ -201,15 +201,9 @@ sap.ui.define([
          *
          */
         onCancelStep: function () {
-            if (RecordController.getInstance().isReplaying()) {
-                this.getRouter().navTo("testReplay", {
-                    TestId: this._sTestId
-                }, true);
-            } else {
-                this.getRouter().navTo("TestDetails", {
-                    TestId: this._sTestId
-                }, true);
-            }
+            this.getRouter().navTo("TestDetails", {
+                TestId: this._sTestId
+            }, true);
             RecordController.getInstance().startRecording();
         },
 
@@ -234,16 +228,10 @@ sap.ui.define([
         onSave: function () {
             this._save().then(function () {
                 //navigate backwards to the screen, and immediately start recording..
-                if (RecordController.getInstance().isReplaying()) {
-                    this.getRouter().navTo("testReplay", {
-                        TestId: this._sTestId
-                    }, true);
-                } else {
-                    this.getRouter().navTo("TestDetails", {
-                        TestId: this._sTestId
-                    }, true);
-                    RecordController.getInstance().startRecording();
-                }
+                this.getRouter().navTo("TestDetails", {
+                    TestId: this._sTestId
+                }, true);
+                RecordController.getInstance().startRecording();
             }.bind(this));
         },
 

@@ -80,7 +80,6 @@ sap.ui.define([
             this.getOwnerComponent().getRouter().getRoute("TestDetails").attachPatternMatched(this._onTestDisplay, this);
             this.getOwnerComponent().getRouter().getRoute("TestDetailsCreate").attachPatternMatched(this._onTestCreate, this);
             this.getOwnerComponent().getRouter().getRoute("TestDetailsCreateQuick").attachPatternMatched(this._onTestCreateQuick, this);
-            this.getOwnerComponent().getRouter().getRoute("testReplay").attachPatternMatched(this._onTestReplay, this);
 
             // add event listener for item selections on page
             sap.ui.getCore().getEventBus().subscribe("Internal", "itemSelected", this._onItemSelected.bind(this));
@@ -150,49 +149,6 @@ sap.ui.define([
             this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
             this._bQuickMode = true;
             this._initTestCreate(true);
-        },
-
-        /**
-         *
-         * @param {*} oEvent
-         */
-        _onTestReplay: function (oEvent) {
-            this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
-
-            var sTargetUUID = oEvent.getParameter("arguments").TestId;
-            var sCurrentUUID = RecordController.getInstance().getTestUUID();
-            if (sTargetUUID === this._oTestId && RecordController.getInstance().isReplaying()) {
-                if (RecordController.getInstance().isTestStepExecuted(this._iCurrentStep)) {
-                    this.onReplayNextStep();
-                }
-                return;
-            }
-
-            this._oTestId = sTargetUUID;
-            this._iCurrentStep = 0;
-            if (sCurrentUUID !== sTargetUUID) {
-                //we have to read the current data..
-                ChromeStorage.get({
-                    key: sTargetUUID,
-                    success: function (oSave) {
-                        if (!oSave) {
-                            this.getRouter().navTo("start");
-                            return;
-                        }
-                        oSave = JSON.parse(oSave);
-                        this._oModel.setProperty("/codeSettings", oSave.codeSettings);
-                        RecordController.getInstance().setTestElements(oSave.elements);
-                        RecordController.getInstance().setTestDetails(oSave.test);
-                        this._updatePreview();
-                        //this._updatePlayButton();
-                        this._replay();
-                    }.bind(this)
-                });
-            } else {
-                this._updatePreview();
-                //this._updatePlayButton();
-                this._replay();
-            }
         },
 
         // #endregion

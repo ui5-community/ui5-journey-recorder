@@ -105,11 +105,6 @@ sap.ui.define([
                                 target: "TestDetails"
                             },
                             {
-                                pattern: "/testReplay/{TestId}",
-                                name: "testReplay",
-                                target: "TestDetails"
-                            },
-                            {
                                 pattern: "/TestDetailsCreate",
                                 name: "TestDetailsCreate",
                                 target: "TestDetails"
