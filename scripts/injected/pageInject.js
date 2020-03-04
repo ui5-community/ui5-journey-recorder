@@ -343,6 +343,9 @@ function _executeAction(oEventData) {
         });
     }
 
+    // identify control for current DOM node so special cases for specific controls can be handled
+    var oControl = UI5ControlHelper.getControlFromDom(oDOMNode);
+
     // reveal DOM node by using CSS classes and add fade-out effect
     revealDOMNode(oDOMNode);
     setTimeout(function () {
@@ -352,30 +355,18 @@ function _executeAction(oEventData) {
     // for mouse-press events
     if (oItem.property.actKey === "PRS") {
 
-        //send touch event..
-        var event = new MouseEvent('mousedown', {
-            view: window,
-            bubbles: true,
-            cancelable: true
-        });
-        event.originalEvent = event; //self refer
-        aEvents.push(testEvent(oDOMNode, "mousedown", event));
+        aEvents.push(new Promise(function(resolve, reject) {
 
-        var event = new MouseEvent('mouseup', {
-            view: window,
-            bubbles: true,
-            cancelable: true
-        });
-        event.originalEvent = event; //self refer
-        aEvents.push(testEvent(oDOMNode, "mouseup", event));
+            sap.ui.require(["sap/ui/test/actions/Press"], function(Press) {
+                var oPressAction = new Press();
+                oPressAction.executeOn(oControl);
+                resolve({
+                    result: "success"
+                });
+            });
 
-        var event = new MouseEvent('click', {
-            view: window,
-            bubbles: true,
-            cancelable: true
-        });
-        event.originalEvent = event; //self refer
-        aEvents.push(testEvent(oDOMNode, "click", event));
+        }));
+
     } else
     // for typing events
     if (oItem.property.actKey === "TYP") {
