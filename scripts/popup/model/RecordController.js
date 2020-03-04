@@ -99,7 +99,7 @@ sap.ui.define([
         },
 
         /**
-         * Focus the target window.
+         * Focus the target window and unlocks the page.
          */
         focusTargetWindow: function () {
             chrome.tabs.update(
@@ -593,12 +593,6 @@ sap.ui.define([
             var iCurrentStepIdx = this._oModel.getProperty("/currentReplayStep");
             var oElement = this.getTestElementByIdx(iCurrentStepIdx);
 
-            // focus the target window so the user can see what is going on
-            this.focusTargetWindow();
-
-            // indicate to bindings that a step is executing now
-            this._oModel.setProperty("/isExecuting", true);
-
             // execute the next replay action and react to result
             this.executeTestStep(oElement).then(function (oResult) {
 
@@ -663,6 +657,12 @@ sap.ui.define([
          */
         executeTestStep: function (oTestStep) {
             var iTimeout = this._settingsModel.getProperty("/settings/defaultReplayTimeout");
+
+            // focus the target window so the user can see what is going on
+            this.focusTargetWindow();
+
+            // indicate to bindings that a step is executing now
+            this._oModel.setProperty("/isExecuting", true);
 
             return new Promise(function (resolve) {
 
