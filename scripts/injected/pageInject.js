@@ -137,6 +137,10 @@ class PageCommunication {
                 oReturn = unlockPage();
                 break;
 
+            case "disconnect":
+                oReturn = _disconnect();
+                return; // return directly and do not issue any returning message below
+
             // case "mockserver":
             //     return this._getDataModelInformation();
 
@@ -828,6 +832,27 @@ function _runSupportAssistant(oComponent) {
         }.bind(this));
     }.bind(this));
 
+}
+
+function _disconnect() {
+    // unlock page and stop recording
+    _bActive = false;
+    _bPageLocked = false;
+
+    // ask user whether to reload page to remove any injections
+    sap.m.MessageBox.error(
+        "The connection to the UI5 test-recorder has been lost. Do you want to reload this page to reset it?",
+        {
+            icon: sap.m.MessageBox.Icon.QUESTION,
+            title: "Reload page?",
+            actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+            onClose: function (sAction) {
+                if (sAction === sap.m.MessageBox.Action.YES) {
+                    location.reload();
+                }
+            }
+        }
+    );
 }
 
 // #endregion

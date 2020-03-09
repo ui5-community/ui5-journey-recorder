@@ -51,6 +51,7 @@
             this._openPort();
             // add listener for incoming and outgoing messages
             this._port.onMessage.addListener(this._handleMessagesFromExtension.bind(this));
+            this._port.onDisconnect.addListener(this._handleExtensionDisconnect.bind(this));
             this._handleMessagesFromPageBind = this._handleMessagesFromPage.bind(this);
             window.addEventListener("message", this._handleMessagesFromPageBind);
 
@@ -185,6 +186,15 @@
                         );
                 } // switch (oMessage.data.type)
             } // if (oMessage.data.origin && (oMessage.data.origin === "FROM_PAGE"))
+        }
+
+        /**
+         * Handle the case that the port to the extension has been disconnected. Notify the page.
+         *
+         * @param {chrome.runtime.Port} oPort the disconnected Port instance
+         */
+        _handleExtensionDisconnect(oPort) {
+            this.sendToPage("disconnect", {});
         }
     }
 
