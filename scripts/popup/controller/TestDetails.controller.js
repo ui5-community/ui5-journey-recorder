@@ -442,6 +442,7 @@ sap.ui.define([
 
             RecordController.getInstance().setCurrentElement(oData);
             RecordController.getInstance().focusPopup();
+            this._oRecordDialog.close();
 
             var sRouterTarget = this._bQuickMode ? "elementCreateQuick" : "elementCreate";
             this.getRouter().navTo(sRouterTarget, {
