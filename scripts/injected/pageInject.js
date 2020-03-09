@@ -372,52 +372,79 @@ function _executeAction(oEventData) {
     if (oItem.property.actKey === "TYP") {
 
         var sText = oItem.property.selectActInsert;
-        oDOMNode.focus();
+        var bClearTextFirst = oItem.property.actionSettings.replaceText;
+        var bPressEnterKey = oItem.property.actionSettings.enter;
+        var bKeepFocus = !oItem.property.actionSettings.blur;
+        var bEnterPressed = false;
 
-        // insert text: either replace or append
-        if (sText.length > 0 && oItem.property.actionSettings.replaceText === false) {
-            oDOMNode.value = oDOMNode.value + sText;
-        } else {
-            oDOMNode.value = sText;
-        }
+        var oEnterTextActionPromise = new Promise(function(resolve, reject) {
 
-        //first simulate a dummy input (NO! ENTER! - that is different)
-        //this will e.g. trigger the liveChange events
-        var event = new KeyboardEvent('input', {
-            view: window,
-            data: '',
-            bubbles: true,
-            cancelable: true
+            sap.ui.require(["sap/ui/test/actions/EnterText"], function(EnterText) {
+                var oEnterTextAction = new EnterText();
+
+                oEnterTextAction.setText(sText);
+                oEnterTextAction.setClearTextFirst(bClearTextFirst);
+                oEnterTextAction.setKeepFocus(bKeepFocus);
+
+                // for UI5 >= 1.76, we can press the Enter key using the action
+                if (oEnterTextAction.setPressEnterKey) {
+                    oEnterTextAction.setPressEnterKey(bPressEnterKey);
+                    bEnterPressed = true;
+                }
+
+                oEnterTextAction.executeOn(oControl);
+
+                resolve({
+                    result: "success"
+                });
+            });
+
         });
-        event.originalEvent = event;
-        aEvents.push(testEvent(oDOMNode, "input", event));
 
-        //afterwards trigger the blur event, in order to trigger the change event (enter is not really the same.. but ya..)
-        if (oItem.property.actionSettings.blur === true) {
-            var event = new MouseEvent('blur', {
-                view: window,
-                bubbles: true,
-                cancelable: true
-            });
-            event.originalEvent = event;
-            aEvents.push(testEvent(oDOMNode, "blur", event));
-        }
+        // chain Promise to execute press on Enter key:
+        // we need to ensure that Enter is pressed *after* the text is entered,
+        // so we chain the enter after the already existing promise
+        var oEnterKeyPressActionPromise = new Promise(function(resolve) {
 
-        if (oItem.property.actionSettings.enter === true) {
-            var event = new KeyboardEvent('keydown', {
-                view: window,
-                data: '',
-                charCode: 0,
-                code: "Enter",
-                key: "Enter",
-                keyCode: 13,
-                which: 13,
-                bubbles: true,
-                cancelable: true
+            oEnterTextActionPromise.then(function(oResult) {
+                // return that result if...
+                // (1) the typing action above has not worked or
+                // (2) if Enter is *not* to be pressed
+                if (oResult.result !== "success" || !bPressEnterKey) {
+                    resolve(oResult);
+                    return;
+                }
+
+                // instead execute the press of the Enter key,
+                // but only if it has not been already pressed
+                if (!bEnterPressed) {
+                    // create KeyBoardEvent to simulate Enter
+                    var event = new KeyboardEvent('keydown', {
+                        view: window,
+                        data: '',
+                        charCode: 0,
+                        code: "Enter",
+                        key: "Enter",
+                        keyCode: 13,
+                        which: 13,
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    event.originalEvent = event;
+
+                    // dispatch event and resolve appropriately
+                    var oEventPromise = testEvent(oDOMNode, "keydown", event);
+                    oEventPromise.then(function(oEventPromiseResult) {
+                        resolve(oEventPromiseResult);
+                    });
+                }
             });
-            event.originalEvent = event;
-            aEvents.push(testEvent(oDOMNode, "keydown", event));
-        }
+
+        });
+
+        // add Promise as an event to be gathered later
+        aEvents.push(oEnterKeyPressActionPromise);
+
     }
 
     return new Promise(function(resolve) {
