@@ -43,7 +43,7 @@
             <Button visible="{= ${viewModel>/quickMode} === true }" type="Reject" text="Cancel" press="onStopFromQuick"/>
             <Button visible="{= ${viewModel>/quickMode} === true }" type="Accept" text="Re-Select" press="onNewStepFromQuick"/>
             <Button visible="{= ${viewModel>/quickMode} === false }" type="Reject" text="Cancel" press="onCancelStep"/>
-            <Button visible="{= ${viewModel>/quickMode} === false }" type="Accept" text="Save Step" press="onSave"/>
+            <Button visible="{= ${viewModel>/quickMode} === false }" id="btSaveFooter" type="Accept" text="Save Step" press="onSave"/>
         </semantic:customFooterContent>
 
         <!-- TODO What to hide when {= ( ${viewModel>/element/property/type} === 'SUP' ) }? atrElementsPnl? Code preview? tstSelectedBy? -->
@@ -57,7 +57,7 @@
                         <Button visible="{= ${viewModel>/quickMode} === true }" type="Reject" text="Cancel" press="onStopFromQuick"/>
                         <Button visible="{= ${viewModel>/quickMode} === true }" type="Accept" text="Re-Select" press="onNewStepFromQuick"/>
                         <Button visible="{= ${viewModel>/quickMode} === false }" id="btClose" type="Reject" text="Cancel" press="onCancelStep"/>
-                        <Button visible="{= ${viewModel>/quickMode} === false }" id="btSave" type="Accept" text="Save Step" press="onSave"/>
+                        <Button visible="{= ${viewModel>/quickMode} === false }" id="btSaveHeader" type="Accept" text="Save Step" press="onSave"/>
                     </Toolbar>
                 </headerToolbar>
                 <f:SimpleForm layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">

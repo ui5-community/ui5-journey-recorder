@@ -230,7 +230,14 @@ sap.ui.define([
          *
          */
         onSave: function () {
+            this.byId("btSaveHeader").setBusy(true);
+            this.byId("btSaveFooter").setBusy(true);
+
             this._save().then(function () {
+
+                this.byId("btSaveHeader").setBusy(false);
+                this.byId("btSaveFooter").setBusy(false);
+
                 //navigate backwards to the screen, and immediately start recording..
                 this.getRouter().navTo("TestDetails", {
                     TestId: this._sTestId
