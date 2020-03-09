@@ -124,7 +124,7 @@ sap.ui.define([
         _onDisconnect: function () {
             this.resetConnection();
             // TODO publish appropriate event to event bus instead of showing message box
-            MessageBox.error("Connection to the webpage lost, try to reconnect.");
+            sap.ui.getCore().getEventBus().publish("Internal", "pageDisconnected");
         },
 
         /**
