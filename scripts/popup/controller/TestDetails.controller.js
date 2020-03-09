@@ -188,7 +188,6 @@ sap.ui.define([
             var sPath = oEvent.getSource().getBindingContext("recordModel").getPath();
             var sNumber = sPath.split("/").pop();
             RecordController.getInstance().removeTestElementById(sNumber);
-            this._updatePlayButton();
         },
 
         /**
