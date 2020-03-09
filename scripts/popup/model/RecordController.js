@@ -242,11 +242,16 @@ sap.ui.define([
          */
         stopRecording: function () {
             if (this.isRecording()) {
-                ConnectionMessages.stopRecording(Connection.getInstance())
+                // try and tell page about stopping recording
+                if (this.isInjected()) {
+                    ConnectionMessages.stopRecording(Connection.getInstance())
                     .then(function () {
                         ConnectionMessages.unlockPage(Connection.getInstance());
-                        this._onRecordingStopped();
                     }.bind(this));
+                }
+
+                // update internal state
+                this._onRecordingStopped();
             }
         },
 
