@@ -84,6 +84,7 @@ sap.ui.define([
             // add event listener for item selections on page
             sap.ui.getCore().getEventBus().subscribe("Internal", "itemSelected", this._onItemSelected.bind(this));
             sap.ui.getCore().getEventBus().subscribe("Internal", "replayFinished", this._onCheckRecordContinuing.bind(this));
+            sap.ui.getCore().getEventBus().subscribe("Internal", "pageDisconnected", this._onPageDisconnected.bind(this));
 
             // trigger prompt on unload!
             // TODO insert function here that asks for saving the changes → which can be used also on connection losses
@@ -257,7 +258,6 @@ sap.ui.define([
             });
         },
 
-
         /**
          *
          */
@@ -300,15 +300,15 @@ sap.ui.define([
 
         /**
          *
+         * @returns {Promise} a Promise on saving the current record
          */
         onSave: function () {
-            //save /codesettings & /test & /elements - optimiazion potential..
             var oSave = {
                 codeSettings: this._oModel.getProperty("/codeSettings"),
                 elements: RecordController.getInstance().getTestElements(),
                 test: RecordController.getInstance().getTestDetails()
             };
-            ChromeStorage.saveRecord(oSave);
+            return ChromeStorage.saveRecord(oSave);
         },
 
         /**
@@ -488,6 +488,42 @@ sap.ui.define([
             });
 
             dialog.open();
+        },
+
+        /**
+         * Handle the case that the page disconnects.
+         *
+         * @param {string} sChannel the channel name of the incoming event (ignored)
+         * @param {string} sEventId the event ID of the incoming event (ignored)
+         * @param {*} oData the data on the selected element (ignored)
+         */
+        _onPageDisconnected: function(sChannel, sEventId, oData) {
+
+            // stop recording and replaying
+            this._oRecordDialog.close();
+            RecordController.getInstance().stopRecording();
+            RecordController.getInstance().stopReplaying();
+
+            // ask user whether to save current status
+            sap.m.MessageBox.error(
+                "The connection to the page under test has been lost. You will be redirected to the start page, where you can re-open the test." +
+                "\n\n" + "Do you want to save the current recording status now?",
+                {
+                    icon: sap.m.MessageBox.Icon.QUESTION,
+                    closeOnNavigation: true,
+                    title: "Page disconnected",
+                    actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+                    onClose: function (sAction) {
+                        if (sAction === sap.m.MessageBox.Action.YES) {
+                            this.onSave().then(function() {
+                                this.getRouter().navTo("start");
+                            }.bind(this));
+                        } else {
+                            this.getRouter().navTo("start");
+                        }
+                    }.bind(this)
+                }
+            );
         },
 
         /**
