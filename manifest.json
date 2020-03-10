@@ -19,12 +19,12 @@
     ],
     "browser_action": {
         "default_title": "UI5 Test-Recorder",
-        "default_icon": "images/rework45.png"
+        "default_icon": "images/icon.png"
     },
     "icons": {
-        "16": "images/rework45.png",
-        "48": "images/rework45.png",
-        "128": "images/rework45.png"
+        "16": "images/icon.png",
+        "48": "images/icon.png",
+        "128": "images/icon.png"
     },
     "optional_permissions": [
         "tabs",
