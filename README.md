@@ -30,7 +30,7 @@ The tool has support for the following test-frameworks:
 The following Screenshots are showing the capabilities of the recorder.
 
 Start-Page: Create a new recording, or open an existing one
-![alt text](bilder/overview_page.png)
+![alt text](images/overview_page.png)
 
 Example Selection Page
-![alt text](bilder/detail_page_1.png)
+![alt text](images/detail_page_1.png)
