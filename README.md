@@ -1,36 +1,29 @@
+[![Logo of UI5 test recorder](images/icon.png)](http://msg-systems.github.io/ui5-testrecorder/)
+
 # UI5 Test Recorder
 
-The tool enables efficient test-automation for SAP UI5 and OpenUI5 Applications, by providing you a test-recorder for UI5 with exporting capabilities to uiveri5, testcafe and OPA5.
-During recording the tool supports you in setting the perfect combination of unique attributes in order to allow a stable test-execution.
+The *UI5 Test Recorder* enables efficient test automation for SAP UI5 and OpenUI5 applications, by enabling the user to record test scenarios with only simple tools.
+To this end, the UI5 test recorder provides export capabilities to UIVeri5, TestCafe, and OPA5.
+While recording, the tool supports you in setting the perfect combination of unique attributes to allow a stable and reproducible test execution.
 
-/********************
-/Release Notes "0.5.2"
-/********************
-Several Bugfixes:
-- removed recuring cals for successful injection, broke the replay option
-- Fixed the TestDetails controller for better replay
+## Documentation
 
-New Features:
-- Auto Close of old Tabs on replay
-- Offline view of single Teststeps
-  
+There are several points of interest for users:
 
+- The official website of the UI5 test recorder http://msg-systems.github.io/ui5-testrecorder/.
+- Further documentation can be found [here](docs/documentation.md).
 
-Github-Page: http://msg-systems.github.io/ui5-testrecorder/
+## Install
 
-Here you can find a [Documentation](./docs/documentation.md)
+The built WebExtension is [available in the Chrome Web Store](https://chrome.google.com/webstore/detail/hcpkckcanianjcbiigbklddcpfiljmhj).
 
-The chrome plugin is published in Google-Webstore under https://chrome.google.com/webstore/detail/hcpkckcanianjcbiigbklddcpfiljmhj 
+*Note*: Right now, only Chrome is supported, further browsers are under investigation.
 
-The tool has support for the following test-frameworks:
-- uiveri5
-- testcafe
-- OPA5
+## Contributing
 
-The following Screenshots are showing the capabilities of the recorder.
+> The contribution guide is still under construction. For now, please just open a pull request against the branch `dev` or open an issue.
 
-Start-Page: Create a new recording, or open an existing one
-![alt text](images/overview_page.png)
+## License
 
-Example Selection Page
-![alt text](images/detail_page_1.png)
+The UI5 test recorder is licensed under the Apache License 2.0.
+See the file [LICENSE](LICENSE) for more details.
