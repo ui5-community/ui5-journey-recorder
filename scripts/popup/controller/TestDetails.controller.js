@@ -103,6 +103,7 @@ sap.ui.define([
                 //we have to read the current data..
                 ChromeStorage.get({
                     key: sTargetUUID,
+                    // if the test is loaded, update preview
                     success: function (oSave) {
                         if (!oSave) {
                             this.getRouter().navTo("start");
@@ -113,6 +114,10 @@ sap.ui.define([
                         RecordController.getInstance().setTestElements(oSave.elements);
                         RecordController.getInstance().setTestDetails(oSave.test);
                         this._updatePreview();
+                    }.bind(this),
+                    // if the test cannot be loaded, redirect to route 'start'
+                    failure: function(oLastError) {
+                        this.getRouter().navTo("start");
                     }.bind(this)
                 });
             } else if (RecordController.getInstance().isRecording() && this._bQuickMode === false) {
@@ -580,6 +585,12 @@ sap.ui.define([
          *
          */
         _initTestCreate: function () {
+            // if we are here because of an extension reload, redirect to route 'start'
+            if (!RecordController.getInstance().isInjected()) {
+                this.getRouter().navTo("start");
+                return;
+            }
+
             RecordController.getInstance().stopReplaying();
 
             RecordController.getInstance().reset();
