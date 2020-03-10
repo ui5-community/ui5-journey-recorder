@@ -31,7 +31,15 @@ class PageCommunication {
      */
     start() {
         // add listener for incoming messages
-        window.addEventListener("message", this._messageFromExtension.bind(this));
+        this._messageFromExtensionBind = this._messageFromExtension.bind(this);
+        window.addEventListener("message", this._messageFromExtensionBind);
+    }
+
+    /**
+     * Reset connection by removing listeners.
+     */
+    reset() {
+        window.removeEventListener("message", this._messageFromExtensionBind);
     }
 
     /**
@@ -835,9 +843,12 @@ function _runSupportAssistant(oComponent) {
 }
 
 function _disconnect() {
-    // unlock page and stop recording
+    // unlock page, stop recording, and reset all controls and listeners
     _bActive = false;
     _bPageLocked = false;
+    _oPageLockBusyDialog.destroy();
+    PageListener.getInstance().reset();
+    PageCommunication.getInstance().reset();
 
     // ask user whether to reload page to remove any injections
     sap.m.MessageBox.error(
@@ -874,6 +885,12 @@ class PageListener {
         return PageListener._oInstance;
     }
 
+    _fnMouseDownListener(event) {
+        if (event.button == 2) {
+            oLastDom = event.target;
+        }
+    }
+
     setupPageListener() {
         /** use the css hovering class */
         document.onmouseover = function (e) {
@@ -893,13 +910,8 @@ class PageListener {
             }
         };
 
-        document.addEventListener("mousedown", function (event) {
-            if (event.button == 2) {
-                oLastDom = event.target;
-            }
-        }, true);
+        document.addEventListener("mousedown", this._fnMouseDownListener, true);
 
-        // FIXME event prevention does not work properly (see also above): use addEventListener instead?
         document.onclick = function (e) {
             var e = e || window.event,
                 el = e.target || e.srcElement;
@@ -924,7 +936,19 @@ class PageListener {
             e.stopImmediatePropagation();
         }.bind(this);
 
-        sap.m.MessageToast.show("UI5-Testrecorder fully injected!");
+        sap.m.MessageToast.show("UI5 test recorder fully injected!");
+    }
+
+    /**
+     * Resets the page listener by removing all page listeners and destroying the instance.
+     */
+    reset() {
+        document.onmouseover = null;
+        document.mousedown = null;
+        document.removeEventListener('mousedown', this._fnMouseDownListener, true);
+        document.onclick = null;
+
+        PageListener._oInstance = null;
     }
 
     handleClickOn(oDOMNode) {
