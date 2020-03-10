@@ -170,10 +170,9 @@ sap.ui.define([
                 if (this.isInjected()) {
 
                     MessageBox.show(
-                        "The test recorder is already connected to a tab. This may be the case because you have been recording or replaying. " +
-                        "To replay reliably, a new tab needs to be opened." +
+                        "The test recorder is currently connected to a tab. This may be the case because you have been recording or replaying.\n" +
                         "\n" +
-                        "Do you want to close the already connected tab?\n" +
+                        "Do you want to close the connected tab?\n" +
                         "\n" +
                         "In any case, the connected tab is disconnected. You can start recording again where you left off after replaying all steps.",
                         {
