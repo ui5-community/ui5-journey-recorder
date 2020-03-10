@@ -23,13 +23,18 @@ sap.ui.define([
 
             sap.ui.getCore().getEventBus().subscribe("Internal", "recordingStopped", this._onRecordingStopped.bind(this));
 
-            // trigger prompt on unload!
+            // trigger prompt before unload!
             window.addEventListener('beforeunload', function (e) {
                 // cancel the event
                 e.preventDefault();
                 // set 'returnValue' as required by Chrome
                 e.returnValue = '';
             });
+
+            // handle extension unload
+            window.addEventListener('unload', function (e) {
+                this.reset(true);
+            }.bind(this));
         },
 
         /**
