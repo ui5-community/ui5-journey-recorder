@@ -20,6 +20,14 @@ The built WebExtension is [available in the Chrome Web Store](https://chrome.goo
 
 *Note*: Right now, only Chrome is supported, further browsers are under investigation.
 
+## Test apps
+
+Testing is important, testing – and using! – the UI5 test recorder even more.
+You can test the UI5 test recorder with every app provided with [the OpenUI5 Samples](https://openui5.hana.ondemand.com/#/controls).
+
+You can also use our [presentation at the UI5con 2019](https://msg-systems.github.io/ui5-testrecorder/presentation2019/index.html).
+Additionally, we provide [a corresponding download package](https://msg-systems.github.io/ui5-testrecorder/downloads/presentation2019.7z) for offline usage.
+
 ## Contributing
 
 > The contribution guide is still under construction. For now, please just open a pull request against the branch `dev` or open an issue.
