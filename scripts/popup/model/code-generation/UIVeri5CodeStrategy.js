@@ -266,7 +266,7 @@ sap.ui.define([
                                 sCode += ");";
                             }
                         } else {
-                                //TODO:@ADRIAN -> hier noch richtige logik das table oder table0 verwendet bei definition davon.
+                                //TODO @ADRIAN -> hier noch richtige logik das table oder table0 verwendet bei definition davon.
                             //we are actually searching for "exists" now. we will hand over the attributes we are searching for into the searching handler..
                             var sElementTmp = this._getUI5Element(oElement, oUI5Selector, oAss);
                             if (oElement.property.useTechnicalName === true) {

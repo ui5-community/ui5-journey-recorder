@@ -46,7 +46,6 @@
             <Button visible="{= ${viewModel>/quickMode} === false }" id="btSaveFooter" type="Accept" text="Save Step" press="onSave"/>
         </semantic:customFooterContent>
 
-        <!-- TODO What to hide when {= ( ${viewModel>/element/property/type} === 'SUP' ) }? atrElementsPnl? Code preview? tstSelectedBy? -->
         <semantic:content>
             <MessageStrip id="displayStrip" text="This is recorded information about a test step. Changes are limited and wrong information about found items may be displayed the information is retrieved in real time from the connected page." type="Warning" showIcon="true" visible="{viewModel>/blocked}"/>
             <MessageStrip id="offlineStrip" text="The information about this test step is not complete as no items can be retrieved from the page right now. This is only possible while recording." type="Warning" showIcon="true" visible="{= !${viewModel>/isInjected} &amp;&amp; !${viewModel>/blocked} }"/>

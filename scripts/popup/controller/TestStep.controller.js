@@ -441,7 +441,7 @@ sap.ui.define([
         /**
          *
          */
-        initializeTestElement: function (oItem, bAssertion) { //todo: assertion
+        initializeTestElement: function (oItem, bAssertion) {
             this._oModel.setProperty("/element", JSON.parse(JSON.stringify(this._oModel.getProperty("/elementDefault"))));
             if (bAssertion === true) {
                 this._oModel.setProperty("/element/property/type", "ASS");
@@ -1472,7 +1472,7 @@ sap.ui.define([
         // #endregion
 
         // #region Actions and asserts
-        // TODO try to remove this region (move to RecordController)
+        // TODO try to remove this region (move to RecordController or Utils)
 
         /**
          *

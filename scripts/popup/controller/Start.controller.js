@@ -199,7 +199,6 @@ sap.ui.define([
                 origins: ["https://*/*", "http://*/*"]
             }, function (result) {
                 if (result) {
-                    // TODO: do not determine switch state based on permission grant
                     this.getView().byId('ui5Switch').setState(true);
                 }
                 this._getUI5Urls();

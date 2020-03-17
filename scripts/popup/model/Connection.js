@@ -78,8 +78,6 @@ sap.ui.define([
             this._iMessageID = 0;
         },
 
-        // FIXME killConnection (like resetConnection but without user notification)
-
         /**
          * Check whether the connection is established.
          *
@@ -123,7 +121,7 @@ sap.ui.define([
          */
         _onDisconnect: function () {
             this.resetConnection();
-            // TODO publish appropriate event to event bus instead of showing message box
+            // publish appropriate event to event bus
             sap.ui.getCore().getEventBus().publish("Internal", "pageDisconnected");
         },
 

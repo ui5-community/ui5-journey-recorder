@@ -38,9 +38,31 @@ sap.ui.define([
         },
 
         /**
-         * Return the model of this controller.
+         * Return the model of this controller, internally called 'recordModel'.
          *
-         * // TODO insert structure of model into docs
+         * The model is structured as follows:
+         * <code><pre>
+         * oModel = {
+         *     // Recording
+         *     isRecording: false,
+         *     // Test details and elements
+         *     test: {
+         *         uuid: 0,
+         *         createdAt: 0
+         *     },
+         *     item: {},
+         *     elements: [],
+         *     // Replaying
+         *     isReplaying: false,
+         *     isExecuting: false,
+         *     currentReplayStep: 0,
+         *     replayInterval: 0,
+         *     replayMessages: []
+         * }
+         * </code></pre>
+         *
+         * @returns {sap.ui.model.json.JSONModel} the model called 'recordModel'
+         * @see RecordController.reset
          */
         getModel: function () {
             return this._oModel;
@@ -431,7 +453,9 @@ sap.ui.define([
                         }.bind(this)
                     )
                     .catch(function () {
-                        // FIXME permission not granted, send message via event bus!
+                        sap.ui.getCore().getEventBus().publish("Internal", "permissionNotGranted", {
+                            message: "A new tab with the URL '" + sURL + "' could not be opened."
+                        });
                     });
 
             }.bind(this));
@@ -461,7 +485,6 @@ sap.ui.define([
         stopReplaying: function () {
             this._oModel.setProperty("/isExecuting", false);
             this._setReplaying(false);
-            // TODO disconnect here?!
         },
 
         /**

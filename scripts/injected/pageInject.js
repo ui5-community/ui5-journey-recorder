@@ -193,7 +193,6 @@ function _startRecording(oInformation) {
         }
 
         //Directly select again (woop)
-        // TODO rework as Promise or async function!
         setTimeout(function () {
             PageListener.getInstance().handleClickOn(oLastDom);
             oLastDom = null;
@@ -1119,9 +1118,8 @@ class TestItem {
         var aInformation = UI5ControlHelper.findControlsBySelector(oSelector);
 
         //remove all items, which are starting with "testDialog"..
-        // TODO Is this needed anyway?! If yes: "!startWith" or "!includes"? "indexOf() === -1" is "!includes"...
         var aItems = aInformation.filter(function(oItem) {
-            return oItem.getId().indexOf("testDialog") === -1;
+            return !oItem.getId().includes("testDialog");
         })
 
         var aItemsEnhanced = aItems.map(function(oItem) {
@@ -1268,7 +1266,6 @@ class TestItem {
 
             // identify whether the element ID has been generated:
             // if the ui5id contains a "__", it is most likely a generated ID which should NOT BE USESD LATER!
-            // TODO check might be enhanced, as it seems to be that all controls are adding "__[CONTORLNAME] as dynamic view..
             if (oReturn.identifier.ui5Id.includes("__")) {
                 oReturn.identifier.idGenerated = true;
             }
