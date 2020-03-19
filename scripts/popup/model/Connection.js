@@ -3,8 +3,9 @@ sap.ui.define([
     "sap/m/MessageBox"
 ], function (SuperObject, MessageBox) {
     "use strict";
-    var oInstance;
+
     var Connection = SuperObject.extend("com.ui5.testing.model.Connection", /** @lends com.ui5.testing.model.Connection.prototype */ {
+
         /**
          * Constructor for the Connection object
          */
@@ -26,8 +27,11 @@ sap.ui.define([
         },
 
         /**
+         * Establish a connection to the tab with the given ID.
          *
-         * @param {*} sTabId
+         * @param {string|integer} sTabId the ID of the tab to connect to
+         *
+         * @returns {Promise} a Promise indicating the connection
          */
         establishConnection: function (sTabId) {
             return new Promise(function (resolve, reject) {
@@ -104,7 +108,7 @@ sap.ui.define([
         },
 
         /**
-         * Handle all incomming message from the injection, for the current active port.
+         * Handle all incoming message from the injection, for the current active port.
          *
          * @param {object} oMsg the message send from the injected code.
          */
@@ -117,7 +121,7 @@ sap.ui.define([
         },
 
         /**
-         * Resets the connection.
+         * Reset the connection.
          */
         _onDisconnect: function () {
             this.resetConnection();
@@ -126,20 +130,20 @@ sap.ui.define([
         },
 
         /**
-         * Sends a message to the page
+         * Send a message through this connection.
          *
-         * @param {object} oInformation
+         * @param {object} oInformation the message to send
          */
         _sendMessage: function (oInformation) {
             this._port.postMessage(oInformation);
         },
 
         /**
-         * Sends a synchronous handled message to the page.
+         * Send a handled message to the page.
          *
-         * @param {object} oInformation
+         * @param {object} oInformation the message to send
          *
-         * @returns {Promise}
+         * @returns {Promise} a Promise fulfilled with the returning answer to the sent message
          */
         syncMessage: function (oInformation) {
             var oSynchronizer = {};
@@ -157,7 +161,7 @@ sap.ui.define([
         },
 
         /**
-         * Sends a asynchronous message to the UI5-Page
+         * Send a message to the page that does *not* expect an answer.
          *
          * @param {object} oInformation the information which should be send to the page
          */
@@ -202,6 +206,13 @@ sap.ui.define([
         }
     });
 
+    // #region Singleton
+
+    /**
+     * Singleton instance of the Connection.
+     */
+    var oInstance;
+
     return {
         /**
          * Getter function for the Singleton pattern
@@ -215,4 +226,7 @@ sap.ui.define([
             return oInstance;
         }
     };
+
+    // #endregion
+
 });

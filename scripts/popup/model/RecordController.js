@@ -116,7 +116,6 @@ sap.ui.define([
         focusPopup: function () {
             var iWindowId = Connection.getInstance().getConnectingWindowId();
             if (iWindowId) {
-                console.debug("changing to window: " + iWindowId)
                 chrome.windows.update(iWindowId, {
                     focused: true
                 });
@@ -207,8 +206,7 @@ sap.ui.define([
                                         // if an error occurred while closing the tab, do not proceed
                                         if (chrome.runtime.lastError) {
                                             reject();
-                                        }
-                                        else {
+                                        } else {
                                             resolve();
                                         }
                                     });
@@ -273,7 +271,7 @@ sap.ui.define([
                     ConnectionMessages.stopRecording(Connection.getInstance())
                     .then(function () {
                         ConnectionMessages.unlockPage(Connection.getInstance());
-                    }.bind(this));
+                    });
                 }
 
                 // update internal state
@@ -388,6 +386,8 @@ sap.ui.define([
          * Obtain the test element at the given position in the list of all test elements.
          *
          * @param {string|integer} iIdx the index of the test element to obtain
+         *
+         * @returns {object} the test element at the given index
          */
         getTestElementByIdx: function (iIdx) {
             return this._oModel.getProperty("/elements/" + iIdx);
@@ -659,9 +659,8 @@ sap.ui.define([
                         this._replayNextStepWithTimeout();
                     }
 
-                }
-                // if no result is given, we need to react in a uniform way: stop replaying
-                else {
+                } else { // if no result is given, we need to react in a uniform way: stop replaying
+
                     this.setTestStepExecuted(iCurrentStepIdx, sap.ui.core.MessageType.Error);
 
                     // publish any messages from the result
@@ -670,7 +669,7 @@ sap.ui.define([
                         title: "Replay error",
                         subtitle: "Test step returned no processable result",
                         description: "No processable result was returned for the test step executed last. Stopping..."
-                    }
+                    };
                     this._oModel.getProperty("/replayMessages").push(oMessage);
                     this._oModel.updateBindings(true); // force update as the array push in the previous line does not trigger one
 
@@ -727,18 +726,15 @@ sap.ui.define([
                         // resolve
                         resolve(oData);
                     });
-                }
-                // everything else cannot be handled and is consequently returned right away
-                else {
+                } else { // everything else cannot be handled and is consequently returned right away
                     resolve({
                         result: "error",
                         messages: []
                     });
-                    return false;
                 }
 
             });
-        },
+        }
 
         // #endregion
 
