@@ -18,7 +18,7 @@ There are several points of interest for users:
 
 ## Install
 
-The UI5 Test-Recorder is [available through the Chrome Web Store](https://chrome.google.com/webstore/detail/hcpkckcanianjcbiigbklddcpfiljmhj).
+The UI5 test recorder is [available through the Chrome Web Store](https://chrome.google.com/webstore/detail/hcpkckcanianjcbiigbklddcpfiljmhj).
 
 *Note*: Right now, only Chrome is supported, further browsers are under investigation.
 

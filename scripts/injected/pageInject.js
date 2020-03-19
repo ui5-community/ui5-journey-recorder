@@ -851,7 +851,7 @@ function _disconnect() {
 
     // ask user whether to reload page to remove any injections
     sap.m.MessageBox.error(
-        "The connection to the UI5 test-recorder has been lost. Do you want to reload this page to reset it?",
+        "The connection to the UI5 test recorder has been lost. Do you want to reload this page to reset it?",
         {
             icon: sap.m.MessageBox.Icon.QUESTION,
             title: "Reload page?",

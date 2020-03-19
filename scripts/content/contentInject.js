@@ -2,7 +2,7 @@
     "use strict";
 
     // prefix for any created DOM-node tags
-    const TAG_ID_PREFIX = "ui5-testrecorder-functions";
+    const TAG_ID_PREFIX = "UI5TR-functions";
 
     /**
      * ConnectionProxy class to handle any page–extension messaging.
@@ -63,7 +63,7 @@
         _openPort() {
             console.log("- Create connection to extension");
             this._port = chrome.runtime.connect({
-                name: ConnectionProxy._generateInjectID() + "-UI5Testrecorder"
+                name: ConnectionProxy._generateInjectID() + "-UI5TR"
             });
         }
 
