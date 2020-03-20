@@ -1363,9 +1363,13 @@ sap.ui.define([
                     // unlock view
                     this.getView().setBusy(false);
 
-                    resolve({
-                        rating: iGrade,
-                        messages: aMessages
+                    // update found elements a last time before resolving as the element-specific messages are
+                    // attached to the identified elements and are not updated otherwise
+                    this._getFoundElements().then(function() {
+                        resolve({
+                            rating: iGrade,
+                            messages: aMessages
+                        });
                     });
 
                 }.bind(this));
