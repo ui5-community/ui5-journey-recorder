@@ -850,19 +850,21 @@ function _disconnect() {
     PageCommunication.getInstance().reset();
 
     // ask user whether to reload page to remove any injections
-    sap.m.MessageBox.error(
-        "The connection to the UI5 test recorder has been lost. Do you want to reload this page to reset it?",
-        {
-            icon: sap.m.MessageBox.Icon.QUESTION,
-            title: "Reload page?",
-            actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-            onClose: function (sAction) {
-                if (sAction === sap.m.MessageBox.Action.YES) {
-                    location.reload();
+    sap.ui.require(["sap/m/MessageBox"], function(MessageBox) {
+        MessageBox.error(
+            "The connection to the UI5 test recorder has been lost. Do you want to reload this page to reset it?",
+            {
+                icon: MessageBox.Icon.QUESTION,
+                title: "Reload page?",
+                actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                onClose: function (sAction) {
+                    if (sAction === MessageBox.Action.YES) {
+                        location.reload();
+                    }
                 }
             }
-        }
-    );
+        );
+    });
 }
 
 // #endregion
@@ -935,7 +937,9 @@ class PageListener {
             e.stopImmediatePropagation();
         }.bind(this);
 
-        sap.m.MessageToast.show("UI5 test recorder fully injected!");
+        sap.ui.require(["sap/m/MessageToast"], function(MessageToast) {
+            MessageToast.show("UI5 test recorder fully injected!");
+        });
     }
 
     /**
@@ -2940,10 +2944,12 @@ function initializePage() {
 
 function setupTestRecorderFunctions() {
     // create a BusyDialog for screen locking
-    _oPageLockBusyDialog = new sap.m.BusyDialog("UI5TR_BusyDialog", {
-        title: "Finalize test step",
-        text: "Waiting until user saves test step in test-recorder popup..."
-    });
+    sap.ui.require(["sap/m/BusyDialog"], function(BusyDialog) {
+        _oPageLockBusyDialog = new BusyDialog("UI5TR_BusyDialog", {
+            title: "Finalize test step",
+            text: "Waiting until user saves test step in test-recorder popup..."
+        });
+    }.bind(this));
 
     //setup listener for messages from the Extension
     PageCommunication.getInstance().start();
