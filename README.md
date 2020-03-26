@@ -40,7 +40,7 @@ If you want to get the latest version that is not published, you can perform the
 Testing is important, testing – and using! – the UI5 test recorder even more.
 You can test the UI5 test recorder with every app provided with [the OpenUI5 Samples](https://openui5.hana.ondemand.com/#/controls).
 
-You can also use our [presentation at the UI5con 2019](https://msg-systems.github.io/ui5-testrecorder/presentation2019/index.html).
+You can also use our [presentation from the UI5con 2019](https://msg-systems.github.io/ui5-testrecorder/presentation2019/index.html).
 Additionally, we provide [a corresponding download package](https://msg-systems.github.io/ui5-testrecorder/downloads/presentation2019.7z) for offline usage.
 
 ## Contributing
