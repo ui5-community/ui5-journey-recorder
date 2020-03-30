@@ -35,15 +35,48 @@ sap.ui.define([
          */
         establishConnection: function (sTabId) {
             return new Promise(function (resolve, reject) {
+
+                // flag whether an injection is attempted already, so we do not perform actions several times,
+                // especially the injection script can break things
+                var bInjectionAttempted = false;
+
                 /**
-                 * Event handler for the page message to set the connection status between page and extension
+                 * Event handler for 'chrome.tabs.onUpdated' to check for the to-be-connected page to reloaded
+                 * and to inject the content script afterwards.
+                 *
+                 * Note: This function is triggered for all updates on tabs, not just the connected tab.
+                 *
+                 * @param {integer} iTabId the ID of the tab that was updated
+                 * @param {object} oChangeInfo lists the changes to the state of the tab that was updated
+                 * @param {chrome.tabs.Tab} oTab the Tab object of the tab that was updated
+                 */
+                function fnAttemptInjectionAfterReload(iTabId, oChangeInfo, oTab) {
+                    // check for correct tab and information
+                    if (!bInjectionAttempted && iTabId == sTabId && oChangeInfo.status === "complete") {
+                        // state that an injected is attempted so that no further ones are performed
+                        bInjectionAttempted = true;
+                        // perform the injection after some seconds
+                        setTimeout(function() {
+                            chrome.tabs.executeScript(iTabId, {
+                                file: '/scripts/content/contentInject.js'
+                            }, function() {
+                                // remove the listener after the attempt so that it is not triggered for any further
+                                // tab updates (later, somewhere else, ...)
+                                chrome.tabs.onUpdated.removeListener(fnAttemptInjectionAfterReload);
+                            });
+                        }, 2500);
+                    }
+                }
+
+                /**
+                 * Event handler for the page message to resolve the connection status between page and extension
                  *
                  * @param {string} sChannelId the channel we are on
                  * @param {string} sEventId  the event we are reacting on
                  * @param {object} oData the carrier data for the event
                  */
-                function fnCallback(sChannelId, sEventId, oData) {
-                    sap.ui.getCore().getEventBus().unsubscribe("Internal", "injectDone", fnCallback);
+                function fnInjectDoneCallback(sChannelId, sEventId, oData) {
+                    sap.ui.getCore().getEventBus().unsubscribe("Internal", "injectDone", fnInjectDoneCallback);
 
                     if (oData.status === "success") {
                         resolve(oData);
@@ -53,14 +86,23 @@ sap.ui.define([
                     }
                 }
 
-                sap.ui.getCore().getEventBus().subscribe("Internal", "injectDone", fnCallback.bind(this));
-
                 if (!this._sTabId) {
                     this._sTabId = sTabId;
 
-                    chrome.tabs.executeScript(this._sTabId, {
-                        file: '/scripts/content/contentInject.js'
-                    });
+                    // the connection is established as follows:
+                    // 1) reload the page in the to-be-connected tab,
+                    // 2) after reloading, wait some seconds and attempt content-script injection afterwards, and
+                    // 3) if injection is done, resolve the connection promise and, thus, trigger further steps.
+
+                    // 2) listen on tab updates due to reloading so that we can attempt the injection after that
+                    chrome.tabs.onUpdated.addListener(fnAttemptInjectionAfterReload);
+
+                    // 3) if injection is done, act to any event-bus message 'injectDone' to initiate any further steps
+                    sap.ui.getCore().getEventBus().subscribe("Internal", "injectDone", fnInjectDoneCallback.bind(this));
+
+                    // 1) reload page before attempting the injection to reset any internal counters of the UI5 page (e.g., view numbers).
+                    //    this triggers 'fnAttemptInjectionAfterReload'
+                    chrome.tabs.reload(this._sTabId, {bypassCache: false});
                 } else {
                     reject({
                         message: "There is already a connection, please stop before opening a new one."

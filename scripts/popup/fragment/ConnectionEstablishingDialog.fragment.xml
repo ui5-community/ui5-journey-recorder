@@ -4,6 +4,6 @@
 
     <BusyDialog
         title="Connecting to selected tab"
-        text="Waiting until the UI5 test recorder is able to connect..." />
+        text="The selected tab is reloaded to ensure reliable recording. Waiting until the UI5 test recorder is able to connect..." />
 
 </core:FragmentDefinition>
