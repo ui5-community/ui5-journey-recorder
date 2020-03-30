@@ -23,7 +23,7 @@
         </semantic:subHeader>
 
         <semantic:customFooterContent>
-            <Button icon="sap-icon://record" text="Record" press="onContinueRecording" visible="{= ${viewModel>/activeTab} === 'settings'}" />
+            <Button icon="sap-icon://record" text="Record" press="onContinueRecording" enabled="{= ${recordModel>/isReplaying} || ${recordModel>/isRecording} }" visible="{= ${viewModel>/activeTab} === 'settings'}" />
             <Button id="beExport" text="Export" icon="sap-icon://action" press="onExport" visible="{= ${viewModel>/activeTab} === 'settings'}" />
             <Button id="beDelete" type="Reject" text="Delete" press="onDelete" visible="{= ${viewModel>/activeTab} === 'settings'}" />
             <Button id="btCancel" type="Emphasized" text="Cancel" press="onNavBack" visible="{= ${viewModel>/activeTab} === 'settings'}" />
