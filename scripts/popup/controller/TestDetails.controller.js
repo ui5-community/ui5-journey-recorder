@@ -120,7 +120,7 @@ sap.ui.define([
                         this.getRouter().navTo("start");
                     }.bind(this)
                 });
-            } else if (RecordController.getInstance().isRecording() && this._bQuickMode === false) {
+            } else if (RecordController.getInstance().isRecording()) {
                 setTimeout(function () {
                     this._oRecordDialog.open();
                 }.bind(this), 100);
