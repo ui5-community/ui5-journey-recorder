@@ -1,12 +1,13 @@
 sap.ui.define([
     "com/ui5/testing/controller/BaseController",
     "sap/ui/model/json/JSONModel",
+    "sap/ui/core/Fragment",
     "com/ui5/testing/model/ChromeStorage",
-    "sap/m/MessageToast",
     "com/ui5/testing/model/RecordController",
     "com/ui5/testing/model/Utils",
-    "sap/m/MessageBox"
-], function (BaseController, JSONModel, ChromeStorage, MessageToast, RecordController, Utils, MessageBox) {
+    "sap/m/MessageBox",
+    "sap/m/MessageToast"
+], function (BaseController, JSONModel, Fragment, ChromeStorage, RecordController, Utils, MessageBox, MessageToast) {
     "use strict";
 
     return BaseController.extend("com.ui5.testing.controller.Start", {
@@ -157,12 +158,16 @@ sap.ui.define([
                 sUrl = oEvent.getSource().getBindingContext('viewModel').getObject().url;
             }
 
+            this._oConnectionEstablishingDialog.open();
+
             RecordController.getInstance().injectScript(iId)
             .then((oData) => {
+                this._oConnectionEstablishingDialog.close();
                 MessageToast.show(`Script injected: Page uses ${oData.name} at version ${oData.version}.`);
                 this.getRouter().navTo("TestDetailsCreate");
             })
             .catch((oData) => {
+                this._oConnectionEstablishingDialog.close();
                 MessageBox.error(oData.message);
             });
         },
@@ -231,6 +236,13 @@ sap.ui.define([
                 reader.onload = fnImportDone;
                 reader.readAsText(files[0]);
             }.bind(this), false);
+
+            Fragment.load({
+                name: "com.ui5.testing.fragment.ConnectionEstablishingDialog",
+                controller: this
+            }).then(function(oConnectionEstablishingDialog) {
+                this._oConnectionEstablishingDialog = oConnectionEstablishingDialog;
+            }.bind(this));
         },
 
         /**

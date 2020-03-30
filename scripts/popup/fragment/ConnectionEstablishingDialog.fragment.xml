@@ -1,0 +1,9 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <BusyDialog
+        title="Connecting to selected tab"
+        text="Waiting until the UI5 test recorder is able to connect..." />
+
+</core:FragmentDefinition>
