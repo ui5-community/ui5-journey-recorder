@@ -1,17 +1,18 @@
 sap.ui.define([
     "com/ui5/testing/controller/BaseController",
-    "com/ui5/testing/model/Communication",
-    "com/ui5/testing/model/RecordController",
-    "com/ui5/testing/model/Navigation",
     "sap/ui/model/json/JSONModel",
+    "sap/ui/core/Fragment",
     "com/ui5/testing/model/ChromeStorage",
+    "com/ui5/testing/model/RecordController",
+    "com/ui5/testing/model/Utils",
+    "sap/m/MessageBox",
     "sap/m/MessageToast"
-], function (BaseController, Communication, RecordController, Navigation, JSONModel, ChromeStorage, MessageToast) {
+], function (BaseController, JSONModel, Fragment, ChromeStorage, RecordController, Utils, MessageBox, MessageToast) {
     "use strict";
 
     return BaseController.extend("com.ui5.testing.controller.Start", {
         /**
-         * 
+         *
          */
         onInit: function () {
             this._oModel = new JSONModel({
@@ -19,27 +20,7 @@ sap.ui.define([
                 currentUrl: ""
             });
             this.getView().setModel(this._oModel, "viewModel");
-            this.getView().setModel(RecordController.getModel(), "recordModel");
-            RecordController.init(this.getOwnerComponent());
-            this.getView().setModel(Navigation.getModel(), "navModel");
-            this._getCurrentURL();
             this.getRouter().getRoute("start").attachPatternMatched(this._loadTableItems, this);
-        },
-
-        /**
-         *
-         */
-        _getCurrentURL: function () {
-            chrome.tabs.query({
-                active: true,
-                currentWindow: false
-            }, function (tabs) {
-                var sUrl = "";
-                if (tabs && tabs[0]) {
-                    sUrl = tabs[0].url;
-                }
-                this._oModel.setProperty("/currentUrl", sUrl);
-            }.bind(this));
         },
 
         /**
@@ -72,7 +53,7 @@ sap.ui.define([
                 for (var i = 0; i < tabs.length; i++) {
                     if (tabs[i].url && tabs[i].url.indexOf('chrome:') < 0) {
                         /**
-                         * 
+                         *
                          */
                         function checkUI5() {
                             var normal = [].slice.call(document.head.getElementsByTagName('script')).filter(function (s) {
@@ -86,9 +67,9 @@ sap.ui.define([
                         }
 
                         /**
-                         * 
-                         * @param {*} tabId 
-                         * @param {*} tabUrl 
+                         *
+                         * @param {*} tabId
+                         * @param {*} tabUrl
                          */
                         function callback(tabId, tabUrl) {
                             return function (results) {
@@ -121,29 +102,22 @@ sap.ui.define([
         _getUI5Urls: function () {
             var bRequestUI5 = this.getView().byId('ui5Switch').getState();
 
-            chrome.permissions.contains({
-                permissions: ['tabs'],
-                origins: ["https://*/*", "http://*/*"]
-            }, function (result) {
-                if (!bRequestUI5) {
-                    this._getTabsForAll();
-                } else if (result) {
-                    this._getTabsForUI5();
-                } else {
-                    chrome.permissions.request({
-                        permissions: ['tabs'],
-                        origins: ["https://*/*", "http://*/*"]
-                    }, function (result) {
-                        if (result) {
-                            //extract to method
+            if (!bRequestUI5) {
+                this._getTabsForAll();
+            } else {
+                Utils.requestTabsPermission()
+                    .then(
+                        function () {
                             this._getTabsForUI5();
-                        } else {
+                        }.bind(this)
+                    )
+                    .catch(
+                        function () {
                             MessageToast.show('No permissions granted! Showing only active tabs');
                             this._getTabsForAll();
-                        }
-                    }.bind(this));
-                }
-            }.bind(this));
+                        }.bind(this)
+                    );
+            }
         },
 
         /**
@@ -160,8 +134,7 @@ sap.ui.define([
             var vTabId = oEvent.getSource().getBindingContext('viewModel').getObject().id;
             chrome.tabs.update(vTabId, {
                 "active": true
-            }, function (tab) {});
-            chrome.tabs.get(vTabId, function (tab) {
+            }, function (tab) {
                 chrome.windows.update(tab.windowId, {
                     focused: true
                 });
@@ -184,12 +157,18 @@ sap.ui.define([
                 iId = oEvent.getSource().getBindingContext('viewModel').getObject().id;
                 sUrl = oEvent.getSource().getBindingContext('viewModel').getObject().url;
             }
-            RecordController.injectScript(iId, sUrl).then(function () {
-                this.getModel("navModel").setProperty("/elements", []);
-                this.getModel("navModel").setProperty("/elementLength", 0);
+
+            this._oConnectionEstablishingDialog.open();
+
+            RecordController.getInstance().injectScript(iId)
+            .then((oData) => {
+                this._oConnectionEstablishingDialog.close();
+                MessageToast.show(`Script injected: Page uses ${oData.name} at version ${oData.version}.`);
                 this.getRouter().navTo("TestDetailsCreate");
-            }.bind(this), function () {
-                return;
+            })
+            .catch((oData) => {
+                this._oConnectionEstablishingDialog.close();
+                MessageBox.error(oData.message);
             });
         },
 
@@ -202,7 +181,7 @@ sap.ui.define([
                 iId = oEvent.getSource().getBindingContext('viewModel').getObject().id;
                 sUrl = oEvent.getSource().getBindingContext('viewModel').getObject().url;
             }
-            RecordController.injectScript(iId, sUrl).then(function () {
+            RecordController.getInstance().injectScript(iId, sUrl).then(function () {
                 this.getRouter().navTo("mockserver");
             }.bind(this), function () {
                 return;
@@ -257,12 +236,21 @@ sap.ui.define([
                 reader.onload = fnImportDone;
                 reader.readAsText(files[0]);
             }.bind(this), false);
+
+            Fragment.load({
+                name: "com.ui5.testing.fragment.ConnectionEstablishingDialog",
+                controller: this
+            }).then(function(oConnectionEstablishingDialog) {
+                this._oConnectionEstablishingDialog = oConnectionEstablishingDialog;
+            }.bind(this));
         },
 
         /**
          *
          */
         _importDone: function (oData) {
+            oData.test.uuid = Utils.getUUIDv4();
+            oData.test.createdAt = new Date().getTime();
             ChromeStorage.saveRecord(oData).then(function () {
                 ChromeStorage.getRecords({
                     path: '/items',

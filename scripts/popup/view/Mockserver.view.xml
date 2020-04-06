@@ -1,23 +1,23 @@
-<mvc:View 
-    xmlns="sap.m" 
-    xmlns:l="sap.ui.layout" 
-    xmlns:mvc="sap.ui.core.mvc" 
-    xmlns:f="sap.ui.layout.form" 
-    xmlns:t="sap.ui.table" 
-    xmlns:code="sap.ui.codeeditor" 
-    xmlns:u="sap.ui.unified" 
-    xmlns:av="sap.f" 
-    xmlns:semantic="sap.m.semantic" 
+<mvc:View
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:t="sap.ui.table"
+    xmlns:code="sap.ui.codeeditor"
+    xmlns:u="sap.ui.unified"
+    xmlns:av="sap.f"
+    xmlns:semantic="sap.m.semantic"
     xmlns:core="sap.ui.core"
-	controllerName="com.ui5.testing.controller.Mockserver" >
+    controllerName="com.ui5.testing.controller.Mockserver" >
     <Page showFooter="true">
         <customHeader>
             <Bar>
                 <contentLeft>
-                    <Button 
-						icon="sap-icon://nav-back" 
-						tooltip="Navigate Backwards" 
-						press="onNavBack"/>
+                    <Button
+                        icon="sap-icon://nav-back"
+                        tooltip="Navigate Backwards"
+                        press="onNavBack"/>
                 </contentLeft>
                 <contentMiddle>
                     <Title text="OData-Explorer"/>
@@ -29,11 +29,11 @@
         <subHeader>
             <Toolbar>
                 <ToolbarSpacer/>
-                <Select 
-					id="listSelect" 
-					change="onServiceSelectionChange" 
-					items="{mockserver>/services}" 
-					selectedKey="{viewModel>/selectedService}">
+                <Select
+                    id="listSelect"
+                    change="onServiceSelectionChange"
+                    items="{mockserver>/services}"
+                    selectedKey="{viewModel>/selectedService}">
                     <core:ListItem key="{mockserver>title}" text="{mockserver>title}" />
                 </Select>
             </Toolbar>
@@ -46,22 +46,22 @@
                     <ToolbarSpacer/>
                 </Toolbar>
             </headerToolbar>
-            <f:SimpleForm 
-				editable="true" 
-				layout="ResponsiveGridLayout" 
-				labelSpanXL="3" 
-				labelSpanL="3" 
-				labelSpanM="3" 
-				labelSpanS="12" 
-				adjustLabelSpan="false" 
-				emptySpanXL="4" 
-				emptySpanL="4" 
-				emptySpanM="4" 
-				emptySpanS="0" 
-				columnsXL="1" 
-				columnsL="1" 
-				columnsM="1" 
-				singleContainerFullSize="false">
+            <f:SimpleForm
+                editable="true"
+                layout="ResponsiveGridLayout"
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="3"
+                labelSpanS="12"
+                adjustLabelSpan="false"
+                emptySpanXL="4"
+                emptySpanL="4"
+                emptySpanM="4"
+                emptySpanS="0"
+                columnsXL="1"
+                columnsL="1"
+                columnsM="1"
+                singleContainerFullSize="false">
                 <f:content>
                     <Label text="Server-Path"/>
                     <Input value="{mockserver>path}"/>
@@ -73,12 +73,12 @@
 
         <l:Splitter>
             <VBox id="partList">
-                <List 
-					id="entityList" 
-					selectionChange="onSelectionChange" 
-					mode="SingleSelectMaster" 
-					items="{ path: 'mockserver>service/entitySet', sorter: { path: 'name' }}" 
-					noDataText="No Entities Found">
+                <List
+                    id="entityList"
+                    selectionChange="onSelectionChange"
+                    mode="SingleSelectMaster"
+                    items="{ path: 'mockserver>service/entitySet', sorter: { path: 'name' }}"
+                    noDataText="No Entities Found">
                     <headerToolbar>
                         <Toolbar>
                             <SearchField liveChange="onSearch" width="100%" />
@@ -117,22 +117,22 @@
                             <Button icon="sap-icon://play" press="onExecute"/>
                         </Toolbar>
                     </headerToolbar>
-                    <f:SimpleForm 
-						editable="true" 
-						layout="ResponsiveGridLayout" 
-						labelSpanXL="3" 
-						labelSpanL="3" 
-						labelSpanM="3" 
-						labelSpanS="12" 
-						adjustLabelSpan="false" 
-						emptySpanXL="4" 
-						emptySpanL="4" 
-						emptySpanM="4" 
-						emptySpanS="0" 
-						columnsXL="1" 
-						columnsL="1" 
-						columnsM="1" 
-						singleContainerFullSize="false">
+                    <f:SimpleForm
+                        editable="true"
+                        layout="ResponsiveGridLayout"
+                        labelSpanXL="3"
+                        labelSpanL="3"
+                        labelSpanM="3"
+                        labelSpanS="12"
+                        adjustLabelSpan="false"
+                        emptySpanXL="4"
+                        emptySpanL="4"
+                        emptySpanM="4"
+                        emptySpanS="0"
+                        columnsXL="1"
+                        columnsL="1"
+                        columnsM="1"
+                        singleContainerFullSize="false">
                         <f:content>
                             <Label text="Entity-Name"/>
                             <Input value="{mockserver>entity/name}" editable="false"/>
@@ -154,11 +154,11 @@
                             </Select>
 
                             <Label text="Other-Entity" visible="{= ${mockserver>readLogic} === 'fromOther' }"/>
-                            <Select 
-								items="{viewModel>/currentService/entitySet}" 
-								change="onSelReadEntityChange" 
-								selectedKey="{mockserver>readEntitySet}" 
-								visible="{= ${mockserver>readLogic} === 'fromOther' }">
+                            <Select
+                                items="{viewModel>/currentService/entitySet}"
+                                change="onSelReadEntityChange"
+                                selectedKey="{mockserver>readEntitySet}"
+                                visible="{= ${mockserver>readLogic} === 'fromOther' }">
                                 <core:ListItem key="{viewModel>entity/name}" text="{viewModel>entity/name}" />
                             </Select>
                         </f:content>
@@ -217,13 +217,13 @@
                                     <Input editable="{= ${mockserver>changeIndicator} !== ''}" value="{mockserver>name}"/>
                                     <Input editable="{= ${mockserver>changeIndicator} !== ''}" value="{mockserver>type}"/>
                                     <HBox width="100%">
-                                        <Text 
-											width="100%" 
-											text="{ parts: [{ path: 'mockserver>valueGen'}, 
-											                { path: 'mockserver>faker' }, 
-															{ path: 'mockserver>fixedValue' }, 
-															{ path: 'mockserver>multipleValues' }], 
-													formatter: '._genValueMode'}">
+                                        <Text
+                                            width="100%"
+                                            text="{ parts: [{ path: 'mockserver>valueGen'},
+                                                            { path: 'mockserver>faker' },
+                                                            { path: 'mockserver>fixedValue' },
+                                                            { path: 'mockserver>multipleValues' }],
+                                                    formatter: '._genValueMode'}">
                                             <layoutData>
                                                 <FlexItemData alignSelf="Center" growFactor="1"/>
                                             </layoutData>
@@ -341,16 +341,16 @@
                                     <Button text="Play" icon="sap-icon://play" press="onExecuteGetMultiple" type="Transparent"/>
                                     <ToolbarSpacer/>
                                 </Toolbar>
-                                <t:Table 
-									id="previewResults" 
-									enableSelectAll="false" 
-									columns="{mockserver>attributes}" 
-									alternateRowColors="true" 
-									showColumnVisibilityMenu="true" 
-									rowActionCount="1" 
-									visibleRowCount="20" 
-									width="100%" 
-									selectionMode="MultiToggle">
+                                <t:Table
+                                    id="previewResults"
+                                    enableSelectAll="false"
+                                    columns="{mockserver>attributes}"
+                                    alternateRowColors="true"
+                                    showColumnVisibilityMenu="true"
+                                    rowActionCount="1"
+                                    visibleRowCount="20"
+                                    width="100%"
+                                    selectionMode="MultiToggle">
                                     <t:columns>
                                         <t:Column filterProperty="{mockserver>name}" sortProperty="{mockserver>name}" autoResizable="true">
                                             <Label text="{mockserver>name}" tooltip="{mockserver>name}"/>

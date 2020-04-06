@@ -208,11 +208,10 @@ This project may include APIs to SAP or third party products or services. The us
 
 
 ------------------------------------------------------------------------------
-ui5TestAutomation SUBCOMPONENTS:
+SUB-COMPONENTS of the UI5 Test Recorder:
 
-ui5TestAutomation includes the following subcomponents that are subject to separate license terms.
-Your use of these subcomponents is subject to the separate license terms applicable to
-each subcomponent.
+The UI5 test recorder includes the following sub-components that are subject to separate license terms.
+Your use of these sub-components is subject to the corresponding license terms applicable to each sub-component.
 
 Component: OpenUI5
 Licensor: SAP

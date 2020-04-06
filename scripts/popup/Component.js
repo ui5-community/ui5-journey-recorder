@@ -1,5 +1,5 @@
 sap.ui.define([
-    'sap/ui/core/UIComponent',
+    'sap/ui/core/UIComponent'
 ], function (UIComponent) {
     'use strict';
 
@@ -102,11 +102,6 @@ sap.ui.define([
                             {
                                 pattern: "/TestDetails/{TestId}",
                                 name: "TestDetails",
-                                target: "TestDetails"
-                            },
-                            {
-                                pattern: "/testReplay/{TestId}",
-                                name: "testReplay",
                                 target: "TestDetails"
                             },
                             {

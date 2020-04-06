@@ -1,16 +1,16 @@
-<mvc:View 
-    xmlns="sap.m" 
-    xmlns:mvc="sap.ui.core.mvc" 
-    xmlns:f="sap.ui.layout.form" 
-    xmlns:code="sap.ui.codeeditor" 
-    xmlns:semantic="sap.m.semantic" 
-    xmlns:core="sap.ui.core" 
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:code="sap.ui.codeeditor"
+    xmlns:semantic="sap.m.semantic"
+    xmlns:core="sap.ui.core"
     controllerName="com.ui5.testing.controller.TestStep">
-    <semantic:FullscreenPage 
-        navButtonPress="onNavBack" 
-        showSubHeader="false" 
-        title="{viewModel>/element/item/identifier/ui5Id}" 
-        showNavButton="true" 
+    <semantic:FullscreenPage
+        navButtonPress="onNavBack"
+        showSubHeader="false"
+        title="{viewModel>/element/item/identifier/ui5Id}"
+        showNavButton="true"
         busy="{viewModel>/busy}"
         showFooter="{= ${viewModel>/quickMode} === true || ${viewModel>/quickMode} === false}">
         <semantic:customHeaderContent>
@@ -18,7 +18,7 @@
                 <menu>
                     <Menu itemSelected="onMenuAction">
                         <items>
-                            <MenuItem text="Parent" items="{viewModel>/element/item/parents}">
+                            <MenuItem text="Parent" items="{viewModel>/element/item/parents}" enabled="{= ${viewModel>/element/item/parents}.length > 0 }">
                                 <items>
                                     <MenuItem text="{viewModel>identifier/ui5Id}" press="onSelectItem"/>
                                 </items>
@@ -38,24 +38,25 @@
                 </menu>
             </MenuButton>
         </semantic:customHeaderContent>
-        
+
         <semantic:customFooterContent>
-            <Button visible="{= ${viewModel>/quickMode} === true }" type="Reject" text="Cancel" press="_onStopFromQuick"/>
-            <Button visible="{= ${viewModel>/quickMode} === true }" type="Accept" text="Re-Select" press="_onNewStepFromQuick"/>
-            <Button visible="{= ${viewModel>/quickMode} === false }" type="Reject" text="Cancel" press="_onCancelStep"/>
-            <Button visible="{= ${viewModel>/quickMode} === false }" type="Accept" text="Save Step" press="_onSave"/>
+            <Button visible="{= ${viewModel>/quickMode} === true }" type="Reject" text="Cancel" press="onStopFromQuick"/>
+            <Button visible="{= ${viewModel>/quickMode} === true }" type="Accept" text="Re-Select" press="onNewStepFromQuick"/>
+            <Button visible="{= ${viewModel>/quickMode} === false }" type="Reject" text="Cancel" press="onCancelStep"/>
+            <Button visible="{= ${viewModel>/quickMode} === false }" id="btSaveFooter" type="Accept" text="Save Step" press="onSave"/>
         </semantic:customFooterContent>
 
         <semantic:content>
-            <MessageStrip id="offlineStrip" text="You will see recorded information about a test step. The functionality for changes are limited." type="Warning" showIcon="true" visible="{viewModel>/blocked}"/>
+            <MessageStrip id="displayStrip" text="This is recorded information about a test step. Changes are limited and wrong information about found items may be displayed the information is retrieved in real time from the connected page." type="Warning" showIcon="true" visible="{viewModel>/blocked}"/>
+            <MessageStrip id="offlineStrip" text="The information about this test step is not complete as no items can be retrieved from the page right now. This is only possible while recording." type="Warning" showIcon="true" visible="{= !${viewModel>/isInjected} &amp;&amp; !${viewModel>/blocked} }"/>
             <Panel expandable="false" expanded="true" width="auto">
                 <headerToolbar>
-                    <Toolbar active="true" press="onExpandControl" height="3rem" style="Clear" visible="{= ${viewModel>/quickMode} === true || ${viewModel>/quickMode} === false}">
+                    <Toolbar active="true" height="3rem" style="Clear" visible="{= ${viewModel>/quickMode} === true || ${viewModel>/quickMode} === false}">
                         <ToolbarSpacer/>
-                        <Button visible="{= ${viewModel>/quickMode} === true }" type="Reject" text="Cancel" press="_onStopFromQuick"/>
-                        <Button visible="{= ${viewModel>/quickMode} === true }" type="Accept" text="Re-Select" press="_onNewStepFromQuick"/>
-                        <Button visible="{= ${viewModel>/quickMode} === false }" id="btClose" type="Reject" text="Cancel" press="_onCancelStep"/>
-                        <Button visible="{= ${viewModel>/quickMode} === false }" id="btSave" type="Accept" text="Save Step" press="_onSave"/>
+                        <Button visible="{= ${viewModel>/quickMode} === true }" type="Reject" text="Cancel" press="onStopFromQuick"/>
+                        <Button visible="{= ${viewModel>/quickMode} === true }" type="Accept" text="Re-Select" press="onNewStepFromQuick"/>
+                        <Button visible="{= ${viewModel>/quickMode} === false }" id="btClose" type="Reject" text="Cancel" press="onCancelStep"/>
+                        <Button visible="{= ${viewModel>/quickMode} === false }" id="btSaveHeader" type="Accept" text="Save Step" press="onSave"/>
                     </Toolbar>
                 </headerToolbar>
                 <f:SimpleForm layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
@@ -72,6 +73,7 @@
                             </Select>
                             <Button icon="sap-icon://settings" enabled="{= !${viewModel>/blocked}}" press="onShowActionSettings"/>
                         </HBox>
+
                         <Label text="Action" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) }"/>
                         <HBox visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) }">
                             <Select id="tstActType" enabled="{= !${viewModel>/blocked}}" items="{constants>/stepActions}" width="100%" change="onUpdateAction" selectedKey="{viewModel>/element/property/actKey}">
@@ -168,17 +170,17 @@
                         <items>
                             <ColumnListItem>
                                 <cells>
-                                    <Select items="{viewModel>/dynamic/attrType}" change="onAttributeTypeChanged" selectedKey="{viewModel>attributeType}">
+                                    <Select items="{ path: 'viewModel>/dynamic/attrType', templateShareable: false }" change="onAttributeTypeChanged" selectedKey="{viewModel>attributeType}">
                                         <items>
                                             <core:Item text="{viewModel>text}" key="{viewModel>key}"/>
                                         </items>
                                     </Select>
-                                    <Select change="onCriteriaTypeChanged" selectedKey="{ path: 'viewModel>criteriaType'}" items="{ path:'viewModel>criteriaTypes', sorter: { path: 'criteriaText' }}">
+                                    <Select change="onCriteriaTypeChanged" selectedKey="{ path: 'viewModel>criteriaType'}" items="{ path:'viewModel>criteriaTypes', sorter: { path: 'criteriaText' }, templateShareable: false }">
                                         <items>
                                             <core:Item text="{viewModel>criteriaText}" key="{viewModel>criteriaKey}"/>
                                         </items>
                                     </Select>
-                                    <Select change="onSubCriteriaTypeChanged" showSecondaryValues="true" width="13em" selectedKey="{ path: 'viewModel>subCriteriaType' }" items="{ path: 'viewModel>subCriteriaTypes', sorter: { path: 'subCriteriaText' }}">
+                                    <Select change="onSubCriteriaTypeChanged" showSecondaryValues="true" width="13em" selectedKey="{ path: 'viewModel>subCriteriaType' }" items="{ path: 'viewModel>subCriteriaTypes', sorter: { path: 'subCriteriaText' }, templateShareable: false }">
                                         <items>
                                             <core:ListItem text="{viewModel>subCriteriaText}" key="{viewModel>subCriteriaType}" additionalText="{viewModel>calculatedValue}" tooltip="{viewModel>calculatedValueUnres}"/>
                                         </items>
@@ -195,9 +197,9 @@
                 <headerToolbar>
                     <Toolbar active="true" press="onExpandControl" height="3em" style="Clear">
                         <content>
-                            <ObjectStatus text="Support-Assistant ( {viewModel>/element/supportAssistantResultLength} )" state="{viewModel>/element/property/elementState}"/>
+                            <ObjectStatus text="Support Assistant ( {= ${viewModel>/element/supportAssistantResult/issues}.length } )" state="{viewModel>/element/property/elementState}"/>
                             <ToolbarSpacer/>
-                            <Button press="onRunSupportAssistant" icon="sap-icon://media-play" tooltip="Run Support Assistant or selected component"/>
+                            <Button press="onRunSupportAssistant" icon="sap-icon://media-play" tooltip="Run Support Assistant on selected component" />
                         </content>
                     </Toolbar>
                 </headerToolbar>
@@ -207,14 +209,14 @@
                             <Label text="Ignore Global Context"/>
                             <CheckBox selected="{viewModel>/element/property/supportAssistant/ignoreGlobal}" select="onRunSupportAssistant"/>
                             <Label text="Exclude Rules"/>
-                            <MultiComboBox selectedKeys="{viewModel>/element/supportAssistant/supportRules}" selectionFinish="onRunSupportAssistant" items="{ path: 'viewModel>/statics/supportRules',
+                            <MultiComboBox selectedKeys="{viewModel>/element/property/supportAssistant/supportRules}" selectionFinish="onRunSupportAssistant" items="{ path: 'viewModel>/statics/supportRules',
                                          sorter: { path: 'libName' }}">
                                 <core:Item key="{viewModel>libName}/{viewModel>ruleId}" text="{viewModel>libName} - {viewModel>ruleId}"/>
                             </MultiComboBox>
                         </f:content>
                     </f:SimpleForm>
 
-                    <Table id="idSupportAssistantTable" inset="false" items="{viewModel>/element/supportAssistantResult}">
+                    <Table id="idSupportAssistantTable" inset="false" items="{viewModel>/element/supportAssistantResult/issues}">
                         <columns>
                             <Column width="4em">
                                 <Text text="Severity"/>
@@ -316,7 +318,7 @@
                             <Column minScreenWidth="Tablet" demandPopin="true">
                                 <Text text="Type"/>
                             </Column>
-                            <Column minScreenWidth="Tablet" demandPopin="true" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' ) }">
+                            <Column minScreenWidth="Tablet" demandPopin="true" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' || ${viewModel>/element/property/assKey} === 'MTC' ) }">
                                 <Text text="Assertion Status"/>
                             </Column>
                         </columns>
@@ -331,7 +333,7 @@
                                         </Text>
                                     </HBox>
                                     <Text text="{viewModel>metadata/elementName}"/>
-                                    <HBox visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' ) }">
+                                    <HBox visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' || ${viewModel>/element/property/assKey} === 'MTC' ) }">
                                         <core:Icon src='sap-icon://accept' color="Positive" visible="{viewModel>assertionOK}"/>
                                         <Button press="onShowAssertionIssue" icon='sap-icon://decline' type="Reject" visible="{= ${viewModel>assertionOK} === false}"/>
                                     </HBox>

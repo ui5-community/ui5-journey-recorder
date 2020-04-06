@@ -1,6 +1,4 @@
-coverage
 node_modules/
+ui5/
+faker.js
 dist/
-doc/
-reports/
-changes_preview.js

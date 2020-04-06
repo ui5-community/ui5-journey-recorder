@@ -1,16 +1,17 @@
 sap.ui.define([
     "com/ui5/testing/controller/BaseController",
     "sap/ui/model/json/JSONModel",
-    'sap/m/MessagePopover',
-    'sap/m/MessageItem',
-    "com/ui5/testing/model/Navigation",
-    "com/ui5/testing/model/Communication",
+    "sap/ui/core/Fragment",
+    "com/ui5/testing/model/Connection",
+    "com/ui5/testing/model/ConnectionMessages",
     "com/ui5/testing/model/RecordController",
     "com/ui5/testing/model/GlobalSettings",
     "com/ui5/testing/model/CodeHelper",
     "com/ui5/testing/model/ChromeStorage",
     "com/ui5/testing/model/Utils",
-    "sap/m/MessageToast",
+    "sap/m/MessageBox",
+    'sap/m/MessagePopover',
+    'sap/m/MessageItem',
     "sap/m/Dialog",
     "sap/m/Button",
     "sap/m/Text",
@@ -18,16 +19,17 @@ sap.ui.define([
     "com/ui5/testing/libs/FileSaver.min"
 ], function (Controller,
     JSONModel,
-    MessagePopover,
-    MessageItem,
-    Navigation,
-    Communication,
+    Fragment,
+    Connection,
+    ConnectionMessages,
     RecordController,
     GlobalSettings,
     CodeHelper,
     ChromeStorage,
     Utils,
-    MessageToast,
+    MessageBox,
+    MessagePopover,
+    MessageItem,
     Dialog,
     Button,
     Text) {
@@ -35,11 +37,11 @@ sap.ui.define([
 
     return Controller.extend("com.ui5.testing.controller.TestDetails", {
         utils: Utils,
+        _oRecordDialog: null,
+        _oMessagePopover: null,
         _oModel: new JSONModel({
             codes: [],
             test: {},
-            replayMode: false,
-            replayType: 0,
             routeName: "",
             codeSettings: {
                 language: "UI5",
@@ -57,151 +59,214 @@ sap.ui.define([
             },
             activeTab: 'settings'
         }),
-        _bActive: false,
-        _iGlobal: 0,
-        _bStarted: false,
-        _bReplayMode: false,
 
         /**
          *
          */
         onInit: function () {
-            Communication.registerEvent("itemSelected", this._onItemSelected.bind(this));
-
+            // set models
             this.getView().setModel(this._oModel, "viewModel");
-            var oRecordModel = RecordController.getModel();
-            this.getView().setModel(oRecordModel, "recordModel");
-            oRecordModel.attachPropertyChange(function (oEvent) {
-                var oPara = oEvent.getParameters();
-                if (oPara.path === "/targetUI5Version" && oPara.value && oPara.value !== "") {
-                    this.getModel('viewModel').setProperty('/codeSettings/ui5Version', oPara.value);
-                }
-            });
-
-            this.getView().setModel(Navigation.getModel(), "navModel");
+            this.getView().setModel(RecordController.getInstance().getModel(), "recordModel");
             this.getView().setModel(GlobalSettings.getModel(), "settings");
-            this.getModel('settings').setProperty('/settings/replayType', this.getModel('settings').getProperty('/settingsDefault/replayType'));
 
+            // due to the binding, the settings value gets overridden, so a retrieval of the default value for the replay interval/timeout is needed
+            this.getModel("settings").setProperty("/settings/defaultReplayInterval", this.getModel("settings").getProperty("/settingsDefault/defaultReplayInterval"));
+            this.getModel("settings").setProperty("/settings/defaultReplayTimeout", this.getModel("settings").getProperty("/settingsDefault/defaultReplayTimeout"));
+
+            // initialize recording dialog and reset replay messages
             this._createDialog();
+
+            // attach routes
             this.getOwnerComponent().getRouter().getRoute("TestDetails").attachPatternMatched(this._onTestDisplay, this);
             this.getOwnerComponent().getRouter().getRoute("TestDetailsCreate").attachPatternMatched(this._onTestCreate, this);
             this.getOwnerComponent().getRouter().getRoute("TestDetailsCreateQuick").attachPatternMatched(this._onTestCreateQuick, this);
-            this.getOwnerComponent().getRouter().getRoute("testReplay").attachPatternMatched(this._onTestReplay, this);
-            Communication.registerEvent("loaded", this._onInjectionDone.bind(this));
 
-            //Why is this function subscribed?
-            //sap.ui.getCore().getEventBus().subscribe("RecordController", "windowFocusLost", this._recordStopped, this);
+            // add event listener for item selections on page
+            sap.ui.getCore().getEventBus().subscribe("Internal", "itemSelected", this._onItemSelected.bind(this));
+            sap.ui.getCore().getEventBus().subscribe("Internal", "replayFinished", this._onCheckRecordContinuing.bind(this));
+            sap.ui.getCore().getEventBus().subscribe("Internal", "pageDisconnected", this._onPageDisconnected.bind(this));
         },
 
-        /**
-         * 
-         * @param {*} oEvent 
-         */
-        onReplaySingleStep: function (oEvent) {
-            //var oLine = oEvent.getSource().getParent();
-            RecordController.focusTargetWindow();
-            var oLine = this.getView().byId('tblPerformedSteps').getItems()[this._iCurrentStep];
-            this._executeAction().then(function (oResult) {
-                var performedStep = oLine;
-                //this is our custom object
-                if (oResult && oResult.type && oResult.type === "ASS") {
-                    switch (oResult.result) {
-                        case "success":
-                            performedStep.setHighlight(sap.ui.core.MessageType.Success);
-                            this.replayNextStep();
-                            break;
-                        case "warning":
-                            performedStep.setHighlight(sap.ui.core.MessageType.Warning);
-                            this.replayNextStep();
-                            break;
-                        case "error":
-                            this.getModel("viewModel").setProperty("/replayMode", false);
-                            MessageToast.show('Assertion not met, check your setup!');
-                            performedStep.setHighlight(sap.ui.core.MessageType.Error);
-                            this._bReplayMode = false;
-                            this.getModel("viewModel").setProperty("/replayMode", false);
-                            RecordController.stopRecording();
-                            this.getRouter().navTo("TestDetails", {
-                                TestId: this.getModel("navModel").getProperty("/test/uuid")
-                            });
-                            break;
-                        default:
-                            jQuery.sap.log.info(`No handling for no event`);
-                    }
-                    //This is the object back from the Communication object.
-                } else if (oResult && oResult.uuid) {
-                    if (oResult.processed) {
-                        performedStep.setHighlight(sap.ui.core.MessageType.Success);
-                        this.replayNextStep();
-                    } else {
-                        this.getModel("viewModel").setProperty("/replayMode", false);
-                        MessageToast.show('Action can not be performed, check your setup!');
-                        performedStep.setHighlight(sap.ui.core.MessageType.Error);
-                    }
-                } else if (oResult && oResult.type && oResult.type === "ACT" && oResult.result === "error") {
-                    this.getModel("viewModel").setProperty("/replayMode", false);
-                    MessageToast.show('Action can not be performed, check your setup!');
-                    performedStep.setHighlight(sap.ui.core.MessageType.Error);
-                }
-            }.bind(this));
-        },
+        // #region Routes
 
         /**
-         * 
+         *
          */
-        replayNextStep: function () {
-            var aEvent = this.getModel("navModel").getProperty("/elements");
-            this._iCurrentStep += 1;
-            this._updatePlayButton();
-            if (this._iCurrentStep >= aEvent.length) {
-                this._bReplayMode = false;
-                this.getModel("viewModel").setProperty("/replayMode", false);
-                RecordController.stopRecording();
-                //RecordController.startRecording();
-                this.checkRecordContinuing();
-                this.getRouter().navTo("TestDetails", {
-                    TestId: this.getModel("navModel").getProperty("/test/uuid")
+        _onTestDisplay: function (oEvent) {
+            this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
+
+            RecordController.getInstance().stopReplaying();
+            this._sTestId = oEvent.getParameter("arguments").TestId;
+            var sTargetUUID = this._sTestId;
+            var sCurrentUUID = RecordController.getInstance().getTestUUID();
+            if (sCurrentUUID !== sTargetUUID) {
+                //we have to read the current data..
+                ChromeStorage.get({
+                    key: sTargetUUID,
+                    // if the test is loaded, update preview
+                    success: function (oSave) {
+                        if (!oSave) {
+                            this.getRouter().navTo("start");
+                            return;
+                        }
+                        oSave = JSON.parse(oSave);
+                        this._oModel.setProperty("/codeSettings", oSave.codeSettings);
+                        RecordController.getInstance().setTestElements(oSave.elements);
+                        RecordController.getInstance().setTestDetails(oSave.test);
+                        this._updatePreview();
+                    }.bind(this),
+                    // if the test cannot be loaded, redirect to route 'start'
+                    failure: function(oLastError) {
+                        this.getRouter().navTo("start");
+                    }.bind(this)
                 });
+            } else if (RecordController.getInstance().isRecording()) {
+                setTimeout(function () {
+                    this._oRecordDialog.open();
+                }.bind(this), 100);
             }
+            this._updatePreview();
         },
 
         /**
-         * 
+         *
+         * @param {*} oEvent
          */
-        checkRecordContinuing: function () {
-            var dialog = new Dialog({
-                title: 'Start Recording?',
-                type: 'Message',
-                content: new Text({
-                    text: 'Do you want to add additional test steps?'
-                }),
-                beginButton: new Button({
-                    text: 'Yes',
-                    tooltip: 'Starts the recording process',
-                    press: function () {
-                        RecordController.startRecording();
-                        this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                            oStep.setHighlight(sap.ui.core.MessageType.None);
-                        });
-                        dialog.close();
-                    }.bind(this)
-                }),
-                endButton: new Button({
-                    text: 'No',
-                    tooltip: 'No further actions',
-                    // eslint-disable-next-line require-jsdoc
-                    press: function () {
-                        this._rejectConnection();
-                        dialog.close();
-                    }.bind(this)
-                }),
-                // eslint-disable-next-line require-jsdoc
-                afterClose: function () {
-                    dialog.destroy();
+        _onTestCreate: function (oEvent) {
+            this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
+            this._bQuickMode = false;
+            this._initTestCreate(false);
+        },
+
+        /**
+         *
+         * @param {*} oEvent
+         */
+        _onTestCreateQuick: function (oEvent) {
+            this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
+            this._bQuickMode = true;
+            this._initTestCreate(true);
+        },
+
+        // #endregion
+
+        // #region Event handling regarding view
+
+        /**
+         *
+         */
+        onTabChange: function (oEvent) {
+            this._oModel.setProperty('/activeTab', oEvent.getSource().getSelectedKey());
+        },
+
+        /**
+         *
+         */
+        onUpdatePreview: function () {
+            this._updatePreview();
+        },
+
+        /**
+         *
+         */
+        onStepClick: function (oEvent) {
+            var sPath = oEvent.getSource().getBindingContext('recordModel').getPath();
+            sPath = sPath.substring(sPath.lastIndexOf('/') + 1);
+            this.getRouter().navTo("elementDisplay", {
+                TestId: this._sTestId,
+                ElementId: sPath
+            });
+        },
+
+        /**
+         *
+         */
+        onDeleteStep: function (oEvent) {
+            var sPath = oEvent.getSource().getBindingContext("recordModel").getPath();
+            var sNumber = sPath.split("/").pop();
+            RecordController.getInstance().removeTestElementById(sNumber);
+        },
+
+        /**
+         *
+         */
+        onStopRecord: function () {
+            RecordController.getInstance().stopRecording();
+            this._oRecordDialog.close();
+        },
+
+        /**
+         *
+         */
+        onReplayStart: function () {
+
+            // store URL to test for easier access
+            var sURL = this._oModel.getProperty("/codeSettings/testUrl");
+
+            // construct a promise whether to start replaying right away:
+            // resolve indicates replaying can start, reject otherwise
+            var replayablePromise = new Promise(function(resolve, reject) {
+
+                // make sure that no recording is going on now
+                if (RecordController.getInstance().isRecording()) {
+
+                    // ask user whether to stop recording in favor of replay
+                    MessageBox.error(
+                        "You are recording right now. Do you want start replaying instead?",
+                        {
+                            icon: MessageBox.Icon.QUESTION,
+                            title: "Stop recording?",
+                            actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                            onClose: function (sAction) {
+                                if (sAction === MessageBox.Action.YES) {
+                                    resolve(sURL);
+                                } else {
+                                    reject();
+                                }
+                            }
+                        }
+                    );
+
+                } else
+                // check whether there is a replay right now
+                if (RecordController.getInstance().isReplaying()) {
+                    reject("You are replaying already. Finish the current replay first before starting another one.");
                 }
+                // if no recording is going on, go to replaying right away
+                else {
+                    resolve(sURL);
+                }
+
             });
 
-            dialog.open();
+            // what to do after resolving/rejecting replay-indication promise
+            replayablePromise
+            .then(function(sURL) {
+                RecordController.getInstance().startReplaying(sURL);
+                this._oMessagePopover.close();
+            }.bind(this))
+            .catch(function(sMessage) {
+                if (sMessage) {
+                    MessageBox.error(sMessage, {
+                        title: "Replay error"
+                    });
+                }
+            });
+        },
+
+        /**
+         *
+         */
+        onReplayStop: function () {
+            RecordController.getInstance().stopReplaying();
+        },
+
+        /**
+         *
+         * @param {*} oEvent
+         */
+        onReplaySingleStep: function () {
+            RecordController.getInstance().replayNextStep();
         },
 
         /**
@@ -209,68 +274,45 @@ sap.ui.define([
          */
         onContinueRecording: function () {
             this._oRecordDialog.open();
-            RecordController.startRecording();
-        },
-
-        /**
-         * 
-         */
-        _rejectConnection: function () {
-            RecordController.stopRecording();
-            RecordController.closeTab();
+            RecordController.getInstance().startRecording();
         },
 
         /**
          *
          */
-        onDeleteStep: function (oEvent) {
-            var aItem = oEvent.getSource().getBindingContext("navModel").getPath().split("/");
-            var sNumber = parseInt(aItem[aItem.length - 1], 10);
-            var aElements = this.getModel("navModel").getProperty("/elements");
-            aElements.splice(sNumber, 1);
-            this.getModel("navModel").setProperty("/elements", aElements);
-            this._updatePlayButton();
+        onNavBack: function () {
+            // close the tab if any is open
+            RecordController.getInstance().closeTab().finally(function() {
+                // reset RecordController
+                RecordController.getInstance().reset(true);
+
+                // close open dialogs
+                this._oRecordDialog.close();
+
+                // go to start page
+                this.getRouter().navTo("start");
+            }.bind(this));
+        },
+
+        /**
+         *
+         * @returns {Promise} a Promise on saving the current record
+         */
+        onSave: function () {
+            var oSave = {
+                codeSettings: this._oModel.getProperty("/codeSettings"),
+                elements: RecordController.getInstance().getTestElements(),
+                test: RecordController.getInstance().getTestDetails()
+            };
+            return ChromeStorage.saveRecord(oSave);
         },
 
         /**
          *
          */
-        onReplayAll: function (oEvent) {
-            //console.log('ReplayStart, have to close former tab: ' + RecordController.isInjected());
-            if (RecordController.isInjected()) {
-                RecordController.closeTab().then(function () {
-                    this._bReplayMode = false;
-                    var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
-                    this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                        oStep.setHighlight(sap.ui.core.MessageType.None);
-                    });
-                    this._iCurrentStep = -1;
-                    chrome.permissions.request({
-                        permissions: ['tabs'],
-                        origins: [sUrl]
-                    }, function (granted) {
-                        if (granted) {
-                            this._oModel.setProperty("/replayMode", true);
-                            this._replay();
-                        }
-                    }.bind(this));
-                }.bind(this));
-            } else {
-                var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
-                this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                    oStep.setHighlight(sap.ui.core.MessageType.None);
-                });
-                this._iCurrentStep = -1;
-                chrome.permissions.request({
-                    permissions: ['tabs'],
-                    origins: [sUrl]
-                }, function (granted) {
-                    if (granted) {
-                        this._oModel.setProperty("/replayMode", true);
-                        this._replay();
-                    }
-                }.bind(this));
-            }
+        onDelete: function () {
+            var sId = RecordController.getInstance().getTestUUID();
+            ChromeStorage.deleteTest(sId).finally(this.onNavBack.bind(this));
         },
 
         /**
@@ -280,8 +322,8 @@ sap.ui.define([
             var oSave = {
                 versionId: "0.2.0",
                 codeSettings: this._oModel.getProperty("/codeSettings"),
-                elements: this.getModel("navModel").getProperty("/elements"),
-                test: this.getModel("navModel").getProperty("/test")
+                elements: RecordController.getInstance().getTestElements(),
+                test: RecordController.getInstance().getTestDetails()
             };
 
             //fix for cycling object
@@ -301,75 +343,7 @@ sap.ui.define([
         /**
          *
          */
-        onExpandControl: function (oEvent) {
-            var oPanel = oEvent.getSource().getParent();
-            oPanel.setExpanded(oPanel.getExpanded() === false);
-        },
-
-        /**
-         *
-         */
-        onUpdatePreview: function () {
-            this._updatePreview();
-        },
-
-        /**
-         *
-         */
-        showCode: function (sId) {
-            this._bShowCodeOnly = true;
-        },
-
-        /**
-         * 
-         */
-        onRecord: function () {
-            RecordController.startRecording();
-        },
-
-        /**
-         * 
-         */
-        onSave: function () {
-            //save /codesettings & /test & navModel>/elements - optimiazion potential..
-            var oSave = {
-                codeSettings: this._oModel.getProperty("/codeSettings"),
-                elements: this.getModel("navModel").getProperty("/elements"),
-                test: this.getModel("navModel").getProperty("/test")
-            };
-            ChromeStorage.saveRecord(oSave);
-        },
-
-        /**
-         * 
-         */
-        onDelete: function () {
-            var sId = this.getModel("navModel").getProperty("/test/uuid");
-            ChromeStorage.deleteTest(sId).then(this.getRouter().navTo("start"));
-        },
-
-        /**
-         * 
-         */
-        onNavBack: function () {
-            RecordController.stopRecording();
-            RecordController.closeTab();
-            this._oRecordDialog.close();
-            this.getRouter().navTo("start");
-        },
-
-        /**
-         * 
-         */
-        onStopRecord: function () {
-            RecordController.stopRecording();
-            this._oRecordDialog.close();
-        },
-
-        /**
-         *
-         */
-        downloadSource: function (oEvent) {
+        onDownloadSource: function (oEvent) {
             var sSourceCode = oEvent.getSource().getParent().getContent().filter(c => c instanceof sap.ui.codeeditor.CodeEditor)[0].getValue();
             var element = document.createElement('a');
             element.setAttribute('href', 'data:text/javascript;charset=utf-8,' + encodeURIComponent(sSourceCode));
@@ -386,14 +360,7 @@ sap.ui.define([
         /**
          *
          */
-        onTabChange: function (oEvent) {
-            this._oModel.setProperty('/activeTab', oEvent.getSource().getSelectedKey());
-        },
-
-        /**
-         *
-         */
-        downloadAll: function (oEvent) {
+        onDownloadAll: function (oEvent) {
             var zip = new JSZip();
             //take all sources containing code no free text
 
@@ -444,407 +411,225 @@ sap.ui.define([
             }
 
             zip.generateAsync({
-                    type: "blob"
-                })
+                type: "blob"
+            })
                 .then(content => saveAs(content, "testCode.zip"));
         },
 
-        /**
-         *
-         */
-        onStepClick: function (oEvent) {
-            var sPath = oEvent.getSource().getBindingContext('navModel').getPath();
-            sPath = sPath.substring(sPath.lastIndexOf('/') + 1);
-            this.getRouter().navTo("elementDisplay", {
-                TestId: this._sTestId,
-                ElementId: sPath
-            });
+        onShowReplayMessages: function(oEvent) {
+            this._oMessagePopover.toggle(oEvent.getSource());
         },
+
+        // #endregion
+
+        // #region Event handling regarding event bus
 
         /**
          *
+         * @param {string} sChannel the channel name of the incoming event (ignored)
+         * @param {string} sEventId the event ID of the incoming event (ignored)
+         * @param {*} oData the data on the selected element
          */
-        _lengthStatusFormatter: function (iLength) {
-            return "Success";
-        },
-
-        /**
-         * 
-         * @param {*} oData 
-         */
-        _onInjectionDone: function (oData) {
-            if (oData.ok === true) {
-                this._oModel.setProperty('/ui5Version', oData.version);
-            }
-        },
-
-        /**
-         * 
-         */
-        _replay: function () {
-            var sUrl = this._oModel.getProperty("/codeSettings/testUrl");
-            var bInjectRequested = false;
-            var lastCreatedTab = "";
-
-            /**
-             * @param {string} tabId tab id the event comes from
-             * @param {object} oChangeInfo the object containing the update information
-             * @param {chrome.tabs.Tab} tTab the tab updated
-             */
-            function fnListenerFunction(tabId, oChangeInfo, tTab) {
-                //console.log('Tabs: ' + lastCreatedTab + ' === ' + tabId + ', ' + (lastCreatedTab === tabId) + ', currentStatus: ' + oChangeInfo.status);
-                if (oChangeInfo.status === "complete" && lastCreatedTab === tabId) {
-                    //console.log(tTab.url + ', already injected: ' + bInjectRequested + ' and Replay mode activated: ' + this._bReplayMode);
-                    if (tTab.url.indexOf(sUrl) > -1 && !bInjectRequested) {
-                        RecordController.injectScript(tabId).then(function (oData) {
-                            //console.log('Injection done: ' + RecordController.isInjected());
-                            if (RecordController.isInjected() && !this._bReplayMode) {
-                                this._bReplayMode = true;
-                                this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                                    oStep.setHighlight(sap.ui.core.MessageType.None);
-                                });
-                                //console.log("_startReplay");
-                                this._startReplay();
-                            }
-                            if (oData) {
-                                this._oModel.setProperty('/ui5Version', oData.version);
-                            }
-                        }.bind(this));
-                        bInjectRequested = true;
-                        chrome.tabs.onUpdated.removeListener(fnListenerFunction.bind(this));
-                    }
-                }
-            }
-
-            chrome.tabs.onUpdated.addListener(fnListenerFunction.bind(this));
-
-            chrome.tabs.create({
-                url: sUrl,
-                active: true
-            }, function (oTab) {
-                //console.log('Now created: ' + oTab.id);
-                lastCreatedTab = oTab.id;
-            });
-        },
-
-        /**
-         * 
-         */
-        _startReplay: function () {
-            this._iCurrentStep = 0;
-            this._updatePlayButton();
-        },
-
-        /**
-         * 
-         */
-        _executeAction: function () {
-            var aEvent = this.getModel("navModel").getProperty("/elements");
-            var oElement = aEvent[this._iCurrentStep];
-
-            return new Promise(function (resolve) {
-                if (oElement && oElement.property.type === "ACT") {
-                    this._getFoundElements(oElement).then(function (aElements) {
-                        if (aElements.length === 0) {
-                            resolve({
-                                result: "error",
-                                type: "ACT"
-                            });
-                            return;
-                        }
-                        oElement.item.identifier = aElements[0].identifier;
-                        Communication.fireEvent("execute", {
-                            element: oElement
-                        }).then(resolve);
-                    });
-                } else if (oElement && oElement.property.type === "ASS") {
-                    this._getFoundElements(oElement).then(function (aElements) {
-                        if (aElements.length === 1) {
-                            resolve({
-                                result: "success",
-                                type: "ASS"
-                            });
-                        } else if (aElements.length > 1) {
-                            resolve({
-                                result: "warning",
-                                type: "ASS"
-                            });
-                        } else {
-                            resolve({
-                                result: "error",
-                                type: "ASS"
-                            });
-                        }
-                    });
-                } else {
-                    resolve();
-                    return false;
-                }
-            }.bind(this));
-        },
-
-        /**
-         * 
-         * @param {*} oElement 
-         */
-        _getFoundElements: function (oElement) {
-            var oDefinition = oElement.selector;
-
-            return new Promise(function (resolve, reject) {
-                this._findItemAndExclude(oDefinition.selectorAttributes).then(function (aItemsEnhanced) {
-                    //make an assert check..
-                    resolve(aItemsEnhanced);
-                });
-            }.bind(this));
-        },
-
-        /**
-         * 
-         * @param {*} oSelector 
-         */
-        _findItemAndExclude: function (oSelector) {
-            return Communication.fireEvent("find", oSelector);
-        },
-
-        /**
-         * 
-         */
-        _updatePlayButton: function () {
-            if (!this._oModel.getProperty("/replayMode")) {
-                this._oModel.setProperty("/replayMode", true);
-            }
-            var oNavModel = this.getModel('navModel');
-            var iNumElements = oNavModel.getProperty("/elements").length;
-            for (var i = 0; i < iNumElements; i++) {
-                oNavModel.setProperty("/elements/" + i + "/showPlay", i === this._iCurrentStep);
-            }
-            //Here the test should work automatically
-            var iReplayType = this.getModel('settings').getProperty('/settings/replayType');
-            if (iReplayType !== 0) {
-                const timeout = 500 * iReplayType;
-
-                new Promise((resolve, reject) => {
-                    var wait = setTimeout(() => {
-                        clearTimeout(wait);
-                        resolve();
-                    }, timeout);
-                }).then(function () {
-                    this.onReplaySingleStep();
-                }.bind(this));
-            }
-        },
-
-        /**
-         * 
-         */
-        _uuidv4: function () {
-            var sStr = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                var r = Math.random() * 16 | 0,
-                    v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            }) + this._iGlobal;
-            this._iGlobal = this._iGlobal + 1;
-            return sStr;
-        },
-
-        /**
-         * 
-         */
-        _createDialog: function () {
-            this._oRecordDialog = sap.ui.xmlfragment(
-                "com.ui5.testing.fragment.RecordDialog",
-                this
-            );
-            this._oRecordDialog.setModel(this._oModel, "viewModel");
-            this._oRecordDialog.setModel(RecordController.getModel(), "recordModel");
-        },
-
-        /**
-         * 
-         * @param {*} oEvent 
-         */
-        _onTestCreateQuick: function (oEvent) {
-            this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
-            this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                oStep.setHighlight(sap.ui.core.MessageType.None);
-            });
-            this._bQuickMode = true;
-            this._initTestCreate(true);
-        },
-
-        /**
-         * 
-         * @param {*} oEvent 
-         */
-        _onTestCreate: function (oEvent) {
-            this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
-            this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                oStep.setHighlight(sap.ui.core.MessageType.None);
-            });
-            this._bQuickMode = false;
-            this._initTestCreate(false);
-        },
-
-        /**
-         * 
-         * @param {*} bImmediate 
-         */
-        _initTestCreate: function (bImmediate) {
-            this._oModel.setProperty("/replayMode", false);
-
-            this.getModel("navModel").setProperty("/test", {
-                uuid: this._uuidv4(),
-                createdAt: new Date().getTime()
-            });
-            this._oModel.setProperty("/codeSettings/language", this.getModel("settings").getProperty("/settings/defaultLanguage"));
-            this._oModel.setProperty("/codeSettings/authentification", this.getModel("settings").getProperty("/settings/defaultAuthentification"));
-            Communication.fireEvent("getwindowinfo").then(function (oData) {
-                if (!oData) {
-                    return;
-                }
-                this._oModel.setProperty("/codeSettings/testName", oData.title);
-                this._oModel.setProperty("/codeSettings/testCategory", oData.title);
-                this._oModel.setProperty("/codeSettings/testUrl", oData.url);
-                RecordController.startRecording(bImmediate);
-                if (bImmediate === true) {
-                    this._oRecordDialog.close();
-                }
-
-                this.getRouter().navTo("TestDetails", {
-                    TestId: this.getModel("navModel").getProperty("/test/uuid")
-                });
-            }.bind(this));
-        },
-
-        /**
-         * 
-         * @param {*} oData 
-         */
-        _onItemSelected: function (oData) {
-            if (this._bReplayMode === true) {
-                return; //NO!
-            }
-
-            Navigation.setSelectedItem(oData);
-            RecordController.focusPopup();
-
-            if (this._bQuickMode !== true) {
-                this.getRouter().navTo("elementCreate", {
-                    TestId: this.getModel("navModel").getProperty("/test/uuid"),
-                    ElementId: oData.identifier.ui5AbsoluteId
-                });
-            } else {
-                this.getRouter().navTo("elementCreateQuick", {
-                    TestId: this.getModel("navModel").getProperty("/test/uuid"),
-                    ElementId: oData.identifier.ui5AbsoluteId
-                });
-            }
-        },
-
-        /**
-         * 
-         * @param {*} oEvent 
-         */
-        _onTestReplay: function (oEvent) {
-            this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
-            this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                oStep.setHighlight(sap.ui.core.MessageType.None);
-            });
-            var sTargetUUID = oEvent.getParameter("arguments").TestId;
-            var sCurrentUUID = this.getModel("navModel").getProperty("/test/uuid");
-            if (sTargetUUID === this._oTestId && this._oModel.getProperty("/replayMode") === true) {
-                if (this.getModel("navModel").getProperty("/elements/" + this._iCurrentStep + "/stepExecuted") === true) {
-                    this.replayNextStep();
-                }
+        _onItemSelected: function (sChannel, sEventId, oData) {
+            // while replaying, items get selected continuously, so we do not respect such notifications
+            if (RecordController.getInstance().isReplaying()) {
                 return;
             }
 
-            this._oTestId = sTargetUUID;
-            this._iCurrentStep = 0;
-            if (sCurrentUUID !== sTargetUUID) {
-                //we have to read the current data..
-                ChromeStorage.get({
-                    key: sTargetUUID,
-                    success: function (oSave) {
-                        if (!oSave) {
-                            this.getRouter().navTo("start");
-                            return;
-                        }
-                        oSave = JSON.parse(oSave);
-                        this._oModel.setProperty("/codeSettings", oSave.codeSettings);
-                        this.getModel("navModel").setProperty("/elements", oSave.elements);
-                        this.getModel("navModel").setProperty("/elementLength", oSave.elements.length);
-                        this.getModel("navModel").setProperty("/test", oSave.test);
-                        this._updatePreview();
-                        //this._updatePlayButton();
-                        this._replay();
-                    }.bind(this)
-                });
-            } else {
-                this._updatePreview();
-                //this._updatePlayButton();
-                this._replay();
-            }
-        },
+            RecordController.getInstance().setCurrentElement(oData);
+            RecordController.getInstance().focusPopup();
+            this._oRecordDialog.close();
 
-        /**
-         * 
-         */
-        _onTestRerun: function () {
-            this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                oStep.setHighlight(sap.ui.core.MessageType.None);
+            var sRouterTarget = this._bQuickMode ? "elementCreateQuick" : "elementCreate";
+            this.getRouter().navTo(sRouterTarget, {
+                TestId: RecordController.getInstance().getTestUUID(),
+                ElementId: oData.identifier.ui5AbsoluteId
             });
-            this._updatePreview();
-            //this._updatePlayButton();
-            this._replay();
         },
 
         /**
-         * 
+         *
+         * @param {string} sChannel the channel name of the incoming event (ignored)
+         * @param {string} sEventId the event ID of the incoming event (ignored)
+         * @param {*} oData the data on the selected element
          */
-        _onTestDisplay: function (oEvent) {
-            this._oModel.setProperty("/routeName", oEvent.getParameter('name'));
-            this.getView().byId('tblPerformedSteps').getItems().forEach(function (oStep) {
-                oStep.setHighlight(sap.ui.core.MessageType.None);
-            });
-            this._oModel.setProperty("/replayMode", false);
-            this._sTestId = oEvent.getParameter("arguments").TestId;
-            var sTargetUUID = this._sTestId;
-            var sCurrentUUID = this.getModel("navModel").getProperty("/test/uuid");
-            if (sCurrentUUID !== sTargetUUID) {
-                //we have to read the current data..
-                ChromeStorage.get({
-                    key: sTargetUUID,
-                    success: function (oSave) {
-                        if (!oSave) {
-                            this.getRouter().navTo("start");
-                            return;
-                        }
-                        oSave = JSON.parse(oSave);
-                        this._oModel.setProperty("/codeSettings", oSave.codeSettings);
-                        this.getModel("navModel").setProperty("/elements", oSave.elements);
-                        this.getModel("navModel").setProperty("/elementLength", oSave.elements.length);
-                        this.getModel("navModel").setProperty("/test", oSave.test);
-                        this._updatePreview();
+        _onCheckRecordContinuing: function (sChannel, sEventId, oData) {
+            var dialog = new Dialog({
+                title: 'Start Recording?',
+                type: 'Message',
+                content: new Text({
+                    text: 'Do you want to add additional test steps?'
+                }),
+                beginButton: new Button({
+                    text: 'Yes',
+                    tooltip: 'Starts the recording process',
+                    press: function () {
+                        RecordController.getInstance().startRecording();
+                        dialog.close();
                     }.bind(this)
-                });
-            } else if (this.getModel("recordModel").getProperty("/recording") === true && this._bQuickMode === false) {
-                setTimeout(function () {
-                    this._oRecordDialog.open();
-                }.bind(this), 100);
-            }
-            this._updatePreview();
+                }),
+                endButton: new Button({
+                    text: 'No',
+                    tooltip: 'No further actions',
+                    // eslint-disable-next-line require-jsdoc
+                    press: function () {
+                        RecordController.getInstance().stopRecording();
+                        dialog.close();
+                    }.bind(this)
+                }),
+                // eslint-disable-next-line require-jsdoc
+                afterClose: function () {
+                    dialog.destroy();
+                }
+            });
+
+            dialog.open();
         },
 
         /**
-         * 
+         * Handle the case that the page disconnects.
+         *
+         * @param {string} sChannel the channel name of the incoming event (ignored)
+         * @param {string} sEventId the event ID of the incoming event (ignored)
+         * @param {*} oData the data on the selected element (ignored)
+         */
+        _onPageDisconnected: function(sChannel, sEventId, oData) {
+
+            // stop recording and replaying
+            this._oRecordDialog.close();
+            RecordController.getInstance().stopRecording();
+            RecordController.getInstance().stopReplaying();
+
+            // ask user whether to save current status
+            sap.m.MessageBox.error(
+                "The connection to the page under test has been lost. You will be redirected to the start page, where you can re-open the test." +
+                "\n\n" + "Do you want to save the current recording status now?",
+                {
+                    icon: sap.m.MessageBox.Icon.QUESTION,
+                    closeOnNavigation: true,
+                    title: "Page disconnected",
+                    actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+                    onClose: function (sAction) {
+                        if (sAction === sap.m.MessageBox.Action.YES) {
+                            this.onSave().then(function() {
+                                this.getRouter().navTo("start");
+                            }.bind(this));
+                        } else {
+                            this.getRouter().navTo("start");
+                        }
+                    }.bind(this)
+                }
+            );
+        },
+
+        /**
+         * Handle incoming messages during replay.
+         *
+         * @param {*} oEvent the event indicating a new message
+         */
+        _onReceiveMessageDuringReplay: function(oEvent) {
+
+            var oMessages = this.getView().getModel("recordModel").getProperty("/replayMessages");
+
+            // open the message popover if there is an error in any message
+            oMessages.forEach(function(oMsg) {
+                if (oMsg.type === "Error") {
+                    this._oMessagePopover.openBy(this.byId("replayMessagePopoverBtn"));
+                }
+            }.bind(this));
+
+        },
+
+        // #endregion
+
+        // #region Miscellaneous
+
+        /**
+         *
+         */
+        _createDialog: function () {
+            Fragment.load({
+                name: "com.ui5.testing.fragment.RecordDialog",
+                controller: this
+            }).then(function(oRecordDialog) {
+                this._oRecordDialog = oRecordDialog;
+            }.bind(this));
+
+            this._oMessagePopover = new MessagePopover({
+                items: {
+                    path: 'recordModel>/replayMessages',
+                    template: new MessageItem({
+                        type: '{recordModel>type}',
+                        title: '{recordModel>title}',
+                        description: '{recordModel>description}',
+                        subtitle: '{recordModel>subtitle}'
+                    })
+                }
+            });
+            this._oMessagePopover.setModel(this.getView().getModel("recordModel"), "recordModel");
+            this._oMessagePopover.getBinding("items").attachChange(this._onReceiveMessageDuringReplay, this);
+        },
+
+        /**
+         *
          */
         _updatePreview: function () {
-            var aStoredItems = this.getModel("navModel").getProperty("/elements");
+            var aStoredItems = RecordController.getInstance().getTestElements();
             var codeSettings = this.getModel('viewModel').getProperty('/codeSettings');
             codeSettings.language = this.getModel('settings').getProperty('/settings/defaultLanguage');
             codeSettings.execComponent = this.getOwnerComponent();
             this._oModel.setProperty("/codes", CodeHelper.getFullCode(codeSettings, aStoredItems));
-        }
+        },
+
+        /**
+         *
+         */
+        _initTestCreate: function () {
+            // if we are here because of an extension reload, redirect to route 'start'
+            if (!RecordController.getInstance().isInjected()) {
+                this.getRouter().navTo("start");
+                return;
+            }
+
+            RecordController.getInstance().stopReplaying();
+
+            RecordController.getInstance().reset();
+            RecordController.getInstance().initializeTestDetails();
+            this._oModel.setProperty("/codeSettings/language", this.getModel("settings").getProperty("/settings/defaultLanguage"));
+            this._oModel.setProperty("/codeSettings/authentification", this.getModel("settings").getProperty("/settings/defaultAuthentification"));
+            ConnectionMessages.getWindowInfo(Connection.getInstance())
+                .then(function (oData) {
+                    if (!oData) {
+                        return;
+                    }
+                    this._oModel.setProperty("/codeSettings/testName", oData.title);
+                    this._oModel.setProperty("/codeSettings/testCategory", oData.title);
+                    this._oModel.setProperty("/codeSettings/testUrl", oData.url);
+                    this._oModel.setProperty("/codeSettings/ui5Version", oData.ui5Version);
+
+                    // close record dialog if we have an immediate start
+                    if (Connection.getInstance().isStartImmediately()) {
+                        this._oRecordDialog.close();
+                    } else {
+                        this._oRecordDialog.open();
+                    }
+
+                    // start recording
+                    RecordController.getInstance().startRecording();
+
+                    this.getRouter().navTo("TestDetails", {
+                        TestId: RecordController.getInstance().getTestUUID()
+                    });
+                }.bind(this));
+        },
+
+        _formatTestStepDetails: function (sKey, oItems) {
+            return oItems.find(function(oItem) {
+                return oItem.key === sKey;
+            }).text;
+        },
+
+        // #endregion
+
     });
 });

@@ -1,50 +1,35 @@
 var bInitialized = false;
 var bNextImmediateStart = false;
 
-chrome.contextMenus.create({
-	title: "Create Element Selector",
-	contexts: ["selection", "page", "link", "editable", "image"],
-	onclick: function (e) {
-		"use strict";
-		chrome.tabs.getSelected(null, function (tab) {
-			createAndStart(tab, true);
-		});
-	}
-});
-
-
+/**
+ * Open /scripts/popup/index.html in new popup-type window.
+ */
 chrome.browserAction.onClicked.addListener(function (tab) {
 	"use strict";
-	createAndStart(tab, false);
-});
 
-function createAndStart(tab, bStartSelectImmediate) {
-	"use strict";
-	bNextImmediateStart = bStartSelectImmediate;
-
-
-	chrome.tabs.create({
+	// create new window in popup type and focus it immediately
+	chrome.windows.create({
 		url: chrome.extension.getURL('/scripts/popup/index.html'),
-		active: false
-	}, function (tab) {
-		chrome.windows.create({
-			tabId: tab.id,
-			type: 'popup',
-			focused: true
-		}, function (fnWindow) {
-			if (bInitialized === false) {
-				bInitialized = true;
-				chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-					if (message.type === "HandshakeToWindow") {
-						chrome.runtime.sendMessage({
-							"type": "send-window-id",
-							"windowid": sender.tab.windowId,
-							"startImmediate": bNextImmediateStart
-						}, function (response) {
-						});
-					}
-				});
-			}
-		});
+		type: 'popup',
+		focused: true
+	}, function (fnWindow) {
+
+		if (bInitialized === false) {
+
+			// new window is now initialized
+			bInitialized = true;
+
+			// send handshake message with window ID and 'bNextImmediateStart'
+			chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+				if (message.type === "handshake-get-window-id") {
+					sendResponse({
+						"type": "handshake-send-window-id",
+						"windowId": fnWindow.id,
+						"startImmediately": bNextImmediateStart
+					});
+				}
+			});
+		}
+
 	});
-}
+});

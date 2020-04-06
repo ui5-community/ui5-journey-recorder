@@ -7,13 +7,13 @@
     <semantic:FullscreenPage
             showFooter="false"
             showNavButton="false"
-            title="UI5 Automated Testing"
+            title="{i18n>appTitle}"
             busy="{viewModel>/busy}">
         <semantic:customHeaderContent>
             <Button icon="sap-icon://settings" text="{i18n>settings}" press="onOpenSettings"/>
         </semantic:customHeaderContent>
         <semantic:content>
-            <IconTabBar id="startTabBar">
+            <IconTabBar id="startTabBar" expanded="true" expandable="false">
                 <items>
                     <IconTabFilter icon="sap-icon://record"
                                    text="{i18n>newRecording}"
@@ -51,7 +51,7 @@
                                 <ColumnListItem type="Navigation" press="onStartNewRecording">
                                     <cells>
                                         <core:Icon src="sap-icon://record" color="red"/>
-                                        <Text text="{viewModel>url}"/>
+                                        <Text text="{viewModel>url} (Tab ID {viewModel>id})"/>
                                         <Button icon="sap-icon://display" press="onDisplayPage"/>
                                         <!--<Button icon="sap-icon://database" press="onMockserver"/>-->
                                     </cells>
