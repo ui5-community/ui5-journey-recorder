@@ -1,22 +1,5 @@
 <mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:code="sap.ui.codeeditor" xmlns:semantic="sap.m.semantic" controllerName="com.ui5.testing.controller.TestDetails">
     <semantic:FullscreenPage navButtonPress="onNavBack" showNavButton="true" title="Test {viewModel>/codeSettings/testName}" showFooter="{= ${viewModel>/activeTab} === 'settings' || ${viewModel>/activeTab} === 'code'}">
-        <semantic:subHeader>
-            <Bar>
-                <contentRight>
-                    <Label text="Language" visible="{= ${viewModel>/activeTab} === 'code' }" />
-                    <Select id="tstLanguage" change="onUpdatePreview" items="{settings>/codeLanguages}" visible="{= ${viewModel>/activeTab} === 'code' }" selectedKey="{settings>/settings/defaultLanguage}">
-                        <items>
-                            <core:Item text="{settings>text}" key="{settings>key}" />
-                        </items>
-                    </Select>
-                    <Select id="natLanguage" change="onUpdatePreview" items="{settings>/naturalLanguages}" visible="{= ${viewModel>/activeTab} === 'code' &amp;&amp; ${settings>/settings/defaultLanguage} === 'NAT'}" selectedKey="{settings>/settings/defaultNatLanguage}">
-                        <items>
-                            <core:Item text="{settings>text}" key="{settings>key}" />
-                        </items>
-                    </Select>
-                </contentRight>
-            </Bar>
-        </semantic:subHeader>
 
         <semantic:customFooterContent>
             <Button icon="sap-icon://record" text="Record" press="onContinueRecording" enabled="{= ${recordModel>/isReplaying} || ${recordModel>/isRecording} }" visible="{= ${viewModel>/activeTab} === 'settings'}" />
@@ -129,16 +112,35 @@
                     </IconTabFilter>
 
                     <IconTabFilter text="Code" key="code">
-                        <IconTabBar id="codeTab" expanded="true" expandable="false" stretchContentHeight="true" backgroundDesign="Transparent" applyContentPadding="true" items="{ path:'viewModel>/codes', sorter: { path: 'order' }}">
-                            <items>
-                                <IconTabFilter text="{viewModel>codeName}">
-                                    <code:CodeEditor visible="{= ${viewModel>type} === 'CODE'}" value="{viewModel>code}" editable="true"></code:CodeEditor>
-                                    <FormattedText visible="{= ${viewModel>type} === 'FTXT'}" htmlText="{viewModel>code}" />
-                                    <Text visible="{= ${viewModel>type} === 'CTXT'}" text="{viewModel>code}" />
-                                    <Button id="downloadButton" type="Transparent" class="btnFloat btnCircle" icon="sap-icon://download" press="onDownloadSource" visible="{= ${viewModel>type} === 'CODE' || ${settings>/settings/defaultLanguage} === 'NAT'}" />
-                                </IconTabFilter>
-                            </items>
-                        </IconTabBar>
+                        <VBox renderType="Bare" justifyContent="SpaceBetween">
+
+                            <Toolbar>
+                                <ToolbarSpacer />
+
+                                <Label text="Language" class="sapUiSmallMarginEnd" />
+                                <Select id="tstLanguage" change="onUpdatePreview" items="{settings>/codeLanguages}" selectedKey="{settings>/settings/defaultLanguage}">
+                                    <items>
+                                        <core:Item text="{settings>text}" key="{settings>key}" />
+                                    </items>
+                                </Select>
+                                <Select id="natLanguage" change="onUpdatePreview" items="{settings>/naturalLanguages}" visible="{= ${settings>/settings/defaultLanguage} === 'NAT'}" selectedKey="{settings>/settings/defaultNatLanguage}">
+                                    <items>
+                                        <core:Item text="{settings>text}" key="{settings>key}" />
+                                    </items>
+                                </Select>
+                            </Toolbar>
+
+                            <IconTabBar id="codeTab" class="sapUiMediumMarginTop" expanded="true" expandable="false" stretchContentHeight="true" headerBackgroundDesign="Solid" applyContentPadding="true" items="{ path:'viewModel>/codes', sorter: { path: 'order' }}">
+                                <items>
+                                    <IconTabFilter text="{viewModel>codeName}">
+                                        <code:CodeEditor visible="{= ${viewModel>type} === 'CODE'}" value="{viewModel>code}" editable="true" />
+                                        <FormattedText visible="{= ${viewModel>type} === 'FTXT'}" htmlText="{viewModel>code}" />
+                                        <Text visible="{= ${viewModel>type} === 'CTXT'}" text="{viewModel>code}" />
+                                        <Button id="downloadButton" type="Transparent" class="btnFloat btnCircle" icon="sap-icon://download" press="onDownloadSource" visible="{= ${viewModel>type} === 'CODE' || ${settings>/settings/defaultLanguage} === 'NAT'}" />
+                                    </IconTabFilter>
+                                </items>
+                            </IconTabBar>
+                        </VBox>
                     </IconTabFilter>
                 </items>
             </IconTabBar>
