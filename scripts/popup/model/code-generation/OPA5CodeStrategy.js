@@ -90,6 +90,7 @@ sap.ui.define([
         }.bind(this));
 
         aCodes.push({
+            
             codeName: 'Common',
             type: 'CODE',
             order: order++,
