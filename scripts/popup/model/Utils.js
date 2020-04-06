@@ -27,19 +27,19 @@ sap.ui.define([
                 {key: "MTC", text: "Matching Count"}
             ],
             selTypes: [
-                {key: "UI5", text: "UI5-Identifier"},
+                {key: "UI5", text: "UI5 Identifier"},
                 {key: "ATTR", text: "Combination of Attributes"},
-                {key: 'DOM', text: "DOM-Identifiert"}
+                {key: 'DOM', text: "DOM Identifier"}
             ],
             attrType: [
                 {key: "OWN", text: "Own Element"},
                 {key: "VIW", text: "View"},
-                {key: "PRT", text: "Parent-Element (L1)"},
-                {key: "PRT2", text: "Parent-Element (L2)"},
-                {key: "PRT3", text: "Parent-Element (L3)"},
-                {key: "PRT4", text: "Parent-Element (L4)"},
+                {key: "PRT", text: "Parent Element (L1)"},
+                {key: "PRT2", text: "Parent Element (L2)"},
+                {key: "PRT3", text: "Parent Element (L3)"},
+                {key: "PRT4", text: "Parent Element (L4)"},
                 {key: "PLBL", text: "Label Element"},
-                {key: "MCMB", text: "Item-Data"},
+                {key: "MCMB", text: "Item Data"},
                 {key: "AGR", text: "Aggregation"},
                 {key: "PEL", text: "Previous Element"},
                 {key: "NEL", text: "Next Element"}
@@ -60,7 +60,7 @@ sap.ui.define([
                     criteriaSpec: function () {
                         return [{
                             subCriteriaType: "ID",
-                            subCriteriaText: "Global-Id",
+                            subCriteriaText: "Global ID",
                             value: function (oItem) {
                                 return oItem.identifier.ui5Id;
                             },
@@ -79,7 +79,7 @@ sap.ui.define([
                             }
                         }, {
                             subCriteriaType: "LID",
-                            subCriteriaText: "Local-Id",
+                            subCriteriaText: "Local ID",
                             value: function (oItem) {
                                 return oItem.identifier.ui5LocalId;
                             },
@@ -110,7 +110,7 @@ sap.ui.define([
                     criteriaSpec: function () {
                         return [{
                             subCriteriaType: "ELM",
-                            subCriteriaText: "Element-Name",
+                            subCriteriaText: "Element name",
                             value: function (oItem) {
                                 return oItem.metadata.elementName;
                             },
@@ -132,7 +132,7 @@ sap.ui.define([
                             }
                         }, {
                             subCriteriaType: "CMP",
-                            subCriteriaText: "Component-Name",
+                            subCriteriaText: "Component name",
                             value: function (oItem) {
                                 return oItem.metadata.componentName;
                             },
@@ -155,11 +155,11 @@ sap.ui.define([
                 },
                 "VIW": {
                     criteriaKey: "VIW",
-                    criteriaText: "View-Data",
+                    criteriaText: "View Data",
                     criteriaSpec: function () {
                         return [{
                             subCriteriaType: "VIWNM",
-                            subCriteriaText: "View-Name",
+                            subCriteriaText: "View name",
                             value: function (oItem) {
                                 return oItem.viewProperty.viewName;
                             },
@@ -179,7 +179,7 @@ sap.ui.define([
                             }
                         }, {
                             subCriteriaType: "VIWLNM",
-                            subCriteriaText: "Local-View-Name",
+                            subCriteriaText: "Local view name",
                             value: function (oItem) {
                                 return oItem.viewProperty.localViewName;
                             },

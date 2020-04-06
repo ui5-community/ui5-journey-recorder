@@ -670,7 +670,7 @@ sap.ui.define([
                                 if (typeof oItem.bindingContext[sAttr] !== "object") {
                                     aList.push({
                                         type: "BNDX",
-                                        typeTxt: "Binding-Context",
+                                        typeTxt: "Binding Context",
                                         bdgPath: sAttr,
                                         attribute: sAttr,
                                         importance: oItem.uniquness.bindingContext[sAttr],
@@ -1697,7 +1697,7 @@ sap.ui.define([
                 contentHeight: "75%",
                 contentWidth: "40%",
                 id: "tstDialog",
-                title: "Please specifiy a unique combination",
+                title: "Please specify a unique combination",
                 content: new sap.m.VBox({
                     items: [
                         new sap.m.SearchField({
