@@ -1,62 +1,48 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
-  <head>
-    <title>UI5 Test Recorder – A user guide</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" href="../assets/css/style.css" />
-    <link rel="stylesheet" href="../assets/css/pilcrow.css" />
-    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
-  </head>
+<head>
+<meta charset="utf-8">
+        <title>UI5 Test Recorder – documentation</title>
+        <meta name='language' content='en'>
+        <link rel='stylesheet' href='../assets/css/style.css' />
+        <link rel='stylesheet' href='../assets/css/pilcrow.css' />
+        <link type='text/css' rel='stylesheet' href='../assets/css/hljs-github.min.css' />
+</head>
 <body>
-
-  <div id="wrapper">
-    <div id="header">
-    </div>
-
-    <div class="clear"></div>
-    <div id="main">
-      <div id="content" class="post"><p><a href="http://msg-systems.github.io/ui5-testrecorder/"><img src="../images/icon.png" alt="Logo of UI5 test recorder"></a></p>
-<h1 id="ui5-test-recorder-–-a-user-guide"><a class="header-link" href="#ui5-test-recorder-–-a-user-guide"></a>UI5 Test Recorder – A user guide</h1>
+<div id='wrapper'><div id='main'><div id='content' class='post'>
+<p><a href="http://msg-systems.github.io/ui5-testrecorder/"><img src="../images/icon.png" alt="Logo of UI5 test recorder" /></a></p>
+<h1 id="ui5-test-recorder-–-a-user-guide">UI5 Test Recorder – A user guide</h1>
 <p>The UI5 Test Recorder is and will always be a work in progress!
 Therefore, please be aware that you may run into issues or miss features.
 Instead of getting frustrated, please report them and we try to resolve them as fast as possible.</p>
-<h2 id="intended-usage"><a class="header-link" href="#intended-usage"></a>Intended usage</h2>
+<h2 id="intended-usage">Intended usage</h2>
 <p>We created the UI5 Test Recorder to easily record and replay the usage of a UI5 application.
 Furthermore, we target to support tests with <a href="https://github.com/SAP/ui5-uiveri5">UIVeri5</a>, <a href="https://sap.github.io/openui5-docs/#/Integration_Testing_with_One_Page_Acceptance_Tests_%28OPA5%29_2696ab5">OPA5</a> and <a href="https://devexpress.github.io/testcafe/">TestCafé</a>.</p>
-<h2 id="how-to-start"><a class="header-link" href="#how-to-start"></a>How to start</h2>
+<h2 id="how-to-start">How to start</h2>
 <p>After <a href="../README.html#install">installation</a>, you will find a new toolbar icon near the address bar of your browser:</p>
-<p class="img-container"><img src="./img/ExtIcon.png" alt="UI5 test recorder – Toolbar icon"></p>
+<p><img src="./img/ExtIcon.png" alt="UI5 test recorder – Toolbar icon" /></p>
 <p>By clicking on this icon, you start the UI5 test recorder and its front page is shown:</p>
-<p class="img-container"><img src="./img/StartPage.png" alt="UI5 test recorder – Start Page"></p>
+<p><img src="./img/StartPage.png" alt="UI5 test recorder – Start Page" /></p>
 <p>Voilá, you can start testing and recording!</p>
-<h2 id="start-page"><a class="header-link" href="#start-page"></a>Start page</h2>
+<h2 id="start-page">Start page</h2>
 <p>On the start page, you have the choice to start a new recording or review your existing ones.</p>
-<h3 id="start-a-new-recording"><a class="header-link" href="#start-a-new-recording"></a>Start a new recording</h3>
+<h3 id="start-a-new-recording">Start a new recording</h3>
 <p>To start a new recording, just select a tab from the list shown on the start page and the UI5 test recorder will initiate the recording process.</p>
-<p>For a more detailed description of the recording process, see the <a href="./recordTest.html">corresponding documentation</a>.</p>
-<h4 id="additional-buttons-and-functions"><a class="header-link" href="#additional-buttons-and-functions"></a>Additional buttons and functions</h4>
+<p>For a more detailed description of the recording process, see the <a href="recordTest.html">corresponding documentation</a>.</p>
+<h4 id="additional-buttons-and-functions">Additional buttons and functions</h4>
 <p>On the start page, we provode some additional functionalities, which may be not interesting for you.</p>
-<p>There is a glasses button <img src="./img/ViewButton.png" alt="View button"> for each entry in the list.
+<p>There is a glasses button <img src="./img/ViewButton.png" alt="View button" /> for each entry in the list.
 This button can be used to switch to the tab of the page that corresponds to the respective list entry.</p>
-<p>The switch <img src="./img/FilterUI5.png" alt="Filter for UI5 context"> triggers a new search across all open tabs of your browser – to find only tabs running a page using the UI5 framework.
+<p>The switch <img src="./img/FilterUI5.png" alt="Filter for UI5 context" /> triggers a new search across all open tabs of your browser – to find only tabs running a page using the UI5 framework.
 If this option is deselected, the extension shows only active tabs within open browser windows, regardless of whether they contain a UI5 application or not.</p>
-<p>There is a reload button <img src="./img/ReloadButton.png" alt="Reload button"> within the table toolbar to reload the table.
+<p>There is a reload button <img src="./img/ReloadButton.png" alt="Reload button" /> within the table toolbar to reload the table.
 The reload functionality is necessary because the UI5 test recorder checks only at startup for tabs to show.
 If new tabs are created or opened, the UI5 test recorder will not be informed automatically.
 Therefore, we implemented the reload button so you can trigger the search manually.</p>
-<h3 id="review-recorded-tests"><a class="header-link" href="#review-recorded-tests"></a>Review recorded tests</h3>
+<h3 id="review-recorded-tests">Review recorded tests</h3>
 <p>With the UI5 test recorder, you can save tests you have recorded for further inspection and even a replay.
 To open an saved record, just click on the respective list items.</p>
-<p>For a more detailed description of the inspection and replaying process, see the <a href="./testDetailPage.html">corresponding documentation</a>.</p>
-      </div>
-    </div>
-
-    <div class="clear">
-    </div>
-
-    <div id="footer">
-    </div>
-  </div>
+<p>For a more detailed description of the inspection and replaying process, see the <a href="testDetailPage.html">corresponding documentation</a>.</p>
+</div></div></div>
 </body>
 </html>

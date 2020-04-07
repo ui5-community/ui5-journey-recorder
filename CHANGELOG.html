@@ -1,67 +1,53 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
-  <head>
-    <title>UI5 Test Recorder – Changelog</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" href="assets/css/style.css" />
-    <link rel="stylesheet" href="assets/css/pilcrow.css" />
-    <link type="text/css" rel="stylesheet" href="assets/css/hljs-github.min.css"/>
-  </head>
+<head>
+<meta charset="utf-8">
+        <title>UI5 Test Recorder – CHANGELOG</title>
+        <meta name='language' content='en'>
+        <link rel='stylesheet' href='assets/css/style.css' />
+        <link rel='stylesheet' href='assets/css/pilcrow.css' />
+        <link type='text/css' rel='stylesheet' href='assets/css/hljs-github.min.css' />
+</head>
 <body>
-
-  <div id="wrapper">
-    <div id="header">
-    </div>
-
-    <div class="clear"></div>
-    <div id="main">
-      <div id="content" class="post"><h1 id="ui5-test-recorder-–-changelog"><a class="header-link" href="#ui5-test-recorder-–-changelog"></a>UI5 Test Recorder – Changelog</h1>
-<h2 id="0.6.0"><a class="header-link" href="#0.6.0"></a>0.6.0</h2>
+<div id='wrapper'><div id='main'><div id='content' class='post'>
+<h1 id="ui5-test-recorder-–-changelog">UI5 Test Recorder – Changelog</h1>
+<h2 id="060">0.6.0</h2>
 <p>For this version, we performed an extensive refactoring in the context of Issue <a href="https://github.com/msg-systems/ui5-testrecorder/issues/10">#10</a>, while we did not stop there.
 Due to the extent of the refactoring, only the most important user-visible changes are listed below.
 For further details, please see PR <a href="https://github.com/msg-systems/ui5-testrecorder/pull/36">#36</a>.</p>
-<h3 id="added"><a class="header-link" href="#added"></a>Added</h3>
-<ul class="list">
+<h3 id="added">Added</h3>
+<ul>
 <li>Actually execute asserts during replay (7069fcc)</li>
 <li>Actually execute support assistant during replay (fe4d04c)</li>
 <li>Gather and show messages during replay in a MessagePopover (b742c11, 4e239fd)</li>
 <li>The page under test is now locked when it is not to be accessed (0232cc6)</li>
 <li>Further user feedback is shown when extension or page disconnects/reloads (e.g., 17f7922, ba7a716, 7b35702, 9bd5167, and 8b102cd)</li>
-<li>Add changelog file <a href="./CHANGELOG.html">CHANGELOG.md</a> (see Issue <a href="https://github.com/msg-systems/ui5-testrecorder/issues/33">#33</a>)</li>
+<li>Add changelog file <a href="CHANGELOG.html">CHANGELOG.md</a> (see Issue <a href="https://github.com/msg-systems/ui5-testrecorder/issues/33">#33</a>)</li>
 </ul>
-<h3 id="changed/improved"><a class="header-link" href="#changed/improved"></a>Changed/Improved</h3>
-<ul class="list">
+<h3 id="changedimproved">Changed/Improved</h3>
+<ul>
 <li>Page injection and connection handling now uses WebExtension functionality, which improves stability (see Issue <a href="https://github.com/msg-systems/ui5-testrecorder/issues/10">#10</a>)</li>
 <li>Replay can be stopped (69fcb66).</li>
-<li>Use a single button &#39;Replay next step&#39; during manual replay</li>
+<li>Use a single button 'Replay next step' during manual replay</li>
 <li>Disable test-step handling during replay (8283ae9)</li>
-<li>Refactor README file <a href="./README.html">README.md</a> (see Issue <a href="https://github.com/msg-systems/ui5-testrecorder/issues/34">#34</a>)</li>
+<li>Refactor README file <a href="README.html">README.md</a> (see Issue <a href="https://github.com/msg-systems/ui5-testrecorder/issues/34">#34</a>)</li>
 </ul>
-<h3 id="fixed"><a class="header-link" href="#fixed"></a>Fixed</h3>
-<ul class="list">
+<h3 id="fixed">Fixed</h3>
+<ul>
 <li>Fix potential page injection problem with item properties (072a04e)</li>
 <li>Fix highlighting of selected element in page under test (1db2b70)</li>
 </ul>
-<h2 id="0.5.2"><a class="header-link" href="#0.5.2"></a>0.5.2</h2>
-<h3 id="added-1"><a class="header-link" href="#added-1"></a>Added</h3>
-<ul class="list">
+<h2 id="052">0.5.2</h2>
+<h3 id="added-1">Added</h3>
+<ul>
 <li>Automatic closing of old tabs on replay</li>
 <li>Offline view of single test steps</li>
 </ul>
-<h3 id="fixed-1"><a class="header-link" href="#fixed-1"></a>Fixed</h3>
-<ul class="list">
+<h3 id="fixed-1">Fixed</h3>
+<ul>
 <li>Removed recurring calls regarding successful page injection that broke the replay option</li>
-<li>Fixed the controller &#39;TestDetails&#39; for better replay</li>
+<li>Fixed the controller 'TestDetails' for better replay</li>
 </ul>
-      </div>
-    </div>
-
-    <div class="clear">
-    </div>
-
-    <div id="footer">
-    </div>
-  </div>
+</div></div></div>
 </body>
 </html>

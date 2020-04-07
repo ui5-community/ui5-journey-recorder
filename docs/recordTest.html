@@ -1,56 +1,49 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
-  <head>
-    <title>UI5 Test Recorder – Record a new test</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" href="../assets/css/style.css" />
-    <link rel="stylesheet" href="../assets/css/pilcrow.css" />
-    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
-  </head>
+<head>
+<meta charset="utf-8">
+        <title>UI5 Test Recorder – recordTest</title>
+        <meta name='language' content='en'>
+        <link rel='stylesheet' href='../assets/css/style.css' />
+        <link rel='stylesheet' href='../assets/css/pilcrow.css' />
+        <link type='text/css' rel='stylesheet' href='../assets/css/hljs-github.min.css' />
+</head>
 <body>
-
-  <div id="wrapper">
-    <div id="header">
-    </div>
-
-    <div class="clear"></div>
-    <div id="main">
-      <div id="content" class="post"><p><a href="http://msg-systems.github.io/ui5-testrecorder/"><img src="../images/icon.png" alt="Logo of UI5 test recorder"></a></p>
-<h1 id="ui5-test-recorder-–-record-a-new-test"><a class="header-link" href="#ui5-test-recorder-–-record-a-new-test"></a>UI5 Test Recorder – Record a new test</h1>
+<div id='wrapper'><div id='main'><div id='content' class='post'>
+<p><a href="http://msg-systems.github.io/ui5-testrecorder/"><img src="../images/icon.png" alt="Logo of UI5 test recorder" /></a></p>
+<h1 id="ui5-test-recorder-–-record-a-new-test">UI5 Test Recorder – Record a new test</h1>
 <p>As described in <a href="./documentation.html">the starting document of this documentation</a>, you can start the recording of a new test just by clicking on the list item on the start page representing the URL to your application.
 This action will trigger the UI5 test recorder to start the recording which give you some sort of this as a result:</p>
-<p class="img-container"><img src="./img/RecordStart.png" alt="Recording starts"></p>
+<p><img src="./img/RecordStart.png" alt="Recording starts" /></p>
 <p>As visible at the bottom of the application page, a toast message indicates that the test recorder has connected successfully to your UI5 application.
 Additionally, the test recorder switches to a waiting state, waiting for an interaction with the UI5 application.</p>
-<h2 id="selecting-a-ui5-control-on-the-application-page"><a class="header-link" href="#selecting-a-ui5-control-on-the-application-page"></a>Selecting a UI5 control on the application page</h2>
+<h2 id="selecting-a-ui5-control-on-the-application-page">Selecting a UI5 control on the application page</h2>
 <p>When you move your mouse over the application page, you will notice that detected UI5 controls are highlighted.</p>
-<p class="img-container"><img src="./img/SelectedItem.png" alt="Select UI5 control"></p>
+<p><img src="./img/SelectedItem.png" alt="Select UI5 control" /></p>
 <p>After <em>clicking</em> on a detected item on the application page, the test recorder switches to a detail page for you to finalize the test step.
 The application page is locked in the same moment.</p>
-<p class="img-container"><img src="./img/ItemTestStepPage.png" alt="Finalizing test step"></p>
-<h2 id="finalizing-the-test-step"><a class="header-link" href="#finalizing-the-test-step"></a>Finalizing the test step</h2>
-<h3 id="test-step-type"><a class="header-link" href="#test-step-type"></a>Test-step type</h3>
+<p><img src="./img/ItemTestStepPage.png" alt="Finalizing test step" /></p>
+<h2 id="finalizing-the-test-step">Finalizing the test step</h2>
+<h3 id="test-step-type">Test-step type</h3>
 <p>Interacting with the test-step page of the test recorder, you can decide which type of test step you want to perform.
 There are actions, assertions, and runs of the Support Assistant.</p>
-<p class="img-container"><img src="./img/TestStepTypes.png" alt="Test-step type"></p>
+<p><img src="./img/TestStepTypes.png" alt="Test-step type" /></p>
 <p><em>Actions</em> are for actual actions you want to perform on the application:</p>
-<ul class="list">
+<ul>
 <li><em>Press</em>, used for clicking on elements or buttons, and</li>
 <li><em>EnterText</em>, used for typing text into inputs, text fields, or search fields.</li>
 </ul>
-<p class="img-container"><img src="./img/ActionTypes.png" alt="Action types"></p>
+<p><img src="./img/ActionTypes.png" alt="Action types" /></p>
 <p>With <em>assertions</em>, you can check properties of controls for specific values:</p>
-<ul class="list">
-<li><em>Exists</em>, used to check if, at least, one control with specific properties exists within the application page,</li>
-<li><em>Attributes</em>, same as <em>Exists</em> but allows you to add additional checks for the control attributes, and</li>
+<ul>
+<li><p><em>Exists</em>, used to check if, at least, one control with specific properties exists within the application page,</p></li>
+<li><p><em>Attributes</em>, same as <em>Exists</em> but allows you to add additional checks for the control attributes, and</p></li>
 <li><p><em>Matching Count</em>, used for lists or tables to check for the number of items contained within their aggregations.</p>
-<p class="img-container"><img src="./img/AssertTypes.png" alt="Assert types"></p>
-</li>
+<p><img src="./img/AssertTypes.png" alt="Assert types" /></p></li>
 </ul>
-<h3 id="selection-criteria-for-control-identification"><a class="header-link" href="#selection-criteria-for-control-identification"></a>Selection criteria for control identification</h3>
+<h3 id="selection-criteria-for-control-identification">Selection criteria for control identification</h3>
 <p>The third selection on the test-step page allows you to choose how the control should be searched within and be selected from the application page:</p>
-<ul class="list">
+<ul>
 <li><em>UI5 Identifier</em>: The control is searched using a unique ID given by the application developer, which gives you a 100% match.
 This option is the most inflexible with respect to changes to the application page.</li>
 <li><em>Combination of Attributes</em>: You can configure control attributes that are used later to search for the control with in the application page.
@@ -59,29 +52,21 @@ This is the most flexible approach for control selection.</li>
 This is a qualifier similar to the <em>UI5 Identifier</em>.</li>
 </ul>
 <p><em>Note:</em> There are a lot of attributes a control can have, have a look at the <a href="./attributes.html">documentation on attributes</a> for a better overview.</p>
-<p class="img-container"><img src="./img/SelectionCriteria.png" alt="Selection criteria"></p>
-<h3 id="found-items"><a class="header-link" href="#found-items"></a>Found items</h3>
+<p><img src="./img/SelectionCriteria.png" alt="Selection criteria" /></p>
+<h3 id="found-items">Found items</h3>
 <p>If you use the selection criterion <em>Combination of Attributes</em>, it is possible that you select a combination of attributes which is valid for more than one control with in the application page.
 Sometimes this is wanted, sometimes it is not.
 Nevertheless, you can see if your configured attribute combination is  specific enough by inspecting the found items at the bottom of the test-step page.</p>
-<p class="img-container"><img src="./img/FoundItem.png" alt="Found items"></p>
-<h3 id="navigating-to-parent-and-child-controls"><a class="header-link" href="#navigating-to-parent-and-child-controls"></a>Navigating to parent and child controls</h3>
+<p><img src="./img/FoundItem.png" alt="Found items" /></p>
+<h3 id="navigating-to-parent-and-child-controls">Navigating to parent and child controls</h3>
 <p>Sometimes, you accidentally select an control which is not the control you had in mind.
 (This may also be caused by the test recorder because the conversion from DOM elements to UI5 controls can be tricky.)
 You can navigate to parent and child controls by accessing the top-right dropdown menu.</p>
-<p class="img-container"><img src="./img/ParentSelector.png" alt="Access parent/child controls"></p>
+<p><img src="./img/ParentSelector.png" alt="Access parent/child controls" /></p>
 <p>The <em>parent controls</em> can be accessed using the menu entry <code>Parent</code>.
 The <em>child controls</em> can be selected through the menu entry <code>Aggregations</code> because child controls are contained within aggregations in UI5.
 Therefore, you have to select a suitable aggregation to access the wanted child:
 Try to use <code>content</code> or <code>items</code> as those the most-used aggregations for content in UI5.</p>
-      </div>
-    </div>
-
-    <div class="clear">
-    </div>
-
-    <div id="footer">
-    </div>
-  </div>
+</div></div></div>
 </body>
 </html>
