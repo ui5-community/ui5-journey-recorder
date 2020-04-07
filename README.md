@@ -12,7 +12,8 @@ UI5 test recorder is able to generate the test code either for integration tests
 
 There are several points of interest for users:
 
-- The official website of the UI5 test recorder http://msg-systems.github.io/ui5-testrecorder/.
+- The official website of the UI5 test recorder is http://msg-systems.github.io/ui5-testrecorder/.
+- The official repository is located at GitHub: http://github.com/msg-systems/ui5-testrecorder/.
 - Usage documentation can be found [here](http://msg-systems.github.io/ui5-testrecorder/docs/documentation.html).
 - The changelog is documented in the file [CHANGELOG.md](CHANGELOG.md).
 

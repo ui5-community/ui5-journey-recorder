@@ -26,6 +26,7 @@ For further details, please see PR [#36](https://github.com/msg-systems/ui5-test
 ### Fixed
 - Fix potential page injection problem with item properties (072a04e)
 - Fix highlighting of selected element in page under test (1db2b70)
+- Fix potential security vulnerabilities in package dependencies and update dependencies
 
 
 ## 0.5.2
