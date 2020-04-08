@@ -9,6 +9,6 @@
     },
     "devDependencies": {
         "eslint": "*",
-        "markdown-styles": "*"
+        "showdown": "*"
     }
 }
