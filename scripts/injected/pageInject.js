@@ -1818,12 +1818,12 @@ class UI5ControlHelper {
      *
      * @returns {Object.<sap.ui.core.ID, sap.ui.core.Element>} object with all registered elements, keyed by their ID
      */
-    static getRegisteredElements() {
+    static getRegisteredElements(oSelector) {
         var oElements = {};
 
         // try to use registry (UI5 >= v1.67)
         if (sap.ui.core.Element && sap.ui.core.Element.registry) {
-            oElements = sap.ui.core.Element.registry.all();
+            oElements = sap.ui.core.Element.registry.all(); //TODO: replace by filter method -> therefore add the selector options as parameter
         }
         // use workaround with fully initialized core otherwise
         else {
@@ -1962,7 +1962,7 @@ class UI5ControlHelper {
                 return [];
             }
 
-            var aElements = UI5ControlHelper.getRegisteredElements();
+            var aElements = UI5ControlHelper.getRegisteredElements(oSelector);
 
             // TODO can we reuse UI5ControlHelper.getLabelForItem._getAllLabels here?
             //search for identifier of every single object..

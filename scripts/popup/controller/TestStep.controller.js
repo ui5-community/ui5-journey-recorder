@@ -117,7 +117,7 @@ sap.ui.define([
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._oModel.setProperty("/quickMode", false);
             var oItem = RecordController.getInstance().getCurrentElement();
-            if (!oItem || JSON.stringify(oItem) == "{}") {
+            if (!oItem || JSON.stringify(oItem) === "{}") {
                 this.getRouter().navTo("start");
                 return;
             }
@@ -134,7 +134,7 @@ sap.ui.define([
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._oModel.setProperty("/quickMode", true);
             var oItem = RecordController.getInstance().getCurrentElement();
-            if (!oItem || JSON.stringify(oItem) == "{}") {
+            if (!oItem || JSON.stringify(oItem) === "{}") {
                 this.getRouter().navTo("start");
                 return;
             }
@@ -251,7 +251,7 @@ sap.ui.define([
          * @param {*} oEvent
          */
         onUpdateAction: function (oEvent) {
-            this._updateSubActionTypes(false);
+            this._updateSubActionTypes();
             this._adjustDomChildWith(this._oModel.getProperty("/element/item"));
             this._updatePreview();
         },
@@ -471,7 +471,7 @@ sap.ui.define([
          *
          */
         _setItem: function (oItem) {
-            this._suspendBindings();
+            this._suspendBindings(); //TODO: What's the benefit?
 
             this._oModel.setProperty("/element/item", oItem);
             this._oModel.setProperty("/element/attributeFilter", []);
@@ -481,10 +481,10 @@ sap.ui.define([
             this._setValidAttributeTypes();
             this._adjustDefaultSettings(oItem).then(function () {
                 this._updateValueState(oItem);
-                this._updateSubActionTypes(true);
+                this._updateSubActionTypes();
                 this._updatePreview();
 
-                this._resumeBindings();
+                this._resumeBindings(); //TODO: What's the benefit, by pause all bindings?
             }.bind(this));
         },
 
@@ -1014,7 +1014,8 @@ sap.ui.define([
             var oItem = this._oModel.getProperty("/element");
             this._suspendBindings();
             this._adjustBeforeSaving(oItem).then(function (oElementFinal) {
-                this._getFoundElements().then(function (aElements) {
+                //can not understand why we need this
+                /* this._getFoundElements().then(function (aElements) {
 
                     if (aElements.length !== 1) {
                         // expand elements panel when in ACTION mode: the user has to do sth. as only one element can be selected for an action
@@ -1030,7 +1031,12 @@ sap.ui.define([
                     codeSettings.language = this.getModel('settings').getProperty('/settings/defaultLanguage');
                     codeSettings.execComponent = this.getOwnerComponent();
                     this.getModel("viewModel").setProperty("/code", CodeHelper.getItemCode(codeSettings, oElementFinal, this.getOwnerComponent()).join("\n").trim());
-                }.bind(this));
+                }.bind(this)); */
+
+                var codeSettings = this.getModel('viewModel').getProperty('/codeSettings');
+                codeSettings.language = this.getModel('settings').getProperty('/settings/defaultLanguage');
+                codeSettings.execComponent = this.getOwnerComponent();
+                this.getModel("viewModel").setProperty("/code", CodeHelper.getItemCode(codeSettings, oElementFinal, this.getOwnerComponent()).join("\n").trim());
             }.bind(this));
         },
 
@@ -1333,7 +1339,7 @@ sap.ui.define([
                     case "SUP":
                         // inspect support-assistant results that already exist
                         var aIssues = this._oModel.getProperty("/element/supportAssistantResult");
-                        oRatingPromise = new Promise(function(resolve) {
+                        oRatingPromise = new Promise(function (resolve) {
                             resolve(aIssues);
                         });
                         break;
@@ -1365,7 +1371,7 @@ sap.ui.define([
 
                     // update found elements a last time before resolving as the element-specific messages are
                     // attached to the identified elements and are not updated otherwise
-                    this._getFoundElements().then(function() {
+                    this._getFoundElements().then(function () {
                         resolve({
                             rating: iGrade,
                             messages: aMessages
@@ -1457,19 +1463,15 @@ sap.ui.define([
             }
 
             if (bRecording) {
-                return new Promise(function (resolve, reject) {
-                    ConnectionMessages.getWindowInfo(Connection.getInstance()).then(function (oData) {
-                        oReturn.href = oData.url;
-                        oReturn.hash = oData.hash;
-                        resolve(JSON.parse(JSON.stringify(oReturn)));
-                    });
+                return ConnectionMessages.getWindowInfo(Connection.getInstance()).then(function (oData) {
+                    oReturn.href = oData.url;
+                    oReturn.hash = oData.hash;
+                    return JSON.parse(JSON.stringify(oReturn));
                 });
             } else {
-                return new Promise(function (resolve, reject) {
-                    oReturn.href = oElement.href;
-                    oReturn.hash = oElement.hash;
-                    resolve(JSON.parse(JSON.stringify(oReturn)));
-                });
+                oReturn.href = oElement.href;
+                oReturn.hash = oElement.hash;
+                return Promise.resolve(JSON.parse(JSON.stringify(oReturn)));
             }
         },
 
