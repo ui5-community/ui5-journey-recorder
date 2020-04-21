@@ -299,7 +299,7 @@
                 <content>
                     <List id="tblIdentifiedElements" items="{viewModel>/element/identifiedElements}" noDataText="{i18n>notFoundTitle}" growing="true">
                         <items>
-                            <StandardListItem title="{viewModel>id}"/>
+                            <StandardListItem title="{viewModel>id}" description="{viewModel>className}"/>
                         </items>
                     </List>
                 </content>

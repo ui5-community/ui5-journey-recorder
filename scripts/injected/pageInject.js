@@ -1855,7 +1855,7 @@
                 return !oItem.getId().includes("testDialog");
             })
 
-            return aItems.map((oItem) => { return { id: oItem.sId }; });
+            return aItems.map((oItem) => { return { id: oItem.sId, className: oItem.getMetadata()._sClassName }; });
         }
 
         /**
