@@ -297,37 +297,11 @@
                     </Toolbar>
                 </headerToolbar>
                 <content>
-                    <Table fixedLayout="false" id="tblIdentifiedElements" inset="false" items="{viewModel>/element/identifiedElements}" noDataText="{i18n>notFoundTitle}" growing="true" growingFactor="50">
-                        <columns>
-                            <Column>
-                                <Text text="UI5-Id"/>
-                            </Column>
-                            <!-- <Column minScreenWidth="Tablet" demandPopin="true">
-                                <Text text="Type"/>
-                            </Column>
-                            <Column minScreenWidth="Tablet" demandPopin="true" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' || ${viewModel>/element/property/assKey} === 'MTC' ) }">
-                                <Text text="Assertion Status"/>
-                            </Column> -->
-                        </columns>
+                    <List id="tblIdentifiedElements" items="{viewModel>/element/identifiedElements}" noDataText="{i18n>notFoundTitle}" growing="true">
                         <items>
-                            <ColumnListItem>
-                                <cells>
-                                    <HBox>
-                                        <Text text="{viewModel>identifier/ui5Id}">
-                                            <layoutData>
-                                                <FlexItemData alignSelf="Center"/>
-                                            </layoutData>
-                                        </Text>
-                                    </HBox>
-                                    <!-- <Text text="{viewModel>metadata/elementName}"/>
-                                    <HBox visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' || ${viewModel>/element/property/assKey} === 'MTC' ) }">
-                                        <core:Icon src='sap-icon://accept' color="Positive" visible="{viewModel>assertionOK}"/>
-                                        <Button press="onShowAssertionIssue" icon='sap-icon://decline' type="Reject" visible="{= ${viewModel>assertionOK} === false}"/>
-                                    </HBox> -->
-                                </cells>
-                            </ColumnListItem>
+                            <StandardListItem title="{viewModel>id}"/>
                         </items>
-                    </Table>
+                    </List>
                 </content>
             </Panel>
 

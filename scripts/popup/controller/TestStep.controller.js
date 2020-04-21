@@ -257,7 +257,6 @@ sap.ui.define([
             this._updateSubActionTypes();
             this._adjustDomChildWith(this._oModel.getProperty("/element/item"));
             this._updatePreview();
-            //TODD @Adrian: reloading all found items should not be necessary
         },
 
         /**
@@ -475,7 +474,6 @@ sap.ui.define([
             }
             this.byId("atrElementsPnl").setExpanded(false);
             this._bShowCodeOnly = false;
-            debugger;
             this._setItem(oItem);
 
             //in case we are in "TYP" after opening, set focus to input field..
@@ -884,7 +882,6 @@ sap.ui.define([
 
                     if (aReturn.length === 1) { // early exit if possible: the less attributes the better
                         resolve(aReturn);
-                        return aReturn;
                     }
 
                     // 6) now add the label text if possible and static
