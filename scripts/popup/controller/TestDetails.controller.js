@@ -189,10 +189,14 @@ sap.ui.define([
 
         /**
          *
+         * @param {sap.ui.base.Event} oControlEvent the event attached to the closing action
          */
-        onStopRecord: function () {
-            RecordController.getInstance().stopRecording();
-            this._oRecordDialog.close();
+        onStopRecord: function (oControlEvent) {
+            // only stop recording iff the user pressed the cancel button 'Stop recording'
+            if (oControlEvent.getParameter("cancelPressed")) {
+                RecordController.getInstance().stopRecording();
+                this._oRecordDialog.close(); // dialog may be already closed
+            }
         },
 
         /**
@@ -553,6 +557,7 @@ sap.ui.define([
                 controller: this
             }).then(function(oRecordDialog) {
                 this._oRecordDialog = oRecordDialog;
+                this._oRecordDialog.attachClose(this.onStopRecord, this);
             }.bind(this));
 
             this._oMessagePopover = new MessagePopover({
