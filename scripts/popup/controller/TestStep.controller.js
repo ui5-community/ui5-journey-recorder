@@ -499,7 +499,7 @@ sap.ui.define([
          *
          */
         _setItem: function (oItem) {
-            this._suspendBindings(); //TODO: What's the benefit?
+            this._suspendBindings();
 
             this._oModel.setProperty("/element/item", oItem);
             this._oModel.setProperty("/element/attributeFilter", []);
@@ -512,7 +512,7 @@ sap.ui.define([
                 this._updateSubActionTypes();
                 this._updatePreview();
 
-                this._resumeBindings(); //TODO: What's the benefit, by pause all bindings?
+                this._resumeBindings();
             }.bind(this));
         },
 
@@ -1041,29 +1041,11 @@ sap.ui.define([
             var oItem = this._oModel.getProperty("/element");
             this._suspendBindings();
             return this._adjustBeforeSaving(oItem).then(function (oElementFinal) {
-                //can not understand why we need this, here.
-                /* this._getFoundElements().then(function (aElements) {
-
-                    if (aElements.length !== 1) {
-                        // expand elements panel when in ACTION mode: the user has to do sth. as only one element can be selected for an action
-                        if (this._oModel.getProperty("/element/property/type") === 'ACT') {
-                            this.byId("atrElementsPnl").setExpanded(true);
-                        }
-                    }
-
-                    this._checkElementNumber();
-                    this._resumeBindings();
-
-                    var codeSettings = this.getModel('viewModel').getProperty('/codeSettings');
-                    codeSettings.language = this.getModel('settings').getProperty('/settings/defaultLanguage');
-                    codeSettings.execComponent = this.getOwnerComponent();
-                    this.getModel("viewModel").setProperty("/code", CodeHelper.getItemCode(codeSettings, oElementFinal, this.getOwnerComponent()).join("\n").trim());
-                }.bind(this)); */
-
                 var codeSettings = this.getModel('viewModel').getProperty('/codeSettings');
                 codeSettings.language = this.getModel('settings').getProperty('/settings/defaultLanguage');
                 codeSettings.execComponent = this.getOwnerComponent();
                 this.getModel("viewModel").setProperty("/code", CodeHelper.getItemCode(codeSettings, oElementFinal, this.getOwnerComponent()).join("\n").trim());
+                this._resumeBindings();
             }.bind(this));
         },
 
