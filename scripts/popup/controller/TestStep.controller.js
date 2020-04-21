@@ -611,7 +611,7 @@ sap.ui.define([
                 //check if the technical name is already given
                 this._oModel.setProperty("/element/property/technicalName", sName);
 
-                this._getFoundElements().then(function (aReturn) {
+                this._getMatchingElementCount().then(function (aReturn) {
                     if (this._oModel.getProperty("/element/property/selectItemBy") === "UI5" && aReturn.length > 1) {
                         this._oModel.setProperty("/element/property/selectItemBy", "ATTR"); // change to attribute in case that the ID is not sufficient..
                     }
@@ -784,7 +784,7 @@ sap.ui.define([
                 var sProp = this._oModel.getProperty("/element/property/selectItemBy");
                 if (sProp != "ATTR") {
                     this._oModel.setProperty("/element/attributeFilter", []);
-                    resolve(this._getFoundElements());
+                    resolve(this._getMatchingElementCount());
                 } else {
                     resolve(this._findAttribute(oItem)); //generate standard, or "best fitting" (whatever that is :-)
                 }
@@ -880,7 +880,7 @@ sap.ui.define([
                 }
 
                 // 5) retry and get the elements from the page again
-                this._getFoundElements().then(function (aReturn) {
+                this._getMatchingElementCount().then(function (aReturn) {
 
                     if (aReturn.length === 1) { // early exit if possible: the less attributes the better
                         resolve(aReturn);
@@ -1071,7 +1071,7 @@ sap.ui.define([
          * 
          */
         _validateSelectedItemNumber: function () {
-            return this._getFoundElements().then(function (aElements) {
+            return this._getMatchingElementCount().then(function (aElements) {
                 if (aElements.length !== 1) {
                     // expand elements panel when in ACTION mode: the user has to do sth. as only one element can be selected for an action
                     if (this._oModel.getProperty("/element/property/type") === 'ACT') {
@@ -1093,16 +1093,23 @@ sap.ui.define([
          */
         _getFoundElements: function () {
             var oDefinition = this._getSelectorDefinition(this._oModel.getProperty("/element"));
-            var oModel = this._oModel;
 
-            return new Promise(function (resolve, reject) {
-                ConnectionMessages.findElements(Connection.getInstance(), oDefinition.selectorAttributes).then(function (aElements) {
-                    oModel.setProperty("/element/identifiedElements", aElements);
-                    resolve(aElements);
-                });
-            });
+            return ConnectionMessages.findElements(Connection.getInstance(), oDefinition.selectorAttributes).then(function (aElements) {
+                this._oModel.setProperty("/element/identifiedElements", aElements);
+                return aElements;
+            }.bind(this));
         },
 
+        /**
+         * 
+         */
+        _getMatchingElementCount: function () {
+            var oDefinition = this._getSelectorDefinition(this._oModel.getProperty("/element"));
+            return ConnectionMessages.checkElementCount(Connection.getInstance(), oDefinition.selectorAttributes).then(function (aElements) {
+                this._oModel.setProperty("/element/identifiedElements", aElements);
+                return aElements;
+            }.bind(this));
+        },
 
         /**
          *
@@ -1415,7 +1422,7 @@ sap.ui.define([
 
                     // update found elements a last time before resolving as the element-specific messages are
                     // attached to the identified elements and are not updated otherwise
-                    this._getFoundElements().then(function () {
+                    this._getMatchingElementCount().then(function () {
                         resolve({
                             rating: iGrade,
                             messages: aMessages

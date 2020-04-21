@@ -106,6 +106,10 @@
                     oReturn = _findItemsBySelector(oEventData);
                     break;
 
+                case "checkElementCountBySelector":
+                    oReturn = _checkElementCountBySelector(oEventData);
+                    break;
+
                 case "selectItem":
                     oReturn = _selectItem(oEventData);
                     break;
@@ -212,6 +216,11 @@
     function _findItemsBySelector(oSelector) {
         // TODO create and use TestItem instance here
         return TestItem.findItemsBySelector(oSelector);
+    }
+
+    function _checkElementCountBySelector(oSelector) {
+        // TODO create and use TestItem instance here
+        return UI5ControlHelper.getMatchingElementIDs(oSelector);
     }
 
     function _selectItem(oEventData) {
@@ -1832,6 +1841,21 @@
             }
 
             return oElements;
+        }
+
+        /**
+         * 
+         * @param {object} oSelector 
+         */
+        static getMatchingElementIDs(oSelector) {
+            var aInformation = UI5ControlHelper.findControlsBySelector(oSelector);
+
+            //remove all items, which are starting with "testDialog"..
+            var aItems = aInformation.filter(function (oItem) {
+                return !oItem.getId().includes("testDialog");
+            })
+
+            return aItems.map((oItem) => { return { id: oItem.sId }; });
         }
 
         /**

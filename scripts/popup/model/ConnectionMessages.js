@@ -60,6 +60,21 @@ sap.ui.define([], function () {
         }
 
         /**
+         * Send message through the given connection to find page element id's matching the given selector.
+         *
+         * @param {com.ui5.testing.model.Connection} oConnection the connection to use for sending messages
+         * @param {object} oItemSelector selector information
+         *
+         * @returns {Promise} a Promise resolving to the matche page elements
+         */
+        static checkElementCount(oConnection, oItemSelector) {
+            return oConnection.syncMessage({
+                action: "checkElementCountBySelector",
+                data: oItemSelector
+            });
+        }
+
+        /**
          * Send message through the given connection to select the page element matching the given selector.
          *
          * @param {com.ui5.testing.model.Connection} oConnection the connection to use for sending messages

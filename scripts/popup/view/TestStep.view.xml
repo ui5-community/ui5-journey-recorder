@@ -302,12 +302,12 @@
                             <Column>
                                 <Text text="UI5-Id"/>
                             </Column>
-                            <Column minScreenWidth="Tablet" demandPopin="true">
+                            <!-- <Column minScreenWidth="Tablet" demandPopin="true">
                                 <Text text="Type"/>
                             </Column>
                             <Column minScreenWidth="Tablet" demandPopin="true" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' || ${viewModel>/element/property/assKey} === 'MTC' ) }">
                                 <Text text="Assertion Status"/>
-                            </Column>
+                            </Column> -->
                         </columns>
                         <items>
                             <ColumnListItem>
@@ -319,11 +319,11 @@
                                             </layoutData>
                                         </Text>
                                     </HBox>
-                                    <Text text="{viewModel>metadata/elementName}"/>
+                                    <!-- <Text text="{viewModel>metadata/elementName}"/>
                                     <HBox visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' || ${viewModel>/element/property/assKey} === 'MTC' ) }">
                                         <core:Icon src='sap-icon://accept' color="Positive" visible="{viewModel>assertionOK}"/>
                                         <Button press="onShowAssertionIssue" icon='sap-icon://decline' type="Reject" visible="{= ${viewModel>assertionOK} === false}"/>
-                                    </HBox>
+                                    </HBox> -->
                                 </cells>
                             </ColumnListItem>
                         </items>
