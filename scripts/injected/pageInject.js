@@ -922,7 +922,7 @@
 
             document.addEventListener("mousedown", this._fnMouseDownListener, true);
 
-            document.onclick = function (e) {
+            document.addEventListener('click', function (e) {
                 var e = e || window.event,
                     el = e.target || e.srcElement;
 
@@ -944,7 +944,7 @@
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
-            }.bind(this);
+            }.bind(this), true);
 
             sap.ui.require(["sap/m/MessageToast"], function (MessageToast) {
                 MessageToast.show("UI5 test recorder fully injected!");
