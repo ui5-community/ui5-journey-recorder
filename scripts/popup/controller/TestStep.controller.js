@@ -1084,7 +1084,7 @@ sap.ui.define([
          */
         _getMatchingElementCount: function () {
             var oDefinition = this._getSelectorDefinition(this._oModel.getProperty("/element"));
-            return ConnectionMessages.checkElementCount(Connection.getInstance(), oDefinition.selectorAttributes).then(function (aElements) {
+            return ConnectionMessages.findElementIDsBySelector(Connection.getInstance(), oDefinition.selectorAttributes).then(function (aElements) {
                 this._oModel.setProperty("/element/identifiedElements", aElements);
                 return aElements;
             }.bind(this));

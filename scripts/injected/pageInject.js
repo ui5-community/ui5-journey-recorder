@@ -106,8 +106,8 @@
                     oReturn = _findItemsBySelector(oEventData);
                     break;
 
-                case "checkElementCountBySelector":
-                    oReturn = _checkElementCountBySelector(oEventData);
+                case "findElementIDsBySelector":
+                    oReturn = _findElementIDsBySelector(oEventData);
                     break;
 
                 case "selectItem":
@@ -218,7 +218,7 @@
         return TestItem.findItemsBySelector(oSelector);
     }
 
-    function _checkElementCountBySelector(oSelector) {
+    function _findElementIDsBySelector(oSelector) {
         // TODO create and use TestItem instance here
         return UI5ControlHelper.getMatchingElementIDs(oSelector);
     }

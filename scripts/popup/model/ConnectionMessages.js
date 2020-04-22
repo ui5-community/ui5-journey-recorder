@@ -67,9 +67,9 @@ sap.ui.define([], function () {
          *
          * @returns {Promise} a Promise resolving to the matche page elements
          */
-        static checkElementCount(oConnection, oItemSelector) {
+        static findElementIDsBySelector(oConnection, oItemSelector) {
             return oConnection.syncMessage({
-                action: "checkElementCountBySelector",
+                action: "findElementIDsBySelector",
                 data: oItemSelector
             });
         }
