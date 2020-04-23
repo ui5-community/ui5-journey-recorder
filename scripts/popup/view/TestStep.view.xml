@@ -1,18 +1,5 @@
-<mvc:View
-    xmlns="sap.m"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns:f="sap.ui.layout.form"
-    xmlns:code="sap.ui.codeeditor"
-    xmlns:semantic="sap.m.semantic"
-    xmlns:core="sap.ui.core"
-    controllerName="com.ui5.testing.controller.TestStep">
-    <semantic:FullscreenPage
-        navButtonPress="onNavBack"
-        showSubHeader="false"
-        title="{viewModel>/element/item/identifier/ui5Id}"
-        showNavButton="true"
-        busy="{viewModel>/busy}"
-        showFooter="{= ${viewModel>/quickMode} === true || ${viewModel>/quickMode} === false}">
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:code="sap.ui.codeeditor" xmlns:semantic="sap.m.semantic" xmlns:core="sap.ui.core" controllerName="com.ui5.testing.controller.TestStep">
+    <semantic:FullscreenPage navButtonPress="onNavBack" showSubHeader="false" title="{viewModel>/element/item/identifier/ui5Id}" showNavButton="true" busy="{viewModel>/busy}" showFooter="{= ${viewModel>/quickMode} === true || ${viewModel>/quickMode} === false}">
         <semantic:customHeaderContent>
             <MenuButton text="Navigate from Item" buttonMode="Regular">
                 <menu>
@@ -310,37 +297,11 @@
                     </Toolbar>
                 </headerToolbar>
                 <content>
-                    <Table fixedLayout="false" id="tblIdentifiedElements" inset="false" items="{viewModel>/element/identifiedElements}" noDataText="{i18n>notFoundTitle}">
-                        <columns>
-                            <Column>
-                                <Text text="UI5-Id"/>
-                            </Column>
-                            <Column minScreenWidth="Tablet" demandPopin="true">
-                                <Text text="Type"/>
-                            </Column>
-                            <Column minScreenWidth="Tablet" demandPopin="true" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' || ${viewModel>/element/property/assKey} === 'MTC' ) }">
-                                <Text text="Assertion Status"/>
-                            </Column>
-                        </columns>
+                    <List id="tblIdentifiedElements" items="{viewModel>/element/identifiedElements}" noDataText="{i18n>notFoundTitle}" growing="true">
                         <items>
-                            <ColumnListItem>
-                                <cells>
-                                    <HBox>
-                                        <Text text="{viewModel>identifier/ui5Id}">
-                                            <layoutData>
-                                                <FlexItemData alignSelf="Center"/>
-                                            </layoutData>
-                                        </Text>
-                                    </HBox>
-                                    <Text text="{viewModel>metadata/elementName}"/>
-                                    <HBox visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'ATTR' || ${viewModel>/element/property/assKey} === 'MTC' ) }">
-                                        <core:Icon src='sap-icon://accept' color="Positive" visible="{viewModel>assertionOK}"/>
-                                        <Button press="onShowAssertionIssue" icon='sap-icon://decline' type="Reject" visible="{= ${viewModel>assertionOK} === false}"/>
-                                    </HBox>
-                                </cells>
-                            </ColumnListItem>
+                            <StandardListItem title="{viewModel>id}" description="{viewModel>className}"/>
                         </items>
-                    </Table>
+                    </List>
                 </content>
             </Panel>
 

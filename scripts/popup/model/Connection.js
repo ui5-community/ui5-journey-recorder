@@ -16,7 +16,9 @@ sap.ui.define([
             // get window info for popup window
             this._iWindowId = null;
             this._bStartImmediately = false;
-            chrome.runtime.sendMessage({type: "handshake-get-window-id"}, function (response) {
+            chrome.runtime.sendMessage({
+                type: "handshake-get-window-id"
+            }, function (response) {
                 if (response && response.type === "handshake-send-window-id") {
                     this._iWindowId = response.windowId;
                     this._bStartImmediately = response.startImmediately;
@@ -56,10 +58,10 @@ sap.ui.define([
                         // state that an injected is attempted so that no further ones are performed
                         bInjectionAttempted = true;
                         // perform the injection after some seconds
-                        setTimeout(function() {
+                        setTimeout(function () {
                             chrome.tabs.executeScript(iTabId, {
                                 file: '/scripts/content/contentInject.js'
-                            }, function() {
+                            }, function () {
                                 // remove the listener after the attempt so that it is not triggered for any further
                                 // tab updates (later, somewhere else, ...)
                                 chrome.tabs.onUpdated.removeListener(fnAttemptInjectionAfterReload);
@@ -102,7 +104,9 @@ sap.ui.define([
 
                     // 1) reload page before attempting the injection to reset any internal counters of the UI5 page (e.g., view numbers).
                     //    this triggers 'fnAttemptInjectionAfterReload'
-                    chrome.tabs.reload(this._sTabId, {bypassCache: false});
+                    chrome.tabs.reload(this._sTabId, {
+                        bypassCache: false
+                    });
                 } else {
                     reject({
                         message: "There is already a connection, please stop before opening a new one."
@@ -129,7 +133,7 @@ sap.ui.define([
          *
          * @returns {boolean} true if the connection is established, false otherwise
          */
-        isConnected: function() {
+        isConnected: function () {
             return !!this._port;
         },
 
@@ -177,7 +181,9 @@ sap.ui.define([
          * @param {object} oInformation the message to send
          */
         _sendMessage: function (oInformation) {
-            this._port.postMessage(oInformation);
+            if (this._port) {
+                this._port.postMessage(oInformation);
+            }
         },
 
         /**

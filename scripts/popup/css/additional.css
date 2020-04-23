@@ -26,3 +26,11 @@
     /* width: 30px; */
     /* height: 30px; */
 }
+
+.sapUiLocalBusyIndicatorAnimation>div::before {
+    background: #a01441;
+}
+
+.sapUiLocalBusyIndicatorAnimation>div::after {
+    box-shadow: inset 0 0 2px 1px #797979;
+}
