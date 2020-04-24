@@ -175,6 +175,22 @@ sap.ui.define([], function () {
             });
         }
 
+        //#region mockdata
+
+        /**
+         * Send message through the given connection to unlock the page in the connected tab.
+         * 
+         * @param {com.ui5.testing.model.Connection} oConnection the connection to use for sending messages
+         * 
+         * @returns {Promise} a Promise resolving when page returns the requested models
+         */
+        static getODataV2Models(oConnection) {
+            return oConnection.syncMessage({
+                action: "getODataV2Models"
+            });
+        }
+        //#endregion
+
     }
 
     return ConnectionMessages;

@@ -95,9 +95,9 @@ sap.ui.define([
                                 target: "testElement"
                             },
                             {
-                                pattern: "/mockserver",
-                                name: "mockserver",
-                                target: "mockserver"
+                                pattern: "/mockdata",
+                                name: "mockdata",
+                                target: "mockdata"
                             },
                             {
                                 pattern: "/TestDetails/{TestId}",
@@ -126,10 +126,10 @@ sap.ui.define([
                             }
                         ],
                         targets: {
-                            mockserver: {
-                                viewName: "Mockserver",
+                            mockdata: {
+                                viewName: "Mockdata",
                                 viewLevel: 1,
-                                viewId: "mockserver",
+                                viewId: "Mockdata",
                                 controlAggregation: "pages"
                             },
                             testElement: {

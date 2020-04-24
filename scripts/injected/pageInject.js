@@ -5,12 +5,12 @@
     // #region Page communication
 
     /**
-    * PageCommunication class to handle any page–extension messaging.
-    *
-    * This class is singleton to ensure reliable message handling in both directions.
-    *
-    * Messages are handled using a {@link window.message} and corresponding listeners.
-    */
+     * PageCommunication class to handle any page–extension messaging.
+     *
+     * This class is singleton to ensure reliable message handling in both directions.
+     *
+     * Messages are handled using a {@link window.message} and corresponding listeners.
+     */
     class PageCommunication {
 
         /**
@@ -153,11 +153,9 @@
                     oReturn = _disconnect();
                     return; // return directly and do not issue any returning message below
 
-                // case "mockserver":
-                //     return this._getDataModelInformation();
-
-                // events that are not handled: "setWindowLocation"
-
+                case "getODataV2Models":
+                    oReturn = _retrieveODataV2Models();
+                    break;
                 default:
                     break;
             }
@@ -203,7 +201,19 @@
                 this._bActive = false;
             }.bind(this), 10);
         }
+    }
 
+    function _retrieveODataV2Models() {
+        var oComponent = _getAppComponent();
+        if (oComponent) {
+            var aServices = _getDataServices(oComponent).filter((oService) => oService.version === "2.0");
+            var aModels = _getDataModels(oComponent).filter((oModel) => oModel.dataSources && aServices.some((oService) => oService.name === oModel.dataSources));
+            return aModels.map((oModel) => {
+                oModel.metadata = oComponent.getModel(oModel.name !== "" ? oModel.name : undefined).getServiceMetadata ? oComponent.getModel(oModel.name !== "" ? oModel.name : undefined).getServiceMetadata() : {};
+            });
+        } else {
+            return [];
+        }
     }
 
     function _stopRecording() {
@@ -253,9 +263,9 @@
         //    (1) found no control for the given element selector,
         //    (2) the given list is empty,
         //    (3) the given parameter is neither an HTMLElement nor a NodeList
-        if (!aDOMNodes
-            || (aDOMNodes.length && aDOMNodes.length === 0)
-            || !(aDOMNodes instanceof HTMLElement || aDOMNodes instanceof NodeList || Array.isArray(aDOMNodes))) {
+        if (!aDOMNodes ||
+            (aDOMNodes.length && aDOMNodes.length === 0) ||
+            !(aDOMNodes instanceof HTMLElement || aDOMNodes instanceof NodeList || Array.isArray(aDOMNodes))) {
             oResult = {
                 result: "error",
                 message: {
@@ -760,9 +770,9 @@
                     // run support assistant with the given set of rules (or no rules at all if none have been cached yet)
                     // TODO this function is deprecated for UI5 >= 1.60. "Please use sap/ui/support/RuleAnalyzer instead."
                     jQuery.sap.support.analyze({
-                        type: "components",
-                        components: [sComponent]
-                    }, appliedSupportAssistantRules.length > 0 ? appliedSupportAssistantRules : undefined)
+                            type: "components",
+                            components: [sComponent]
+                        }, appliedSupportAssistantRules.length > 0 ? appliedSupportAssistantRules : undefined)
                         // post-process results
                         .then(function () {
                             var aIssues = jQuery.sap.support.getLastAnalysisHistory();
@@ -861,8 +871,7 @@
         // ask user whether to reload page to remove any injections
         sap.ui.require(["sap/m/MessageBox"], function (MessageBox) {
             MessageBox.error(
-                "The connection to the UI5 test recorder has been lost. Do you want to reload this page to reset it?",
-                {
+                "The connection to the UI5 test recorder has been lost. Do you want to reload this page to reset it?", {
                     icon: MessageBox.Icon.QUESTION,
                     title: "Reload page?",
                     actions: [MessageBox.Action.YES, MessageBox.Action.NO],
@@ -876,6 +885,58 @@
         });
     }
 
+    // #endregion
+
+    // #region Data Model handling
+
+    function _getAppComponent() {
+        var aElements = UI5ControlHelper._getRegisteredElements().filter((oElement) => oElement.getComponentInstance);
+        if (aElements.length > 0) {
+            return aElements[0].getComponentInstance();
+        } else {
+            return undefined;
+        }
+    }
+
+    function _getDataServices(oComponent) {
+        var oManifest = oComponent.getManifest();
+        var oSapAppSection = oManifest["sap.app"];
+        var oDataSources = oSapAppSection.dataSources;
+        if (oDataSources) {
+            var aServices = Object.keys(oDataSources).map((sService) => {
+                var oService = {
+                    name: sService
+                };
+                oService.uri = oDataSources[sService].uri;
+                oService.type = oDataSources[sService].type;
+                if (oService.type === "OData" && oDataSources[sService].settings) {
+                    oService.version = oDataSources[sService].settings.odataVersion;
+                }
+            });
+            return aServices;
+        } else {
+            return [];
+        }
+    }
+
+    function _getDataModels(oComponent) {
+
+        var oManifest = oComponent.getManifest();
+        var oUI5 = oManifest["sap.ui5"];
+        if (!oUI5) {
+            return [];
+        }
+
+        var oModels = oUI5.models;
+        if (!oModels) {
+            return [];
+        }
+
+        return Object.keys(oModels).map((sModelName) => {
+            var oModelObject = oModels[sModelName];
+            oModelObject.name = sModelName;
+        });
+    }
     // #endregion
 
     // #region Page listener
@@ -1250,7 +1311,9 @@
                 oReturn.classArray = [];
                 var oMeta = oItem.getMetadata();
                 while (oMeta) {
-                    oReturn.classArray.push({ elementName: oMeta._sClassName });
+                    oReturn.classArray.push({
+                        elementName: oMeta._sClassName
+                    });
                     oMeta = oMeta.getParent();
                 }
 
@@ -1828,12 +1891,12 @@
          *
          * @returns {Object.<sap.ui.core.ID, sap.ui.core.Element>} object with all registered elements, keyed by their ID
          */
-        static getRegisteredElements(oSelector) {
+        static getRegisteredElements() {
             var oElements = {};
 
             // try to use registry (UI5 >= v1.67)
             if (sap.ui.core.Element && sap.ui.core.Element.registry) {
-                oElements = sap.ui.core.Element.registry.all(); //TODO: replace by filter method -> therefore add the selector options as parameter
+                oElements = sap.ui.core.Element.registry.all();
             }
             // use workaround with fully initialized core otherwise
             else {
@@ -1855,7 +1918,12 @@
                 return !oItem.getId().includes("testDialog");
             })
 
-            return aItems.map((oItem) => { return { id: oItem.sId, className: oItem.getMetadata()._sClassName }; });
+            return aItems.map((oItem) => {
+                return {
+                    id: oItem.sId,
+                    className: oItem.getMetadata()._sClassName
+                };
+            });
         }
 
         /**
@@ -2718,17 +2786,18 @@
         },
         "sap.m.SearchField": {
             defaultAction: [{
-                domChildWith: "-search",
-                action: "PRS"
-            },
-            {
-                domChildWith: "-reset",
-                action: "PRS"
-            },
-            {
-                domChildWith: "",
-                action: "TYP"
-            }]
+                    domChildWith: "-search",
+                    action: "PRS"
+                },
+                {
+                    domChildWith: "-reset",
+                    action: "PRS"
+                },
+                {
+                    domChildWith: "",
+                    action: "TYP"
+                }
+            ]
         }
     };
 
