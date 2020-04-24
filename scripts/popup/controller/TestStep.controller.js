@@ -306,7 +306,10 @@ sap.ui.define([
          *
          */
         onUpdatePreview: function () {
-            this._updatePreview();
+            Promise.all([
+                this._updatePreview(),
+                this._validateSelectedItemNumber()
+            ]);
         },
 
         /**
@@ -326,7 +329,10 @@ sap.ui.define([
                 this._oModel.setProperty("/element/attributeFilter", aFilter);
 
                 //update preview
-                this._updatePreview();
+                Promise.all([
+                    this._updatePreview(),
+                    this._validateSelectedItemNumber()
+                ]);
             }.bind(this));
         },
 
@@ -509,6 +515,7 @@ sap.ui.define([
                 this._updateValueState(oItem);
                 this._updateSubActionTypes();
                 this._updatePreview();
+                this._validateSelectedItemNumber();
 
                 this._resumeBindings();
             }.bind(this));
@@ -937,6 +944,7 @@ sap.ui.define([
             }
 
             this._updatePreview();
+            this._validateSelectedItemNumber();
             this._check();
         },
 
