@@ -11,7 +11,7 @@
                                 </items>
                             </MenuItem>
 
-                            <MenuItem text="Aggregations" items="{ path: 'viewModel>/element/item/aggregationArray', filters: [{ path: 'length', operator: 'NE', value1: 0 }] }">
+                            <MenuItem text="Aggregations" items="{ path: 'viewModel>/element/item/aggregation', filters: [{ path: 'length', operator: 'NE', value1: 0 }] }">
                                 <items>
                                     <MenuItem text="{viewModel>name}" items="{viewModel>rows}">
                                         <items>
