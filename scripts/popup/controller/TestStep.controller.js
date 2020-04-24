@@ -1414,13 +1414,9 @@ sap.ui.define([
                     // unlock view
                     this.getView().setBusy(false);
 
-                    // update found elements a last time before resolving as the element-specific messages are
-                    // attached to the identified elements and are not updated otherwise
-                    this._getMatchingElementCount().then(function () {
-                        resolve({
-                            rating: iGrade,
-                            messages: aMessages
-                        });
+                    resolve({
+                        rating: iGrade,
+                        messages: aMessages
                     });
 
                 }.bind(this));
