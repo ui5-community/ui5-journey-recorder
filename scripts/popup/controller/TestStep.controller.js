@@ -236,7 +236,8 @@ sap.ui.define([
             this.byId("btSaveHeader").setBusy(true);
             this.byId("btSaveFooter").setBusy(true);
 
-            this._save().then(function () {
+            this._save()
+            .then(function () {
 
                 this.byId("btSaveHeader").setBusy(false);
                 this.byId("btSaveFooter").setBusy(false);
@@ -246,6 +247,10 @@ sap.ui.define([
                     TestId: this._sTestId
                 }, true);
                 RecordController.getInstance().startRecording();
+            }.bind(this))
+            .catch(function () {
+                this.byId("btSaveHeader").setBusy(false);
+                this.byId("btSaveFooter").setBusy(false);
             }.bind(this));
         },
 
@@ -1238,6 +1243,8 @@ sap.ui.define([
                             onClose: function (oAction) {
                                 if (oAction === MessageBox.Action.OK) {
                                     resolve();
+                                } else {
+                                    reject();
                                 }
                             }
                         });
@@ -1451,7 +1458,10 @@ sap.ui.define([
                             resolve();
                         }
                     }.bind(this));
-                }.bind(this));
+                }.bind(this))
+                .catch(function () {
+                    reject();
+                });
             }.bind(this));
         },
 
