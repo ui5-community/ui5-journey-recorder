@@ -5,12 +5,12 @@
     // #region Page communication
 
     /**
-    * PageCommunication class to handle any page–extension messaging.
-    *
-    * This class is singleton to ensure reliable message handling in both directions.
-    *
-    * Messages are handled using a {@link window.message} and corresponding listeners.
-    */
+     * PageCommunication class to handle any page–extension messaging.
+     *
+     * This class is singleton to ensure reliable message handling in both directions.
+     *
+     * Messages are handled using a {@link window.message} and corresponding listeners.
+     */
     class PageCommunication {
 
         /**
@@ -253,9 +253,9 @@
         //    (1) found no control for the given element selector,
         //    (2) the given list is empty,
         //    (3) the given parameter is neither an HTMLElement nor a NodeList
-        if (!aDOMNodes
-            || (aDOMNodes.length && aDOMNodes.length === 0)
-            || !(aDOMNodes instanceof HTMLElement || aDOMNodes instanceof NodeList || Array.isArray(aDOMNodes))) {
+        if (!aDOMNodes ||
+            (aDOMNodes.length && aDOMNodes.length === 0) ||
+            !(aDOMNodes instanceof HTMLElement || aDOMNodes instanceof NodeList || Array.isArray(aDOMNodes))) {
             oResult = {
                 result: "error",
                 message: {
@@ -861,17 +861,16 @@
         // ask user whether to reload page to remove any injections
         sap.ui.require(["sap/m/MessageBox"], function (MessageBox) {
             MessageBox.error(
-                "The connection to the UI5 test recorder has been lost. Do you want to reload this page to reset it?",
-                {
-                    icon: MessageBox.Icon.QUESTION,
-                    title: "Reload page?",
-                    actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-                    onClose: function (sAction) {
-                        if (sAction === MessageBox.Action.YES) {
-                            location.reload();
-                        }
+                "The connection to the UI5 test recorder has been lost. Do you want to reload this page to reset it?", {
+                icon: MessageBox.Icon.QUESTION,
+                title: "Reload page?",
+                actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                onClose: function (sAction) {
+                    if (sAction === MessageBox.Action.YES) {
+                        location.reload();
                     }
                 }
+            }
             );
         });
     }
@@ -901,6 +900,30 @@
             }
         }
 
+        _fnClickListener(event) {
+            var event = event || window.event,
+                el = event.target || event.srcElement;
+
+            if (_bActive === false) {
+
+                // no active recording, but still recording ongoing (e.g., in the other extension part)
+                if (_bPageLocked === true) {
+                    // sap.m.MessageToast.show("Please finalize the test step in the test-recorder popup first.");
+                    event.preventDefault();
+                    event.stopPropagation();
+                    event.stopImmediatePropagation();
+                }
+
+                return;
+            }
+
+            _bActive = false;
+            this.handleClickOn(el);
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+        }
+
         setupPageListener() {
             /** use the css hovering class */
             document.onmouseover = function (e) {
@@ -922,29 +945,7 @@
 
             document.addEventListener("mousedown", this._fnMouseDownListener, true);
 
-            document.onclick = function (e) {
-                var e = e || window.event,
-                    el = e.target || e.srcElement;
-
-                if (_bActive === false) {
-
-                    // no active recording, but still recording ongoing (e.g., in the other extension part)
-                    if (_bPageLocked === true) {
-                        // sap.m.MessageToast.show("Please finalize the test step in the test-recorder popup first.");
-                        event.preventDefault();
-                        event.stopPropagation();
-                        event.stopImmediatePropagation();
-                    }
-
-                    return;
-                }
-
-                _bActive = false;
-                this.handleClickOn(el);
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-            }.bind(this);
+            document.addEventListener('click', this._fnClickListener.bind(this), true);
 
             sap.ui.require(["sap/m/MessageToast"], function (MessageToast) {
                 MessageToast.show("UI5 test recorder fully injected!");
@@ -958,6 +959,7 @@
             document.onmouseover = null;
             document.mousedown = null;
             document.removeEventListener('mousedown', this._fnMouseDownListener, true);
+            document.removeEventListener('click', this._fnClickListener.bind(this), true);
             document.onclick = null;
 
             PageListener._oInstance = null;
@@ -1250,7 +1252,9 @@
                 oReturn.classArray = [];
                 var oMeta = oItem.getMetadata();
                 while (oMeta) {
-                    oReturn.classArray.push({ elementName: oMeta._sClassName });
+                    oReturn.classArray.push({
+                        elementName: oMeta._sClassName
+                    });
                     oMeta = oMeta.getParent();
                 }
 
@@ -1855,7 +1859,12 @@
                 return !oItem.getId().includes("testDialog");
             })
 
-            return aItems.map((oItem) => { return { id: oItem.sId, className: oItem.getMetadata()._sClassName }; });
+            return aItems.map((oItem) => {
+                return {
+                    id: oItem.sId,
+                    className: oItem.getMetadata()._sClassName
+                };
+            });
         }
 
         /**
@@ -2728,7 +2737,8 @@
             {
                 domChildWith: "",
                 action: "TYP"
-            }]
+            }
+            ]
         }
     };
 
