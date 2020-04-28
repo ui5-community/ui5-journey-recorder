@@ -1,4 +1,4 @@
-<mvc:View xmlns="sap.m" xmlns:f="sap.f" xmlns:mvc="sap.ui.core.mvc" controller="com.ui5.testing.controller.Mockdata">
+<mvc:View xmlns="sap.m" xmlns:f="sap.f" xmlns:mvc="sap.ui.core.mvc" controllerName="com.ui5.testing.controller.Mockdata">
     <f:DynamicPage headerExpanded="{/headerExpanded}" toggleHeaderOnTitleClick="{/titleClickable}">
         <f:title>
             <f:DynamicPageTitle>

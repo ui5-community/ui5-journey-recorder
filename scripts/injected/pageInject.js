@@ -890,7 +890,7 @@
     // #region Data Model handling
 
     function _getAppComponent() {
-        var aElements = UI5ControlHelper._getRegisteredElements().filter((oElement) => oElement.getComponentInstance);
+        var aElements = UI5ControlHelper.getRegisteredElements().filter((oElement) => oElement.getComponentInstance);
         if (aElements.length > 0) {
             return aElements[0].getComponentInstance();
         } else {
@@ -935,6 +935,7 @@
         return Object.keys(oModels).map((sModelName) => {
             var oModelObject = oModels[sModelName];
             oModelObject.name = sModelName;
+            return oModelObject;
         });
     }
     // #endregion
@@ -3026,9 +3027,11 @@
             }
             var oCheckData = checkPageForUI5();
             if (oCheckData.status === "success") {
-                clearInterval(intvervalID);
-                setupTestRecorderFunctions();
-                PageCommunication.getInstance().messageFromPage("injectDone", oCheckData);
+                sap.ui.getCore().attachInit(function () {
+                    clearInterval(intvervalID);
+                    setupTestRecorderFunctions();
+                    PageCommunication.getInstance().messageFromPage("injectDone", oCheckData);
+                })
             } else if (waited > maxWaitTime) {
                 clearInterval(intvervalID);
                 PageCommunication.getInstance().messageFromPage("injectDone", oCheckData);
