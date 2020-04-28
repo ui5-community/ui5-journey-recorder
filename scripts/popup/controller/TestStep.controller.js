@@ -1743,10 +1743,6 @@ sap.ui.define([
                     press: function () {
                         var aItems = this._oTableContext.getSelectedItems();
                         if (aItems && aItems.length) {
-                            Promise.all([
-                                this._updatePreview(),
-                                this._validateSelectedItemNumber()
-                            ]);
                             for (var j = 0; j < aItems.length; j++) {
                                 var oBndgCtxObj = aItems[j].getBindingContext("viewModel").getObject();
                                 this._add("/element/attributeFilter", {
@@ -1755,6 +1751,10 @@ sap.ui.define([
                                     subCriteriaType: oBndgCtxObj.bdgPath
                                 });
                             }
+                            Promise.all([
+                                this._updatePreview(),
+                                this._validateSelectedItemNumber()
+                            ]);
                         }
                         this._oSelectDialog.close();
                     }.bind(this)
