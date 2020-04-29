@@ -236,7 +236,8 @@ sap.ui.define([
             this.byId("btSaveHeader").setBusy(true);
             this.byId("btSaveFooter").setBusy(true);
 
-            this._save().then(function () {
+            this._save()
+            .then(function () {
 
                 this.byId("btSaveHeader").setBusy(false);
                 this.byId("btSaveFooter").setBusy(false);
@@ -246,6 +247,10 @@ sap.ui.define([
                     TestId: this._sTestId
                 }, true);
                 RecordController.getInstance().startRecording();
+            }.bind(this))
+            .catch(function () {
+                this.byId("btSaveHeader").setBusy(false);
+                this.byId("btSaveFooter").setBusy(false);
             }.bind(this));
         },
 
@@ -306,7 +311,10 @@ sap.ui.define([
          *
          */
         onUpdatePreview: function () {
-            this._updatePreview();
+            Promise.all([
+                this._updatePreview(),
+                this._validateSelectedItemNumber()
+            ]);
         },
 
         /**
@@ -326,7 +334,10 @@ sap.ui.define([
                 this._oModel.setProperty("/element/attributeFilter", aFilter);
 
                 //update preview
-                this._updatePreview();
+                Promise.all([
+                    this._updatePreview(),
+                    this._validateSelectedItemNumber()
+                ]);
             }.bind(this));
         },
 
@@ -509,6 +520,7 @@ sap.ui.define([
                 this._updateValueState(oItem);
                 this._updateSubActionTypes();
                 this._updatePreview();
+                this._validateSelectedItemNumber();
 
                 this._resumeBindings();
             }.bind(this));
@@ -937,6 +949,7 @@ sap.ui.define([
             }
 
             this._updatePreview();
+            this._validateSelectedItemNumber();
             this._check();
         },
 
@@ -1230,6 +1243,8 @@ sap.ui.define([
                             onClose: function (oAction) {
                                 if (oAction === MessageBox.Action.OK) {
                                     resolve();
+                                } else {
+                                    reject();
                                 }
                             }
                         });
@@ -1399,13 +1414,9 @@ sap.ui.define([
                     // unlock view
                     this.getView().setBusy(false);
 
-                    // update found elements a last time before resolving as the element-specific messages are
-                    // attached to the identified elements and are not updated otherwise
-                    this._getMatchingElementCount().then(function () {
-                        resolve({
-                            rating: iGrade,
-                            messages: aMessages
-                        });
+                    resolve({
+                        rating: iGrade,
+                        messages: aMessages
                     });
 
                 }.bind(this));
@@ -1443,7 +1454,10 @@ sap.ui.define([
                             resolve();
                         }
                     }.bind(this));
-                }.bind(this));
+                }.bind(this))
+                .catch(function () {
+                    reject();
+                });
             }.bind(this));
         },
 
@@ -1729,10 +1743,6 @@ sap.ui.define([
                     press: function () {
                         var aItems = this._oTableContext.getSelectedItems();
                         if (aItems && aItems.length) {
-                            Promise.all([
-                                this._updatePreview(),
-                                this._validateSelectedItemNumber()
-                            ]);
                             for (var j = 0; j < aItems.length; j++) {
                                 var oBndgCtxObj = aItems[j].getBindingContext("viewModel").getObject();
                                 this._add("/element/attributeFilter", {
@@ -1741,6 +1751,10 @@ sap.ui.define([
                                     subCriteriaType: oBndgCtxObj.bdgPath
                                 });
                             }
+                            Promise.all([
+                                this._updatePreview(),
+                                this._validateSelectedItemNumber()
+                            ]);
                         }
                         this._oSelectDialog.close();
                     }.bind(this)
