@@ -82,7 +82,7 @@
                                 <Table fixedLayout="false" id="tblPerformedSteps" inset="false" items="{path: 'recordModel>/elements', templateShareable: false}" noDataText="{i18n>notFoundTitle}">
                                     <headerToolbar>
                                         <Toolbar height="3rem" active="true" design="Solid" visible="{= ${recordModel>/isReplaying} || !!${recordModel>/replayMessages}.length }">
-                                            <Button icon="sap-icon://step" text="Replay next step" type="Accept" press="onReplaySingleStep" visible="{= ${recordModel>/isReplaying} &amp;&amp; ${recordModel>/replayInterval} === 0 }" />
+                                            <Button icon="sap-icon://step" text="Replay next step" type="Accept" press="onReplaySingleStep" visible="{= ${recordModel>/isReplaying} &amp;&amp; ${recordModel>/replayInterval} === 0 }" busy="{= ${recordModel>/isExecuting} }"/>
                                             <Button icon="sap-icon://stop" text="Stop replay" type="Reject" press="onReplayStop" visible="{recordModel>/isReplaying}" />
 
                                             <ToolbarSpacer />
