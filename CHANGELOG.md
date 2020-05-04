@@ -14,7 +14,7 @@ For further details, please see PR [#36](https://github.com/msg-systems/ui5-test
 - The page under test is now locked when it is not to be accessed (0232cc6)
 - Further user feedback is shown when extension or page disconnects/reloads (e.g., 17f7922, ba7a716, 7b35702, 9bd5167, and 8b102cd)
 - Add changelog file [CHANGELOG.md](CHANGELOG.md) (see Issue [#33](https://github.com/msg-systems/ui5-testrecorder/issues/33))
-
+- Correct catching of `<a>`-clicks (see Issue [#44](https://github.com/msg-systems/ui5-testrecorder/issues/44) and PR [#52](https://github.com/msg-systems/ui5-testrecorder/pull/52))
 
 ### Changed/Improved
 - Page injection and connection handling now uses WebExtension functionality, which improves stability (see Issue [#10](https://github.com/msg-systems/ui5-testrecorder/issues/10))
@@ -22,6 +22,7 @@ For further details, please see PR [#36](https://github.com/msg-systems/ui5-test
 - Use a single button 'Replay next step' during manual replay
 - Disable test-step handling during replay (8283ae9)
 - Refactor README file [README.md](README.md) (see Issue [#34](https://github.com/msg-systems/ui5-testrecorder/issues/34))
+- Speed of identification of many similar controls has been improved significantly (see Issue [#45](https://github.com/msg-systems/ui5-testrecorder/issues/45), PR [#50](https://github.com/msg-systems/ui5-testrecorder/pull/50) and [#53](https://github.com/msg-systems/ui5-testrecorder/pull/53))
 
 ### Fixed
 - Fix potential page injection problem with item properties (072a04e)
