@@ -156,6 +156,11 @@
                 case "getODataV2Models":
                     oReturn = _retrieveODataV2Models();
                     break;
+
+                case "checkRootComponent":
+                    oReturn = _checkRootComponent();
+                    break;
+
                 default:
                     break;
             }
@@ -170,8 +175,7 @@
                 oReturn.then(function (oData) {
                     PageCommunication.getInstance().messageFromPage(sEventType, oData, iMessageID);
                 });
-            }
-            // 2) return directly otherwise
+            } /* 2) return directly otherwise */
             else {
                 PageCommunication.getInstance().messageFromPage(sEventType, oReturn, iMessageID);
             }
@@ -204,16 +208,31 @@
     }
 
     function _retrieveODataV2Models() {
-        var oComponent = _getAppComponent();
-        if (oComponent) {
+        return _getAppComponent().then(function (oComponent) {
             var aServices = _getDataServices(oComponent).filter((oService) => oService.version === "2.0");
             var aModels = _getDataModels(oComponent).filter((oModel) => oModel.dataSources && aServices.some((oService) => oService.name === oModel.dataSources));
             return aModels.map((oModel) => {
                 oModel.metadata = oComponent.getModel(oModel.name !== "" ? oModel.name : undefined).getServiceMetadata ? oComponent.getModel(oModel.name !== "" ? oModel.name : undefined).getServiceMetadata() : {};
             });
-        } else {
-            return [];
-        }
+        });
+    }
+
+    function _checkRootComponent() {
+        return new Promise(function (resolve) {
+            var aElements = sap.ui.core.Element.registry.filter((oElement) => oElement.getComponentInstance);
+
+            if (aElements.length > 0) {
+                resolve(aElements[0].getComponentInstance());
+            } else {
+                const iIntervalID = setInterval(function () {
+                    aElements = sap.ui.core.Element.registry.filter((oElement) => oElement.getComponentInstance);
+                    if (aElements.length > 0) {
+                        clearInterval(iIntervalID);
+                        resolve(aElements[0].getComponentInstance());
+                    }
+                }, 1000);
+            }
+        });
     }
 
     function _stopRecording() {
@@ -890,12 +909,14 @@
     // #region Data Model handling
 
     function _getAppComponent() {
-        var aElements = UI5ControlHelper.getRegisteredElements().filter((oElement) => oElement.getComponentInstance);
-        if (aElements.length > 0) {
-            return aElements[0].getComponentInstance();
-        } else {
-            return undefined;
-        }
+        return new Promise(function (resolve, reject) {
+            var aElements = sap.ui.core.Element.registry.filter((oElement) => oElement.getComponentInstance);
+            if (aElements.length > 0) {
+                resolve(aElements[0].getComponentInstance());
+            } else {
+                reject([]);
+            }
+        });
     }
 
     function _getDataServices(oComponent) {
@@ -3016,22 +3037,19 @@
     }
 
     function initializePage() {
-
-        console.log('- checking UI5 appearance...');
         const maxWaitTime = 3000;
         var waited = 0;
+        console.log('- checking UI5 appearance...');
         var intvervalID = setInterval(function () {
             waited = waited + 100;
             if (waited % 500 === 0) {
-                console.log('- checking UI5 appearance...');
+                console.log(`- checking UI5 appearance (${waited/1000.0})...`);
             }
             var oCheckData = checkPageForUI5();
             if (oCheckData.status === "success") {
-                sap.ui.getCore().attachInit(function () {
-                    clearInterval(intvervalID);
-                    setupTestRecorderFunctions();
-                    PageCommunication.getInstance().messageFromPage("injectDone", oCheckData);
-                })
+                clearInterval(intvervalID);
+                setupTestRecorderFunctions();
+                PageCommunication.getInstance().messageFromPage("injectDone", oCheckData);
             } else if (waited > maxWaitTime) {
                 clearInterval(intvervalID);
                 PageCommunication.getInstance().messageFromPage("injectDone", oCheckData);
