@@ -705,8 +705,8 @@ sap.ui.define([
                                     if (typeof oItem.context[sModel][sAttribute] !== "object") {
                                         aList.push({
                                             type: "BDG",
-                                            typeTxt: "Context",
-                                            bdgPath: sModel + "/" + sAttribute,
+                                            typeTxt: "Binding value",
+                                            bdgPath: sModel + ">" + ( oItem.bindingContext[sModel] ? oItem.bindingContext[sModel] + "/" : "")  + sAttribute,
                                             attribute: sAttribute,
                                             value: oItem.context[sModel][sAttribute],
                                             importance: oItem.uniquness.context[sModel][sAttribute],
