@@ -237,21 +237,21 @@ sap.ui.define([
             this.byId("btSaveFooter").setBusy(true);
 
             this._save()
-            .then(function () {
+                .then(function () {
 
-                this.byId("btSaveHeader").setBusy(false);
-                this.byId("btSaveFooter").setBusy(false);
+                    this.byId("btSaveHeader").setBusy(false);
+                    this.byId("btSaveFooter").setBusy(false);
 
-                //navigate backwards to the screen, and immediately start recording..
-                this.getRouter().navTo("TestDetails", {
-                    TestId: this._sTestId
-                }, true);
-                RecordController.getInstance().startRecording();
-            }.bind(this))
-            .catch(function () {
-                this.byId("btSaveHeader").setBusy(false);
-                this.byId("btSaveFooter").setBusy(false);
-            }.bind(this));
+                    //navigate backwards to the screen, and immediately start recording..
+                    this.getRouter().navTo("TestDetails", {
+                        TestId: this._sTestId
+                    }, true);
+                    RecordController.getInstance().startRecording();
+                }.bind(this))
+                .catch(function () {
+                    this.byId("btSaveHeader").setBusy(false);
+                    this.byId("btSaveFooter").setBusy(false);
+                }.bind(this));
         },
 
         /**
@@ -964,8 +964,8 @@ sap.ui.define([
 
             //check if the current criteraType value is valid - if yes, keep it, otherwise reset it..
             if (oAttribute.criteriaTypes.filter(function (e) {
-                return e.criteriaKey === oAttribute.criteriaType;
-            }).length === 0) {
+                    return e.criteriaKey === oAttribute.criteriaType;
+                }).length === 0) {
                 oAttribute.criteriaType = oAttribute.criteriaTypes[0].criteriaKey;
             }
 
@@ -988,8 +988,8 @@ sap.ui.define([
             oAttribute.subCriteriaTypes = aSubCriteriaSettings;
             if (oAttribute.subCriteriaTypes.length > 0) {
                 if (oAttribute.subCriteriaTypes.filter(function (e) {
-                    return e.subCriteriaType === oAttribute.subCriteriaType;
-                }).length === 0) {
+                        return e.subCriteriaType === oAttribute.subCriteriaType;
+                    }).length === 0) {
                     oAttribute.subCriteriaType = oAttribute.subCriteriaTypes[0].subCriteriaType;
                 }
             } else {
@@ -1014,6 +1014,8 @@ sap.ui.define([
                 oAttribute.subCriteriaTypes[i].calculatedValueUnres = sStringUntrimmed;
                 oAttribute.subCriteriaTypes[i].calculatedValue = sStringTrimmed;
             }
+            //reset the criteriaValue because it can be false
+            oAttribute.criteriaValue = "";
 
             this._oModel.setProperty(oCtx.getPath(), oAttribute);
 
@@ -1435,29 +1437,29 @@ sap.ui.define([
         _save: function () {
             return new Promise(function (resolve, reject) {
                 this._checkAndDisplay().then(function () {
-                    var oCurrentElement = this._oModel.getProperty("/element");
-                    this._adjustBeforeSaving(oCurrentElement).then(function (oElementFinal) {
+                        var oCurrentElement = this._oModel.getProperty("/element");
+                        this._adjustBeforeSaving(oCurrentElement).then(function (oElementFinal) {
 
-                        var aElements = RecordController.getInstance().getTestElements();
-                        if (RecordController.getInstance().isReplaying()) {
-                            aElements[this._sElementId] = oElementFinal;
-                        } else {
-                            aElements.push(oElementFinal);
-                        }
-                        RecordController.getInstance().setTestElements(aElements);
+                            var aElements = RecordController.getInstance().getTestElements();
+                            if (RecordController.getInstance().isReplaying()) {
+                                aElements[this._sElementId] = oElementFinal;
+                            } else {
+                                aElements.push(oElementFinal);
+                            }
+                            RecordController.getInstance().setTestElements(aElements);
 
-                        // execute test step now, but only if an action needs to be performed.
-                        // all other types do not need results (asserts and support assistant).
-                        if (oElementFinal.property.type === "ACT") {
-                            RecordController.getInstance().executeTestStep(oElementFinal).then(resolve);
-                        } else {
-                            resolve();
-                        }
-                    }.bind(this));
-                }.bind(this))
-                .catch(function () {
-                    reject();
-                });
+                            // execute test step now, but only if an action needs to be performed.
+                            // all other types do not need results (asserts and support assistant).
+                            if (oElementFinal.property.type === "ACT") {
+                                RecordController.getInstance().executeTestStep(oElementFinal).then(resolve);
+                            } else {
+                                resolve();
+                            }
+                        }.bind(this));
+                    }.bind(this))
+                    .catch(function () {
+                        reject();
+                    });
             }.bind(this));
         },
 
@@ -1544,8 +1546,8 @@ sap.ui.define([
                 //check if sIdChild is part of our current "domChildWith"
                 // eslint-disable-next-line no-loop-func
                 if (aRows.filter(function (e) {
-                    return e.domChildWith === sIdChild;
-                }).length === 0) {
+                        return e.domChildWith === sIdChild;
+                    }).length === 0) {
                     aRows.push({
                         text: aSubObjects[i].isInput === true ? "In Input-Field" : sIdChild,
                         domChildWith: sIdChild,
@@ -1563,8 +1565,8 @@ sap.ui.define([
 
             //check if the current value is fine..
             if (aRows.filter(function (e) {
-                return e.domChildWith === sDomChildWith;
-            }).length === 0) {
+                    return e.domChildWith === sDomChildWith;
+                }).length === 0) {
                 sDomChildWith = aRows.length >= 0 ? aRows[0].domChildWith : "";
                 this._oModel.setProperty("/element/property/domChildWith", sDomChildWith);
             }
