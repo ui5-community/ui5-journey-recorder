@@ -317,7 +317,7 @@ sap.ui.define([
                         for (var sBinding in oItem.bindingContext) {
                             aReturn.push({
                                 subCriteriaType: sBinding,
-                                subCriteriaText: sBinding,
+                                subCriteriaText: `Model '${sBinding === "undefined" ? "" : sBinding }'`,
                                 bindingRef: oItem.bindingContext[sBinding],
                                 code: function (sBinding, sValue) {
                                     var oReturn = { bindingContext: {} };
@@ -361,8 +361,8 @@ sap.ui.define([
                                     continue;
                                 }
                                 aReturn.push({
-                                    subCriteriaType: sModel + "/" + sProperty,
-                                    subCriteriaText: sModel + "/" + sProperty,
+                                    subCriteriaType: (sModel === "undefined" ? "" : sModel + ">" ) + (oItem.bindingContext[sModel] ? oItem.bindingContext[sModel] + "/" : "") + sProperty,
+                                    subCriteriaText: (sModel === "undefined" ? "" : sModel + ">" ) + (oItem.bindingContext[sModel] ? oItem.bindingContext[sModel] + "/" : "") + sProperty,
                                     code: function (sModel, sProperty, sValue) {
                                         var oReturn = { context: {} };
                                         oReturn.context[sModel] = {};
