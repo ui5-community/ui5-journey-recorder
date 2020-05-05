@@ -1695,7 +1695,6 @@ sap.ui.define([
 
             this._oSelectDialog = new sap.m.Dialog({
                 contentHeight: "75%",
-                contentWidth: "40%",
                 id: "tstDialog",
                 title: "Please specify a unique combination",
                 content: new sap.m.VBox({
