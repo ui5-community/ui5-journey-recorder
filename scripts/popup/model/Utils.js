@@ -311,8 +311,7 @@ sap.ui.define([
 
                 "BNDX": {
                     criteriaKey: "BNDX",
-                    //criteriaText: "Binding Context",
-                    criteriaText: "Binding Path",
+                    criteriaText: "Binding Context",
                     criteriaSpec: function (oItem) {
                         var aReturn = [];
                         for (var sBinding in oItem.bindingContext) {
@@ -353,8 +352,7 @@ sap.ui.define([
                 },
                 "BDG": {
                     criteriaKey: "BDG",
-                    //criteriaText: "Model-Context Values",
-                    criteriaText: "Binding Context",
+                    criteriaText: "Binding",
                     criteriaSpec: function (oItem) {
                         var aReturn = [];
                         for (var sModel in oItem.context) {
