@@ -132,8 +132,7 @@
                         <content>
                             <ObjectStatus id="attrObjectStatus" text="Attributes ( {= ${viewModel>/element/attributeFilter}.length } )" state="{viewModel>/element/property/elementState}"/>
                             <ToolbarSpacer/>
-                            <Button press="onFindAttribute" enabled="{= !${viewModel>/blocked}}" icon="sap-icon://activate" tooltip="Find"/>
-                            <Button press="onAddAttribute" icon="sap-icon://add" tooltip="Add"/>
+                            <Button press="onFindAttribute" enabled="{= !${viewModel>/blocked}}" icon="sap-icon://add" tooltip="Add attribute" />
                             <Button press="onRemoveAttribute" icon="sap-icon://delete" tooltip="Remove"/>
                         </content>
                     </Toolbar>
