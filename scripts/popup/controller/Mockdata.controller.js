@@ -44,6 +44,15 @@ sap.ui.define([
                     debugger;
                 }.bind(this));
             }.bind(this));
+        },
+
+        /**
+         *
+         */
+        retrieveODataV2: function () {
+            ConnectionMessages.getODataV2Models(Connection.getInstance()).then(function (oData) {
+                debugger;
+            });
         }
     });
 });
