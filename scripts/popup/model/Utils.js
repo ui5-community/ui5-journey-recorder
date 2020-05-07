@@ -110,7 +110,7 @@ sap.ui.define([
                     criteriaSpec: function () {
                         return [{
                             subCriteriaType: "ELM",
-                            subCriteriaText: "Element name",
+                            subCriteriaText: "Control type",
                             value: function (oItem) {
                                 return oItem.metadata.elementName;
                             },

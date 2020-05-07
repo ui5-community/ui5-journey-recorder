@@ -626,7 +626,7 @@ sap.ui.define([
                         this._oModel.setProperty("/element/property/selectItemBy", "ATTR"); // change to attribute in case that the ID is not sufficient..
                     }
 
-                    this._findBestAttributeDefaultSetting(oItem, false).then(function () {
+                    this._adjustAttributeDefaultSetting(oItem).then(function () {
                         // adjust DOM node for action type "INP"..
                         this._adjustDomChildWith(oItem);
                         resolve();
@@ -640,111 +640,108 @@ sap.ui.define([
          */
         _findBestAttributeDefaultSetting: function (oItem, bForcePopup) {
             return new Promise(function (resolve) {
-                this._adjustAttributeDefaultSetting(oItem).then(function (aReturn) {
-                    //in case we still have >1 item - change to
-                    if (this._oModel.getProperty("/element/property/selectItemBy") === "ATTR" &&
-                        ((this._oModel.getProperty("/element/identifiedElements").length > 1 && this._oModel.getProperty("/element/property/type") === 'ACT') || bForcePopup === true)) {
-                        //ok - we are still not ready - let's check if we are any kind of item, which is requiring the user to ask for binding context information..
-                        //work on our binding context information..
-                        var oItem = this._oModel.getProperty("/element/item");
-                        var aList = [];
-                        if (!jQuery.isEmptyObject(oItem.binding)) {
-                            for (var sAttr in oItem.binding) {
-                                if (typeof oItem.binding[sAttr].path !== "object") {
-                                    aList.push({
-                                        type: "BNDG",
-                                        typeTxt: "Binding",
-                                        bdgPath: sAttr,
-                                        attribute: sAttr,
-                                        importance: oItem.uniquness.binding[sAttr],
-                                        value: oItem.binding[sAttr].path,
-                                        valueToString: oItem.binding[sAttr].path
-                                    });
-                                }
+                //in case we still have >1 item - change to
+                if (this._oModel.getProperty("/element/property/selectItemBy") === "ATTR" &&
+                    ((this._oModel.getProperty("/element/identifiedElements").length > 1 && this._oModel.getProperty("/element/property/type") === 'ACT') || bForcePopup === true)) {
+                    //ok - we are still not ready - let's check if we are any kind of item, which is requiring the user to ask for binding context information..
+                    //work on our binding context information..
+                    var aList = [];
+                    if (!jQuery.isEmptyObject(oItem.binding)) {
+                        debugger;
+                        for (var sAttr in oItem.binding) {
+                            if (typeof oItem.binding[sAttr].path !== "object") {
+                                aList.push({
+                                    type: "BNDG",
+                                    typeTxt: "Binding",
+                                    bdgPath: sAttr,
+                                    attribute: sAttr,
+                                    importance: oItem.uniquness.binding[sAttr],
+                                    value: oItem.binding[sAttr].path,
+                                    valueToString: oItem.binding[sAttr].path
+                                });
                             }
-                        }
-                        //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-                        /*@Adrian - Start*/
-                        if (!jQuery.isEmptyObject(oItem.bindingContext)) {
-                            for (var sAttr in oItem.bindingContext) {
-                                if (typeof oItem.bindingContext[sAttr] !== "object") {
-                                    aList.push({
-                                        type: "BNDX",
-                                        typeTxt: "Binding Context",
-                                        bdgPath: sAttr,
-                                        attribute: sAttr,
-                                        importance: oItem.uniquness.bindingContext[sAttr],
-                                        value: oItem.bindingContext[sAttr],
-                                        valueToString: oItem.bindingContext[sAttr]
-                                    });
-                                }
-                            }
-                        }
-                        /*@Adrian - End*/
-                        if (!jQuery.isEmptyObject(oItem.property)) {
-                            for (var sAttr in oItem.property) {
-                                if (typeof oItem.property[sAttr] !== "object") {
-                                    aList.push({
-                                        type: "ATTR",
-                                        typeTxt: "Property",
-                                        bdgPath: sAttr,
-                                        attribute: sAttr,
-                                        importance: oItem.uniquness.property[sAttr],
-                                        value: oItem.property[sAttr],
-                                        valueToString: oItem.property[sAttr].toString ? oItem.property[sAttr].toString() : oItem.property[sAttr]
-                                    });
-                                }
-                            }
-                        }
-
-                        //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-                        /*Timo will uncomment this stuff, i will need it for OPA5*/
-                        if (!jQuery.isEmptyObject(oItem.context)) {
-                            for (var sModel in oItem.context) {
-                                for (var sAttribute in oItem.context[sModel]) {
-                                    if (typeof oItem.context[sModel][sAttribute] !== "object") {
-                                        aList.push({
-                                            type: "BDG",
-                                            typeTxt: "Binding value",
-                                            bdgPath: sModel + ">" + ( oItem.bindingContext[sModel] ? oItem.bindingContext[sModel] + "/" : "")  + sAttribute,
-                                            attribute: sAttribute,
-                                            value: oItem.context[sModel][sAttribute],
-                                            importance: oItem.uniquness.context[sModel][sAttribute],
-                                            valueToString: oItem.context[sModel][sAttribute].toString ? oItem.context[sModel][sAttribute].toString() : oItem.context[sModel][sAttribute]
-                                        });
-                                    }
-                                }
-                            }
-                        }
-                        var oMerged = this._getMergedClassArray(oItem);
-                        this._oModel.setProperty("/element/itemCloned", oMerged.cloned);
-                        if (oMerged.cloned === true) {
-                            aList = aList.sort(function (aObj, bObj) {
-                                if (aObj.importance <= bObj.importance) {
-                                    return 1;
-                                }
-                                return -1;
-                            });
-                        }
-
-                        for (var i = 0; i < aList.length; i++) {
-                            aList[i].numberState = "Error";
-                            if (aList[i].importance >= 80) {
-                                aList[i].numberState = "Success";
-                            } else if (aList[i].importance >= 60) {
-                                aList[i].numberState = "Warning";
-                            }
-                        }
-                        if (aList.length > 0) {
-                            this._oModel.setProperty("/element/possibleContext", aList);
-                            this._oTableContext.removeSelections();
-                            this._oSelectDialog.setModel(this._oModel, "viewModel")
-                            this._oSelectDialog.open();
                         }
                     }
+                    //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                    /*@Adrian - Start*/
+                    if (!jQuery.isEmptyObject(oItem.bindingContext)) {
+                        for (var sAttr in oItem.bindingContext) {
+                            if (typeof oItem.bindingContext[sAttr] !== "object") {
+                                aList.push({
+                                    type: "BNDX",
+                                    typeTxt: "Binding Context",
+                                    bdgPath: sAttr,
+                                    attribute: sAttr,
+                                    importance: oItem.uniquness.bindingContext[sAttr],
+                                    value: oItem.bindingContext[sAttr],
+                                    valueToString: oItem.bindingContext[sAttr]
+                                });
+                            }
+                        }
+                    }
+                    /*@Adrian - End*/
+                    if (!jQuery.isEmptyObject(oItem.property)) {
+                        for (var sAttr in oItem.property) {
+                            if (typeof oItem.property[sAttr] !== "object") {
+                                aList.push({
+                                    type: "ATTR",
+                                    typeTxt: "Property",
+                                    bdgPath: sAttr,
+                                    attribute: sAttr,
+                                    importance: oItem.uniquness.property[sAttr],
+                                    value: oItem.property[sAttr],
+                                    valueToString: oItem.property[sAttr].toString ? oItem.property[sAttr].toString() : oItem.property[sAttr]
+                                });
+                            }
+                        }
+                    }
+                    //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                    /*Timo will uncomment this stuff, i will need it for OPA5*/
+                    if (!jQuery.isEmptyObject(oItem.context)) {
+                        for (var sModel in oItem.context) {
+                            for (var sAttribute in oItem.context[sModel]) {
+                                if (typeof oItem.context[sModel][sAttribute] !== "object") {
+                                    aList.push({
+                                        type: "BDG",
+                                        typeTxt: "Binding value",
+                                        bdgPath: sModel + ">" + ( oItem.bindingContext[sModel] ? oItem.bindingContext[sModel] + "/" : "")  + sAttribute,
+                                        attribute: sAttribute,
+                                        value: oItem.context[sModel][sAttribute],
+                                        importance: oItem.uniquness.context[sModel][sAttribute],
+                                        valueToString: oItem.context[sModel][sAttribute].toString ? oItem.context[sModel][sAttribute].toString() : oItem.context[sModel][sAttribute]
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    var oMerged = this._getMergedClassArray(oItem);
+                    this._oModel.setProperty("/element/itemCloned", oMerged.cloned);
+                    if (oMerged.cloned === true) {
+                        aList = aList.sort(function (aObj, bObj) {
+                            if (aObj.importance <= bObj.importance) {
+                                return 1;
+                            }
+                            return -1;
+                        });
+                    }
 
-                    resolve();
-                }.bind(this));
+                    for (var i = 0; i < aList.length; i++) {
+                        aList[i].numberState = "Error";
+                        if (aList[i].importance >= 80) {
+                            aList[i].numberState = "Success";
+                        } else if (aList[i].importance >= 60) {
+                            aList[i].numberState = "Warning";
+                        }
+                    }
+                    if (aList.length > 0) {
+                        this._oModel.setProperty("/element/possibleContext", aList);
+                        this._oTableContext.removeSelections();
+                        this._oSelectDialog.setModel(this._oModel, "viewModel")
+                        this._oSelectDialog.open();
+                    }
+                }
+
+                resolve();
             }.bind(this));
         },
 
@@ -1062,7 +1059,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _validateSelectedItemNumber: function () {
             return this._getMatchingElementCount().then(function (aElements) {
@@ -1095,7 +1092,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _getMatchingElementCount: function () {
             var oDefinition = this._getSelectorDefinition(this._oModel.getProperty("/element"));
