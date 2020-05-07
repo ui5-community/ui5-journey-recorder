@@ -392,6 +392,8 @@ sap.ui.define([
                         parentMatcher[aToken[id].attributeType]['OBJ_CLASS'] = 'controlType: \"' + aToken[id].criteriaValue + '\"';
                     }
                     break;
+
+                // FIXME adjust code generation regarding new binding stuff (search for 'BDG' in this file)
                 case 'BNDG':
                     if (aToken[id].attributeType === 'OWN') {
                         objectMatcher['BNDG'] = 'i18n: {property: \"' + aToken[id].subCriteriaType + '\", path: \"' + oStep.attributeFilter[id].criteriaValue + '\"}';

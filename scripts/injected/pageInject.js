@@ -2182,11 +2182,17 @@
             var oBndgContext = oItem.getBindingContext(oRelevantPart.model);
             var sPathPre = oBndgContext ? oBndgContext.getPath() + "/" : "";
 
+            // construct a model prefix
+            var sModel = oRelevantPart.model;
+            var sModelStringified = sModel === "undefined" || sModel === undefined ? "" : sModel;
+            var sModelStringifiedPrefixed = (sModelStringified ? sModelStringified + ">" : "");
+
             if (oBinding) {
                 oReturn = {
                     model: oRelevantPart.model,
                     path: oBinding.sPath && oBinding.getPath(),
                     relativePath: oBinding.sPath && oBinding.getPath(), //relative path..
+                    prefixedFullPath: sModelStringifiedPrefixed + sPathPre + (oBinding.sPath && oBinding.getPath()),
                     contextPath: sPathPre,
                     static: oBinding.oModel && oBinding.getModel() instanceof sap.ui.model.resource.ResourceModel,
                     jsonBinding: oBinding.oModel && oBinding.getModel() instanceof sap.ui.model.json.JSONModel
@@ -2195,7 +2201,8 @@
                 oReturn.path = sPathPre + oReturn.path;
             } else {
                 oReturn = {
-                    path: oBindingInfo.path,
+                    path: oRelevantPart.path,
+                    prefixedFullPath: sModelStringifiedPrefixed + oRelevantPart.path,
                     model: oRelevantPart.model,
                     static: true
                 };
@@ -2447,22 +2454,13 @@
             /*@Adrian - End*/
             if (oSelector.binding) {
                 for (var sBinding in oSelector.binding) {
-                    //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-                    /*@Adrian - Start
-                    var oAggrInfo = oItem.getBindingInfo(sBinding);
-                    if (!oAggrInfo) {
-                        //SPECIAL CASE for sap.m.Label in Forms, where the label is actually bound against the parent element (yay)
-                        @Adrian - End*/
-                    /*@Adrian - Start*/
-
                     var oBndgInfo = UI5ControlHelper.getBindingInformation(oItem, sBinding);
 
-                    if (oBndgInfo.path !== oSelector.binding[sBinding].path) {
-                        /*@Adrian - End*/
+                    if (oBndgInfo.prefixedFullPath !== oSelector.binding[sBinding].prefixedFullPath) {
                         if (oItem.getMetadata().getElementName() === "sap.m.Label") {
                             if (oItem.getParent() && oItem.getParent().getMetadata()._sClassName === "sap.ui.layout.form.FormElement") {
                                 var oParentBndg = oItem.getParent().getBinding("label");
-                                if (!oParentBndg || oParentBndg.getPath() !== oSelector.binding[sBinding].path) {
+                                if (!oParentBndg || oParentBndg.getPath() !== oSelector.binding[sBinding].relativePath) {
                                     return false;
                                 }
                             } else {
