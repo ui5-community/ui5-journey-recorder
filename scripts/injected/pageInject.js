@@ -210,9 +210,10 @@
     function _retrieveODataV2Models() {
         return _getAppComponent().then(function (oComponent) {
             var aServices = _getDataServices(oComponent).filter((oService) => oService.version === "2.0");
-            var aModels = _getDataModels(oComponent).filter((oModel) => oModel.dataSources && aServices.some((oService) => oService.name === oModel.dataSources));
+            var aModels = _getDataModels(oComponent).filter((oModel) => oModel.dataSource && aServices.some((oService) => oService.name === oModel.dataSource));
             return aModels.map((oModel) => {
                 oModel.metadata = oComponent.getModel(oModel.name !== "" ? oModel.name : undefined).getServiceMetadata ? oComponent.getModel(oModel.name !== "" ? oModel.name : undefined).getServiceMetadata() : {};
+                return oModel;
             });
         });
     }
@@ -933,6 +934,7 @@
                 if (oService.type === "OData" && oDataSources[sService].settings) {
                     oService.version = oDataSources[sService].settings.odataVersion;
                 }
+                return oService;
             });
             return aServices;
         } else {
