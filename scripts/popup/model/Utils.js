@@ -354,7 +354,6 @@ sap.ui.define([
                         return aReturn;
                     }.bind(this)
                 },
-
                 "ATTR": {
                     criteriaKey: "ATTR",
                     criteriaText: "Attributes",

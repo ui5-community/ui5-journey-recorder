@@ -1838,9 +1838,33 @@ sap.ui.define([
         // #endregion
 
         // #region Formatters
+        /**
+         * Simple formatter function to check wether a requested item attribute is available or not.
+         *
+         * @param {string} sCriteriaKey the criteria to check
+         * @param {object} oItem the item to check
+         *
+         * @returns {boolean} true if present or not
+         */
         checkCriteriaAppearance: function (sCriteriaKey, oItem) {
-            debugger;
+            switch (sCriteriaKey) {
+                case "AGG":
+                    return oItem.aggregation && Object.keys(oItem.aggregation).length > 0;
+                case "ID":
+                    return oItem.identifier && Object.keys(oItem.identifier).length > 0;
+                case "MTA":
+                    return oItem.metadata && Object.keys(oItem.metadata).length > 0;
+                case "VIW":
+                    return oItem.viewProperty && Object.keys(oItem.viewProperty).length > 0;
+                case "BNDG":
+                    return oItem.binding && Object.keys(oItem.binding).length > 0;
+                case "ATTR":
+                    return oItem.property && Object.keys(oItem.property).length > 0;
+                default:
+                    return false;
+            }
         }
+        // //#endregion
     });
 
 

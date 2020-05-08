@@ -163,7 +163,7 @@
                                     </Select>
                                     <Select change="onCriteriaTypeChanged" selectedKey="{ path: 'viewModel>criteriaType'}" items="{ path:'viewModel>criteriaTypes', sorter: { path: 'criteriaText' }, templateShareable: false }">
                                         <items>
-                                            <core:Item text="{viewModel>criteriaText}" key="{viewModel>criteriaKey}" enabled="{parts: [{path: 'viewModel>criteriaKey'}, {path: 'viewModel>/element/item}], formatter: '.checkCriteriaAppearance'}"/>
+                                            <core:Item text="{viewModel>criteriaText}" key="{viewModel>criteriaKey}" enabled="{parts: [{path: 'viewModel>criteriaKey'}, {path: 'viewModel>/element/item'}], formatter: '.checkCriteriaAppearance'}"/>
                                         </items>
                                     </Select>
                                     <Select change="onSubCriteriaTypeChanged" showSecondaryValues="true" width="13em" selectedKey="{ path: 'viewModel>subCriteriaType' }" items="{ path: 'viewModel>subCriteriaTypes', sorter: { path: 'subCriteriaText' }, templateShareable: false }">
