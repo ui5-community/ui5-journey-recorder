@@ -153,10 +153,10 @@
                     oReturn = _disconnect();
                     return; // return directly and do not issue any returning message below
 
-                // case "mockserver":
-                //     return this._getDataModelInformation();
+                    // case "mockserver":
+                    //     return this._getDataModelInformation();
 
-                // events that are not handled: "setWindowLocation"
+                    // events that are not handled: "setWindowLocation"
 
                 default:
                     break;
@@ -760,9 +760,9 @@
                     // run support assistant with the given set of rules (or no rules at all if none have been cached yet)
                     // TODO this function is deprecated for UI5 >= 1.60. "Please use sap/ui/support/RuleAnalyzer instead."
                     jQuery.sap.support.analyze({
-                        type: "components",
-                        components: [sComponent]
-                    }, appliedSupportAssistantRules.length > 0 ? appliedSupportAssistantRules : undefined)
+                            type: "components",
+                            components: [sComponent]
+                        }, appliedSupportAssistantRules.length > 0 ? appliedSupportAssistantRules : undefined)
                         // post-process results
                         .then(function () {
                             var aIssues = jQuery.sap.support.getLastAnalysisHistory();
@@ -862,15 +862,15 @@
         sap.ui.require(["sap/m/MessageBox"], function (MessageBox) {
             MessageBox.error(
                 "The connection to the UI5 test recorder has been lost. Do you want to reload this page to reset it?", {
-                icon: MessageBox.Icon.QUESTION,
-                title: "Reload page?",
-                actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-                onClose: function (sAction) {
-                    if (sAction === MessageBox.Action.YES) {
-                        location.reload();
+                    icon: MessageBox.Icon.QUESTION,
+                    title: "Reload page?",
+                    actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                    onClose: function (sAction) {
+                        if (sAction === MessageBox.Action.YES) {
+                            location.reload();
+                        }
                     }
                 }
-            }
             );
         });
     }
@@ -1200,30 +1200,7 @@
             function getElementInformationDetails(oItem, oDomNode, bFull = true) {
 
                 // construct default return value
-                var oReturn = {
-                    property: {},
-                    aggregation: {},
-                    association: {},
-                    binding: {},
-                    //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-                    bindingContext: {},
-                    context: {},
-                    model: {},
-                    metadata: {},
-                    viewProperty: {},
-                    classArray: [],
-                    identifier: {
-                        domId: "",
-                        ui5Id: "",
-                        idCloned: false,
-                        idGenerated: false,
-                        ui5LocalId: "",
-                        localIdClonedOrGenerated: false,
-                        ui5AbsoluteId: ""
-                    },
-                    control: null,
-                    dom: null
-                };
+                var oReturn = {};
 
                 // no item to inspect, return right away
                 if (!oItem) {
@@ -1243,27 +1220,21 @@
                 // store default information and UI5 IDs
                 oReturn.control = oItem;
                 oReturn.dom = oDomNode;
+
+                if (!oReturn.identifier) {
+                    oReturn.identifier = {};
+                }
                 oReturn.identifier.domId = oDomNode.id;
                 oReturn.identifier.ui5Id = UI5ControlHelper.getUi5Id(oItem);
                 oReturn.identifier.ui5LocalId = UI5ControlHelper.getUi5LocalId(oItem);
                 oReturn.identifier.ui5AbsoluteId = oItem.getId();
 
-                // get class names from metadata
-                oReturn.classArray = [];
-                var oMeta = oItem.getMetadata();
-                while (oMeta) {
-                    oReturn.classArray.push({
-                        elementName: oMeta._sClassName
-                    });
-                    oMeta = oMeta.getParent();
-                }
 
                 // identify whether the element has been cloned:
                 // 1) if the UI5 ID contains a "-" with a following number, it is most likely a dependent control (e.g., based on aggregation or similar) and, thus, cloned
                 if (RegExp("([A-Z,a-z,0-9])-([0-9])").test(oReturn.identifier.ui5Id)) {
                     oReturn.identifier.idCloned = true;
-                }
-                // 2) check via metadata
+                } /* 2) check via metadata */
                 else {
                     var oMetadata = oItem.getMetadata();
                     while (oMetadata) {
@@ -1281,15 +1252,35 @@
                     }
                 }
 
+                if (!oReturn.identifier.idCloned) {
+                    oReturn.identifier.idCloned = false;
+                }
+
                 // identify whether the element ID has been generated:
                 // if the ui5id contains a "__", it is most likely a generated ID which should NOT BE USESD LATER!
                 if (oReturn.identifier.ui5Id.includes("__")) {
                     oReturn.identifier.idGenerated = true;
+                } else {
+                    oReturn.identifier.idGenerated = false;
                 }
 
                 // identify whether the local element ID is cloned or generated
                 if (oReturn.identifier.idCloned || oReturn.identifier.ui5LocalId.includes("__")) {
                     oReturn.identifier.localIdClonedOrGenerated = true;
+                } else {
+                    oReturn.identifier.localIdClonedOrGenerated = false;
+                }
+
+
+
+                // get class names from metadata
+                oReturn.classArray = [];
+                var oMeta = oItem.getMetadata();
+                while (oMeta) {
+                    oReturn.classArray.push({
+                        elementName: oMeta._sClassName
+                    });
+                    oMeta = oMeta.getParent();
                 }
 
                 // get metadata:
@@ -1346,6 +1337,7 @@
                 // get view information
                 var oView = UI5ControlHelper.getParentControlAtLevel(oItem, 1, true); // get the view!
                 if (oView && oView.getProperty("viewName")) {
+                    oReturn.viewProperty = {};
                     oReturn.viewProperty.viewName = oView.getProperty("viewName");
                     oReturn.viewProperty.localViewName = oReturn.viewProperty.viewName.split(".").pop();
                     if (oReturn.viewProperty.localViewName.length) {
@@ -1355,6 +1347,9 @@
 
                 // get binding information
                 // 1) all bindings
+                if (oItem.mBindingInfos) {
+                    oReturn.binding = {};
+                }
                 for (var sBinding in oItem.mBindingInfos) {
                     oReturn.binding[sBinding] = UI5ControlHelper.getBindingInformation(oItem, sBinding);
                 }
@@ -1378,10 +1373,16 @@
                     if (!oBndg) {
                         continue;
                     }
+                    if (!oReturn.bindingContext) {
+                        oReturn.bindingContext = {};
+                    }
                     oReturn.bindingContext[sModel] = oBndg;
                 }
 
                 // get all simple properties
+                if (oItem.mProperties) {
+                    oReturn.property = {};
+                }
                 for (var sProperty in oItem.mProperties) {
                     var fnGetter = oItem["get" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1)];
                     if (fnGetter) {
@@ -1393,12 +1394,20 @@
 
                 // get all binding contexts
                 oReturn.context = UI5ControlHelper.getContexts(oItem);
+                //currently we don't wan't to change the function, therefore we just remove the empty object
+                if (Object.keys(oReturn.context).length === 0) {
+                    delete oReturn.context;
+                }
 
                 // get model information
-                oReturn.model = {};
+                /* oReturn.model = {}; */
+                // TODO: WTF? Is this everthing?
 
                 // get lengths of aggregation
                 var aAggregations = oItem.getMetadata().getAllAggregations();
+                if (aAggregations) {
+                    oReturn.aggregation = {};
+                }
                 for (var sAggregation in aAggregations) {
 
                     // if there are not multiple items aggregated, this is not interesting
@@ -1449,9 +1458,9 @@
 
             // construct raw return value
             var oReturn = {
-                property: {},
+                /* property: {},
                 aggregation: {},
-                association: {},
+                //association: {}, //TODO: had to be setup;
                 context: {},
                 metadata: {},
                 identifier: {
@@ -1471,7 +1480,7 @@
                 label: {},
                 parents: [],
                 control: null,
-                dom: null
+                dom: null */
             };
 
             // if there is no control given, return empty information object
@@ -1496,7 +1505,15 @@
 
             // get information on label and item data
             oReturn.label = getElementInformationDetails(UI5ControlHelper.getLabelForItem(oControl), bFull);
+            //currently we don't want to adapt the functions, therefore we remove empty objects
+            if (Object.keys(oReturn.label).length === 0) {
+                delete oReturn.label;
+            }
             oReturn.itemdata = getElementInformationDetails(UI5ControlHelper.getItemDataForItem(oControl), bFull);
+            //currently we don't want to adapt the functions, therefore we remove empty objects
+            if (Object.keys(oReturn.itemdata).length === 0) {
+                delete oReturn.itemdata;
+            }
 
             // cache result
             TestItem._oTestGlobalCache["fnGetElementInfo"][bFull][oControl.getId()] = oReturn;
@@ -2727,17 +2744,17 @@
         },
         "sap.m.SearchField": {
             defaultAction: [{
-                domChildWith: "-search",
-                action: "PRS"
-            },
-            {
-                domChildWith: "-reset",
-                action: "PRS"
-            },
-            {
-                domChildWith: "",
-                action: "TYP"
-            }
+                    domChildWith: "-search",
+                    action: "PRS"
+                },
+                {
+                    domChildWith: "-reset",
+                    action: "PRS"
+                },
+                {
+                    domChildWith: "",
+                    action: "TYP"
+                }
             ]
         }
     };

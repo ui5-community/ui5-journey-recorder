@@ -471,6 +471,8 @@ sap.ui.define([
             ]);
         },
 
+        //#endregion
+
         //#region Element initialization and updating
 
         /**
@@ -704,7 +706,7 @@ sap.ui.define([
                                     aList.push({
                                         type: "BDG",
                                         typeTxt: "Binding value",
-                                        bdgPath: sModel + ">" + ( oItem.bindingContext[sModel] ? oItem.bindingContext[sModel] + "/" : "")  + sAttribute,
+                                        bdgPath: sModel + ">" + (oItem.bindingContext[sModel] ? oItem.bindingContext[sModel] + "/" : "") + sAttribute,
                                         attribute: sAttribute,
                                         value: oItem.context[sModel][sAttribute],
                                         importance: oItem.uniquness.context[sModel][sAttribute],
@@ -1597,7 +1599,6 @@ sap.ui.define([
 
         // #endregion
 
-
         // #region Miscellaneous
 
         /**
@@ -1858,7 +1859,6 @@ sap.ui.define([
          *
          */
         _getClassArray: function (oItem) {
-            var oMetadata = oItem.classArray;
             var aReturn = [];
             for (var i = 0; i < oItem.classArray.length; i++) {
                 var sClassName = oItem.classArray[i].elementName;
@@ -1871,6 +1871,10 @@ sap.ui.define([
 
         // #endregion
 
+        // #region Formatters
+        checkCriteriaAppearance: function (sCriteriaKey, oItem) {
+            debugger;
+        }
     });
 
 
