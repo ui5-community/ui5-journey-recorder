@@ -1200,7 +1200,30 @@
             function getElementInformationDetails(oItem, oDomNode, bFull = true) {
 
                 // construct default return value
-                var oReturn = {};
+                var oReturn = {
+                    property: {},
+                    aggregation: {},
+                    association: {},
+                    binding: {},
+                    //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                    bindingContext: {},
+                    context: {},
+                    model: {},
+                    metadata: {},
+                    viewProperty: {},
+                    classArray: [],
+                    identifier: {
+                        domId: "",
+                        ui5Id: "",
+                        idCloned: false,
+                        idGenerated: false,
+                        ui5LocalId: "",
+                        localIdClonedOrGenerated: false,
+                        ui5AbsoluteId: ""
+                    },
+                    control: null,
+                    dom: null
+                };
 
                 // no item to inspect, return right away
                 if (!oItem) {
@@ -1865,8 +1888,8 @@
         }
 
         /**
-         * 
-         * @param {object} oSelector 
+         *
+         * @param {object} oSelector
          */
         static getMatchingElementIDs(oSelector) {
             var aInformation = UI5ControlHelper.findControlsBySelector(oSelector);
