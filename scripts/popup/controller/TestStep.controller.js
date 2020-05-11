@@ -200,6 +200,20 @@ sap.ui.define([
 
         },
 
+        /**
+         * Add an new attribute, using the binding information to add a additional check for the value itself
+         *
+         * @param {sap.ui.core.Event} oEvent the event triggered by the binding item, add filter button
+         */
+        onAddAttributeValue: function (oEvent) {
+            var oContext = oEvent.getSource().getBindingContext('viewModel');
+            this._add("/element/attributeFilter", {
+                attributeType: "OWN",
+                criteriaType: "ATTR",
+                subCriteriaType: oContext.getObject().subCriteriaType
+            });
+        },
+
         onNavBack: function () {
             this.onCancelStep();
         },
@@ -1863,13 +1877,18 @@ sap.ui.define([
                 default:
                     return false;
             }
+        },
+
+        /**
+         * 
+         */
+        getBindingValue: function (criteriaType, sSubCriteriaType, criteriaValue, oItem) {
+            if (criteriaType !== "BNDG") {
+                return "";
+            } else {
+                return oItem.property[sSubCriteriaType];
+            }
         }
         // //#endregion
     });
-
-
-
-
-
-
 });
