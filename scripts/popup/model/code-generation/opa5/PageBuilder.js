@@ -15,7 +15,10 @@ sap.ui.define([
             this.__namespace = namespace ? namespace : "template";
             this.__viewName = viewName ? viewName : "view1";
             this.__baseClass = baseClass ? baseClass : "Common";
-            this.__dependencies = [{asyncDep: 'sap/ui/test/Opa5', paraDep: 'Opa5'}];
+            this.__dependencies = [{
+                asyncDep: 'sap/ui/test/Opa5',
+                paraDep: 'Opa5'
+            }];
             this.__actions = {
                 enterText: false,
                 press: false
@@ -26,6 +29,9 @@ sap.ui.define([
                 aggEmptyFunction: false,
                 aggFillFunction: false,
                 aggCntFunction: false
+            };
+            this._checks = {
+                bindingPath: false
             };
             this.__customMatcher = {
                 parent: false,
@@ -92,7 +98,10 @@ sap.ui.define([
 
     PageBuilder.prototype.addEnterTextFunction = function () {
         if (!this.__dependencies.some(dep => dep.paraDep === 'EnterText')) {
-            this.__dependencies.push({asyncDep: 'sap/ui/test/actions/EnterText', paraDep: 'EnterText'});
+            this.__dependencies.push({
+                asyncDep: 'sap/ui/test/actions/EnterText',
+                paraDep: 'EnterText'
+            });
         }
         if (!this.__dependencies.some(dep => dep.paraDep === 'PropertyStrictEquals')) {
             this.__dependencies.push({
@@ -106,7 +115,10 @@ sap.ui.define([
 
     PageBuilder.prototype.addPressFunction = function () {
         if (!this.__dependencies.some(dep => dep.paraDep === 'Press')) {
-            this.__dependencies.push({asyncDep: 'sap/ui/test/actions/Press', paraDep: 'Press'});
+            this.__dependencies.push({
+                asyncDep: 'sap/ui/test/actions/Press',
+                paraDep: 'Press'
+            });
         }
         if (!this.__dependencies.some(dep => dep.paraDep === 'PropertyStrictEquals')) {
             this.__dependencies.push({
@@ -118,9 +130,22 @@ sap.ui.define([
         return this;
     };
 
+    PageBuilder.prototype.addBindingPathCheck = function () {
+        if (!this.__dependencies.some(dep => dep.paraDep === "BindingPath")) {
+            this.__dependencies.push({
+                asyncDep: 'sap/ui/test/matchers/BindingPath',
+                paraDep: 'BindingPath'
+            });
+        }
+        this.__checks.bindingPath = true;
+    };
+
     PageBuilder.prototype.addAggregationEmpty = function () {
         if (!this.__dependencies.some(dep => dep.paraDep === 'AggregationEmpty')) {
-            this.__dependencies.push({asyncDep: 'sap/ui/test/matchers/AggregationEmpty', paraDep: 'AggregationEmpty'});
+            this.__dependencies.push({
+                asyncDep: 'sap/ui/test/matchers/AggregationEmpty',
+                paraDep: 'AggregationEmpty'
+            });
         }
         this.__assertions.aggEmptyFunction = true;
         return this;
@@ -243,7 +268,7 @@ sap.ui.define([
     };
 
     PageBuilder.prototype.__generateExistFunction = function (aCode) {
-        aCode.push(Array(5).join('\t') + 'iShouldSeeTheProperty: function(oMatchProperties) {\n');
+        aCode.push(Array(5).join('\t') + 'iShouldSeeTheControl: function(oMatchProperties) {\n');
         aCode.push(Array(6).join('\t') + 'var checkObject = {};\n');
         aCode.push(Array(6).join('\t') + 'if (oMatchProperties.id) {checkObject.id = new RegExp(oMatchProperties.id);}\n');
         aCode.push(Array(6).join('\t') + 'if (oMatchProperties.controlType) {checkObject.controlType = oMatchProperties.controlType;}\n');
@@ -255,13 +280,23 @@ sap.ui.define([
         aCode.push(Array(7).join('\t') + 'oMatchProperties.attributes.map(function(el) {\n');
         aCode.push(Array(8).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
         aCode.push(Array(7).join('\t') + '}) : [];\n');
-        if (this.__assertions.bindingFunction) {
-            aCode.push(Array(6).join('\t') + 'if (oMatchProperties.bndg_cntxt && oMatchProperties.bndg_cntxt.length > 0) {\n');
-            aCode.push(Array(7).join('\t') + 'oMatchProperties.bndg_cntxt.forEach(function(el) {\n');
-            aCode.push(Array(8).join('\t') + ' checkObject.matchers.push(new ItemBindingMatcher({modelName: el.contextName, propertyName: el.contextAttr, propertyValue: el.targetValue}));\n');
-            aCode.push(Array(7).join('\t') + '});\n');
-            aCode.push(Array(6).join('\t') + '}\n');
-        }
+
+        //add the binding path matcher
+        aCode.push(Array(6).join('\t') + 'if (oMatchProperties.binding && oMatchProperties.binding.length > 0) {\n');
+        aCode.push(Array(7).join('\t') + 'oMatchProperties.binding.forEach(function(el) {\n');
+        aCode.push(Array(8).join('\t') + 'var oBindObject = {}\n');
+        aCode.push(Array(8).join('\t') + 'if (bind.model) {\n');
+        aCode.push(Array(9).join('\t') + 'oBindObject.modelName = bind.model;\n');
+        aCode.push(Array(8).join('\t') + '}\n');
+        aCode.push(Array(8).join('\t') + 'if (bind.path) {\n');
+        aCode.push(Array(9).join('\t') + 'oBindObject.path = bind.path;\n');
+        aCode.push(Array(8).join('\t') + '}\n');
+        aCode.push(Array(8).join('\t') + 'if (bind.propertyPath) {\n');
+        aCode.push(Array(9).join('\t') + 'oBindObject.propertyPath = bind.propertyPath;\n');
+        aCode.push(Array(8).join('\t') + '}\n');
+        aCode.push(Array(8).join('\t') + 'checkObject.matchers.push(new BindingPath(oBindObject));\n');
+        aCode.push(Array(7).join('\t') + '});\n');
+        aCode.push(Array(6).join('\t') + '}\n');
         if (this.__customMatcher.parent) {
             aCode.push(Array(6).join('\t') + 'if (oMatchProperties.parent) {\n');
             aCode.push(Array(7).join('\t') + 'oMatchProperties.parent.forEach(function (el) {\n');
@@ -445,13 +480,23 @@ sap.ui.define([
         aCode.push(Array(7).join('\t') + 'oActionProperties.attributes.map(function(el) {\n');
         aCode.push(Array(8).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
         aCode.push(Array(7).join('\t') + '}) : [];\n');
-        if (this.__assertions.bindingFunction) {
-            aCode.push(Array(6).join('\t') + 'if (oActionProperties.bndg_cntxt && oActionProperties.bndg_cntxt.length > 0) {\n');
-            aCode.push(Array(7).join('\t') + 'oActionProperties.bndg_cntxt.forEach(function(el) {\n');
-            aCode.push(Array(8).join('\t') + 'actionObject.matchers.push(new ItemBindingMatcher({modelName: el.contextName, propertyName: el.contextAttr, propertyValue: el.targetValue}));\n');
-            aCode.push(Array(7).join('\t') + '});\n');
-            aCode.push(Array(6).join('\t') + '}\n');
-        }
+
+        //add the binding path matcher
+        aCode.push(Array(6).join('\t') + 'if (oActionProperties.binding && oActionProperties.binding.length > 0) {\n');
+        aCode.push(Array(7).join('\t') + 'oActionProperties.binding.forEach(function(el) {\n');
+        aCode.push(Array(8).join('\t') + 'var oBindObject = {}\n');
+        aCode.push(Array(8).join('\t') + 'if (bind.model) {\n');
+        aCode.push(Array(9).join('\t') + 'oBindObject.modelName = bind.model;\n');
+        aCode.push(Array(8).join('\t') + '}\n');
+        aCode.push(Array(8).join('\t') + 'if (bind.path) {\n');
+        aCode.push(Array(9).join('\t') + 'oBindObject.path = bind.path;\n');
+        aCode.push(Array(8).join('\t') + '}\n');
+        aCode.push(Array(8).join('\t') + 'if (bind.propertyPath) {\n');
+        aCode.push(Array(9).join('\t') + 'oBindObject.propertyPath = bind.propertyPath;\n');
+        aCode.push(Array(8).join('\t') + '}\n');
+        aCode.push(Array(8).join('\t') + 'actionObject.matchers.push(new BindingPath(oBindObject));\n');
+        aCode.push(Array(7).join('\t') + '});\n');
+        aCode.push(Array(6).join('\t') + '}\n');
         if (this.__customMatcher.parent) {
             aCode.push(Array(6).join('\t') + 'if (oActionProperties.parent) {\n');
             aCode.push(Array(7).join('\t') + 'oActionProperties.parent.forEach(function (el) {\n');
@@ -490,13 +535,23 @@ sap.ui.define([
         aCode.push(Array(7).join('\t') + 'oActionProperties.attributes.map(function(el) {\n');
         aCode.push(Array(8).join('\t') + 'return new PropertyStrictEquals({name: Object.keys(el)[0], value: Object.values(el)[0]});\n');
         aCode.push(Array(7).join('\t') + '}) : [];\n');
-        if (this.__assertions.bindingFunction) {
-            aCode.push(Array(6).join('\t') + 'if (oActionProperties.bndg_cntxt && oActionProperties.bndg_cntxt.length > 0) {\n');
-            aCode.push(Array(7).join('\t') + 'oActionProperties.bndg_cntxt.forEach(function(el) {\n');
-            aCode.push(Array(8).join('\t') + 'actionObject.matchers.push(new ItemBindingMatcher({modelName: el.contextName, propertyName: el.contextAttr, propertyValue: el.targetValue}));\n');
-            aCode.push(Array(7).join('\t') + '});\n');
-            aCode.push(Array(6).join('\t') + '}\n');
-        }
+        //add the binding path matcher
+        aCode.push(Array(6).join('\t') + 'if (oActionProperties.binding && oActionProperties.binding.length > 0) {\n');
+        aCode.push(Array(7).join('\t') + 'oActionProperties.binding.forEach(function(el) {\n');
+        aCode.push(Array(8).join('\t') + 'var oBindObject = {}\n');
+        aCode.push(Array(8).join('\t') + 'if (bind.model) {\n');
+        aCode.push(Array(9).join('\t') + 'oBindObject.modelName = bind.model;\n');
+        aCode.push(Array(8).join('\t') + '}\n');
+        aCode.push(Array(8).join('\t') + 'if (bind.path) {\n');
+        aCode.push(Array(9).join('\t') + 'oBindObject.path = bind.path;\n');
+        aCode.push(Array(8).join('\t') + '}\n');
+        aCode.push(Array(8).join('\t') + 'if (bind.propertyPath) {\n');
+        aCode.push(Array(9).join('\t') + 'oBindObject.propertyPath = bind.propertyPath;\n');
+        aCode.push(Array(8).join('\t') + '}\n');
+        aCode.push(Array(8).join('\t') + 'actionObject.matchers.push(new BindingPath(oBindObject));\n');
+        aCode.push(Array(7).join('\t') + '});\n');
+        aCode.push(Array(6).join('\t') + '}\n');
+
         if (this.__customMatcher.parent) {
             aCode.push(Array(6).join('\t') + 'if (oActionProperties.parent) {\n');
             aCode.push(Array(7).join('\t') + 'oActionProperties.parent.forEach(function (el) {\n');

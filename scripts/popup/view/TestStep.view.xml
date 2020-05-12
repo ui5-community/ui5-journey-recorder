@@ -174,8 +174,8 @@
                                     <VBox>
                                         <Input change="onChangeCriteriaValue" width="100%" value="{viewModel>criteriaValue}" />
                                         <HBox visible="{= ${viewModel>criteriaType} === 'BNDG'}" width="100%" class="attributeLine">
-                                            <Label text="{parts: [{path: 'viewModel>criteriaType'}, {path: 'viewModel>subCriteriaType'}, {path: 'viewModel>criteriaValue'}, {path: 'viewModel>/element/item'}], formatter: '.getBindingValue'}"/>
-                                            <Button icon="sap-icon://add-filter" press="onAddAttributeValue"/>
+                                            <ObjectAttribute title="Value" text="{parts: [{path: 'viewModel>criteriaType'}, {path: 'viewModel>subCriteriaType'}, {path: 'viewModel>criteriaValue'}, {path: 'viewModel>/element/item'}], formatter: '.getBindingValue'}"/>
+                                            <Button icon="sap-icon://add-filter" press="onAddAttributeValue" tooltip="Add attribute to fit the corresponding property value"/>
                                         </HBox>
                                     </VBox>
                                 </cells>

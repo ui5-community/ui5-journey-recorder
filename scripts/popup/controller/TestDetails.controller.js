@@ -213,13 +213,13 @@ sap.ui.define([
 
                 // make sure that no recording is going on now
                 if (RecordController.getInstance().isRecording()) {
-
                     // ask user whether to stop recording in favor of replay
                     MessageBox.error(
                         "You are recording right now. Do you want start replaying instead?", {
                             icon: MessageBox.Icon.QUESTION,
                             title: "Stop recording?",
                             actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                            // eslint-disable-next-line require-jsdoc
                             onClose: function (sAction) {
                                 if (sAction === MessageBox.Action.YES) {
                                     resolve(sURL);
@@ -229,17 +229,16 @@ sap.ui.define([
                             }
                         }
                     );
-
-                } else
+                } else {
                     // check whether there is a replay right now
+                    // eslint-disable-next-line no-lonely-if
                     if (RecordController.getInstance().isReplaying()) {
                         reject("You are replaying already. Finish the current replay first before starting another one.");
+                    } /* if no recording is going on, go to replaying right away */
+                    else {
+                        resolve(sURL);
                     }
-                // if no recording is going on, go to replaying right away
-                else {
-                    resolve(sURL);
                 }
-
             });
 
             // what to do after resolving/rejecting replay-indication promise
@@ -419,6 +418,9 @@ sap.ui.define([
                 .then(content => saveAs(content, "testCode.zip"));
         },
 
+        /**
+         * 
+         */
         onShowReplayMessages: function (oEvent) {
             this._oMessagePopover.toggle(oEvent.getSource());
         },
@@ -626,13 +628,16 @@ sap.ui.define([
                 }.bind(this));
         },
 
+        /**
+         * 
+         * @param {*} sKey 
+         * @param {*} oItems 
+         */
         _formatTestStepDetails: function (sKey, oItems) {
             return oItems.find(function (oItem) {
                 return oItem.key === sKey;
             }).text;
-        },
-
+        }
         // #endregion
-
     });
 });
