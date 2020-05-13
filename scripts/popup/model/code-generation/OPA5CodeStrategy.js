@@ -552,7 +552,7 @@ sap.ui.define([
             //aParts.push('objectProps: ');
         }
 
-        this.__createObjectMatcherInfos(oStep, aParts);
+        this.__createObjectMatcherInfos(oStep, aParts, oCodeSettings);
 
         aParts.push(', ');
 

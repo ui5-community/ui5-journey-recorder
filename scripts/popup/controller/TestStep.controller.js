@@ -1489,10 +1489,13 @@ sap.ui.define([
 
             if (bRecording) {
                 return ConnectionMessages.getWindowInfo(Connection.getInstance()).then(function (oData) {
+                    // update UI5 version for code generation (it's available in test steps already recorded)
+                    this.getModel('viewModel').setProperty('/codeSettings/ui5Version', oData.ui5Version);
+
                     oReturn.href = oData.url;
                     oReturn.hash = oData.hash;
                     return JSON.parse(JSON.stringify(oReturn));
-                });
+                }.bind(this));
             } else {
                 oReturn.href = oElement.href;
                 oReturn.hash = oElement.hash;
