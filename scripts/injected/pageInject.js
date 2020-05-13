@@ -1368,24 +1368,26 @@
                     }
                 }
 
-                // get binding information
-                // 1) all bindings
+                // get binding information:
                 if (oItem.mBindingInfos) {
                     oReturn.binding = {};
                 }
+                // 1) all bindings
                 for (var sBinding in oItem.mBindingInfos) {
                     oReturn.binding[sBinding] = UI5ControlHelper.getBindingInformation(oItem, sBinding);
                 }
-                // 2) special binding information for "sap.m.Label" if not existing already
-                if (oReturn.metadata.elementName === "sap.m.Label" && !oReturn.binding.text) {
+                // 2) special binding information for "sap.m.Label"
+                if (oReturn.metadata.elementName === "sap.m.Label"  && !oReturn.binding.text) {
+                    // TODO binding from parent: this needs testing!
                     // if the label is part of a FormElement, we may obtain further binding information based on the parent
                     if (oItem.getParent() && oItem.getParent().getMetadata()._sClassName === "sap.ui.layout.form.FormElement") {
                         var oParentBndg = oItem.getParent().getBinding("label");
                         if (oParentBndg) {
-                            oReturn.binding["text"] = {
+                            oReturn.binding["text"] = [{
                                 path: oParentBndg.sPath && oParentBndg.getPath(),
-                                "static": oParentBndg.oModel && oParentBndg.getModel() instanceof sap.ui.model.resource.ResourceModel
-                            };
+                                prefixedFullPath: oParentBndg.sPath && oParentBndg.getPath(), // TODO prefixedFullPath needs adjustments
+                                "static": oParentBndg.oModel && oParentBndg.getModel() instanceof sap.ui.model.resource.ResourceModel // TODO change in accordance with UI5ControlHelper.getBindingInformation
+                            }];
                         }
                     }
                 }
@@ -2203,50 +2205,58 @@
         // #region Contexts and binding contexts
 
         static getBindingInformation(oItem, sBinding) {
-            var oBindingInfo = oItem.getBindingInfo(sBinding);
-            var oBinding = oItem.getBinding(sBinding);
+            var mBindingInfos = oItem.getBindingInfo(sBinding);
+
             var oReturn = {};
-            if (!oBindingInfo) {
+
+            if (!mBindingInfos) {
                 return oReturn;
             }
 
-            //not really perfect for composite bindings (what we are doing here) - we are just returning the first for that..
-            //in case of a real use case --> enhance
-            var oRelevantPart = oBindingInfo;
+            // identify binding parts if existing, use binding infos instead otherwise
+            var aBindingParts = (mBindingInfos.parts) ? mBindingInfos.parts : [mBindingInfos];
 
-            if (oBindingInfo.parts && oBindingInfo.parts.length > 0) {
-                oRelevantPart = oBindingInfo.parts[0];
-            }
+            // compute binding data for each part
+            aBindingParts.forEach(function (mPartBindingInfo, iIndex) {
 
-            //get the binding context we are relevant for..
-            var oBndgContext = oItem.getBindingContext(oRelevantPart.model);
-            var sPathPre = oBndgContext ? oBndgContext.getPath() + "/" : "";
+                // obtain path
+                var sPath = mPartBindingInfo.path;
 
-            // construct a model prefix
-            var sModel = oRelevantPart.model;
-            var sModelStringified = sModel === "undefined" || sModel === undefined ? "" : sModel;
-            var sModelStringifiedPrefixed = (sModelStringified ? sModelStringified + ">" : "");
+                // construct a model prefix
+                var sModel = mPartBindingInfo.model;
+                var sModelStringified = sModel === "undefined" || sModel === undefined ? "" : sModel;
+                var sModelStringifiedPrefixed = (sModelStringified ? sModelStringified + ">" : "");
 
-            if (oBinding) {
-                oReturn = {
-                    model: oRelevantPart.model,
-                    path: oBinding.sPath && oBinding.getPath(),
-                    relativePath: oBinding.sPath && oBinding.getPath(), //relative path..
-                    prefixedFullPath: sModelStringifiedPrefixed + sPathPre + (oBinding.sPath && oBinding.getPath()),
-                    contextPath: sPathPre,
-                    static: oBinding.oModel && oBinding.getModel() instanceof sap.ui.model.resource.ResourceModel,
-                    jsonBinding: oBinding.oModel && oBinding.getModel() instanceof sap.ui.model.json.JSONModel
+                // obtain binding context
+                var oBndgContext = oItem.getBindingContext(sModel);
+                var sBndgContextPrefix = oBndgContext ? oBndgContext.getPath() + "/" : "";
+                var bNeedsContextPrefix = !!sBndgContextPrefix && sPath.charAt(0) !== "/";
+
+                // obtain model information *for the current binding part*
+                var mBindings = oItem.getBinding(sBinding);
+                var oModel = undefined;
+                if (mBindings) {
+                    oModel = (mBindings.oModel) ? mBindings.oModel : mBindings.getBindings()[iIndex].getModel();
+                }
+
+                // construct fully-qualified path
+                var sPrefixedFullPath = sModelStringifiedPrefixed
+                    + (bNeedsContextPrefix ? sBndgContextPrefix : "")
+                    + sPath;
+
+                // combine everything into a returned object
+                oReturn[sBinding + "#" + iIndex] = {
+                    property: sBinding,
+                    model: sModel,
+                    path: sPath,
+                    contextPath: bNeedsContextPrefix ? sBndgContextPrefix : "",
+                    relativePath: sPath,
+                    prefixedFullPath: sPrefixedFullPath,
+                    static: mPartBindingInfo.mode !== sap.ui.model.BindingMode.TwoWay,
+                    jsonBinding: oModel && oModel instanceof sap.ui.model.json.JSONModel
                 };
+            });
 
-                oReturn.path = sPathPre + oReturn.path;
-            } else {
-                oReturn = {
-                    path: oRelevantPart.path,
-                    prefixedFullPath: sModelStringifiedPrefixed + oRelevantPart.path,
-                    model: oRelevantPart.model,
-                    static: true
-                };
-            }
             return oReturn;
         }
 
@@ -2494,35 +2504,39 @@
             /*@Adrian - End*/
             if (oSelector.binding) {
                 for (var sBinding in oSelector.binding) {
-                    var oBndgInfo = UI5ControlHelper.getBindingInformation(oItem, sBinding);
+                    var aBndgInfoParts = UI5ControlHelper.getBindingInformation(oItem, sBinding);
 
-                    if (oBndgInfo.prefixedFullPath !== oSelector.binding[sBinding].prefixedFullPath) {
-                        if (oItem.getMetadata().getElementName() === "sap.m.Label") {
-                            if (oItem.getParent() && oItem.getParent().getMetadata()._sClassName === "sap.ui.layout.form.FormElement") {
-                                var oParentBndg = oItem.getParent().getBinding("label");
-                                if (!oParentBndg || oParentBndg.getPath() !== oSelector.binding[sBinding].relativePath) {
+                    // inspect whether the selector is matching the various binding parts of the property 'sBinding'
+                    var aMatchingValues = Object.keys(oSelector.binding[sBinding]).map(function(sKey) {
+                        var mBindingInfo = aBndgInfoParts[sKey];
+                        var mSelectorBindingInfo = oSelector.binding[sBinding][sKey];
+
+                        // return early if a binding part does not exist actually
+                        if (!mBindingInfo || !mSelectorBindingInfo) {
+                            return false;
+                        }
+
+                        if (mBindingInfo.prefixedFullPath !== mSelectorBindingInfo.prefixedFullPath) {
+                            if (oItem.getMetadata().getElementName() === "sap.m.Label") {
+                                if (oItem.getParent() && oItem.getParent().getMetadata()._sClassName === "sap.ui.layout.form.FormElement") {
+                                    var oParentBndg = oItem.getParent().getBinding("label");
+                                    if (!oParentBndg || oParentBndg.getPath() !== oSelector.binding[sBinding].relativePath) {
+                                        return false;
+                                    }
+                                } else {
                                     return false;
                                 }
                             } else {
                                 return false;
                             }
-                        } else {
-                            return false;
                         }
-                        //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-                        /*@Adrian - Start
-                    } else {
-                        var oBinding = oItem.getBinding(sBinding);
-                        if (!oBinding) {
-                            if (oAggrInfo.path !== id.binding[sBinding].path) {
-                                return false;
-                            }
-                        } else {
-                            if (oBinding.getPath() !== id.binding[sBinding].path) {
-                                return false;
-                            }
-                        }
-                        @Adrian - End*/
+
+                        return true;
+                    });
+
+                    // if none of the binding paths has been matched, return false immediately
+                    if (aMatchingValues.every((bIsMatching) => !bIsMatching)) {
+                        return false;
                     }
                 }
             }

@@ -665,17 +665,20 @@ sap.ui.define([
                     // add information on binding context and path
                     if (!jQuery.isEmptyObject(oItem.binding)) {
                         for (var sAttr in oItem.binding) {
-                            if (typeof oItem.binding[sAttr].path !== "object") {
-                                var sModel = oItem.binding[sAttr].model === "undefined" || oItem.binding[sAttr].model === undefined ? "" : oItem.binding[sAttr].model + ">"
-                                aList.push({
-                                    type: "BNDG",
-                                    typeTxt: "Binding path",
-                                    bdgPath: sAttr,
-                                    attribute: sAttr,
-                                    importance: oItem.uniquness.binding[sAttr],
-                                    value: sModel + oItem.binding[sAttr].path,
-                                    valueToString: sModel + oItem.binding[sAttr].path
-                                });
+                            for (var iBindingPartIndex in oItem.binding[sAttr]) {
+                                var mBindingPart = oItem.binding[sAttr][iBindingPartIndex];
+
+                                if (typeof mBindingPart.path !== "object") {
+                                    aList.push({
+                                        type: "BNDG",
+                                        typeTxt: "Binding path",
+                                        bdgPath: iBindingPartIndex,
+                                        attribute: sAttr,
+                                        importance: 100, //oItem.uniquness.binding[sAttr],
+                                        value: mBindingPart.prefixedFullPath,
+                                        valueToString: mBindingPart.prefixedFullPath
+                                    });
+                                }
                             }
                         }
                     }
@@ -1889,7 +1892,10 @@ sap.ui.define([
             if (criteriaType !== "BNDG") {
                 return "";
             } else {
-                return oItem.property[sSubCriteriaType];
+                // extract property from subcriterion type as it is suffixed with a rolling index due to CompositeBindings
+                var sProperty = sSubCriteriaType.substr(0, sSubCriteriaType.indexOf("#"));
+                // get property value
+                return oItem.property[sProperty];
             }
         }
         // //#endregion

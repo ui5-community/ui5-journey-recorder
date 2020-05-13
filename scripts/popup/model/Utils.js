@@ -315,38 +315,45 @@ sap.ui.define([
 
                         for (var sAttr in oItem.binding) {
                             if (typeof oItem.binding[sAttr].path !== "object") {
-                                var sModel = oItem.binding[sAttr].model;
-                                var sModelStringified = sModel === "undefined" || sModel === undefined ? "" : sModel;
-                                var sModelStringifiedPrefixed = (sModelStringified ? sModelStringified + ">" : "");
 
-                                aReturn.push({
-                                    subCriteriaType: sAttr,
-                                    subCriteriaText: "Attribute '" + sAttr + "'",
-                                    value: function (sModelPrefix, sAttribute, oItem) {
-                                        return sModelPrefix + oItem.binding[sAttribute].path;
-                                    }.bind(this, sModelStringifiedPrefixed, sAttr),
-                                    code: function (sModel, sAttr, oItem, sValue) {
-                                        var oReturn = { binding: {} };
-                                        oReturn.binding[sAttr] = {
-                                            prefixedFullPath: sValue,
-                                            relativePath: oItem.binding[sAttr].relativePath,
-                                            contextPath: oItem.binding[sAttr].contextPath,
-                                            model: sModel
-                                        };
-                                        return oReturn;
-                                    }.bind(this, sModelStringified, sAttr, oItem),
-                                    getUi5Spec: function (oAdjust, oItem, iValue) {
-                                        return ""; //not really possible right?
-                                    },
-                                    assert: function (sModel, sAttr) {
-                                        return "context." + sModel + "." + sAttr;
-                                    }.bind(this, sModel, sAttr),
-                                    assertField: function (sValue) {
-                                        return {
-                                            type: "context"
+                                var aBindingParts = oItem.binding[sAttr];
+
+                                for (var iBindingPartIndex in aBindingParts) {
+                                    var oBindingPart = aBindingParts[iBindingPartIndex];
+
+                                    aReturn.push({
+                                        subCriteriaType: iBindingPartIndex, // due to CompositeBindings, a unique name (e.g., 'enabled#1') to enable correct selection
+                                        subcriteriaTypeProperty: sAttr, // name of the control's property (e.g., 'enabled')
+                                        subCriteriaText: "Attribute '" + sAttr + "'",
+                                        value: function (sAttribute, iPartIndex, oItem) {
+                                            return oItem.binding[sAttribute][iPartIndex].prefixedFullPath;
+                                        }.bind(this, sAttr, iBindingPartIndex),
+                                        code: function (sAttribute, sKey, oPart, sValue) {
+                                            var oReturn = { binding: {} };
+                                            oReturn.binding[sAttribute] = {};
+                                            oReturn.binding[sAttribute][sKey] = {
+                                                path: oPart.path,
+                                                prefixedFullPath: sValue,
+                                                relativePath: oPart.relativePath,
+                                                contextPath: oPart.contextPath,
+                                                model: oPart.model
+                                            };
+                                            return oReturn;
+                                        }.bind(this, sAttr, iBindingPartIndex, oBindingPart),
+                                        getUi5Spec: function (oAdjust, oItem, iValue) {
+                                            return ""; //not really possible right?
+                                        },
+                                        assert: function (sModel, sAttr) {
+                                            return "context." + sModel + "." + sAttr;
+                                        }.bind(this, oBindingPart.model, sAttr),
+                                        assertField: function (sValue) {
+                                            return {
+                                                type: "context"
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+
+                                }
 
                             }
                         }
