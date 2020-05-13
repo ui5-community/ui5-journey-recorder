@@ -3,8 +3,6 @@ sap.ui.define(["sap/ui/base/Object"],
         "use strict";
 
         var ItemConstants = BaseObject.extend("com.ui5.testing.util.StringBuilder", {
-            _aParts: [],
-
             /**
              * Simple constructor, allowing a string as parameter to start with
              *
@@ -13,6 +11,7 @@ sap.ui.define(["sap/ui/base/Object"],
              * @return {com.ui5.testing.util.StringBuilder} self reference for chaining
              */
             constructor: function (sString) {
+                this._aParts = [];
                 this.add(sString);
                 return this;
             },
