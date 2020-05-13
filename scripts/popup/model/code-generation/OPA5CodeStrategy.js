@@ -513,7 +513,7 @@ sap.ui.define([
                 if (typeof oToken.criteriaValue === "boolean") {
                     return c.value === oToken.criteriaValue;
                 } else {
-                    return c.value === oToken.criteriaValue.trim();
+                    return c.value === String(oToken.criteriaValue).trim();
                 }
             })[0].symbol : typeof oToken.criteriaValue === "boolean" ?
             oToken.criteriaValue :
