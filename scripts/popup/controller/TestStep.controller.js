@@ -819,7 +819,7 @@ sap.ui.define([
                 }
 
                 var aReturn = this._oModel.getProperty("/element/identifiedElements");
-                if (aReturn.length === 1 && bSufficientForStop === true) { // early exit if possible: the less attributes the better
+                if (!aReturn || (aReturn.length === 1 && bSufficientForStop === true)) { // early exit if possible: the less attributes the better
                     resolve();
                     return;
                 }

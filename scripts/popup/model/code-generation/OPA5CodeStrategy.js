@@ -4,8 +4,9 @@ sap.ui.define([
     "com/ui5/testing/model/code-generation/opa5/ParentMatcherBuilder",
     "com/ui5/testing/model/code-generation/opa5/ItemBindingMatcherBuilder",
     "com/ui5/testing/model/Utils",
-    "com/ui5/testing/util/ItemConstants"
-], function (UI5Object, PageBuilder, ParentMatcherBuilder, ItemBindingMatcherBuilder, Utils, ItemConstants) {
+    "com/ui5/testing/util/ItemConstants",
+    "com/ui5/testing/util/StringBuilder"
+], function (UI5Object, PageBuilder, ParentMatcherBuilder, ItemBindingMatcherBuilder, Utils, ItemConstants, StringBuilder) {
     "use strict";
     var OPA5CodeStrategy = UI5Object.extend("com.ui5.testing.model.code-generation.OPA5CodeStrategy", {
         jsonKeyRegex: /\"(\w+)\"\:/g,
@@ -26,6 +27,7 @@ sap.ui.define([
 
     OPA5CodeStrategy.prototype.generate = function (oCodeSettings, aElements, codeHelper) {
         var aCodes = [];
+        debugger;
         //setup page builder for each view used during the test
         aElements
             .map(el => ({
@@ -40,15 +42,11 @@ sap.ui.define([
         //(2) execute script
         this.__code.codeName = oCodeSettings.testName;
 
-        this.__setupHeader();
+        this._setupHeader();
 
         this.__createConstants(aElements);
 
-        this.__code.content.push('\n' +
-            Array(2).join('\t') +
-            'QUnit.module("' +
-            oCodeSettings.testCategory +
-            '");\n\n');
+        this.__code.content.push((new StringBuilder()).addNewLine().addTab().add('QUnit.module("').add(oCodeSettings.testCategory).add('");').addNewLine(2).toString());
 
         this.__createAppStartStep(oCodeSettings);
 
@@ -101,13 +99,20 @@ sap.ui.define([
         return aCodes;
     };
 
-    OPA5CodeStrategy.prototype.__setupHeader = function () {
-        var aCode = ['sap.ui.define([\n'];
-        aCode.push(Array(2).join('\t') + '"sap/ui/test/Opa5",\n');
-        aCode.push(Array(2).join('\t') + '"sap/ui/test/opaQunit"\n');
-        aCode.push('], function (Opa5, opaTest) {\n');
-        aCode.push(Array(2).join('\t') + '"use strict";\n');
-        this.__code.content.push(aCode.reduce((a, b) => a + b, ''));
+    OPA5CodeStrategy.prototype._setupHeader = function () {
+        var oCode = new StringBuilder('sap.ui.define([');
+        oCode.addNewLine()
+            .addTab()
+            .add('"sap/ui/test/Opa5",')
+            .addNewLine()
+            .addTab()
+            .add('"sap/ui/test/opaQunit"')
+            .addNewLine()
+            .add('], function (Opa5, opaTest) {')
+            .addNewLine()
+            .addTab().add('"use strict";')
+            .addNewLine();
+        this.__code.content.push(oCode.toString());
     };
 
     OPA5CodeStrategy.prototype.__createConstants = function (aElements) {
@@ -154,37 +159,33 @@ sap.ui.define([
     };
 
     OPA5CodeStrategy.prototype.__createAppStartStep = function (oAppDetails) {
-        var aParts = [Array(2).join('\t') + 'opaTest('];
-        aParts.push('"' + oAppDetails.testName + '"');
-        aParts.push(', function(Given, When, Then) {\n');
+        var oStartStep = new StringBuilder();
+        oStartStep.addTab().add('opaTest("').add(oAppDetails.testName).add('", function(Given, When, Then) {').addNewLine();
         var sNavHash = "";
         if (oAppDetails.testUrl.indexOf('#') > -1) {
             sNavHash = oAppDetails.testUrl.substring(oAppDetails.testUrl.indexOf('#') + 1);
         }
-        aParts.push(Array(3).join('\t') + 'Given.iStartTheAppByHash({hash: \"' + sNavHash + '\"});\n\n');
+        oStartStep.addTab(2).add('Given.iStartTheAppByHash({hash: \"').add(sNavHash).add('\"});').addNewLine(2);
 
-        this.__code.content.push(aParts.reduce((a, b) => a + b, ''));
+        this.__code.content.push(oStartStep.toString());
     };
 
     OPA5CodeStrategy.prototype.__createAppCloseStep = function () {
-        var aParts = [];
-        aParts.push('\n' + Array(3).join('\t') + 'Given.iTeardownTheApp();\n');
-        aParts.push(Array(2).join('\t') + '});\n');
-
-        this.__code.content.push(aParts.reduce((a, b) => a + b, ''));
+        var oCloseStep = new StringBuilder();
+        oCloseStep.addNewLine().addTab(2).add('Given.iTeardownTheApp();').addNewLine().addTab().add('});').addNewLine();
+        this.__code.content.push(oCloseStep.toString());
     };
 
     OPA5CodeStrategy.prototype.__createTestSteps = function (oCodeSettings, aTestSteps) {
-        var aParts = [];
+        var oSteps = new StringBuilder();
         //from here starts the real testing
         for (var step in aTestSteps) {
             var stepCode = this.createTestStep(oCodeSettings, aTestSteps[step]);
             if (stepCode) {
-                aParts.push(stepCode);
+                oSteps.add(stepCode);
             }
         }
-
-        this.__code.content.push(aParts.reduce((a, b) => a + b, ''));
+        this.__code.content.push(oSteps.toString());
     };
 
     OPA5CodeStrategy.prototype.createTestStep = function (oCodeSettings, oTestStep) {
@@ -297,42 +298,39 @@ sap.ui.define([
     };
 
     OPA5CodeStrategy.prototype.__createEnterTextAction = function (oStep, oCodeSettings) {
-        var selectors = oStep.selector.selectorUI5.own;
         var viewName = oStep.item.viewProperty.localViewName ? oStep.item.viewProperty.localViewName : "Detached";
         this.__pages[viewName].addEnterTextFunction();
 
-        var aParts = [Array(3).join('\t') + 'When.'];
-        aParts.push('on' + viewName);
-        aParts.push('.enterText(');
+        var oEnterTextAction = new StringBuilder();
+        oEnterTextAction.addTab(2).add('When.on').add(viewName).add('.enterText({')
+        //var aParts = [Array(3).join('\t') + 'When.'];
+        //aParts.push('on' + viewName);
+        //aParts.push('.enterText(');
+        //aParts.push('{');
+        this.__createObjectMatcherInfos(oStep, oEnterTextAction, oCodeSettings);
+        oEnterTextAction.add(', actionText: "').add(oStep.property.selectActInsert).add('"').add('});');
 
-        //var sSelectorParts = this.__createSelectorProperties(selectors);
-        //aParts.push(sSelectorParts);
-        aParts.push('{');
-        this.__createObjectMatcherInfos(oStep, aParts);
-        aParts.push(', actionText: "' + oStep.property.selectActInsert + '"');
-        aParts.push('});');
-
-        return aParts.reduce((a, b) => a + b, '');
+        return oEnterTextAction.toString();
     };
 
     OPA5CodeStrategy.prototype.__createPressAction = function (oStep, oCodeSettings) {
         var viewName = oStep.item.viewProperty.localViewName ? oStep.item.viewProperty.localViewName : "Detached";
         this.__pages[viewName].addPressFunction();
 
-        var aParts = [Array(3).join('\t') + 'When.'];
-        aParts.push('on' + viewName);
-        aParts.push('.press(');
-
-
-        aParts.push('{');
+        var oPressAction = new StringBuilder();
+        oPressAction.addTab(2).add("When.on").add(viewName).add('.press({');
+        //var aParts = [Array(3).join('\t') + 'When.'];
+        //aParts.push('on' + viewName);
+        //aParts.push('.press(');
+        //aParts.push('{');
         if (oStep.property.selectItemBy === "UI5") {
-            aParts.push('id: {value: "' + oStep.selector.selectorUI5.own.id + '",isRegex: true}');
+            oPressAction.add('id: {value: "').add(oStep.selector.selectorUI5.own.id).add('",isRegex: true}');
         } else {
-            this.__createObjectMatcherInfos(oStep, aParts, oCodeSettings);
+            this.__createObjectMatcherInfos(oStep, oPressAction, oCodeSettings);
         }
 
-        aParts.push('});');
-        return aParts.reduce((a, b) => a + b, '');
+        oPressAction.add('});');
+        return oPressAction.toString();
 
     };
 
@@ -342,21 +340,22 @@ sap.ui.define([
             return this.__createAggregationCheck(oStep, oCodeSettings);
         } else {
             this.__pages[viewName].addExistFunction();
-            var aParts = [Array(3).join('\t') + 'Then.'];
-            aParts.push('on' + viewName);
-            aParts.push('.iShouldSeeTheControl(');
+            var oExistAssert = new StringBuilder();
+            oExistAssert.addTab(2).add('Then.on').add(viewName).add('.iShouldSeeTheControl({');
 
-            aParts.push('{');
+            //var aParts = [Array(3).join('\t') + 'Then.'];
+            //aParts.push('on' + viewName);
+            //aParts.push('.iShouldSeeTheControl(');
+            //aParts.push('{');
 
-            this.__createObjectMatcherInfos(oStep, aParts, oCodeSettings);
+            this.__createObjectMatcherInfos(oStep, oExistAssert, oCodeSettings);
+            oExistAssert.add('});');
 
-            aParts.push('});');
-
-            return aParts.reduce((a, b) => a + b, '');
+            return oExistAssert.toString();
         }
     };
 
-    OPA5CodeStrategy.prototype.__createObjectMatcherInfos = function (oStep, aParts, oCodeSettings) {
+    OPA5CodeStrategy.prototype.__createObjectMatcherInfos = function (oStep, oSB, oCodeSettings) {
         var objectMatcher = {};
         var parentMatcher = {};
         var aToken = [...oStep.attributeFilter, ...oStep.assertFilter];
@@ -442,62 +441,65 @@ sap.ui.define([
         }
         for (var k in objectMatcher) {
             if (k !== ItemConstants.ATTRIBUTE && k !== ItemConstants.BINDING && k !== ItemConstants.I18N) {
-                aParts.push(objectMatcher[k] + ', ');
+                oSB.add(objectMatcher[k]).add(', ');
             }
         }
-        aParts[aParts.length - 1] = aParts[aParts.length - 1].replace(/,\s*$/, '');
+        oSB.replace(/,\s*$/, '');
+        //aParts[aParts.length - 1] = aParts[aParts.length - 1].replace(/,\s*$/, '');
 
         if (objectMatcher[ItemConstants.ATTRIBUTE]) {
             objectMatcher[ItemConstants.ATTRIBUTE] = [...new Set(objectMatcher[ItemConstants.ATTRIBUTE])];
-            aParts.push(", attributes: [" + objectMatcher[ItemConstants.ATTRIBUTE].reduce((a, b) => a + ', ' + b, '').substring(2) + "]");
+            oSB.add(", attributes: [").addMultiple(objectMatcher[ItemConstants.ATTRIBUTE], ', ').add("]");
         }
 
         if (objectMatcher[ItemConstants.BINDING]) {
             objectMatcher[ItemConstants.BINDING] = [...new Set(objectMatcher[ItemConstants.BINDING])];
-            aParts.push(", binding: [" + objectMatcher[ItemConstants.BINDING].reduce((a, b) => a + ', ' + b, '').substring(2) + "]");
+            oSB.add(", binding: [").addMultiple(objectMatcher[ItemConstants.BINDING], ', ').add("]");
         }
 
         if (objectMatcher[ItemConstants.I18N]) {
             objectMatcher[ItemConstants.I18N] = [...new Set(objectMatcher[ItemConstants.I18N])];
-            aParts.push(", i18n: [" + objectMatcher[ItemConstants.I18N].reduce((a, b) => a + ', ' + b, '').substring(2) + "]");
+            oSB.add(", i18n: [").addMultiple(objectMatcher[ItemConstants.I18N], ', ').add("]");
         }
 
         if (Object.keys(parentMatcher).length > 0) {
-            aParts.push(", parent: [");
+            oSB.add(", parent: [");
             for (var key in parentMatcher) {
-                aParts.push("{");
+                oSB.add("{");
                 for (var attrK in parentMatcher[key]) {
                     if (attrK !== ItemConstants.ATTRIBUTE && attrK !== ItemConstants.BINDING && attrK !== ItemConstants.I18N) {
-                        aParts.push(parentMatcher[key][attrK] + ', ');
+                        oSB.add(parentMatcher[key][attrK]).add(', ');
                     }
                 }
 
                 if (key === 'PRT') {
-                    aParts.push('levelAbove: 1');
+                    oSB.add('levelAbove: 1');
                 } else {
-                    aParts.push('levelAbove: ' + key.replace('PRT', ''));
+                    oSB.add('levelAbove: ').add(key.replace('PRT', ''));
                 }
 
                 if (parentMatcher[key][ItemConstants.ATTRIBUTE]) {
                     parentMatcher[key][ItemConstants.ATTRIBUTE] = [...new Set(parentMatcher[key][ItemConstants.ATTRIBUTE])];
-                    aParts.push(", attributes: [" + parentMatcher[key][ItemConstants.ATTRIBUTE].reduce((a, b) => a + ', ' + b, '').substring(2) + "]");
+                    oSB.add(", attributes: [").addMultiple(parentMatcher[key][ItemConstants.ATTRIBUTE]).add("]");
                 }
 
                 if (parentMatcher[key][ItemConstants.BINDING]) {
                     parentMatcher[key][ItemConstants.BINDING] = [...new Set(parentMatcher[key][ItemConstants.BINDING])];
-                    aParts.push(", binding: [" + parentMatcher[key][ItemConstants.BINDING].reduce((a, b) => a + ', ' + b, '').substring(2) + "]");
+                    oSB.add(", binding: [").addMultiple(parentMatcher[key][ItemConstants.BINDING]).add("]");
                 }
 
                 if (parentMatcher[key][ItemConstants.I18N]) {
                     parentMatcher[key][ItemConstants.I18N] = [...new Set(parentMatcher[key][ItemConstants.I18N])];
-                    aParts.push(", i18n: [" + parentMatcher[key][ItemConstants.I18N].reduce((a, b) => a + ', ' + b, '').substring(2) + "]");
+                    oSB.add(", i18n: [").addMultiple(parentMatcher[key][ItemConstants.I18N]).add("]");
                 }
-                aParts.push('}, ');
+                oSB.add('}, ');
             }
-            aParts[aParts.length - 1] = aParts[aParts.length - 1].replace(/,\s*$/, '');
-            aParts.push("]");
+            oSB.replace(/,\s*$/, '');
+            //aParts[aParts.length - 1] = aParts[aParts.length - 1].replace(/,\s*$/, '');
+            oSB.add("]");
         }
-        aParts[aParts.length - 1] = aParts[aParts.length - 1].replace(/,\s*$/, '');
+        oSB.replace(/,\s*$/, '');
+        //aParts[aParts.length - 1] = aParts[aParts.length - 1].replace(/,\s*$/, '');
     };
 
     OPA5CodeStrategy.prototype.__createAttrValue = function (oToken, objectMatcher) {
