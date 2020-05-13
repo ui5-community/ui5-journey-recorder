@@ -39,7 +39,7 @@ sap.ui.define(["sap/ui/base/Object"],
              */
             addTab: function (iTimes) {
                 if (iTimes) {
-                    this._aParts.push(Array(iTimes).join('\t'));
+                    this._aParts.push(Array(iTimes + 1).join('\t'));
                 } else {
                     this._aParts.push('\t');
                 }
@@ -55,7 +55,7 @@ sap.ui.define(["sap/ui/base/Object"],
              */
             addNewLine: function (iTimes) {
                 if (iTimes) {
-                    this._aParts.push(Array(iTimes).join('\n'));
+                    this._aParts.push(Array(iTimes + 1).join('\n'));
                 } else {
                     this._aParts.push('\n');
                 }
