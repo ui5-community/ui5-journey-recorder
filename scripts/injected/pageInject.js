@@ -1392,18 +1392,6 @@
                     }
                 }
 
-                // get binding contexts
-                for (var sModel in UI5ControlHelper.getContextModels(oItem)) {
-                    var oBndg = UI5ControlHelper.getBindingContextInformation(oItem, sModel);
-                    if (!oBndg) {
-                        continue;
-                    }
-                    if (!oReturn.bindingContext) {
-                        oReturn.bindingContext = {};
-                    }
-                    oReturn.bindingContext[sModel] = oBndg;
-                }
-
                 // get all simple properties
                 if (oItem.mProperties) {
                     oReturn.property = {};
@@ -1415,13 +1403,6 @@
                     } else {
                         oReturn.property[sProperty] = oItem.mProperties[sProperty];
                     }
-                }
-
-                // get all binding contexts
-                oReturn.context = UI5ControlHelper.getContexts(oItem);
-                //currently we don't wan't to change the function, therefore we just remove the empty object
-                if (Object.keys(oReturn.context).length === 0) {
-                    delete oReturn.context;
                 }
 
                 // get model information
@@ -1574,55 +1555,6 @@
                     if (aItems[i].getMetadata().getElementName() !== oItem.control.getMetadata().getElementName()) {
                         continue;
                     }
-                    for (var sModel in oItem.context) {
-                        if (!oObjectCtx[sModel]) {
-                            oObjectCtx[sModel] = {};
-                        }
-                        var oCtx = aItems[i].getBindingContext(sModel === "undefined" ? undefined : sModel);
-                        if (!oCtx) {
-                            continue;
-                        }
-                        var oCtxObject = oCtx.getObject();
-                        if (oCtxObject) {
-                            for (var sCtx in oItem.context[sModel]) {
-                                var sValue = null;
-                                sValue = oCtxObject[sCtx];
-                                if (!oObjectCtx[sModel][sCtx]) {
-                                    oObjectCtx[sModel][sCtx] = {
-                                        _totalAmount: 0
-                                    };
-                                }
-                                if (!oObjectCtx[sModel][sCtx][sValue]) {
-                                    oObjectCtx[sModel][sCtx][sValue] = 0;
-                                }
-                                oObjectCtx[sModel][sCtx][sValue] = oObjectCtx[sModel][sCtx][sValue] + 1;
-                                oObjectCtx[sModel][sCtx]._totalAmount = oObjectCtx[sModel][sCtx]._totalAmount + 1;
-                            }
-                        }
-                        for (var sCtx in oItem.context[sModel]) {
-                            oObjectCtx[sModel][sCtx]._differentValues = TestItem._getPropertiesInArray(oObjectCtx[sModel][sCtx]);
-                        }
-                    }
-
-                    //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-                    /*@Adrian - Start*/
-                    for (var sProperty in oItem.bindingContext) {
-                        if (!oObjectBndngContexts[sProperty]) {
-                            oObjectBndngContexts[sProperty] = {
-                                _totalAmount: 0
-                            };
-                        }
-
-                        var sValue = UI5ControlHelper.getBindingContextInformation(aItems[i], sProperty);
-                        if (!oObjectBndngContexts[sProperty][sValue]) {
-                            oObjectBndngContexts[sProperty][sValue] = 0;
-                        }
-                        oObjectBndngContexts[sProperty][sValue] = oObjectBndngContexts[sProperty][sValue] + 1;
-                        oObjectBndngContexts[sProperty]._totalAmount = oObjectBndngContexts[sProperty]._totalAmount + 1;
-                    }
-                    for (var sProperty in oItem.bindingContext) {
-                        oObjectBndngContexts[sProperty]._differentValues = TestItem._getPropertiesInArray(oObjectBndngContexts[sProperty]);
-                    }
 
                     for (var sProperty in oItem.binding) {
                         if (!oObjectBndngs[sProperty]) {
@@ -1642,7 +1574,6 @@
                         oObjectBndngs[sProperty]._differentValues = TestItem._getPropertiesInArray(oObjectBndngs[sProperty]);
                     }
 
-                    /*@Adrian - End*/
                     for (var sProperty in oItem.property) {
                         var sGetter = "get" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1);
                         if (!oObjectProps[sProperty]) {
@@ -1722,54 +1653,6 @@
                     }
                 }
                 oItem.uniquness.binding[sAttr] = parseInt(iUniqueness, 10);
-            }
-
-            //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-            /*@Adrian - Start*/
-            for (var sAttr in oItem.bindingContext) {
-                iUniqueness = 0;
-                if (oMerged.cloned === true) {
-                    //we are > 0 - our uniquness is 0, our binding will contain a primary key for the list binding
-                    if (oObjectBndngContexts[sAttr]._totalAmount === oObjectBndngContexts[sAttr]._differentValues) {
-                        //seems to be a key field.. great
-                        iUniqueness = 100;
-                    } else {
-                        iUniqueness = ((oObjectBndngContexts[sAttr]._totalAmount + 1 - oObjectBndngContexts[sAttr][oItem.bindingContext[sAttr]]) / oObjectBndngContexts[sAttr]._totalAmount) * 90;
-                    }
-                } else {
-                    iUniqueness = 0; //not cloned - probably not good..
-                }
-                oItem.uniquness.bindingContext[sAttr] = parseInt(iUniqueness, 10);
-            }
-            /*@Adrian - End*/
-            for (var sModel in oItem.context) {
-                oItem.uniquness.context[sModel] = {};
-                for (var sAttr in oItem.context[sModel]) {
-                    if (oMerged.cloned === true) {
-                        if (oObjectCtx[sModel][sAttr]._totalAmount === oObjectCtx[sModel][sAttr]._differentValues) {
-                            iUniqueness = 100;
-                        } else {
-                            iUniqueness = ((oObjectCtx[sModel][sAttr]._totalAmount + 1 - oObjectCtx[sModel][sAttr][oItem.context[sModel][sAttr]]) / oObjectCtx[sModel][sAttr]._totalAmount) * 90;
-                        }
-                        oItem.uniquness.context[sModel][sAttr] = parseInt(iUniqueness, 10);
-                    } else {
-                        //check if there is a binding referring to that element..
-                        var bFound = false;
-                        for (var sBndg in oItem.binding) {
-                            if (oItem.binding[sBndg].path === sAttr) {
-                                oItem.uniquness.context[sModel][sAttr] = oItem.uniquness.binding[sBndg]; //should be pretty good - we are binding on it..
-                                bFound = true;
-                                break;
-                            }
-                        }
-                        if (!bFound) {
-                            //there is no binding, but we have a binding context - theoretically, we could "check the uniquness" as per the data available
-                            //to really check the uniquness here, would require to scan all elements, and still wouldn't be great
-                            //==>just skip
-                            oItem.uniquness.context[sModel][sAttr] = 0;
-                        }
-                    }
-                }
             }
 
             return oItem;
@@ -2487,21 +2370,6 @@
                 }
             }
 
-            //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-            /*@Adrian - Start*/
-            if (oSelector.bindingContext) {
-                for (var sModel in oSelector.bindingContext) {
-                    var oCtx = oItem.getBindingContext(sModel === "undefined" ? undefined : sModel);
-                    if (!oCtx) {
-                        return false;
-                    }
-
-                    if (oCtx.getPath() !== oSelector.bindingContext[sModel]) {
-                        return false;
-                    }
-                }
-            }
-            /*@Adrian - End*/
             if (oSelector.binding) {
                 for (var sBinding in oSelector.binding) {
                     var aBndgInfoParts = UI5ControlHelper.getBindingInformation(oItem, sBinding);
@@ -2554,24 +2422,6 @@
                     }
                     if (!bFound) {
                         return false;
-                    }
-                }
-            }
-            if (oSelector.context) {
-                for (var sModel in oSelector.context) {
-                    var oCtx = oItem.getBindingContext(sModel === "undefined" ? undefined : sModel);
-                    if (!oCtx) {
-                        return false;
-                    }
-                    var oObjectCompare = oCtx.getObject();
-                    if (!oObjectCompare) {
-                        return false;
-                    }
-                    var oObject = oSelector.context[sModel];
-                    for (var sAttr in oObject) {
-                        if (oObject[sAttr] !== oObjectCompare[sAttr]) {
-                            return false;
-                        }
                     }
                 }
             }
