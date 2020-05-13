@@ -3,6 +3,7 @@ sap.ui.define(["sap/ui/base/Object"],
         "use strict";
 
         var ItemConstants = BaseObject.extend("com.ui5.testing.util.StringBuilder", {
+            //#region chaining methods
             /**
              * Simple constructor, allowing a string as parameter to start with
              *
@@ -28,6 +29,25 @@ sap.ui.define(["sap/ui/base/Object"],
                     //added "" + just to ensure it is a string for further actions
                     this._aParts.push("" + sString);
                 }
+                return this;
+            },
+
+            /**
+             * Add multiple string parts to the whole final string build.
+             * 
+             * @param {string[]} aItems the items to add
+             * @param {string} [sSeparator=""] a possible separator string to add between the items 
+             *
+             * @returns {com.ui5.testing.util.StringBuilder} self reference for chaining
+             */
+            addMultiple: function (aItems, sSeparator) {
+                sSeparator = sSeparator ? sSeparator : "";
+                aItems.forEach(function (a, i, arr) {
+                    this.add(a);
+                    if (i < arr.length - 1) {
+                        this.add(sSeparator);
+                    }
+                }, this);
                 return this;
             },
 
@@ -66,20 +86,22 @@ sap.ui.define(["sap/ui/base/Object"],
             /**
              * 
              * @param {string|regex} sTarget the target signs to replace
-             * @param {string} [sReplacement=""] the string added as replacement
+             * @param {string} sReplacement the string added as replacement
              * @param {number} [iIndex] the index of the text token to replace the text, if not assigned it uses the last token
              *
              * @returns {com.ui5.testing.util.StringBuilder} self reference for chaining
              */
             replace: function (sTarget, sReplacement, iIndex) {
                 sReplacement = sReplacement ? sReplacement : "";
-                iIndex = iIndex = iIndex: this._aParts.length - 1;
+                iIndex = iIndex ? iIndex : this._aParts.length - 1;
                 if (iIndex < 0) {
                     return this;
                 }
                 this._aParts[iIndex] = this._aParts[iIndex].replace(sTarget, sReplacement);
                 return this;
             },
+            //#endregion
+            //#region no chaining methods
 
             /**
              * Returns the number of already added text token.
@@ -98,6 +120,7 @@ sap.ui.define(["sap/ui/base/Object"],
             toString: function () {
                 return this._aParts.join("");
             }
+            //#endregion
         });
         return ItemConstants;
     });
