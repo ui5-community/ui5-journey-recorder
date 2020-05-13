@@ -25,7 +25,8 @@ sap.ui.define(["sap/ui/base/Object"],
              */
             add: function (sString) {
                 if (sString) {
-                    this._aParts.push(sString);
+                    //added "" + just to ensure it is a string for further actions
+                    this._aParts.push("" + sString);
                 }
                 return this;
             },
@@ -60,6 +61,33 @@ sap.ui.define(["sap/ui/base/Object"],
                     this._aParts.push('\n');
                 }
                 return this;
+            },
+
+            /**
+             * 
+             * @param {string|regex} sTarget the target signs to replace
+             * @param {string} [sReplacement=""] the string added as replacement
+             * @param {number} [iIndex] the index of the text token to replace the text, if not assigned it uses the last token
+             *
+             * @returns {com.ui5.testing.util.StringBuilder} self reference for chaining
+             */
+            replace: function (sTarget, sReplacement, iIndex) {
+                sReplacement = sReplacement ? sReplacement : "";
+                iIndex = iIndex = iIndex: this._aParts.length - 1;
+                if (iIndex < 0) {
+                    return this;
+                }
+                this._aParts[iIndex] = this._aParts[iIndex].replace(sTarget, sReplacement);
+                return this;
+            },
+
+            /**
+             * Returns the number of already added text token.
+             *
+             * @returns {number} the number of text tokens
+             */
+            getNumberOfTextToken: function () {
+                return this._aParts.length;
             },
 
             /**
