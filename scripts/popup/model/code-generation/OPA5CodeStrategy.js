@@ -387,12 +387,15 @@ sap.ui.define([
                     }
                     break;
                 case ItemConstants.BINDING:
+                    var sSubCriteriaType = aToken[id].subCriteriaType;
+                    sSubCriteriaType = sSubCriteriaType.substr(0, sSubCriteriaType.indexOf("#")); // remove everything before '#' due to binding parts
+
                     if (aToken[id].attributeType === 'OWN') {
                         if (oStep.attributeFilter[id].criteriaValue.indexOf('i18n>') > -1 && this._versionGE(oCodeSettings.ui5Version, "1.42")) {
                             if (!objectMatcher[ItemConstants.I18N]) {
                                 objectMatcher[ItemConstants.I18N] = [];
                             }
-                            objectMatcher[ItemConstants.I18N].push('{key: \"' + aToken[id].criteriaValue.substring(aToken[id].criteriaValue.indexOf('>') + 1) + '\", propertyName: \"' + aToken[id].subCriteriaType + '\"}');
+                            objectMatcher[ItemConstants.I18N].push('{key: \"' + aToken[id].criteriaValue.substring(aToken[id].criteriaValue.indexOf('>') + 1) + '\", propertyName: \"' + sSubCriteriaType + '\"}');
                         } else {
                             if (!objectMatcher[ItemConstants.BINDING]) {
                                 objectMatcher[ItemConstants.BINDING] = [];
@@ -403,7 +406,7 @@ sap.ui.define([
                             var sPropertyPath = aBindingParts[1] && !aBindingParts[1].startsWith('/') ? aBindingParts[1] : "";
                             var aMatchProperties = [];
                             aMatchProperties.push('{property: "');
-                            aMatchProperties.push(aToken[id].subCriteriaType);
+                            aMatchProperties.push(sSubCriteriaType);
                             aMatchProperties.push('"');
                             if (sModelName !== "") {
                                 aMatchProperties.push(`, modelName: "${sModelName}"`);
@@ -423,12 +426,12 @@ sap.ui.define([
                             if (!parentMatcher[aToken[id].attributeType][ItemConstants.I18N]) {
                                 parentMatcher[aToken[id].attributeType][ItemConstants.I18N] = [];
                             }
-                            parentMatcher[aToken[id].attributeType][ItemConstants.I18N].push('{key: \"' + aToken[id].criteriaValue.substring(aToken[id].criteriaValue.indexOf('>') + 1) + '\", propertyName: \"' + aToken[id].subCriteriaType + '\"}');
+                            parentMatcher[aToken[id].attributeType][ItemConstants.I18N].push('{key: \"' + aToken[id].criteriaValue.substring(aToken[id].criteriaValue.indexOf('>') + 1) + '\", propertyName: \"' + sSubCriteriaType + '\"}');
                         } else {
                             if (!parentMatcher[aToken[id].attributeType][ItemConstants.BINDING]) {
                                 parentMatcher[aToken[id].attributeType][ItemConstants.BINDING] = [];
                             }
-                            parentMatcher[aToken[id].attributeType][ItemConstants.BINDING].push('binding: {property: \"' + aToken[id].subCriteriaType + '\", path: \"' + oStep.attributeFilter[id].criteriaValue + '\"}');
+                            parentMatcher[aToken[id].attributeType][ItemConstants.BINDING].push('binding: {property: \"' + sSubCriteriaType + '\", path: \"' + oStep.attributeFilter[id].criteriaValue + '\"}');
                         }
                     }
                     break;
@@ -512,7 +515,7 @@ sap.ui.define([
                 if (typeof oToken.criteriaValue === "boolean") {
                     return c.value === oToken.criteriaValue;
                 } else {
-                    return c.value === oToken.criteriaValue.trim();
+                    return c.value === String(oToken.criteriaValue).trim();
                 }
             })[0].symbol : typeof oToken.criteriaValue === "boolean" ?
             oToken.criteriaValue :
@@ -551,7 +554,7 @@ sap.ui.define([
             //aParts.push('objectProps: ');
         }
 
-        this.__createObjectMatcherInfos(oStep, aParts);
+        this.__createObjectMatcherInfos(oStep, aParts, oCodeSettings);
 
         aParts.push(', ');
 
