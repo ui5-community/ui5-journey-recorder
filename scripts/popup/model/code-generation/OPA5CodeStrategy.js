@@ -27,15 +27,14 @@ sap.ui.define([
 
     OPA5CodeStrategy.prototype.generate = function (oCodeSettings, aElements, codeHelper) {
         var aCodes = [];
-        debugger;
         //setup page builder for each view used during the test
-        aElements
+        /* aElements
             .map(el => ({
                 viewName: el.item.viewProperty.localViewName ? el.item.viewProperty.localViewName : "Detached",
                 namespace: el.item.viewProperty.viewName ? el.item.viewProperty.viewName.replace('.view.' + el.item.viewProperty.localViewName, '') : '<template>'
             }))
             .reduce((a, b) => a.every(c => b.viewName !== c.viewName) ? a.concat(b) : a, [])
-            .forEach(el => this.__pages[el.viewName] = (new PageBuilder(el.namespace, el.viewName)));
+            .forEach(el => this.__pages[el.viewName] = (new PageBuilder(el.namespace, el.viewName))); */
 
         this.__namespace = this.__pages[Object.keys(this.__pages)[0]] ? this.__pages[Object.keys(this.__pages)[0]].getNamespace() : 'mock.namespace';
 
