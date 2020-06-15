@@ -84,12 +84,23 @@
                                 <core:Item text="{constants>text}" key="{constants>key}"/>
                             </items>
                         </Select>
+                        <Select enabled="{= !${viewModel>/blocked}}" change="onAGGChange"  selectedKey="{viewModel>/element/property/selectedAggregation}" items="{viewModel>/element/item/aggregationNames}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' )}">
+                            <items>
+                                <core:Item text="{viewModel>name}" key="{viewModel>name}"/>
+                            </items>
+                        </Select>
+
 
                         <Label text="Assert-Message" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) }"/>
                         <Input enabled="{= !${viewModel>/blocked}}" change="onUpdatePreview" placeholder="Optional Message for the Assertion" value="{viewModel>/element/property/assertMessage}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) }"/>
 
                         <Label text="Expect Element Count" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' ) }"/>
-                        <Input enabled="{= !${viewModel>/blocked}}" change="onUpdatePreview" value="{ path: 'viewModel>/element/property/assKeyMatchingCount', type:'sap.ui.model.type.Integer'}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' ) }"/>
+                        <Select id="countExpect" enabled="{= !${viewModel>/blocked}}" items="{constants>/countType}" change="onCountExpChange" selectedKey="{viewModel>/element/property/expectCount}">
+                            <items>
+                                <core:Item text="{constants>text}" key="{constants>key}"/>
+                            </items>
+                        </Select>
+                        <Input enabled="{= !${viewModel>/blocked}}" change="onUpdatePreview" value="{ path: 'viewModel>/element/property/assKeyMatchingCount', type:'sap.ui.model.type.Integer'}" type="Number" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' ) &amp;&amp; (${viewModel>/element/property/expectCount} === 'EXAC') }"/>
 
                         <Label text="Type-Text" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) &amp;&amp; ( ${viewModel>/element/property/actKey} === 'TYP' ) }"/>
                         <Input id="inpTypeText" enabled="{= !${viewModel>/blocked}}" valueLiveUpdate="true" liveChange="onUpdatePreview" change="onUpdatePreview" value="{viewModel>/element/property/selectActInsert}" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) &amp;&amp; ( ${viewModel>/element/property/actKey} === 'TYP' ) }"/>

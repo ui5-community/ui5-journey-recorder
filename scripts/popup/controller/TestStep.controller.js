@@ -332,6 +332,37 @@ sap.ui.define([
         },
 
         /**
+         * 
+         */
+        onCountExpChange: function (oEvent) {
+            if (oEvent.getParameter('selectedItem').getKey() === 'EMPT' || oEvent.getParameter('selectedItem').getKey() === 'FILL') {
+                this._oModel.setProperty('/element/property/assKeyMatchingCount', 0);
+            } else {
+                var sSelKey = this._oModel.getProperty('/element/property/selectedAggregation');
+                var oAggregations = this._oModel.getProperty('/element/item/aggregation');
+                if (oAggregations && oAggregations[sSelKey]) {
+                    this._oModel.setProperty('/element/property/assKeyMatchingCount', oAggregations[sSelKey].length);
+                } else {
+                    this._oModel.setProperty('/element/property/assKeyMatchingCount', 0);
+                }
+            }
+        },
+
+        /**
+         * 
+         * @param {*} oEvent 
+         */
+        onAGGChange: function (oEvent) {
+            var oAggregations = this._oModel.getProperty('/element/item/aggregation');
+            var sKey = oEvent.getParameter('selectedItem').getKey();
+            if (oAggregations && oAggregations[sKey]) {
+                this._oModel.setProperty('/element/property/assKeyMatchingCount', oAggregations[sKey].length);
+            } else {
+                this._oModel.setProperty('/element/property/assKeyMatchingCount', 0);
+            }
+        },
+
+        /**
          *
          */
         onTypeChange: function () {

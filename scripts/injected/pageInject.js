@@ -1377,7 +1377,7 @@
                     oReturn.binding[sBinding] = UI5ControlHelper.getBindingInformation(oItem, sBinding);
                 }
                 // 2) special binding information for "sap.m.Label"
-                if (oReturn.metadata.elementName === "sap.m.Label"  && !oReturn.binding.text) {
+                if (oReturn.metadata.elementName === "sap.m.Label" && !oReturn.binding.text) {
                     // TODO binding from parent: this needs testing!
                     // if the label is part of a FormElement, we may obtain further binding information based on the parent
                     if (oItem.getParent() && oItem.getParent().getMetadata()._sClassName === "sap.ui.layout.form.FormElement") {
@@ -1405,17 +1405,14 @@
                     }
                 }
 
-                // get model information
-                /* oReturn.model = {}; */
-                // TODO: WTF? Is this everthing?
-
                 // get lengths of aggregation
                 var aAggregations = oItem.getMetadata().getAllAggregations();
                 if (aAggregations) {
                     oReturn.aggregation = {};
                 }
+                oReturn.aggregationNames = [];
                 for (var sAggregation in aAggregations) {
-
+                    oReturn.aggregationNames.push({name: sAggregation});
                     // if there are not multiple items aggregated, this is not interesting
                     if (!aAggregations[sAggregation].multiple) {
                         continue;
@@ -1679,9 +1676,11 @@
             });
 
             // 3) all parents
-            oItem.parents.forEach(function (oParent) {
-                _removeNonSerializableData(oParent);
-            });
+            if (oItem.parents) {
+                oItem.parents.forEach(function (oParent) {
+                    _removeNonSerializableData(oParent);
+                });
+            }
 
             return oItem;
         }
@@ -2123,9 +2122,9 @@
                 }
 
                 // construct fully-qualified path
-                var sPrefixedFullPath = sModelStringifiedPrefixed
-                    + (bNeedsContextPrefix ? sBndgContextPrefix : "")
-                    + sPath;
+                var sPrefixedFullPath = sModelStringifiedPrefixed +
+                    (bNeedsContextPrefix ? sBndgContextPrefix : "") +
+                    sPath;
 
                 // combine everything into a returned object
                 oReturn[sBinding + "#" + iIndex] = {
@@ -2375,7 +2374,7 @@
                     var aBndgInfoParts = UI5ControlHelper.getBindingInformation(oItem, sBinding);
 
                     // inspect whether the selector is matching the various binding parts of the property 'sBinding'
-                    var aMatchingValues = Object.keys(oSelector.binding[sBinding]).map(function(sKey) {
+                    var aMatchingValues = Object.keys(oSelector.binding[sBinding]).map(function (sKey) {
                         var mBindingInfo = aBndgInfoParts[sKey];
                         var mSelectorBindingInfo = oSelector.binding[sBinding][sKey];
 
