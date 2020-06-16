@@ -346,6 +346,7 @@ sap.ui.define([
                     this._oModel.setProperty('/element/property/assKeyMatchingCount', 0);
                 }
             }
+            this._updatePreview();
         },
 
         /**

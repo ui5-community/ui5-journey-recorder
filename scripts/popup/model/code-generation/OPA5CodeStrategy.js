@@ -350,7 +350,11 @@ sap.ui.define([
             return this.__createAggregationCheck(oStep, oCodeSettings);
         } else {
             var oExistAssert = new StringBuilder();
-            oExistAssert.addTab(2).add('Then.on').add(viewName).add('.iShouldSeeTheControl({');
+            if (oStep && oStep.property && oStep.property.assKey && oStep.property.assKey === "ATTR") {
+                oExistAssert.addTab(2).add('Then.on').add(viewName).add('.controlShouldHave({');
+            } else {
+                oExistAssert.addTab(2).add('Then.on').add(viewName).add('.iShouldSeeTheControl({');
+            }
 
             var oUsedMatchers = this.__createObjectMatcherInfos(oStep, oExistAssert, oCodeSettings);
             this.__pages[viewName].addExistsCheck(oUsedMatchers);
@@ -548,10 +552,10 @@ sap.ui.define([
 
         if (oAGGProp.assertMatchingCount === 0) {
             if (oStep.property && oStep.property.expectCount === 'EMPT') {
-                oAggregationCheck.add('.iAggregationEmpty({');
+                oAggregationCheck.add('.aggregationShouldBeEmpty({');
             }
             if (oStep.property && oStep.property.expectCount === 'FILL') {
-                oAggregationCheck.add('.iAggregationFilled({');
+                oAggregationCheck.add('.aggregationShouldBeFilled({');
             }
         } else {
             oAggregationCheck.add('.aggregationLengthShouldBe({');

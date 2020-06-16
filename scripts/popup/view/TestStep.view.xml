@@ -84,7 +84,7 @@
                                 <core:Item text="{constants>text}" key="{constants>key}"/>
                             </items>
                         </Select>
-                        <Select enabled="{= !${viewModel>/blocked}}" change="onAGGChange"  selectedKey="{viewModel>/element/property/selectedAggregation}" items="{viewModel>/element/item/aggregationNames}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' )}">
+                        <Select enabled="{= !${viewModel>/blocked}}" change="onAGGChange" selectedKey="{viewModel>/element/property/selectedAggregation}" items="{viewModel>/element/item/aggregationNames}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' )}">
                             <items>
                                 <core:Item text="{viewModel>name}" key="{viewModel>name}"/>
                             </items>
@@ -95,7 +95,7 @@
                         <Input enabled="{= !${viewModel>/blocked}}" change="onUpdatePreview" placeholder="Optional Message for the Assertion" value="{viewModel>/element/property/assertMessage}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) }"/>
 
                         <Label text="Expect Element Count" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' ) }"/>
-                        <Select id="countExpect" enabled="{= !${viewModel>/blocked}}" items="{constants>/countType}" change="onCountExpChange" selectedKey="{viewModel>/element/property/expectCount}">
+                        <Select id="countExpect" enabled="{= !${viewModel>/blocked}}" items="{constants>/countType}" change="onCountExpChange" selectedKey="{viewModel>/element/property/expectCount}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' ) }">
                             <items>
                                 <core:Item text="{constants>text}" key="{constants>key}"/>
                             </items>
