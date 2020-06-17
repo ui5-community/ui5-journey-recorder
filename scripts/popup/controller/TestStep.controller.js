@@ -114,6 +114,7 @@ sap.ui.define([
         _onObjectMatched: function (oEvent) {
             this.getModel('viewModel').setProperty('/blocked', false);
             this.getModel('viewModel').setProperty('/isInjected', RecordController.getInstance().isInjected());
+            this.getModel('viewModel').setProperty('/ui5Version', oEvent.getParameter('arguments').ui5Version);
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._oModel.setProperty("/quickMode", false);
             var oItem = RecordController.getInstance().getCurrentElement();
@@ -131,6 +132,7 @@ sap.ui.define([
         _onObjectMatchedQuick: function (oEvent) {
             this.getModel('viewModel').setProperty('/blocked', false);
             this.getModel('viewModel').setProperty('/isInjected', RecordController.getInstance().isInjected());
+            this.getModel('viewModel').setProperty('/ui5Version', oEvent.getParameter('arguments').ui5Version);
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._oModel.setProperty("/quickMode", true);
             var oItem = RecordController.getInstance().getCurrentElement();
@@ -152,6 +154,7 @@ sap.ui.define([
             this.getModel('viewModel').setProperty('/element', RecordController.getInstance().getTestElementByIdx(this._sElementId));
             this.getModel('viewModel').setProperty('/blocked', true);
             this.getModel('viewModel').setProperty('/isInjected', RecordController.getInstance().isInjected());
+            this.getModel('viewModel').setProperty('/ui5Version', oEvent.getParameter('arguments').ui5Version);
             this._setValidAttributeTypes();
             Promise.all([
                 this._updatePreview(),
@@ -1070,6 +1073,7 @@ sap.ui.define([
                 var codeSettings = this.getModel('viewModel').getProperty('/codeSettings');
                 codeSettings.language = this.getModel('settings').getProperty('/settings/defaultLanguage');
                 codeSettings.execComponent = this.getOwnerComponent();
+                codeSettings.ui5Version = this.getModel('viewModel').getProperty('/ui5Version');
                 this.getModel("viewModel").setProperty("/code", CodeHelper.getItemCode(codeSettings, oElementFinal, this.getOwnerComponent()).join("\n").trim());
                 this._resumeBindings();
             }.bind(this));
@@ -1929,6 +1933,13 @@ sap.ui.define([
                 // get property value
                 return oItem.property[sProperty];
             }
+        },
+
+        /**
+         * 
+         */
+        showAttributeAdder: function (sCriteriaType, sCriteriaValue) {
+            return sCriteriaType === 'BNDG' && sCriteriaValue.indexOf('i18n') < 0;
         }
         // //#endregion
     });

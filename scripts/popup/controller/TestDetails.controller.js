@@ -174,7 +174,8 @@ sap.ui.define([
             sPath = sPath.substring(sPath.lastIndexOf('/') + 1);
             this.getRouter().navTo("elementDisplay", {
                 TestId: this._sTestId,
-                ElementId: sPath
+                ElementId: sPath,
+                ui5Version: this._oModel.getProperty("/codeSettings/ui5Version")
             });
         },
 
@@ -448,7 +449,8 @@ sap.ui.define([
             var sRouterTarget = this._bQuickMode ? "elementCreateQuick" : "elementCreate";
             this.getRouter().navTo(sRouterTarget, {
                 TestId: RecordController.getInstance().getTestUUID(),
-                ElementId: oData.identifier.ui5AbsoluteId
+                ElementId: oData.identifier.ui5AbsoluteId,
+                ui5Version: this._oModel.getProperty("/codeSettings/ui5Version")
             });
         },
 
