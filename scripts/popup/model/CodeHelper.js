@@ -24,7 +24,7 @@ sap.ui.define([
 
     CodeHelper.prototype.getFullCode = function (oCodeSettings, aElements) {
         this._oModel.setProperty("/codeSettings", oCodeSettings);
-        switch(oCodeSettings.language) {
+        switch (oCodeSettings.language) {
             case 'OPA':
                 return new OPA5CodeStrategy().generate(oCodeSettings, aElements, this);
             case 'TCF':
