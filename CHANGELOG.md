@@ -25,6 +25,7 @@ For further details, please see PR [#36](https://github.com/msg-systems/ui5-test
 - Use a single button 'Replay next step' during manual replay
 - Disable test-step handling during replay (8283ae9)
 - Refactor README file [README.md](README.md) (see Issue [#34](https://github.com/msg-systems/ui5-testrecorder/issues/34))
+- Refactored the OPA5 code generation due to serveral issues, see PR [#70](https://github.com/msg-systems/ui5-testrecorder/pull/70) and commit (25733a9).
 
 ### Fixed
 - Fix potential page injection problem with item properties (072a04e)
