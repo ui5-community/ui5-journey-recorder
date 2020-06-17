@@ -692,8 +692,11 @@ sap.ui.define([
         _findBestAttributeDefaultSetting: function (oItem, bForcePopup) {
             return new Promise(function (resolve) {
                 //in case we still have >1 item - change to
-                if (this._oModel.getProperty("/element/property/selectItemBy") === "ATTR" &&
-                    ((this._oModel.getProperty("/element/identifiedElements").length > 1 && this._oModel.getProperty("/element/property/type") === 'ACT') || bForcePopup === true)) {
+                var sSelectCriteria = this._oModel.getProperty("/element/property/selectItemBy");
+                var iFoundElements = this._oModel.getProperty("/element/identifiedElements") ? this._oModel.getProperty("/element/identifiedElements").length : 2;
+                var sPropertyType = this._oModel.getProperty("/element/property/type");
+                if (sSelectCriteria === "ATTR" &&
+                    ((iFoundElements > 1 && sPropertyType === 'ACT') || bForcePopup === true)) {
 
                     var aList = [];
 
@@ -734,6 +737,14 @@ sap.ui.define([
                             }
                         }
                     }
+
+                    //aggregation oItem.aggregation
+                    //identifier  oItem.identifier
+                    //metadata    oItem.metadata
+                    //view data   oItem.viewProperty
+                    //associations? 
+                    debugger;
+
                     var oMerged = this._getMergedClassArray(oItem);
                     this._oModel.setProperty("/element/itemCloned", oMerged.cloned);
                     if (oMerged.cloned === true) {
