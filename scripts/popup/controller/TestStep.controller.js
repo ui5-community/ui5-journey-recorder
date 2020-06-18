@@ -738,12 +738,53 @@ sap.ui.define([
                         }
                     }
 
-                    //aggregation oItem.aggregation
-                    //identifier  oItem.identifier
-                    //metadata    oItem.metadata
-                    //view data   oItem.viewProperty
-                    //associations? 
-                    debugger;
+                    if (!jQuery.isEmptyObject(oItem.identifier)) {
+                        for (var sId in oItem.identifier) {
+                            if (typeof oItem.identifier[sId] !== "boolean") {
+                                aList.push({
+                                    type: "ID",
+                                    typeTxt: "Identifier",
+                                    bdgPath: sId,
+                                    attribute: sId,
+                                    importance: oItem.identifier.localIdClonedOrGenerated ? 50 : 100,
+                                    value: oItem.identifier[sId],
+                                    valueToString: oItem.identifier[sId].toString ? oItem.identifier[sId].toString() : oItem.identifier[sId]
+                                });
+                            }
+                        }
+                    }
+
+                    if (!jQuery.isEmptyObject(oItem.metadata)) {
+                        for (var sMeta in oItem.metadata) {
+                            if (typeof oItem.metadata[sMeta] !== "object") {
+                                aList.push({
+                                    type: "MTA",
+                                    typeTxt: "Metadata",
+                                    bdgPath: sMeta,
+                                    attribute: sMeta,
+                                    importance: 50,
+                                    value: oItem.metadata[sMeta],
+                                    valueToString: oItem.metadata[sMeta].toString ? oItem.metadata[sMeta].toString() : oItem.metadata[sMeta]
+                                });
+                            }
+                        }
+                    }
+
+                    if (!jQuery.isEmptyObject(oItem.viewProperty)) {
+                        for (var sView in oItem.viewProperty) {
+                            if (typeof oItem.viewProperty[sView] !== "object") {
+                                aList.push({
+                                    type: "VIW",
+                                    typeTxt: "View Data",
+                                    bdgPath: sView,
+                                    attribute: sView,
+                                    importance: 50,
+                                    value: oItem.viewProperty[sView],
+                                    valueToString: oItem.viewProperty[sView].toString ? oItem.viewProperty[sView].toString() : oItem.viewProperty[sView]
+                                });
+                            }
+                        }
+                    }
 
                     var oMerged = this._getMergedClassArray(oItem);
                     this._oModel.setProperty("/element/itemCloned", oMerged.cloned);
