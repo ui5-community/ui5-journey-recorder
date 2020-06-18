@@ -786,6 +786,20 @@ sap.ui.define([
                         }
                     }
 
+                    if (!jQuery.isEmptyObject(oItem.aggregation)) {
+                        for (var sAgg in oItem.aggregation) {
+                            aList.push({
+                                type: "AGG",
+                                typeTxt: "Aggregation",
+                                bdgPath: sAgg,
+                                attribute: sAgg,
+                                importance: 50,
+                                value: 'length: ' + oItem.aggregation[sAgg].length,
+                                valueToString: 'length: ' + oItem.aggregation[sAgg].length
+                            });
+                        }
+                    }
+
                     var oMerged = this._getMergedClassArray(oItem);
                     this._oModel.setProperty("/element/itemCloned", oMerged.cloned);
                     if (oMerged.cloned === true) {
