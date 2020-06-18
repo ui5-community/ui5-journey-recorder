@@ -152,39 +152,43 @@ sap.ui.define([
          *
          */
         onStartNewRecording: function (oEvent) {
-            var iId, sUrl;
+            var iId;
             if (oEvent.getSource().getBindingContext('viewModel') && oEvent.getSource().getBindingContext('viewModel').getObject()) {
                 iId = oEvent.getSource().getBindingContext('viewModel').getObject().id;
-                sUrl = oEvent.getSource().getBindingContext('viewModel').getObject().url;
             }
 
             this._oConnectionEstablishingDialog.open();
 
             RecordController.getInstance().injectScript(iId)
-            .then((oData) => {
-                this._oConnectionEstablishingDialog.close();
-                MessageToast.show(`Script injected: Page uses ${oData.name} at version ${oData.version}.`);
-                this.getRouter().navTo("TestDetailsCreate");
-            })
-            .catch((oData) => {
-                this._oConnectionEstablishingDialog.close();
-                MessageBox.error(oData.message);
-            });
+                .then((oData) => {
+                    this._oConnectionEstablishingDialog.close();
+                    MessageToast.show(`Script injected: Page uses ${oData.name} at version ${oData.version}.`);
+                    this.getRouter().navTo("TestDetailsCreate");
+                })
+                .catch((oData) => {
+                    this._oConnectionEstablishingDialog.close();
+                    MessageBox.error(oData.message);
+                });
         },
 
         /**
          *
          */
         onMockserver: function (oEvent) {
-            var iId, sUrl;
+            var iId;
             if (oEvent.getSource().getBindingContext('viewModel') && oEvent.getSource().getBindingContext('viewModel').getObject()) {
                 iId = oEvent.getSource().getBindingContext('viewModel').getObject().id;
-                sUrl = oEvent.getSource().getBindingContext('viewModel').getObject().url;
             }
-            RecordController.getInstance().injectScript(iId, sUrl).then(function () {
-                this.getRouter().navTo("mockserver");
-            }.bind(this), function () {
-                return;
+
+            this._oConnectionEstablishingDialog.open();
+
+            RecordController.getInstance().injectScript(iId).then((oData) => {
+                this._oConnectionEstablishingDialog.close();
+                MessageToast.show(`Script injected: Page uses ${oData.name} at version ${oData.version}.`);
+                this.getRouter().navTo("mockdata");
+            }).catch((oData) => {
+                this._oConnectionEstablishingDialog.close();
+                MessageBox.error(oData.message);
             });
         },
 
@@ -240,7 +244,7 @@ sap.ui.define([
             Fragment.load({
                 name: "com.ui5.testing.fragment.ConnectionEstablishingDialog",
                 controller: this
-            }).then(function(oConnectionEstablishingDialog) {
+            }).then(function (oConnectionEstablishingDialog) {
                 this._oConnectionEstablishingDialog = oConnectionEstablishingDialog;
             }.bind(this));
         },

@@ -175,6 +175,35 @@ sap.ui.define([], function () {
             });
         }
 
+        //#region mockdata
+
+        /**
+         * Send message through the given connection to retrieve the ODataV2Models of the page in the connected tab.
+         *
+         * @param {com.ui5.testing.model.Connection} oConnection the connection to use for sending messages
+         *
+         * @returns {Promise} a Promise resolving when page returns the requested models
+         */
+        static getODataV2Models(oConnection) {
+            return oConnection.syncMessage({
+                action: "getODataV2Models"
+            });
+        }
+
+        /**
+         * Send message through the given connection to check the root component of the page is available
+         *
+         * @param {com.ui5.testing.model.Connection} oConnection the connection to use for sending messages
+         *
+         * @returns {Promise} a Promise resolving when page approves the component is available
+         */
+        static rootComponentAvailable(oConnection) {
+            return oConnection.syncMessage({
+                action: "checkRootComponent"
+            });
+        }
+        //#endregion
+
     }
 
     return ConnectionMessages;

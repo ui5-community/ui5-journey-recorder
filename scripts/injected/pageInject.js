@@ -153,10 +153,13 @@
                     oReturn = _disconnect();
                     return; // return directly and do not issue any returning message below
 
-                    // case "mockserver":
-                    //     return this._getDataModelInformation();
+                case "getODataV2Models":
+                    oReturn = _retrieveODataV2Models();
+                    break;
 
-                    // events that are not handled: "setWindowLocation"
+                case "checkRootComponent":
+                    oReturn = _checkRootComponent();
+                    break;
 
                 default:
                     break;
@@ -172,8 +175,7 @@
                 oReturn.then(function (oData) {
                     PageCommunication.getInstance().messageFromPage(sEventType, oData, iMessageID);
                 });
-            }
-            // 2) return directly otherwise
+            } /* 2) return directly otherwise */
             else {
                 PageCommunication.getInstance().messageFromPage(sEventType, oReturn, iMessageID);
             }
@@ -203,7 +205,35 @@
                 this._bActive = false;
             }.bind(this), 10);
         }
+    }
 
+    function _retrieveODataV2Models() {
+        return _getAppComponent().then(function (oComponent) {
+            var aServices = _getDataServices(oComponent).filter((oService) => oService.version === "2.0");
+            var aModels = _getDataModels(oComponent).filter((oModel) => oModel.dataSource && aServices.some((oService) => oService.name === oModel.dataSource));
+            return aModels.map((oModel) => {
+                oModel.metadata = oComponent.getModel(oModel.name !== "" ? oModel.name : undefined).getServiceMetadata ? oComponent.getModel(oModel.name !== "" ? oModel.name : undefined).getServiceMetadata() : {};
+                return oModel;
+            });
+        });
+    }
+
+    function _checkRootComponent() {
+        return new Promise(function (resolve) {
+            var aElements = sap.ui.core.Element.registry.filter((oElement) => oElement.getComponentInstance);
+
+            if (aElements.length > 0) {
+                resolve(aElements[0].getComponentInstance());
+            } else {
+                const iIntervalID = setInterval(function () {
+                    aElements = sap.ui.core.Element.registry.filter((oElement) => oElement.getComponentInstance);
+                    if (aElements.length > 0) {
+                        clearInterval(iIntervalID);
+                        resolve(aElements[0].getComponentInstance());
+                    }
+                }, 1000);
+            }
+        });
     }
 
     function _stopRecording() {
@@ -877,6 +907,62 @@
 
     // #endregion
 
+    // #region Data Model handling
+
+    function _getAppComponent() {
+        return new Promise(function (resolve, reject) {
+            var aElements = sap.ui.core.Element.registry.filter((oElement) => oElement.getComponentInstance);
+            if (aElements.length > 0) {
+                resolve(aElements[0].getComponentInstance());
+            } else {
+                reject([]);
+            }
+        });
+    }
+
+    function _getDataServices(oComponent) {
+        var oManifest = oComponent.getManifest();
+        var oSapAppSection = oManifest["sap.app"];
+        var oDataSources = oSapAppSection.dataSources;
+        if (oDataSources) {
+            var aServices = Object.keys(oDataSources).map((sService) => {
+                var oService = {
+                    name: sService
+                };
+                oService.uri = oDataSources[sService].uri;
+                oService.type = oDataSources[sService].type;
+                if (oService.type === "OData" && oDataSources[sService].settings) {
+                    oService.version = oDataSources[sService].settings.odataVersion;
+                }
+                return oService;
+            });
+            return aServices;
+        } else {
+            return [];
+        }
+    }
+
+    function _getDataModels(oComponent) {
+
+        var oManifest = oComponent.getManifest();
+        var oUI5 = oManifest["sap.ui5"];
+        if (!oUI5) {
+            return [];
+        }
+
+        var oModels = oUI5.models;
+        if (!oModels) {
+            return [];
+        }
+
+        return Object.keys(oModels).map((sModelName) => {
+            var oModelObject = oModels[sModelName];
+            oModelObject.name = sModelName;
+            return oModelObject;
+        });
+    }
+    // #endregion
+
     // #region Page listener
 
     class PageListener {
@@ -1252,6 +1338,15 @@
                 oReturn.identifier.ui5LocalId = UI5ControlHelper.getUi5LocalId(oItem);
                 oReturn.identifier.ui5AbsoluteId = oItem.getId();
 
+                // get class names from metadata
+                oReturn.classArray = [];
+                var oMeta = oItem.getMetadata();
+                while (oMeta) {
+                    oReturn.classArray.push({
+                        elementName: oMeta._sClassName
+                    });
+                    oMeta = oMeta.getParent();
+                }
 
                 // identify whether the element has been cloned:
                 // 1) if the UI5 ID contains a "-" with a following number, it is most likely a dependent control (e.g., based on aggregation or similar) and, thus, cloned
@@ -1756,12 +1851,12 @@
          *
          * @returns {Object.<sap.ui.core.ID, sap.ui.core.Element>} object with all registered elements, keyed by their ID
          */
-        static getRegisteredElements(oSelector) {
+        static getRegisteredElements() {
             var oElements = {};
 
             // try to use registry (UI5 >= v1.67)
             if (sap.ui.core.Element && sap.ui.core.Element.registry) {
-                oElements = sap.ui.core.Element.registry.all(); //TODO: replace by filter method -> therefore add the selector options as parameter
+                oElements = sap.ui.core.Element.registry.all();
             }
             // use workaround with fully initialized core otherwise
             else {
@@ -2857,14 +2952,13 @@
     }
 
     function initializePage() {
-
-        console.log('- checking UI5 appearance...');
         const maxWaitTime = 3000;
         var waited = 0;
+        console.log('- checking UI5 appearance...');
         var intvervalID = setInterval(function () {
             waited = waited + 100;
             if (waited % 500 === 0) {
-                console.log('- checking UI5 appearance...');
+                console.log(`- checking UI5 appearance (${waited/1000.0})...`);
             }
             var oCheckData = checkPageForUI5();
             if (oCheckData.status === "success") {
