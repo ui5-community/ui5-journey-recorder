@@ -116,7 +116,7 @@ sap.ui.define([
                         this._updatePreview();
                     }.bind(this),
                     // if the test cannot be loaded, redirect to route 'start'
-                    failure: function(oLastError) {
+                    failure: function (oLastError) {
                         this.getRouter().navTo("start");
                     }.bind(this)
                 });
@@ -174,7 +174,8 @@ sap.ui.define([
             sPath = sPath.substring(sPath.lastIndexOf('/') + 1);
             this.getRouter().navTo("elementDisplay", {
                 TestId: this._sTestId,
-                ElementId: sPath
+                ElementId: sPath,
+                ui5Version: this._oModel.getProperty("/codeSettings/ui5Version")
             });
         },
 
@@ -209,18 +210,17 @@ sap.ui.define([
 
             // construct a promise whether to start replaying right away:
             // resolve indicates replaying can start, reject otherwise
-            var replayablePromise = new Promise(function(resolve, reject) {
+            var replayablePromise = new Promise(function (resolve, reject) {
 
                 // make sure that no recording is going on now
                 if (RecordController.getInstance().isRecording()) {
-
                     // ask user whether to stop recording in favor of replay
                     MessageBox.error(
-                        "You are recording right now. Do you want start replaying instead?",
-                        {
+                        "You are recording right now. Do you want start replaying instead?", {
                             icon: MessageBox.Icon.QUESTION,
                             title: "Stop recording?",
                             actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                            // eslint-disable-next-line require-jsdoc
                             onClose: function (sAction) {
                                 if (sAction === MessageBox.Action.YES) {
                                     resolve(sURL);
@@ -230,32 +230,31 @@ sap.ui.define([
                             }
                         }
                     );
-
-                } else
-                // check whether there is a replay right now
-                if (RecordController.getInstance().isReplaying()) {
-                    reject("You are replaying already. Finish the current replay first before starting another one.");
+                } else {
+                    // check whether there is a replay right now
+                    // eslint-disable-next-line no-lonely-if
+                    if (RecordController.getInstance().isReplaying()) {
+                        reject("You are replaying already. Finish the current replay first before starting another one.");
+                    } /* if no recording is going on, go to replaying right away */
+                    else {
+                        resolve(sURL);
+                    }
                 }
-                // if no recording is going on, go to replaying right away
-                else {
-                    resolve(sURL);
-                }
-
             });
 
             // what to do after resolving/rejecting replay-indication promise
             replayablePromise
-            .then(function(sURL) {
-                RecordController.getInstance().startReplaying(sURL);
-                this._oMessagePopover.close();
-            }.bind(this))
-            .catch(function(sMessage) {
-                if (sMessage) {
-                    MessageBox.error(sMessage, {
-                        title: "Replay error"
-                    });
-                }
-            });
+                .then(function (sURL) {
+                    RecordController.getInstance().startReplaying(sURL);
+                    this._oMessagePopover.close();
+                }.bind(this))
+                .catch(function (sMessage) {
+                    if (sMessage) {
+                        MessageBox.error(sMessage, {
+                            title: "Replay error"
+                        });
+                    }
+                });
         },
 
         /**
@@ -286,7 +285,7 @@ sap.ui.define([
          */
         onNavBack: function () {
             // close the tab if any is open
-            RecordController.getInstance().closeTab().finally(function() {
+            RecordController.getInstance().closeTab().finally(function () {
                 // reset RecordController
                 RecordController.getInstance().reset(true);
 
@@ -415,12 +414,15 @@ sap.ui.define([
             }
 
             zip.generateAsync({
-                type: "blob"
-            })
+                    type: "blob"
+                })
                 .then(content => saveAs(content, "testCode.zip"));
         },
 
-        onShowReplayMessages: function(oEvent) {
+        /**
+         * 
+         */
+        onShowReplayMessages: function (oEvent) {
             this._oMessagePopover.toggle(oEvent.getSource());
         },
 
@@ -447,7 +449,8 @@ sap.ui.define([
             var sRouterTarget = this._bQuickMode ? "elementCreateQuick" : "elementCreate";
             this.getRouter().navTo(sRouterTarget, {
                 TestId: RecordController.getInstance().getTestUUID(),
-                ElementId: oData.identifier.ui5AbsoluteId
+                ElementId: oData.identifier.ui5AbsoluteId,
+                ui5Version: this._oModel.getProperty("/codeSettings/ui5Version")
             });
         },
 
@@ -468,7 +471,7 @@ sap.ui.define([
                     text: 'Yes',
                     tooltip: 'Starts the recording process',
                     press: function () {
-                        RecordController.getInstance().startRecording();
+                        this.onContinueRecording();
                         dialog.close();
                     }.bind(this)
                 }),
@@ -479,7 +482,7 @@ sap.ui.define([
                     press: function () {
                         RecordController.getInstance().stopRecording();
                         dialog.close();
-                    }.bind(this)
+                    }
                 }),
                 // eslint-disable-next-line require-jsdoc
                 afterClose: function () {
@@ -497,7 +500,7 @@ sap.ui.define([
          * @param {string} sEventId the event ID of the incoming event (ignored)
          * @param {*} oData the data on the selected element (ignored)
          */
-        _onPageDisconnected: function(sChannel, sEventId, oData) {
+        _onPageDisconnected: function (sChannel, sEventId, oData) {
 
             // stop recording and replaying
             this._oRecordDialog.close();
@@ -507,15 +510,14 @@ sap.ui.define([
             // ask user whether to save current status
             sap.m.MessageBox.error(
                 "The connection to the page under test has been lost. You will be redirected to the start page, where you can re-open the test." +
-                "\n\n" + "Do you want to save the current recording status now?",
-                {
+                "\n\n" + "Do you want to save the current recording status now?", {
                     icon: sap.m.MessageBox.Icon.QUESTION,
                     closeOnNavigation: true,
                     title: "Page disconnected",
                     actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
                     onClose: function (sAction) {
                         if (sAction === sap.m.MessageBox.Action.YES) {
-                            this.onSave().then(function() {
+                            this.onSave().then(function () {
                                 this.getRouter().navTo("start");
                             }.bind(this));
                         } else {
@@ -531,12 +533,12 @@ sap.ui.define([
          *
          * @param {*} oEvent the event indicating a new message
          */
-        _onReceiveMessageDuringReplay: function(oEvent) {
+        _onReceiveMessageDuringReplay: function (oEvent) {
 
             var oMessages = this.getView().getModel("recordModel").getProperty("/replayMessages");
 
             // open the message popover if there is an error in any message
-            oMessages.forEach(function(oMsg) {
+            oMessages.forEach(function (oMsg) {
                 if (oMsg.type === "Error") {
                     this._oMessagePopover.openBy(this.byId("replayMessagePopoverBtn"));
                 }
@@ -555,7 +557,7 @@ sap.ui.define([
             Fragment.load({
                 name: "com.ui5.testing.fragment.RecordDialog",
                 controller: this
-            }).then(function(oRecordDialog) {
+            }).then(function (oRecordDialog) {
                 this._oRecordDialog = oRecordDialog;
                 this._oRecordDialog.attachClose(this.onStopRecord, this);
             }.bind(this));
@@ -628,13 +630,16 @@ sap.ui.define([
                 }.bind(this));
         },
 
+        /**
+         * 
+         * @param {*} sKey 
+         * @param {*} oItems 
+         */
         _formatTestStepDetails: function (sKey, oItems) {
-            return oItems.find(function(oItem) {
+            return oItems.find(function (oItem) {
                 return oItem.key === sKey;
             }).text;
-        },
-
+        }
         // #endregion
-
     });
 });

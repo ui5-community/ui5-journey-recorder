@@ -10,5 +10,9 @@
     "devDependencies": {
         "eslint": "*",
         "showdown": "*"
+    },
+    "dependencies": {
+        "grunt": "^1.1.0",
+        "grunt-zip": "^0.18.2"
     }
 }

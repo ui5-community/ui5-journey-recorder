@@ -11,7 +11,7 @@
                                 </items>
                             </MenuItem>
 
-                            <MenuItem text="Aggregations" items="{ path: 'viewModel>/element/item/aggregationArray', filters: [{ path: 'length', operator: 'NE', value1: 0 }] }">
+                            <MenuItem text="Aggregations" items="{ path: 'viewModel>/element/item/aggregation', filters: [{ path: 'length', operator: 'NE', value1: 0 }] }">
                                 <items>
                                     <MenuItem text="{viewModel>name}" items="{viewModel>rows}">
                                         <items>
@@ -84,12 +84,23 @@
                                 <core:Item text="{constants>text}" key="{constants>key}"/>
                             </items>
                         </Select>
+                        <Select enabled="{= !${viewModel>/blocked}}" change="onAGGChange" selectedKey="{viewModel>/element/property/selectedAggregation}" items="{viewModel>/element/item/aggregationNames}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' )}">
+                            <items>
+                                <core:Item text="{viewModel>name}" key="{viewModel>name}"/>
+                            </items>
+                        </Select>
+
 
                         <Label text="Assert-Message" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) }"/>
                         <Input enabled="{= !${viewModel>/blocked}}" change="onUpdatePreview" placeholder="Optional Message for the Assertion" value="{viewModel>/element/property/assertMessage}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) }"/>
 
                         <Label text="Expect Element Count" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' ) }"/>
-                        <Input enabled="{= !${viewModel>/blocked}}" change="onUpdatePreview" value="{ path: 'viewModel>/element/property/assKeyMatchingCount', type:'sap.ui.model.type.Integer'}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' ) }"/>
+                        <Select id="countExpect" enabled="{= !${viewModel>/blocked}}" items="{constants>/countType}" change="onCountExpChange" selectedKey="{viewModel>/element/property/expectCount}" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' ) }">
+                            <items>
+                                <core:Item text="{constants>text}" key="{constants>key}"/>
+                            </items>
+                        </Select>
+                        <Input enabled="{= !${viewModel>/blocked}}" change="onUpdatePreview" value="{ path: 'viewModel>/element/property/assKeyMatchingCount', type:'sap.ui.model.type.Integer'}" type="Number" visible="{= ( ${viewModel>/element/property/type} === 'ASS' ) &amp;&amp; ( ${viewModel>/element/property/assKey} === 'MTC' ) &amp;&amp; (${viewModel>/element/property/expectCount} === 'EXAC') }"/>
 
                         <Label text="Type-Text" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) &amp;&amp; ( ${viewModel>/element/property/actKey} === 'TYP' ) }"/>
                         <Input id="inpTypeText" enabled="{= !${viewModel>/blocked}}" valueLiveUpdate="true" liveChange="onUpdatePreview" change="onUpdatePreview" value="{viewModel>/element/property/selectActInsert}" visible="{= ( ${viewModel>/element/property/type} === 'ACT' ) &amp;&amp; ( ${viewModel>/element/property/actKey} === 'TYP' ) }"/>
@@ -132,8 +143,7 @@
                         <content>
                             <ObjectStatus id="attrObjectStatus" text="Attributes ( {= ${viewModel>/element/attributeFilter}.length } )" state="{viewModel>/element/property/elementState}"/>
                             <ToolbarSpacer/>
-                            <Button press="onFindAttribute" enabled="{= !${viewModel>/blocked}}" icon="sap-icon://activate" tooltip="Find"/>
-                            <Button press="onAddAttribute" icon="sap-icon://add" tooltip="Add"/>
+                            <Button press="onFindAttribute" enabled="{= !${viewModel>/blocked}}" icon="sap-icon://add" tooltip="Add attribute" />
                             <Button press="onRemoveAttribute" icon="sap-icon://delete" tooltip="Remove"/>
                         </content>
                     </Toolbar>
@@ -164,15 +174,21 @@
                                     </Select>
                                     <Select change="onCriteriaTypeChanged" selectedKey="{ path: 'viewModel>criteriaType'}" items="{ path:'viewModel>criteriaTypes', sorter: { path: 'criteriaText' }, templateShareable: false }">
                                         <items>
-                                            <core:Item text="{viewModel>criteriaText}" key="{viewModel>criteriaKey}"/>
+                                            <core:Item text="{viewModel>criteriaText}" key="{viewModel>criteriaKey}" enabled="{parts: [{path: 'viewModel>criteriaKey'}, {path: 'viewModel>/element/item'}], formatter: '.checkCriteriaAppearance'}"/>
                                         </items>
                                     </Select>
-                                    <Select change="onSubCriteriaTypeChanged" showSecondaryValues="true" width="13em" selectedKey="{ path: 'viewModel>subCriteriaType' }" items="{ path: 'viewModel>subCriteriaTypes', sorter: { path: 'subCriteriaText' }, templateShareable: false }">
+                                    <Select id="subCriteriaSelect" change="onSubCriteriaTypeChanged" showSecondaryValues="true" width="13em" selectedKey="{ path: 'viewModel>subCriteriaType' }" items="{ path: 'viewModel>subCriteriaTypes', sorter: { path: 'subCriteriaText' }, templateShareable: false }">
                                         <items>
                                             <core:ListItem text="{viewModel>subCriteriaText}" key="{viewModel>subCriteriaType}" additionalText="{viewModel>calculatedValue}" tooltip="{viewModel>calculatedValueUnres}"/>
                                         </items>
                                     </Select>
-                                    <Input change="onChangeCriteriaValue" width="100%" value="{viewModel>criteriaValue}" />
+                                    <VBox>
+                                        <Input change="onChangeCriteriaValue" width="100%" value="{viewModel>criteriaValue}" />
+                                        <HBox visible="{parts: [{path: 'viewModel>criteriaType'}, {path: 'viewModel>criteriaValue'}], formatter: '.showAttributeAdder'}" width="100%" class="attributeLine">
+                                            <ObjectAttribute title="Value" text="{parts: [{path: 'viewModel>criteriaType'}, {path: 'viewModel>subCriteriaType'}, {path: 'viewModel>criteriaValue'}, {path: 'viewModel>/element/item'}], formatter: '.getBindingValue'}"/>
+                                            <Button icon="sap-icon://add-filter" press="onAddAttributeValue" tooltip="Add attribute to fit the corresponding property value"/>
+                                        </HBox>
+                                    </VBox>
                                 </cells>
                             </ColumnListItem>
                         </items>

@@ -1,10 +1,13 @@
 sap.ui.define([
     "sap/ui/base/Object",
-    "com/ui5/testing/model/code-generation/opa5/PageBuilder",
+    "com/ui5/testing/model/code-generation/opa5/ViewBuilder",
     "com/ui5/testing/model/code-generation/opa5/ParentMatcherBuilder",
     "com/ui5/testing/model/code-generation/opa5/ItemBindingMatcherBuilder",
-    "com/ui5/testing/model/Utils"
-], function (UI5Object, PageBuilder, ParentMatcherBuilder, ItemBindingMatcherBuilder, Utils) {
+    "com/ui5/testing/model/Utils",
+    "com/ui5/testing/util/ItemConstants",
+    "com/ui5/testing/util/StringBuilder",
+    "com/ui5/testing/model/code-generation/opa5/CommonBuilder"
+], function (UI5Object, ViewBuilder, ParentMatcherBuilder, ItemBindingMatcherBuilder, Utils, ItemConstants, StringBuilder, CommonBuilder) {
     "use strict";
     var OPA5CodeStrategy = UI5Object.extend("com.ui5.testing.model.code-generation.OPA5CodeStrategy", {
         jsonKeyRegex: /\"(\w+)\"\:/g,
@@ -25,29 +28,18 @@ sap.ui.define([
 
     OPA5CodeStrategy.prototype.generate = function (oCodeSettings, aElements, codeHelper) {
         var aCodes = [];
-        //setup page builder for each view used during the test
-        aElements
-            .map(el => ({
-                viewName: el.item.viewProperty.localViewName ? el.item.viewProperty.localViewName : "Detached",
-                namespace: el.item.viewProperty.viewName ? el.item.viewProperty.viewName.replace('.view.' + el.item.viewProperty.localViewName, '') : '<template>'
-            }))
-            .reduce((a, b) => a.every(c => b.viewName !== c.viewName) ? a.concat(b) : a, [])
-            .forEach(el => this.__pages[el.viewName] = (new PageBuilder(el.namespace, el.viewName)));
+        this.__commonPage = new CommonBuilder();
 
         this.__namespace = this.__pages[Object.keys(this.__pages)[0]] ? this.__pages[Object.keys(this.__pages)[0]].getNamespace() : 'mock.namespace';
 
         //(2) execute script
         this.__code.codeName = oCodeSettings.testName;
 
-        this.__setupHeader();
+        this._setupHeader();
 
         this.__createConstants(aElements);
 
-        this.__code.content.push('\n' +
-            Array(2).join('\t') +
-            'QUnit.module("' +
-            oCodeSettings.testCategory +
-            '");\n\n');
+        this.__code.content.push((new StringBuilder()).addNewLine().addTab().add('QUnit.module("').add(oCodeSettings.testCategory).add('");').addNewLine(2).toString());
 
         this.__createAppStartStep(oCodeSettings);
 
@@ -70,7 +62,7 @@ sap.ui.define([
             }
             order = order++;
             var oCode = {
-                codeName: key + 'Page',
+                codeName: `${key}Page`,
                 type: 'CODE',
                 order: order,
                 code: this.__pages[key].generate()
@@ -78,35 +70,41 @@ sap.ui.define([
             aCodes.push(oCode);
         }.bind(this));
 
-        Object.keys(this.__customMatcher).forEach(function (key) {
+        /* Object.keys(this.__customMatcher).forEach(function (key) {
             order = order++;
             var oCode = {
-                codeName: this.__capitalize(key) + 'Matcher',
+                codeName: `${this.__capitalize(key)}Matcher`,
                 type: 'CODE',
                 order: order,
                 code: this.__customMatcher[key].generate()
             };
             aCodes.push(oCode);
-        }.bind(this));
+        }.bind(this)); */
 
         aCodes.push({
-            
             codeName: 'Common',
             type: 'CODE',
             order: order++,
-            code: this.__generateCommonPage()
+            code: this.__commonPage.generate()
         });
 
         return aCodes;
     };
 
-    OPA5CodeStrategy.prototype.__setupHeader = function () {
-        var aCode = ['sap.ui.define([\n'];
-        aCode.push(Array(2).join('\t') + '"sap/ui/test/Opa5",\n');
-        aCode.push(Array(2).join('\t') + '"sap/ui/test/opaQunit"\n');
-        aCode.push('], function (Opa5, opaTest) {\n');
-        aCode.push(Array(2).join('\t') + '"use strict";\n');
-        this.__code.content.push(aCode.reduce((a, b) => a + b, ''));
+    OPA5CodeStrategy.prototype._setupHeader = function () {
+        var oCode = new StringBuilder('sap.ui.define([');
+        oCode.addNewLine()
+            .addTab()
+            .add('"sap/ui/test/Opa5",')
+            .addNewLine()
+            .addTab()
+            .add('"sap/ui/test/opaQunit"')
+            .addNewLine()
+            .add('], function (Opa5, opaTest) {')
+            .addNewLine()
+            .addTab().add('"use strict";')
+            .addNewLine();
+        this.__code.content.push(oCode.toString());
     };
 
     OPA5CodeStrategy.prototype.__createConstants = function (aElements) {
@@ -153,37 +151,33 @@ sap.ui.define([
     };
 
     OPA5CodeStrategy.prototype.__createAppStartStep = function (oAppDetails) {
-        var aParts = [Array(2).join('\t') + 'opaTest('];
-        aParts.push('"' + oAppDetails.testName + '"');
-        aParts.push(', function(Given, When, Then) {\n');
+        var oStartStep = new StringBuilder();
+        oStartStep.addTab().add('opaTest("').add(oAppDetails.testName).add('", function(Given, When, Then) {').addNewLine();
         var sNavHash = "";
         if (oAppDetails.testUrl.indexOf('#') > -1) {
             sNavHash = oAppDetails.testUrl.substring(oAppDetails.testUrl.indexOf('#') + 1);
         }
-        aParts.push(Array(3).join('\t') + 'Given.iStartTheAppByHash({hash: \"' + sNavHash + '\"});\n\n');
+        oStartStep.addTab(2).add('Given.iStartTheAppByHash({hash: \"').add(sNavHash).add('\"});').addNewLine(2);
 
-        this.__code.content.push(aParts.reduce((a, b) => a + b, ''));
+        this.__code.content.push(oStartStep.toString());
     };
 
     OPA5CodeStrategy.prototype.__createAppCloseStep = function () {
-        var aParts = [];
-        aParts.push('\n' + Array(3).join('\t') + 'Given.iTeardownTheApp();\n');
-        aParts.push(Array(2).join('\t') + '});\n');
-
-        this.__code.content.push(aParts.reduce((a, b) => a + b, ''));
+        var oCloseStep = new StringBuilder();
+        oCloseStep.addNewLine().addTab(2).add('Given.iTeardownTheApp();').addNewLine().addTab().add('});').addNewLine();
+        this.__code.content.push(oCloseStep.toString());
     };
 
     OPA5CodeStrategy.prototype.__createTestSteps = function (oCodeSettings, aTestSteps) {
-        var aParts = [];
+        var oSteps = new StringBuilder();
         //from here starts the real testing
         for (var step in aTestSteps) {
             var stepCode = this.createTestStep(oCodeSettings, aTestSteps[step]);
             if (stepCode) {
-                aParts.push(stepCode);
+                oSteps.add(stepCode);
             }
         }
-
-        this.__code.content.push(aParts.reduce((a, b) => a + b, ''));
+        this.__code.content.push(oSteps.toString());
     };
 
     OPA5CodeStrategy.prototype.createTestStep = function (oCodeSettings, oTestStep) {
@@ -194,7 +188,7 @@ sap.ui.define([
         }
 
         if (!this.__pages[viewName]) {
-            this.__pages[viewName] = new PageBuilder(namespace, viewName);
+            this.__pages[viewName] = new ViewBuilder(namespace, viewName);
         }
 
         //check if a parent attribute is requested, therefore add the dependencies to the page
@@ -202,35 +196,29 @@ sap.ui.define([
         var aResults = aMatching.filter(filter => filter.attributeType.indexOf('PRT') > -1);
         if (aResults.length > 0) {
             if (!this.__customMatcher.parent) {
-                this.__pages[viewName].setCustomMatcher('parent', true);
+                this.__pages[viewName].addCustomMatcher('parent', true);
+                this.__commonPage.addCustomMatcher('parent', true);
                 this.__customMatcher.parent = new ParentMatcherBuilder(namespace);
-            }
-        }
-
-        if (aMatching.some(a => a.criteriaType === 'BDG' || a.attributeType.indexOf('BDG') > -1)) {
-            if (!this.__customMatcher.itemBinding) {
-                this.__pages[viewName].setCustomMatcher('itemBinding', true);
-                this.__customMatcher.itemBinding = new ItemBindingMatcherBuilder(namespace);
             }
         }
 
         switch (oTestStep.property.type) {
             case "ACT":
-                return this.__createActionStep(oTestStep) + '\n';
+                return this.__createActionStep(oTestStep, oCodeSettings) + '\n';
             case "ASS":
-                return this.__createExistStep(oTestStep) + '\n';
+                return this.__createExistStep(oTestStep, oCodeSettings) + '\n';
             default:
                 return;
         }
     };
 
-    OPA5CodeStrategy.prototype.__createActionStep = function (oStep) {
+    OPA5CodeStrategy.prototype.__createActionStep = function (oStep, oCodeSettings) {
         var actionsType = oStep.property.actKey;
         switch (actionsType) {
             case 'TYP':
-                return this.__createEnterTextAction(oStep);
+                return this.__createEnterTextAction(oStep, oCodeSettings);
             case 'PRS':
-                return this.__createPressAction(oStep);
+                return this.__createPressAction(oStep, oCodeSettings);
             default:
                 //console.log('Found a unknown action type: ' + actionsType);
                 return "";
@@ -296,75 +284,94 @@ sap.ui.define([
         return sSelectorParts;
     };
 
-    OPA5CodeStrategy.prototype.__createEnterTextAction = function (oStep) {
-        var selectors = oStep.selector.selectorUI5.own;
+    OPA5CodeStrategy.prototype.__createEnterTextAction = function (oStep, oCodeSettings) {
         var viewName = oStep.item.viewProperty.localViewName ? oStep.item.viewProperty.localViewName : "Detached";
-        this.__pages[viewName].addEnterTextFunction();
 
-        var aParts = [Array(3).join('\t') + 'When.'];
-        aParts.push('on' + viewName);
-        aParts.push('.enterText(');
+        var oEnterTextAction = new StringBuilder();
+        oEnterTextAction.addTab(2).add('When.on').add(viewName).add('.enterTextOn({');
 
-        //var sSelectorParts = this.__createSelectorProperties(selectors);
-        //aParts.push(sSelectorParts);
-        aParts.push('{');
-        this.__createObjectMatcherInfos(oStep, aParts);
-        aParts.push(', actionText: "' + oStep.property.selectActInsert + '"');
-        aParts.push('});');
-
-        return aParts.reduce((a, b) => a + b, '');
-    };
-
-    OPA5CodeStrategy.prototype.__createPressAction = function (oStep) {
-        var viewName = oStep.item.viewProperty.localViewName ? oStep.item.viewProperty.localViewName : "Detached";
-        this.__pages[viewName].addPressFunction();
-
-        var aParts = [Array(3).join('\t') + 'When.'];
-        aParts.push('on' + viewName);
-        aParts.push('.press(');
-
-        //var sSelectorParts = this.__createSelectorProperties(selectors);
-        //aParts.push(sSelectorParts);
-
-
-        aParts.push('{');
         if (oStep.property.selectItemBy === "UI5") {
-            aParts.push('id: {value: "' + oStep.selector.selectorUI5.own.id + '",isRegex: true}');
+            oEnterTextAction.add('id: {value: "').add(oStep.selector.selectorUI5.own.id).add('",isRegex: true}');
+            this.__pages[viewName].addEnterTextAction({
+                enterText: true
+            });
+            if (this.__commonPage) {
+                this.__commonPage.addEnterTextAction({
+                    enterText: true
+                });
+            }
         } else {
-            this.__createObjectMatcherInfos(oStep, aParts);
+            var oUsedMatchers = this.__createObjectMatcherInfos(oStep, oEnterTextAction, oCodeSettings);
+            oUsedMatchers.enterText = true;
+            this.__pages[viewName].addEnterTextAction(oUsedMatchers);
+            if (this.__commonPage) {
+                this.__commonPage.addEnterTextAction(oUsedMatchers);
+            }
         }
 
-        aParts.push('});');
-        return aParts.reduce((a, b) => a + b, '');
+        oEnterTextAction.add(', actionText: "').add(oStep.property.selectActInsert).add('"').add('});');
 
+        return oEnterTextAction.toString();
     };
 
-    OPA5CodeStrategy.prototype.__createExistStep = function (oStep) {
+    OPA5CodeStrategy.prototype.__createPressAction = function (oStep, oCodeSettings) {
         var viewName = oStep.item.viewProperty.localViewName ? oStep.item.viewProperty.localViewName : "Detached";
-        if (oStep.assertFilter && oStep.assertFilter.some(a => a.criteriaType === 'AGG')) {
-            return this.__createAggregationCheck(oStep);
+
+        var oPressAction = new StringBuilder();
+        oPressAction.addTab(2).add("When.on").add(viewName).add('.clickOn({');
+
+        if (oStep.property.selectItemBy === "UI5") {
+            oPressAction.add('id: {value: "').add(oStep.selector.selectorUI5.own.id).add('",isRegex: true}');
+            this.__pages[viewName].addPressAction({
+                press: true
+            });
+            if (this.__commonPage) {
+                this.__commonPage.addPressAction({
+                    press: true
+                });
+            }
         } else {
-            this.__pages[viewName].addExistFunction();
-            var aParts = [Array(3).join('\t') + 'Then.'];
-            aParts.push('on' + viewName);
-            aParts.push('.iShouldSeeTheProperty(');
+            var oUsedMatchers = this.__createObjectMatcherInfos(oStep, oPressAction, oCodeSettings);
+            oUsedMatchers.press = true;
+            this.__pages[viewName].addPressAction(oUsedMatchers);
+            if (this.__commonPage) {
+                this.__commonPage.addPressAction(oUsedMatchers);
+            }
+        }
 
-            aParts.push('{');
+        oPressAction.add('});');
+        return oPressAction.toString();
 
-            this.__createObjectMatcherInfos(oStep, aParts);
+    };
 
-            aParts.push('});');
+    OPA5CodeStrategy.prototype.__createExistStep = function (oStep, oCodeSettings) {
+        var viewName = oStep.item.viewProperty.localViewName ? oStep.item.viewProperty.localViewName : "Detached";
+        if (oStep && oStep.property && oStep.property.assKey && oStep.property.assKey === "MTC") {
+            return this.__createAggregationCheck(oStep, oCodeSettings);
+        } else {
+            var oExistAssert = new StringBuilder();
+            if (oStep && oStep.property && oStep.property.assKey && oStep.property.assKey === "ATTR") {
+                oExistAssert.addTab(2).add('Then.on').add(viewName).add('.controlShouldHave({');
+            } else {
+                oExistAssert.addTab(2).add('Then.on').add(viewName).add('.iShouldSeeTheControl({');
+            }
 
-            return aParts.reduce((a, b) => a + b, '');
+            var oUsedMatchers = this.__createObjectMatcherInfos(oStep, oExistAssert, oCodeSettings);
+            this.__pages[viewName].addExistsCheck(oUsedMatchers);
+            if (this.__commonPage) {
+                this.__commonPage.addExistsCheck(oUsedMatchers);
+            }
+            oExistAssert.add('});');
+
+            return oExistAssert.toString();
         }
     };
 
-    OPA5CodeStrategy.prototype.__createObjectMatcherInfos = function (oStep, aParts) {
+    OPA5CodeStrategy.prototype.__createObjectMatcherInfos = function (oStep, oSB, oCodeSettings) {
         var objectMatcher = {};
         var parentMatcher = {};
         var aToken = [...oStep.attributeFilter, ...oStep.assertFilter];
         for (var id in aToken) {
-            //var statBindings = Object.keys(oStep.item.binding).filter(k => oStep.item.binding[k].static).map(i => ({attributeName: i, i18nLabel: oStep.item.binding[i].path}));
             if (aToken[id].attributeType !== "OWN") {
                 if (!parentMatcher[aToken[id].attributeType]) {
                     parentMatcher[aToken[id].attributeType] = {};
@@ -378,41 +385,68 @@ sap.ui.define([
                         parentMatcher[aToken[id].attributeType]['ID'] = 'id: {value: "' + aToken[id].criteriaValue + '", isRegex: false}';
                     }
                     break;
-                case 'ATTR':
+                case ItemConstants.ATTRIBUTE:
                     if (aToken[id].attributeType === 'OWN') {
                         this.__createAttrValue(aToken[id], objectMatcher);
                     } else {
                         this.__createAttrValue(aToken[id], parentMatcher[aToken[id].attributeType]);
                     }
                     break;
-                case 'MTA':
+                case ItemConstants.METADATA:
                     if (aToken[id].attributeType === 'OWN') {
                         objectMatcher['OBJ_CLASS'] = 'controlType: \"' + aToken[id].criteriaValue + '\"';
                     } else {
                         parentMatcher[aToken[id].attributeType]['OBJ_CLASS'] = 'controlType: \"' + aToken[id].criteriaValue + '\"';
                     }
                     break;
-                case 'BNDG':
+                case ItemConstants.BINDING:
+                    var sSubCriteriaType = aToken[id].subCriteriaType;
+                    sSubCriteriaType = sSubCriteriaType.substr(0, sSubCriteriaType.indexOf("#")); // remove everything before '#' due to binding parts
+
                     if (aToken[id].attributeType === 'OWN') {
-                        objectMatcher['BNDG'] = 'i18n: {property: \"' + aToken[id].subCriteriaType + '\", path: \"' + oStep.attributeFilter[id].criteriaValue + '\"}';
+                        if (oStep.attributeFilter[id].criteriaValue.indexOf('i18n>') > -1 && this._versionGE(oCodeSettings.ui5Version, "1.42")) {
+                            if (!objectMatcher[ItemConstants.I18N]) {
+                                objectMatcher[ItemConstants.I18N] = [];
+                            }
+                            objectMatcher[ItemConstants.I18N].push('{key: \"' + aToken[id].criteriaValue.substring(aToken[id].criteriaValue.indexOf('>') + 1) + '\", propertyName: \"' + sSubCriteriaType + '\"}');
+                        } else {
+                            if (!objectMatcher[ItemConstants.BINDING]) {
+                                objectMatcher[ItemConstants.BINDING] = [];
+                            }
+                            var aBindingParts = aToken[id].criteriaValue.split('>');
+                            var sModelName = aBindingParts[0] ? aBindingParts[0] : "undefined";
+                            var sPathName = aBindingParts[1] && aBindingParts[1].startsWith('/') ? aBindingParts[1] : "";
+                            var sPropertyPath = aBindingParts[1] && !aBindingParts[1].startsWith('/') ? aBindingParts[1] : "";
+                            var aMatchProperties = [];
+                            aMatchProperties.push('{property: "');
+                            aMatchProperties.push(sSubCriteriaType);
+                            aMatchProperties.push('"');
+                            if (sModelName !== "") {
+                                aMatchProperties.push(`, modelName: "${sModelName}"`);
+                            }
+                            if (sPathName !== "") {
+                                aMatchProperties.push(`, path: "${sPathName}"`);
+                            }
+                            if (sPropertyPath !== "") {
+                                aMatchProperties.push(`, propertyPath: "${sPropertyPath}"`);
+                            }
+                            aMatchProperties.push('}');
+                            objectMatcher[ItemConstants.BINDING].push(aMatchProperties.reduce((a, b) => a + '' + b, ''));
+                        }
                     } else {
-                        parentMatcher[aToken[id].attributeType]['BNDG'] = 'i18n: {property: \"' + aToken[id].subCriteriaType + '\", path: \"' + oStep.attributeFilter[id].criteriaValue + '\"}';
+                        // eslint-disable-next-line no-lonely-if
+                        if (oStep.attributeFilter[id].criteriaValue.indexOf('i18n>') > -1 && this._versionGE(oCodeSettings.ui5Version, "1.42")) {
+                            if (!parentMatcher[aToken[id].attributeType][ItemConstants.I18N]) {
+                                parentMatcher[aToken[id].attributeType][ItemConstants.I18N] = [];
+                            }
+                            parentMatcher[aToken[id].attributeType][ItemConstants.I18N].push('{key: \"' + aToken[id].criteriaValue.substring(aToken[id].criteriaValue.indexOf('>') + 1) + '\", propertyName: \"' + sSubCriteriaType + '\"}');
+                        } else {
+                            if (!parentMatcher[aToken[id].attributeType][ItemConstants.BINDING]) {
+                                parentMatcher[aToken[id].attributeType][ItemConstants.BINDING] = [];
+                            }
+                            parentMatcher[aToken[id].attributeType][ItemConstants.BINDING].push('binding: {property: \"' + sSubCriteriaType + '\", path: \"' + oStep.attributeFilter[id].criteriaValue + '\"}');
+                        }
                     }
-                    break;
-                case 'BDG':
-                    if (!objectMatcher.BDG) {
-                        objectMatcher['BDG'] = [];
-                    }
-                    var sSubCritCntnt = aToken[id].subCriteriaType;
-                    var contextName = sSubCritCntnt.substring(0, sSubCritCntnt.lastIndexOf('/'));
-                    var contextAttribute = sSubCritCntnt.substring(sSubCritCntnt.indexOf('/') + 1);
-                    var infos = {
-                        //opType: aToken[id].operatorType,
-                        targetValue: aToken[id].criteriaValue,
-                        contextName: contextName,
-                        contextAttr: contextAttribute
-                    };
-                    objectMatcher['BDG'].push(infos);
                     break;
                 case 'AGG':
                     break; //need to be because this are no relevant object infos
@@ -420,50 +454,70 @@ sap.ui.define([
                     //console.log('Found a unknown class: ' + aToken[id].criteriaType);
             }
         }
-
         for (var k in objectMatcher) {
-            if (k !== 'ATTR' && k !== 'BDG') {
-                aParts.push(objectMatcher[k] + ', ');
+            if (k !== ItemConstants.ATTRIBUTE && k !== ItemConstants.BINDING && k !== ItemConstants.I18N) {
+                oSB.add(objectMatcher[k]).add(', ');
             }
         }
-        aParts[aParts.length - 1] = aParts[aParts.length - 1].replace(/,\s*$/, '');
+        oSB.replace(/,\s*$/, '');
+        //aParts[aParts.length - 1] = aParts[aParts.length - 1].replace(/,\s*$/, '');
 
-        if (objectMatcher.ATTR) {
-            objectMatcher.ATTR = [...new Set(objectMatcher.ATTR)];
-            aParts.push(", attributes: [" + objectMatcher.ATTR.reduce((a, b) => a + ', ' + b, '').substring(2) + "]");
+        var oReturn = {};
+        if (objectMatcher[ItemConstants.ATTRIBUTE]) {
+            objectMatcher[ItemConstants.ATTRIBUTE] = [...new Set(objectMatcher[ItemConstants.ATTRIBUTE])];
+            oSB.add(", attributes: [").addMultiple(objectMatcher[ItemConstants.ATTRIBUTE], ', ').add("]");
+            oReturn.attribute = true;
         }
 
-        if (objectMatcher.BDG) {
-            objectMatcher.BDG = [...new Set(objectMatcher.BDG)];
-            aParts.push(", bndg_cntxt: [" + objectMatcher.BDG.reduce((a, b) => a + ', ' + Utils.stringifyAttributes(b).replace(/\"undefined\"/gm, 'undefined'), '').substring(2) + "]");
+        if (objectMatcher[ItemConstants.BINDING]) {
+            objectMatcher[ItemConstants.BINDING] = [...new Set(objectMatcher[ItemConstants.BINDING])];
+            oSB.add(", binding: [").addMultiple(objectMatcher[ItemConstants.BINDING], ', ').add("]");
+            oReturn.binding = true;
+        }
+
+        if (objectMatcher[ItemConstants.I18N]) {
+            objectMatcher[ItemConstants.I18N] = [...new Set(objectMatcher[ItemConstants.I18N])];
+            oSB.add(", i18n: [").addMultiple(objectMatcher[ItemConstants.I18N], ', ').add("]");
+            oReturn.i18n = true;
         }
 
         if (Object.keys(parentMatcher).length > 0) {
-            aParts.push(", parent: [");
+            oSB.add(", parent: [");
             for (var key in parentMatcher) {
-                aParts.push("{");
+                oSB.add("{");
                 for (var attrK in parentMatcher[key]) {
-                    if (attrK !== 'ATTR' && attrK !== 'BDG') {
-                        aParts.push(parentMatcher[key][attrK] + ', ');
+                    if (attrK !== ItemConstants.ATTRIBUTE && attrK !== ItemConstants.BINDING && attrK !== ItemConstants.I18N) {
+                        oSB.add(parentMatcher[key][attrK]).add(', ');
                     }
                 }
 
                 if (key === 'PRT') {
-                    aParts.push('levelAbove: 1');
+                    oSB.add('levelAbove: 1');
                 } else {
-                    aParts.push('levelAbove: ' + key.replace('PRT', ''));
+                    oSB.add('levelAbove: ').add(key.replace('PRT', ''));
                 }
 
-                if (parentMatcher[key].ATTR) {
-                    parentMatcher[key].ATTR = [...new Set(parentMatcher[key].ATTR)];
-                    aParts.push(", attributes: [" + parentMatcher[key].ATTR.reduce((a, b) => a + ', ' + b, '').substring(2) + "]");
+                if (parentMatcher[key][ItemConstants.ATTRIBUTE]) {
+                    parentMatcher[key][ItemConstants.ATTRIBUTE] = [...new Set(parentMatcher[key][ItemConstants.ATTRIBUTE])];
+                    oSB.add(", attributes: [").addMultiple(parentMatcher[key][ItemConstants.ATTRIBUTE]).add("]");
                 }
-                aParts.push('}, ');
+
+                if (parentMatcher[key][ItemConstants.BINDING]) {
+                    parentMatcher[key][ItemConstants.BINDING] = [...new Set(parentMatcher[key][ItemConstants.BINDING])];
+                    oSB.add(", binding: [").addMultiple(parentMatcher[key][ItemConstants.BINDING]).add("]");
+                }
+
+                if (parentMatcher[key][ItemConstants.I18N]) {
+                    parentMatcher[key][ItemConstants.I18N] = [...new Set(parentMatcher[key][ItemConstants.I18N])];
+                    oSB.add(", i18n: [").addMultiple(parentMatcher[key][ItemConstants.I18N]).add("]");
+                }
+                oSB.add('}, ');
             }
-            aParts[aParts.length - 1] = aParts[aParts.length - 1].replace(/,\s*$/, '');
-            aParts.push("]");
+            oSB.replace(/,\s*$/, '');
+            oSB.add("]");
         }
-        aParts[aParts.length - 1] = aParts[aParts.length - 1].replace(/,\s*$/, '');
+        oSB.replace(/,\s*$/, '');
+        return oReturn;
     };
 
     OPA5CodeStrategy.prototype.__createAttrValue = function (oToken, objectMatcher) {
@@ -477,7 +531,7 @@ sap.ui.define([
                 if (typeof oToken.criteriaValue === "boolean") {
                     return c.value === oToken.criteriaValue;
                 } else {
-                    return c.value === oToken.criteriaValue.trim();
+                    return c.value === String(oToken.criteriaValue).trim();
                 }
             })[0].symbol : typeof oToken.criteriaValue === "boolean" ?
             oToken.criteriaValue :
@@ -491,81 +545,64 @@ sap.ui.define([
             objectMatcher['ATTR'] = ['{' + oToken.subCriteriaType + ': ' + value + '}'];
     };
 
-    OPA5CodeStrategy.prototype.__createAggregationCheck = function (oStep) {
+    OPA5CodeStrategy.prototype.__createAggregationCheck = function (oStep, oCodeSettings) {
         var viewName = oStep.item.viewProperty.localViewName ? oStep.item.viewProperty.localViewName : "Detached";
-        var oAGGProp = oStep.assertFilter[0];
-        var aParts = [Array(3).join('\t') + 'Then.'];
+        var oAGGProp = oStep.assertion;
+        var oAggregationCheck = new StringBuilder().addTab(2).add('Then.on').add(viewName);
 
-        aParts.push('on' + viewName);
-
-        if (oAGGProp.criteriaValue === 0) {
-            if (oAGGProp.operatorType === 'EQ') {
-                this.__pages[viewName].addAggregationEmpty();
-                aParts.push('.iAggregationEmpty({');
-                //aParts.push('objectProps: ')
+        if (oAGGProp.assertMatchingCount === 0) {
+            if (oStep.property && oStep.property.expectCount === 'EMPT') {
+                oAggregationCheck.add('.aggregationShouldBeEmpty({');
             }
-
-            if (oAGGProp.operatorType === 'GT') {
-                this.__pages[viewName].addAggregationFilled();
-                aParts.push('.iAggregationFilled({');
-                //aParts.push('objectProps: ')
+            if (oStep.property && oStep.property.expectCount === 'FILL') {
+                oAggregationCheck.add('.aggregationShouldBeFilled({');
             }
         } else {
-            this.__pages[viewName].addAggregationCount();
-            aParts.push('.iAggregationCounts({');
-            //aParts.push('objectProps: ');
+            oAggregationCheck.add('.aggregationLengthShouldBe({');
         }
 
-        this.__createObjectMatcherInfos(oStep, aParts);
+        var oUsedMatchers = this.__createObjectMatcherInfos(oStep, oAggregationCheck, oCodeSettings);
 
-        aParts.push(', ');
+        if (oAGGProp.assertMatchingCount === 0) {
+            if (oStep.property && oStep.property.expectCount === 'EMPT') {
+                this.__pages[viewName].addAggregationEmptyCheck(oUsedMatchers);
+                if (this.__commonPage) {
+                    this.__commonPage.addAggregationEmptyCheck({
+                        aggEmpty: true
+                    });
+                }
+            }
 
-        if (oAGGProp.criteriaValue > 0) {
-            aParts.push('count: ');
-            aParts.push(oAGGProp.criteriaValue + ', ');
+            if (oStep.property && oStep.property.expectCount === 'FILL') {
+                this.__pages[viewName].addAggregationFilledCheck(oUsedMatchers);
+                if (this.__commonPage) {
+                    this.__commonPage.addAggregationFilledCheck({
+                        aggFilled: true
+                    });
+                }
+            }
+        } else {
+            this.__pages[viewName].addAggregationCountCheck(oUsedMatchers);
+            if (this.__commonPage) {
+                this.__commonPage.addAggregationCountCheck({
+                    aggCount: true
+                });
+            }
         }
 
-        var aggName = oAGGProp.subCriteriaType.substring(0, oAGGProp.subCriteriaType.indexOf('/'));
-        aParts.push('aggName: "' + aggName + '"});');
+        oAggregationCheck.add(', ');
 
-        return aParts.reduce((a, b) => a + b, '');
+        if (oAGGProp.assertMatchingCount > 0) {
+            oAggregationCheck.add('count: ').add(oAGGProp.assertMatchingCount).add(', ');
+        }
+
+        oAggregationCheck.add('aggName: "').add(oStep.property.selectedAggregation).add('"});');
+
+        return oAggregationCheck.toString();
     };
 
     OPA5CodeStrategy.prototype.__sanatize = function (sString) {
         return '"' + sString + '"';
-    };
-
-    OPA5CodeStrategy.prototype.__generateCommonPage = function () {
-        var aCode = [];
-        aCode.push('sap.ui.define([\n');
-        aCode.push(Array(2).join('\t') + '"sap/ui/test/Opa5",\n');
-        aCode.push(Array(2).join('\t') + '"' + this.__namespace.replace(/\./g, '/') + "/<testPath>/MockServer" + '"\n');
-        aCode.push('], function(Opa5, MockServer) {\n');
-        aCode.push(Array(2).join('\t') + '"use strict";\n\n');
-        aCode.push(Array(2).join('\t') + 'function _wrapParameters(oParameters) {\n');
-        aCode.push(Array(3).join('\t') + 'return {\n');
-        aCode.push(Array(4).join('\t') + 'get: function(name) {\n');
-        aCode.push(Array(5).join('\t') + 'return (oParameters[name] || "").toString();\n');
-        aCode.push(Array(4).join('\t') + '}\n');
-        aCode.push(Array(3).join('\t') + '};\n');
-        aCode.push(Array(2).join('\t') + '}\n\n');
-        aCode.push(Array(2).join('\t') + 'return Opa5.extend("' + this.__namespace + '.<testPath>.Common", {\n');
-        aCode.push(Array(3).join('\t') + 'iStartTheAppByHash: function(oParameters) {\n');
-        aCode.push(Array(4).join('\t') + 'MockServer.init(_wrapParameters(oParameters || {}));\n');
-        aCode.push(Array(4).join('\t') + 'this.iStartMyUIComponent({\n');
-        aCode.push(Array(5).join('\t') + 'componentConfig: {\n');
-        aCode.push(Array(6).join('\t') + 'name: "' + this.__namespace + '",\n');
-        aCode.push(Array(6).join('\t') + 'async: true\n');
-        aCode.push(Array(5).join('\t') + '},\n');
-        aCode.push(Array(5).join('\t') + 'hash: oParameters.hash\n');
-        aCode.push(Array(4).join('\t') + '});\n');
-        aCode.push(Array(3).join('\t') + '},\n');
-        aCode.push(Array(3).join('\t') + 'iTeardownTheApp: function() {\n');
-        aCode.push(Array(4).join('\t') + 'this.iTeardownMyUIComponent();\n');
-        aCode.push(Array(3).join('\t') + '}\n');
-        aCode.push(Array(2).join('\t') + '});\n');
-        aCode.push('});');
-        return aCode.reduce((a, b) => a + b, '');
     };
 
     OPA5CodeStrategy.prototype.__capitalize = function (sString) {
@@ -573,6 +610,49 @@ sap.ui.define([
             return '';
         }
         return sString.charAt(0).toUpperCase() + sString.slice(1);
+    };
+
+    OPA5CodeStrategy.prototype._versionGE = function (sCheckVersion, sTargetVersion) {
+        var iComparisonResult = this._compareVersion(sCheckVersion, sTargetVersion);
+        if (iComparisonResult) {
+            return iComparisonResult >= 0;
+        } else {
+            return false;
+        }
+    };
+
+    /**
+     * @param {string} v1 version string 1 
+     * @param {string} v2 version string 2
+     *
+     * @returns {number} 1 if v1 > v2, -1 if v1 < v2 and 0 if both equal
+     */
+    OPA5CodeStrategy.prototype._compareVersion = function (v1, v2) {
+        if (typeof v1 !== 'string') {
+            return false;
+        }
+        if (typeof v2 !== 'string') {
+            return false;
+        }
+        v1 = v1.split('.');
+        v2 = v2.split('.');
+        const k = Math.min(v1.length, v2.length);
+        for (let i = 0; i < k; ++i) {
+            v1[i] = parseInt(v1[i], 10);
+            v2[i] = parseInt(v2[i], 10);
+            if (v1[i] > v2[i]) {
+                return 1;
+            }
+            if (v1[i] < v2[i]) {
+                return -1;
+            }
+        }
+
+        if (v1.length == v2.length) {
+            return 0;
+        } else {
+            return v1.length < v2.length ? -1 : 1;
+        }
     };
 
     return OPA5CodeStrategy;

@@ -80,17 +80,17 @@ sap.ui.define([
                         },
                         routes: [
                             {
-                                pattern: "/TestDetails/{TestId}/elementCreate/{ElementId}",
+                                pattern: "/TestDetails/{TestId}/elementCreate/{ElementId}/{ui5Version}",
                                 name: "elementCreate",
                                 target: "testElement"
                             },
                             {
-                                pattern: "/TestDetails/{TestId}/elementCreateQuick/{ElementId}",
+                                pattern: "/TestDetails/{TestId}/elementCreateQuick/{ElementId}/{ui5Version}",
                                 name: "elementCreateQuick",
                                 target: "testElement"
                             },
                             {
-                                pattern: "/elementDisplay/{TestId}/{ElementId}",
+                                pattern: "/elementDisplay/{TestId}/{ElementId}/{ui5Version}",
                                 name: "elementDisplay",
                                 target: "testElement"
                             },

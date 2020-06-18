@@ -114,6 +114,7 @@ sap.ui.define([
         _onObjectMatched: function (oEvent) {
             this.getModel('viewModel').setProperty('/blocked', false);
             this.getModel('viewModel').setProperty('/isInjected', RecordController.getInstance().isInjected());
+            this.getModel('viewModel').setProperty('/ui5Version', oEvent.getParameter('arguments').ui5Version);
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._oModel.setProperty("/quickMode", false);
             var oItem = RecordController.getInstance().getCurrentElement();
@@ -131,6 +132,7 @@ sap.ui.define([
         _onObjectMatchedQuick: function (oEvent) {
             this.getModel('viewModel').setProperty('/blocked', false);
             this.getModel('viewModel').setProperty('/isInjected', RecordController.getInstance().isInjected());
+            this.getModel('viewModel').setProperty('/ui5Version', oEvent.getParameter('arguments').ui5Version);
             this._sTestId = oEvent.getParameter("arguments").TestId;
             this._oModel.setProperty("/quickMode", true);
             var oItem = RecordController.getInstance().getCurrentElement();
@@ -152,6 +154,7 @@ sap.ui.define([
             this.getModel('viewModel').setProperty('/element', RecordController.getInstance().getTestElementByIdx(this._sElementId));
             this.getModel('viewModel').setProperty('/blocked', true);
             this.getModel('viewModel').setProperty('/isInjected', RecordController.getInstance().isInjected());
+            this.getModel('viewModel').setProperty('/ui5Version', oEvent.getParameter('arguments').ui5Version);
             this._setValidAttributeTypes();
             Promise.all([
                 this._updatePreview(),
@@ -200,6 +203,20 @@ sap.ui.define([
 
         },
 
+        /**
+         * Add an new attribute, using the binding information to add a additional check for the value itself
+         *
+         * @param {sap.ui.core.Event} oEvent the event triggered by the binding item, add filter button
+         */
+        onAddAttributeValue: function (oEvent) {
+            var oContext = oEvent.getSource().getBindingContext('viewModel');
+            this._add("/element/attributeFilter", {
+                attributeType: "OWN",
+                criteriaType: "ATTR",
+                subCriteriaType: oContext.getObject().subCriteriaType
+            });
+        },
+
         onNavBack: function () {
             this.onCancelStep();
         },
@@ -236,17 +253,22 @@ sap.ui.define([
             this.byId("btSaveHeader").setBusy(true);
             this.byId("btSaveFooter").setBusy(true);
 
-            this._save().then(function () {
+            this._save()
+                .then(function () {
 
-                this.byId("btSaveHeader").setBusy(false);
-                this.byId("btSaveFooter").setBusy(false);
+                    this.byId("btSaveHeader").setBusy(false);
+                    this.byId("btSaveFooter").setBusy(false);
 
-                //navigate backwards to the screen, and immediately start recording..
-                this.getRouter().navTo("TestDetails", {
-                    TestId: this._sTestId
-                }, true);
-                RecordController.getInstance().startRecording();
-            }.bind(this));
+                    //navigate backwards to the screen, and immediately start recording..
+                    this.getRouter().navTo("TestDetails", {
+                        TestId: this._sTestId
+                    }, true);
+                    RecordController.getInstance().startRecording();
+                }.bind(this))
+                .catch(function () {
+                    this.byId("btSaveHeader").setBusy(false);
+                    this.byId("btSaveFooter").setBusy(false);
+                }.bind(this));
         },
 
         /**
@@ -306,7 +328,42 @@ sap.ui.define([
          *
          */
         onUpdatePreview: function () {
+            Promise.all([
+                this._updatePreview(),
+                this._validateSelectedItemNumber()
+            ]);
+        },
+
+        /**
+         * 
+         */
+        onCountExpChange: function (oEvent) {
+            if (oEvent.getParameter('selectedItem').getKey() === 'EMPT' || oEvent.getParameter('selectedItem').getKey() === 'FILL') {
+                this._oModel.setProperty('/element/property/assKeyMatchingCount', 0);
+            } else {
+                var sSelKey = this._oModel.getProperty('/element/property/selectedAggregation');
+                var oAggregations = this._oModel.getProperty('/element/item/aggregation');
+                if (oAggregations && oAggregations[sSelKey]) {
+                    this._oModel.setProperty('/element/property/assKeyMatchingCount', oAggregations[sSelKey].length);
+                } else {
+                    this._oModel.setProperty('/element/property/assKeyMatchingCount', 0);
+                }
+            }
             this._updatePreview();
+        },
+
+        /**
+         * 
+         * @param {*} oEvent 
+         */
+        onAGGChange: function (oEvent) {
+            var oAggregations = this._oModel.getProperty('/element/item/aggregation');
+            var sKey = oEvent.getParameter('selectedItem').getKey();
+            if (oAggregations && oAggregations[sKey]) {
+                this._oModel.setProperty('/element/property/assKeyMatchingCount', oAggregations[sKey].length);
+            } else {
+                this._oModel.setProperty('/element/property/assKeyMatchingCount', 0);
+            }
         },
 
         /**
@@ -326,7 +383,10 @@ sap.ui.define([
                 this._oModel.setProperty("/element/attributeFilter", aFilter);
 
                 //update preview
-                this._updatePreview();
+                Promise.all([
+                    this._updatePreview(),
+                    this._validateSelectedItemNumber()
+                ]);
             }.bind(this));
         },
 
@@ -460,6 +520,8 @@ sap.ui.define([
             ]);
         },
 
+        //#endregion
+
         //#region Element initialization and updating
 
         /**
@@ -509,6 +571,7 @@ sap.ui.define([
                 this._updateValueState(oItem);
                 this._updateSubActionTypes();
                 this._updatePreview();
+                this._validateSelectedItemNumber();
 
                 this._resumeBindings();
             }.bind(this));
@@ -614,7 +677,7 @@ sap.ui.define([
                         this._oModel.setProperty("/element/property/selectItemBy", "ATTR"); // change to attribute in case that the ID is not sufficient..
                     }
 
-                    this._findBestAttributeDefaultSetting(oItem, false).then(function () {
+                    this._adjustAttributeDefaultSetting(oItem).then(function () {
                         // adjust DOM node for action type "INP"..
                         this._adjustDomChildWith(oItem);
                         resolve();
@@ -628,111 +691,143 @@ sap.ui.define([
          */
         _findBestAttributeDefaultSetting: function (oItem, bForcePopup) {
             return new Promise(function (resolve) {
-                this._adjustAttributeDefaultSetting(oItem).then(function (aReturn) {
-                    //in case we still have >1 item - change to
-                    if (this._oModel.getProperty("/element/property/selectItemBy") === "ATTR" &&
-                        ((this._oModel.getProperty("/element/identifiedElements").length > 1 && this._oModel.getProperty("/element/property/type") === 'ACT') || bForcePopup === true)) {
-                        //ok - we are still not ready - let's check if we are any kind of item, which is requiring the user to ask for binding context information..
-                        //work on our binding context information..
-                        var oItem = this._oModel.getProperty("/element/item");
-                        var aList = [];
-                        if (!jQuery.isEmptyObject(oItem.binding)) {
-                            for (var sAttr in oItem.binding) {
-                                if (typeof oItem.binding[sAttr].path !== "object") {
+                //in case we still have >1 item - change to
+                var sSelectCriteria = this._oModel.getProperty("/element/property/selectItemBy");
+                var iFoundElements = this._oModel.getProperty("/element/identifiedElements") ? this._oModel.getProperty("/element/identifiedElements").length : 2;
+                var sPropertyType = this._oModel.getProperty("/element/property/type");
+                if (sSelectCriteria === "ATTR" &&
+                    ((iFoundElements > 1 && sPropertyType === 'ACT') || bForcePopup === true)) {
+
+                    var aList = [];
+
+                    // add information on binding context and path
+                    if (!jQuery.isEmptyObject(oItem.binding)) {
+                        for (var sAttr in oItem.binding) {
+                            for (var iBindingPartIndex in oItem.binding[sAttr]) {
+                                var mBindingPart = oItem.binding[sAttr][iBindingPartIndex];
+
+                                if (typeof mBindingPart.path !== "object") {
                                     aList.push({
                                         type: "BNDG",
-                                        typeTxt: "Binding",
-                                        bdgPath: sAttr,
+                                        typeTxt: "Binding path",
+                                        bdgPath: iBindingPartIndex,
                                         attribute: sAttr,
-                                        importance: oItem.uniquness.binding[sAttr],
-                                        value: oItem.binding[sAttr].path,
-                                        valueToString: oItem.binding[sAttr].path
+                                        importance: 100, //oItem.uniquness.binding[sAttr],
+                                        value: mBindingPart.prefixedFullPath,
+                                        valueToString: mBindingPart.prefixedFullPath
                                     });
                                 }
                             }
-                        }
-                        //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-                        /*@Adrian - Start*/
-                        if (!jQuery.isEmptyObject(oItem.bindingContext)) {
-                            for (var sAttr in oItem.bindingContext) {
-                                if (typeof oItem.bindingContext[sAttr] !== "object") {
-                                    aList.push({
-                                        type: "BNDX",
-                                        typeTxt: "Binding-Context",
-                                        bdgPath: sAttr,
-                                        attribute: sAttr,
-                                        importance: oItem.uniquness.bindingContext[sAttr],
-                                        value: oItem.bindingContext[sAttr],
-                                        valueToString: oItem.bindingContext[sAttr]
-                                    });
-                                }
-                            }
-                        }
-                        /*@Adrian - End*/
-                        if (!jQuery.isEmptyObject(oItem.property)) {
-                            for (var sAttr in oItem.property) {
-                                if (typeof oItem.property[sAttr] !== "object") {
-                                    aList.push({
-                                        type: "ATTR",
-                                        typeTxt: "Property",
-                                        bdgPath: sAttr,
-                                        attribute: sAttr,
-                                        importance: oItem.uniquness.property[sAttr],
-                                        value: oItem.property[sAttr],
-                                        valueToString: oItem.property[sAttr].toString ? oItem.property[sAttr].toString() : oItem.property[sAttr]
-                                    });
-                                }
-                            }
-                        }
-
-                        //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-                        /*Timo will uncomment this stuff, i will need it for OPA5*/
-                        if (!jQuery.isEmptyObject(oItem.context)) {
-                            for (var sModel in oItem.context) {
-                                for (var sAttribute in oItem.context[sModel]) {
-                                    if (typeof oItem.context[sModel][sAttribute] !== "object") {
-                                        aList.push({
-                                            type: "BDG",
-                                            typeTxt: "Context",
-                                            bdgPath: sModel + "/" + sAttribute,
-                                            attribute: sAttribute,
-                                            value: oItem.context[sModel][sAttribute],
-                                            importance: oItem.uniquness.context[sModel][sAttribute],
-                                            valueToString: oItem.context[sModel][sAttribute].toString ? oItem.context[sModel][sAttribute].toString() : oItem.context[sModel][sAttribute]
-                                        });
-                                    }
-                                }
-                            }
-                        }
-                        var oMerged = this._getMergedClassArray(oItem);
-                        this._oModel.setProperty("/element/itemCloned", oMerged.cloned);
-                        if (oMerged.cloned === true) {
-                            aList = aList.sort(function (aObj, bObj) {
-                                if (aObj.importance <= bObj.importance) {
-                                    return 1;
-                                }
-                                return -1;
-                            });
-                        }
-
-                        for (var i = 0; i < aList.length; i++) {
-                            aList[i].numberState = "Error";
-                            if (aList[i].importance >= 80) {
-                                aList[i].numberState = "Success";
-                            } else if (aList[i].importance >= 60) {
-                                aList[i].numberState = "Warning";
-                            }
-                        }
-                        if (aList.length > 0) {
-                            this._oModel.setProperty("/element/possibleContext", aList);
-                            this._oTableContext.removeSelections();
-                            this._oSelectDialog.setModel(this._oModel, "viewModel")
-                            this._oSelectDialog.open();
                         }
                     }
 
-                    resolve();
-                }.bind(this));
+                    // add information on properties
+                    if (!jQuery.isEmptyObject(oItem.property)) {
+                        for (var sAttr in oItem.property) {
+                            if (typeof oItem.property[sAttr] !== "object") {
+                                aList.push({
+                                    type: "ATTR",
+                                    typeTxt: "Property",
+                                    bdgPath: sAttr,
+                                    attribute: sAttr,
+                                    importance: oItem.uniquness.property[sAttr],
+                                    value: oItem.property[sAttr],
+                                    valueToString: oItem.property[sAttr].toString ? oItem.property[sAttr].toString() : oItem.property[sAttr]
+                                });
+                            }
+                        }
+                    }
+
+                    if (!jQuery.isEmptyObject(oItem.identifier)) {
+                        for (var sId in oItem.identifier) {
+                            if (typeof oItem.identifier[sId] !== "boolean") {
+                                aList.push({
+                                    type: "ID",
+                                    typeTxt: "Identifier",
+                                    bdgPath: sId,
+                                    attribute: sId,
+                                    importance: oItem.identifier.localIdClonedOrGenerated ? 50 : 100,
+                                    value: oItem.identifier[sId],
+                                    valueToString: oItem.identifier[sId].toString ? oItem.identifier[sId].toString() : oItem.identifier[sId]
+                                });
+                            }
+                        }
+                    }
+
+                    if (!jQuery.isEmptyObject(oItem.metadata)) {
+                        for (var sMeta in oItem.metadata) {
+                            if (typeof oItem.metadata[sMeta] !== "object") {
+                                aList.push({
+                                    type: "MTA",
+                                    typeTxt: "Metadata",
+                                    bdgPath: sMeta,
+                                    attribute: sMeta,
+                                    importance: 50,
+                                    value: oItem.metadata[sMeta],
+                                    valueToString: oItem.metadata[sMeta].toString ? oItem.metadata[sMeta].toString() : oItem.metadata[sMeta]
+                                });
+                            }
+                        }
+                    }
+
+                    if (!jQuery.isEmptyObject(oItem.viewProperty)) {
+                        for (var sView in oItem.viewProperty) {
+                            if (typeof oItem.viewProperty[sView] !== "object") {
+                                aList.push({
+                                    type: "VIW",
+                                    typeTxt: "View Data",
+                                    bdgPath: sView,
+                                    attribute: sView,
+                                    importance: 50,
+                                    value: oItem.viewProperty[sView],
+                                    valueToString: oItem.viewProperty[sView].toString ? oItem.viewProperty[sView].toString() : oItem.viewProperty[sView]
+                                });
+                            }
+                        }
+                    }
+
+                    if (!jQuery.isEmptyObject(oItem.aggregation)) {
+                        for (var sAgg in oItem.aggregation) {
+                            aList.push({
+                                type: "AGG",
+                                typeTxt: "Aggregation",
+                                bdgPath: sAgg,
+                                attribute: sAgg,
+                                importance: 50,
+                                value: 'length: ' + oItem.aggregation[sAgg].length,
+                                valueToString: 'length: ' + oItem.aggregation[sAgg].length
+                            });
+                        }
+                    }
+
+                    var oMerged = this._getMergedClassArray(oItem);
+                    this._oModel.setProperty("/element/itemCloned", oMerged.cloned);
+                    if (oMerged.cloned === true) {
+                        aList = aList.sort(function (aObj, bObj) {
+                            if (aObj.importance <= bObj.importance) {
+                                return 1;
+                            }
+                            return -1;
+                        });
+                    }
+
+                    for (var i = 0; i < aList.length; i++) {
+                        aList[i].numberState = "Error";
+                        if (aList[i].importance >= 80) {
+                            aList[i].numberState = "Success";
+                        } else if (aList[i].importance >= 60) {
+                            aList[i].numberState = "Warning";
+                        }
+                    }
+                    if (aList.length > 0) {
+                        this._oModel.setProperty("/element/possibleContext", aList);
+                        this._oTableContext.removeSelections();
+                        this._oSelectDialog.setModel(this._oModel, "viewModel")
+                        this._oSelectDialog.open();
+                    }
+                }
+
+                resolve();
             }.bind(this));
         },
 
@@ -828,7 +923,7 @@ sap.ui.define([
                 }
 
                 var aReturn = this._oModel.getProperty("/element/identifiedElements");
-                if (aReturn.length === 1 && bSufficientForStop === true) { // early exit if possible: the less attributes the better
+                if (!aReturn || (aReturn.length === 1 && bSufficientForStop === true)) { // early exit if possible: the less attributes the better
                     resolve();
                     return;
                 }
@@ -937,6 +1032,7 @@ sap.ui.define([
             }
 
             this._updatePreview();
+            this._validateSelectedItemNumber();
             this._check();
         },
 
@@ -951,8 +1047,8 @@ sap.ui.define([
 
             //check if the current criteraType value is valid - if yes, keep it, otherwise reset it..
             if (oAttribute.criteriaTypes.filter(function (e) {
-                return e.criteriaKey === oAttribute.criteriaType;
-            }).length === 0) {
+                    return e.criteriaKey === oAttribute.criteriaType;
+                }).length === 0) {
                 oAttribute.criteriaType = oAttribute.criteriaTypes[0].criteriaKey;
             }
 
@@ -975,8 +1071,8 @@ sap.ui.define([
             oAttribute.subCriteriaTypes = aSubCriteriaSettings;
             if (oAttribute.subCriteriaTypes.length > 0) {
                 if (oAttribute.subCriteriaTypes.filter(function (e) {
-                    return e.subCriteriaType === oAttribute.subCriteriaType;
-                }).length === 0) {
+                        return e.subCriteriaType === oAttribute.subCriteriaType;
+                    }).length === 0) {
                     oAttribute.subCriteriaType = oAttribute.subCriteriaTypes[0].subCriteriaType;
                 }
             } else {
@@ -1001,6 +1097,8 @@ sap.ui.define([
                 oAttribute.subCriteriaTypes[i].calculatedValueUnres = sStringUntrimmed;
                 oAttribute.subCriteriaTypes[i].calculatedValue = sStringTrimmed;
             }
+            //reset the criteriaValue because it can be false
+            oAttribute.criteriaValue = "";
 
             this._oModel.setProperty(oCtx.getPath(), oAttribute);
 
@@ -1041,13 +1139,14 @@ sap.ui.define([
                 var codeSettings = this.getModel('viewModel').getProperty('/codeSettings');
                 codeSettings.language = this.getModel('settings').getProperty('/settings/defaultLanguage');
                 codeSettings.execComponent = this.getOwnerComponent();
+                codeSettings.ui5Version = this.getModel('viewModel').getProperty('/ui5Version');
                 this.getModel("viewModel").setProperty("/code", CodeHelper.getItemCode(codeSettings, oElementFinal, this.getOwnerComponent()).join("\n").trim());
                 this._resumeBindings();
             }.bind(this));
         },
 
         /**
-         * 
+         *
          */
         _validateSelectedItemNumber: function () {
             return this._getMatchingElementCount().then(function (aElements) {
@@ -1080,7 +1179,7 @@ sap.ui.define([
         },
 
         /**
-         * 
+         *
          */
         _getMatchingElementCount: function () {
             var oDefinition = this._getSelectorDefinition(this._oModel.getProperty("/element"));
@@ -1230,6 +1329,8 @@ sap.ui.define([
                             onClose: function (oAction) {
                                 if (oAction === MessageBox.Action.OK) {
                                     resolve();
+                                } else {
+                                    reject();
                                 }
                             }
                         });
@@ -1320,7 +1421,7 @@ sap.ui.define([
 
                     // check whether a binding context is used
                     for (var i = 0; i < aAttributes.length; i++) {
-                        if (aAttributes[i].criteriaType === "BDG") {
+                        if (aAttributes[i].criteriaType === "BNDG") {
                             aMessages.push({
                                 type: "Information",
                                 title: "Binding context",
@@ -1399,13 +1500,9 @@ sap.ui.define([
                     // unlock view
                     this.getView().setBusy(false);
 
-                    // update found elements a last time before resolving as the element-specific messages are
-                    // attached to the identified elements and are not updated otherwise
-                    this._getMatchingElementCount().then(function () {
-                        resolve({
-                            rating: iGrade,
-                            messages: aMessages
-                        });
+                    resolve({
+                        rating: iGrade,
+                        messages: aMessages
                     });
 
                 }.bind(this));
@@ -1424,26 +1521,29 @@ sap.ui.define([
         _save: function () {
             return new Promise(function (resolve, reject) {
                 this._checkAndDisplay().then(function () {
-                    var oCurrentElement = this._oModel.getProperty("/element");
-                    this._adjustBeforeSaving(oCurrentElement).then(function (oElementFinal) {
+                        var oCurrentElement = this._oModel.getProperty("/element");
+                        this._adjustBeforeSaving(oCurrentElement).then(function (oElementFinal) {
 
-                        var aElements = RecordController.getInstance().getTestElements();
-                        if (RecordController.getInstance().isReplaying()) {
-                            aElements[this._sElementId] = oElementFinal;
-                        } else {
-                            aElements.push(oElementFinal);
-                        }
-                        RecordController.getInstance().setTestElements(aElements);
+                            var aElements = RecordController.getInstance().getTestElements();
+                            if (RecordController.getInstance().isReplaying()) {
+                                aElements[this._sElementId] = oElementFinal;
+                            } else {
+                                aElements.push(oElementFinal);
+                            }
+                            RecordController.getInstance().setTestElements(aElements);
 
-                        // execute test step now, but only if an action needs to be performed.
-                        // all other types do not need results (asserts and support assistant).
-                        if (oElementFinal.property.type === "ACT") {
-                            RecordController.getInstance().executeTestStep(oElementFinal).then(resolve);
-                        } else {
-                            resolve();
-                        }
-                    }.bind(this));
-                }.bind(this));
+                            // execute test step now, but only if an action needs to be performed.
+                            // all other types do not need results (asserts and support assistant).
+                            if (oElementFinal.property.type === "ACT") {
+                                RecordController.getInstance().executeTestStep(oElementFinal).then(resolve);
+                            } else {
+                                resolve();
+                            }
+                        }.bind(this));
+                    }.bind(this))
+                    .catch(function () {
+                        reject();
+                    });
             }.bind(this));
         },
 
@@ -1494,10 +1594,13 @@ sap.ui.define([
 
             if (bRecording) {
                 return ConnectionMessages.getWindowInfo(Connection.getInstance()).then(function (oData) {
+                    // update UI5 version for code generation (it's available in test steps already recorded)
+                    this.getModel('viewModel').setProperty('/codeSettings/ui5Version', oData.ui5Version);
+
                     oReturn.href = oData.url;
                     oReturn.hash = oData.hash;
                     return JSON.parse(JSON.stringify(oReturn));
-                });
+                }.bind(this));
             } else {
                 oReturn.href = oElement.href;
                 oReturn.hash = oElement.hash;
@@ -1530,8 +1633,8 @@ sap.ui.define([
                 //check if sIdChild is part of our current "domChildWith"
                 // eslint-disable-next-line no-loop-func
                 if (aRows.filter(function (e) {
-                    return e.domChildWith === sIdChild;
-                }).length === 0) {
+                        return e.domChildWith === sIdChild;
+                    }).length === 0) {
                     aRows.push({
                         text: aSubObjects[i].isInput === true ? "In Input-Field" : sIdChild,
                         domChildWith: sIdChild,
@@ -1549,8 +1652,8 @@ sap.ui.define([
 
             //check if the current value is fine..
             if (aRows.filter(function (e) {
-                return e.domChildWith === sDomChildWith;
-            }).length === 0) {
+                    return e.domChildWith === sDomChildWith;
+                }).length === 0) {
                 sDomChildWith = aRows.length >= 0 ? aRows[0].domChildWith : "";
                 this._oModel.setProperty("/element/property/domChildWith", sDomChildWith);
             }
@@ -1583,7 +1686,6 @@ sap.ui.define([
         },
 
         // #endregion
-
 
         // #region Miscellaneous
 
@@ -1679,9 +1781,8 @@ sap.ui.define([
 
             this._oSelectDialog = new sap.m.Dialog({
                 contentHeight: "75%",
-                contentWidth: "40%",
                 id: "tstDialog",
-                title: "Please specifiy a unique combination",
+                title: "Please specify a unique combination",
                 content: new sap.m.VBox({
                     items: [
                         new sap.m.SearchField({
@@ -1729,10 +1830,6 @@ sap.ui.define([
                     press: function () {
                         var aItems = this._oTableContext.getSelectedItems();
                         if (aItems && aItems.length) {
-                            Promise.all([
-                                this._updatePreview(),
-                                this._validateSelectedItemNumber()
-                            ]);
                             for (var j = 0; j < aItems.length; j++) {
                                 var oBndgCtxObj = aItems[j].getBindingContext("viewModel").getObject();
                                 this._add("/element/attributeFilter", {
@@ -1741,6 +1838,10 @@ sap.ui.define([
                                     subCriteriaType: oBndgCtxObj.bdgPath
                                 });
                             }
+                            Promise.all([
+                                this._updatePreview(),
+                                this._validateSelectedItemNumber()
+                            ]);
                         }
                         this._oSelectDialog.close();
                     }.bind(this)
@@ -1846,7 +1947,6 @@ sap.ui.define([
          *
          */
         _getClassArray: function (oItem) {
-            var oMetadata = oItem.classArray;
             var aReturn = [];
             for (var i = 0; i < oItem.classArray.length; i++) {
                 var sClassName = oItem.classArray[i].elementName;
@@ -1859,11 +1959,54 @@ sap.ui.define([
 
         // #endregion
 
+        // #region Formatters
+        /**
+         * Simple formatter function to check wether a requested item attribute is available or not.
+         *
+         * @param {string} sCriteriaKey the criteria to check
+         * @param {object} oItem the item to check
+         *
+         * @returns {boolean} true if present or not
+         */
+        checkCriteriaAppearance: function (sCriteriaKey, oItem) {
+            switch (sCriteriaKey) {
+                case "AGG":
+                    return oItem.aggregation && Object.keys(oItem.aggregation).length > 0;
+                case "ID":
+                    return oItem.identifier && Object.keys(oItem.identifier).length > 0;
+                case "MTA":
+                    return oItem.metadata && Object.keys(oItem.metadata).length > 0;
+                case "VIW":
+                    return oItem.viewProperty && Object.keys(oItem.viewProperty).length > 0;
+                case "BNDG":
+                    return oItem.binding && Object.keys(oItem.binding).length > 0;
+                case "ATTR":
+                    return oItem.property && Object.keys(oItem.property).length > 0;
+                default:
+                    return false;
+            }
+        },
+
+        /**
+         * 
+         */
+        getBindingValue: function (criteriaType, sSubCriteriaType, criteriaValue, oItem) {
+            if (criteriaType !== "BNDG") {
+                return "";
+            } else {
+                // extract property from subcriterion type as it is suffixed with a rolling index due to CompositeBindings
+                var sProperty = sSubCriteriaType.substr(0, sSubCriteriaType.indexOf("#"));
+                // get property value
+                return oItem.property[sProperty];
+            }
+        },
+
+        /**
+         * 
+         */
+        showAttributeAdder: function (sCriteriaType, sCriteriaValue) {
+            return sCriteriaType === 'BNDG' && sCriteriaValue.indexOf('i18n') < 0;
+        }
+        // //#endregion
     });
-
-
-
-
-
-
 });

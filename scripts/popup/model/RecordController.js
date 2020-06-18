@@ -129,8 +129,7 @@ sap.ui.define([
          */
         focusTargetWindow: function () {
             chrome.tabs.update(
-                Connection.getInstance().getConnectedTabId(),
-                {
+                Connection.getInstance().getConnectedTabId(), {
                     active: true
                 },
                 function (tab) {
@@ -195,8 +194,7 @@ sap.ui.define([
                         "\n" +
                         "Do you want to close the connected tab?\n" +
                         "\n" +
-                        "In any case, the connected tab is disconnected. You can start recording again where you left off after replaying all steps.",
-                        {
+                        "In any case, the connected tab is disconnected. You can start recording again where you left off after replaying all steps.", {
                             icon: MessageBox.Icon.QUESTION,
                             title: "Close current tab?",
                             actions: [MessageBox.Action.YES, MessageBox.Action.NO],
@@ -249,8 +247,7 @@ sap.ui.define([
 
             // send word to the injection that recording starts
             ConnectionMessages.startRecording(
-                Connection.getInstance(),
-                {
+                Connection.getInstance(), {
                     startImmediate: bStartForControl ? bStartForControl : false
                 }
             ).then(function () {
@@ -269,9 +266,9 @@ sap.ui.define([
                 // try and tell page about stopping recording
                 if (this.isInjected()) {
                     ConnectionMessages.stopRecording(Connection.getInstance())
-                    .then(function () {
-                        ConnectionMessages.unlockPage(Connection.getInstance());
-                    });
+                        .then(function () {
+                            ConnectionMessages.unlockPage(Connection.getInstance());
+                        });
                 }
 
                 // update internal state
@@ -607,7 +604,7 @@ sap.ui.define([
          * @private
          */
         _replayNextStepWithTimeout: function () {
-            var iReplayInterval = this._settingsModel.getProperty("/settings/defaultReplayInterval");
+            var iReplayInterval = parseInt(this._settingsModel.getProperty("/settings/defaultReplayInterval"), 10);
             this._oModel.setProperty("/replayInterval", iReplayInterval);
 
             if (this.isReplaying() && iReplayInterval !== 0) {
@@ -706,32 +703,32 @@ sap.ui.define([
                         resolve(oData);
                     });
                 } else
-                // asserts
-                if (oTestStep && oTestStep.property.type === "ASS") {
-                    ConnectionMessages.executeAssert(Connection.getInstance(), {
-                        element: oTestStep.selector.selectorAttributes,
-                        assert: oTestStep.assertion
-                    }).then(function (oData) {
-                        resolve(oData);
-                    });
-                } else
-                // support assistant
-                if (oTestStep && oTestStep.property.type === "SUP") {
-                    ConnectionMessages.runSupportAssistant(Connection.getInstance(), {
-                        component: oTestStep.item.metadata.componentName,
-                        rules: oTestStep.property.supportAssistant
-                    }).then(function (oData) {
-                        // store the result data within the test step so it can be retrieved later
-                        oTestStep.supportAssistantResult = oData;
-                        // resolve
-                        resolve(oData);
-                    });
-                } else { // everything else cannot be handled and is consequently returned right away
-                    resolve({
-                        result: "error",
-                        messages: []
-                    });
-                }
+                    // asserts
+                    if (oTestStep && oTestStep.property.type === "ASS") {
+                        ConnectionMessages.executeAssert(Connection.getInstance(), {
+                            element: oTestStep.selector.selectorAttributes,
+                            assert: oTestStep.assertion
+                        }).then(function (oData) {
+                            resolve(oData);
+                        });
+                    } else
+                        // support assistant
+                        if (oTestStep && oTestStep.property.type === "SUP") {
+                            ConnectionMessages.runSupportAssistant(Connection.getInstance(), {
+                                component: oTestStep.item.metadata.componentName,
+                                rules: oTestStep.property.supportAssistant
+                            }).then(function (oData) {
+                                // store the result data within the test step so it can be retrieved later
+                                oTestStep.supportAssistantResult = oData;
+                                // resolve
+                                resolve(oData);
+                            });
+                        } else { // everything else cannot be handled and is consequently returned right away
+                            resolve({
+                                result: "error",
+                                messages: []
+                            });
+                        }
 
             });
         }
