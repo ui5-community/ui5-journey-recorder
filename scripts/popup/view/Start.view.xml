@@ -38,12 +38,12 @@
                                 <Column>
                                     <Title text="{i18n>targetUrl}"/>
                                 </Column>
-                                <Column width="5rem" hAlign="Center">
+                                <Column width="6rem" hAlign="Center">
                                     <Title text="{i18n>showTab}"/>
                                 </Column>                                
-                                <Column width="5rem" hAlign="Center">
+                                <!-- <Column width="5rem" hAlign="Center">
                                     <Title text="{i18n>recordMockdata}"/>
-                                </Column>
+                                </Column> -->
                                
                             </columns>
                             <items>
@@ -52,7 +52,7 @@
                                         <core:Icon src="sap-icon://record" color="red"/>
                                         <Text text="{viewModel>url} (Tab ID {viewModel>id})"/>
                                         <Button icon="sap-icon://display" press="onDisplayPage"/>
-                                        <Button icon="sap-icon://database" press="onMockserver"/>
+                                        <!-- <Button icon="sap-icon://database" press="onMockserver"/> -->
                                     </cells>
                                 </ColumnListItem>
                             </items>
