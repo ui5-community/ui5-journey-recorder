@@ -37,6 +37,7 @@ sap.ui.define([
             this._aggCountMatcher = oOptions && oOptions.aggCount ? true : this._aggCountMatcher;
             this._pressAction = oOptions && oOptions.press ? true : this._pressAction;
             this._enterTextAction = oOptions && oOptions.enterText ? true : this._enterTextAction;
+            this._parentMatcher = oOptions && oOptions.parent ? true : this._parentMatcher;
 
             PageBuilder.prototype._adder.call(this, sType, oOptions);
 
@@ -84,6 +85,11 @@ sap.ui.define([
             if (this._attMatcher) {
                 oCode.add(',').addNewLine();
                 oCode.add(this._addAttributeMatcherFunction());
+            }
+
+            if (this._parentMatcher) {
+                oCode.add(',').addNewLine();
+                oCode.add(this._addParentMatcherFunction());
             }
 
             oCode.addNewLine();
@@ -143,6 +149,11 @@ sap.ui.define([
                 oEnterText.addTab(4).add('this._addI18NMatcher(actionObject.matchers, oActionProperties.i18n);').addNewLine();
                 oEnterText.addTab(3).add('}').addNewLine(2);
             }
+            if (this._actions.enterText.addParentMatcher) {
+                oEnterText.addTab(3).add('if (oActionProperties.parent && oActionProperties.parent.length > 0) {').addNewLine();
+                oEnterText.addTab(4).add('this._addI18NMatcher(actionObject.matchers, oActionProperties.parent);').addNewLine();
+                oEnterText.addTab(3).add('}').addNewLine(2);
+            }
             oEnterText.addTab(3).add('return this.waitFor(actionObject);').addNewLine();
             oEnterText.addTab(2).add('}');
             return oEnterText.toString();
@@ -179,6 +190,11 @@ sap.ui.define([
             if (this._actions.press.addI18NMatcher) {
                 oPress.addTab(3).add('if (oActionProperties.i18n && oActionProperties.i18n.length > 0) {').addNewLine();
                 oPress.addTab(4).add('this._addI18NMatcher(actionObject.matchers, oActionProperties.i18n);').addNewLine();
+                oPress.addTab(3).add('}').addNewLine(2);
+            }
+            if (this._actions.press.addParentMatcher) {
+                oPress.addTab(3).add('if (oActionProperties.parent && oActionProperties.parent.length > 0) {').addNewLine();
+                oPress.addTab(4).add('this._addI18NMatcher(actionObject.matchers, oActionProperties.parent);').addNewLine();
                 oPress.addTab(3).add('}').addNewLine(2);
             }
             oPress.addTab(3).add('return this.waitFor(actionObject);').addNewLine();
@@ -248,6 +264,11 @@ sap.ui.define([
                 oExists.addTab(4).add('this._addI18NMatcher(checkObject.matchers, oMatchProperties.i18n);').addNewLine();
                 oExists.addTab(3).add('}').addNewLine(2);
             }
+            if (this._assertions.exists.addParentMatcher) {
+                oExists.addTab(3).add('if (oMatchProperties.parent && oMatchProperties.parent.length > 0) {').addNewLine();
+                oExists.addTab(4).add('this._addParentMatcher(checkObject.matchers, oMatchProperties.parent);').addNewLine();
+                oExists.addTab(3).add('}').addNewLine(2);
+            }
             oExists.addTab(3).add('return this.waitFor(checkObject);').addNewLine();
             oExists.addTab(2).add('}');
 
@@ -271,19 +292,24 @@ sap.ui.define([
             oAttributes.addTab(4).add('checkObject.errorMessage = oOptions.errorMessage;').addNewLine();
             oAttributes.addTab(3).add('}').addNewLine(2);
             oAttributes.addTab(3).add('checkObject.matchers = [];').addNewLine(2);
-            if (this._assertions.exists.addAttributeMatcher) {
+            if (this._assertions.attributes.addAttributeMatcher) {
                 oAttributes.addTab(3).add('if(oMatchProperties.attributes && oMatchProperties.attributes.length > 0) {').addNewLine();
                 oAttributes.addTab(4).add('this._addAttributeMatcher(checkObject.matchers, oMatchProperties.attributes);').addNewLine();
                 oAttributes.addTab(3).add('}').addNewLine();
             }
-            if (this._assertions.exists.addBindingMatcher) {
+            if (this._assertions.attributes.addBindingMatcher) {
                 oAttributes.addTab(3).add('if (oMatchProperties.binding && oMatchProperties.binding.length > 0) {').addNewLine();
                 oAttributes.addTab(4).add('this._addBindingMatcher(checkObject.matchers, oMatchProperties.binding);').addNewLine();
                 oAttributes.addTab(3).add('}').addNewLine();
             }
-            if (this._assertions.exists.addI18NMatcher) {
+            if (this._assertions.attributes.addI18NMatcher) {
                 oAttributes.addTab(3).add('if (oMatchProperties.i18n && oMatchProperties.i18n.length > 0) {').addNewLine();
                 oAttributes.addTab(4).add('this._addI18NMatcher(checkObject.matchers, oMatchProperties.i18n);').addNewLine();
+                oAttributes.addTab(3).add('}').addNewLine(2);
+            }
+            if (this._assertions.attributes.addParentMatcher) {
+                oAttributes.addTab(3).add('if (oMatchProperties.parent && oMatchProperties.parent.length > 0) {').addNewLine();
+                oAttributes.addTab(4).add('this._addParentMatcher(checkObject.matchers, oMatchProperties.parent);').addNewLine();
                 oAttributes.addTab(3).add('}').addNewLine(2);
             }
             oAttributes.addTab(3).add('return this.waitFor(checkObject);').addNewLine();
@@ -309,19 +335,24 @@ sap.ui.define([
             oAggEmpty.addTab(4).add('checkObject.errorMessage = oOptions.errorMessage;').addNewLine();
             oAggEmpty.addTab(3).add('}').addNewLine(2);
             oAggEmpty.addTab(3).add('checkObject.matchers = [];').addNewLine(2);
-            if (this._assertions.exists.addAttributeMatcher) {
+            if (this._assertions.aggregationEmpty.addAttributeMatcher) {
                 oAggEmpty.addTab(3).add('if(oMatchProperties.attributes && oMatchProperties.attributes.length > 0) {').addNewLine();
                 oAggEmpty.addTab(4).add('this._addAttributeMatcher(checkObject.matchers, oMatchProperties.attributes);').addNewLine();
                 oAggEmpty.addTab(3).add('}').addNewLine();
             }
-            if (this._assertions.exists.addBindingMatcher) {
+            if (this._assertions.aggregationEmpty.addBindingMatcher) {
                 oAggEmpty.addTab(3).add('if (oMatchProperties.binding && oMatchProperties.binding.length > 0) {').addNewLine();
                 oAggEmpty.addTab(4).add('this._addBindingMatcher(checkObject.matchers, oMatchProperties.binding);').addNewLine();
                 oAggEmpty.addTab(3).add('}').addNewLine();
             }
-            if (this._assertions.exists.addI18NMatcher) {
+            if (this._assertions.aggregationEmpty.addI18NMatcher) {
                 oAggEmpty.addTab(3).add('if (oMatchProperties.i18n && oMatchProperties.i18n.length > 0) {').addNewLine();
                 oAggEmpty.addTab(4).add('this._addI18NMatcher(checkObject.matchers, oMatchProperties.i18n);').addNewLine();
+                oAggEmpty.addTab(3).add('}').addNewLine(2);
+            }
+            if (this._assertions.aggregationEmpty.addParentMatcher) {
+                oAggEmpty.addTab(3).add('if (oMatchProperties.parent && oMatchProperties.parent.length > 0) {').addNewLine();
+                oAggEmpty.addTab(4).add('this._addParentMatcher(checkObject.matchers, oMatchProperties.parent);').addNewLine();
                 oAggEmpty.addTab(3).add('}').addNewLine(2);
             }
             oAggEmpty.addTab(3).add('checkObject.matchers.push(').addNewLine();
@@ -351,19 +382,24 @@ sap.ui.define([
             oAggFilled.addTab(4).add('checkObject.errorMessage = oOptions.errorMessage;').addNewLine();
             oAggFilled.addTab(3).add('}').addNewLine(2);
             oAggFilled.addTab(3).add('checkObject.matchers = [];').addNewLine(2);
-            if (this._assertions.exists.addAttributeMatcher) {
+            if (this._assertions.aggregationFilled.addAttributeMatcher) {
                 oAggFilled.addTab(3).add('if(oMatchProperties.attributes && oMatchProperties.attributes.length > 0) {').addNewLine();
                 oAggFilled.addTab(4).add('this._addAttributeMatcher(checkObject.matchers, oMatchProperties.attributes);').addNewLine();
                 oAggFilled.addTab(3).add('}').addNewLine();
             }
-            if (this._assertions.exists.addBindingMatcher) {
+            if (this._assertions.aggregationFilled.addBindingMatcher) {
                 oAggFilled.addTab(3).add('if (oMatchProperties.binding && oMatchProperties.binding.length > 0) {').addNewLine();
                 oAggFilled.addTab(4).add('this._addBindingMatcher(checkObject.matchers, oMatchProperties.binding);').addNewLine();
                 oAggFilled.addTab(3).add('}').addNewLine();
             }
-            if (this._assertions.exists.addI18NMatcher) {
+            if (this._assertions.aggregationFilled.addI18NMatcher) {
                 oAggFilled.addTab(3).add('if (oMatchProperties.i18n && oMatchProperties.i18n.length > 0) {').addNewLine();
                 oAggFilled.addTab(4).add('this._addI18NMatcher(checkObject.matchers, oMatchProperties.i18n);').addNewLine();
+                oAggFilled.addTab(3).add('}').addNewLine(2);
+            }
+            if (this._assertions.aggregationFilled.addParentMatcher) {
+                oAggFilled.addTab(3).add('if (oMatchProperties.parent && oMatchProperties.parent.length > 0) {').addNewLine();
+                oAggFilled.addTab(4).add('this._addParentMatcher(checkObject.matchers, oMatchProperties.parent);').addNewLine();
                 oAggFilled.addTab(3).add('}').addNewLine(2);
             }
             oAggFilled.addTab(3).add('checkObject.matchers.push(').addNewLine();
@@ -393,19 +429,24 @@ sap.ui.define([
             oAggCount.addTab(4).add('checkObject.errorMessage = oOptions.errorMessage;').addNewLine();
             oAggCount.addTab(3).add('}').addNewLine(2);
             oAggCount.addTab(3).add('checkObject.matchers = [];').addNewLine(2);
-            if (this._assertions.exists.addAttributeMatcher) {
+            if (this._assertions.aggregationCount.addAttributeMatcher) {
                 oAggCount.addTab(3).add('if(oMatchProperties.attributes && oMatchProperties.attributes.length > 0) {').addNewLine();
                 oAggCount.addTab(4).add('this._addAttributeMatcher(checkObject.matchers, oMatchProperties.attributes);').addNewLine();
                 oAggCount.addTab(3).add('}').addNewLine();
             }
-            if (this._assertions.exists.addBindingMatcher) {
+            if (this._assertions.aggregationCount.addBindingMatcher) {
                 oAggCount.addTab(3).add('if (oMatchProperties.binding && oMatchProperties.binding.length > 0) {').addNewLine();
                 oAggCount.addTab(4).add('this._addBindingMatcher(checkObject.matchers, oMatchProperties.binding);').addNewLine();
                 oAggCount.addTab(3).add('}').addNewLine();
             }
-            if (this._assertions.exists.addI18NMatcher) {
+            if (this._assertions.aggregationCount.addI18NMatcher) {
                 oAggCount.addTab(3).add('if (oMatchProperties.i18n && oMatchProperties.i18n.length > 0) {').addNewLine();
                 oAggCount.addTab(4).add('this._addI18NMatcher(checkObject.matchers, oMatchProperties.i18n);').addNewLine();
+                oAggCount.addTab(3).add('}').addNewLine(2);
+            }
+            if (this._assertions.aggregationCount.addParentMatcher) {
+                oAggCount.addTab(3).add('if (oMatchProperties.parent && oMatchProperties.parent.length > 0) {').addNewLine();
+                oAggCount.addTab(4).add('this._addParentMatcher(checkObject.matchers, oMatchProperties.parent);').addNewLine();
                 oAggCount.addTab(3).add('}').addNewLine(2);
             }
             oAggCount.addTab(3).add('checkObject.matchers.push(').addNewLine();
@@ -497,6 +538,29 @@ sap.ui.define([
             oFunctCode.addTab(2).add('}').addNewLine();
             return oFunctCode.toString();
         },
+
+        /**
+         * 
+         */
+        _addParentMatcherFunction: function () {
+            var oParentCode = new StringBuilder();
+            oParentCode.addTab(2).add('_addParentMatcher: function(aMatchers, aParentInformations) {').addNewLine();
+            oParentCode.addTab(3).add('aParentInformations.forEach(function(par) {').addNewLine();
+            oParentCode.addTab(4).add('var oMatchProperties = {};').addNewLine();
+            oParentCode.addTab(4).add('if(par.id) {').addNewLine();
+            oParentCode.addTab(5).add('oMatchProperties.parentId = par.id;)').addNewLine();
+            oParentCode.addTab(4).add('}').addNewLine();
+            oParentCode.addTab(4).add('if(par.controlType) {').addNewLine();
+            oParentCode.addTab(5).add('oMatchProperties.parentClass = par.controlType;)').addNewLine();
+            oParentCode.addTab(4).add('}').addNewLine();
+            oParentCode.addTab(4).add('oMatchProperties.parentAttributes = par.attributes;)').addNewLine();
+            oParentCode.addTab(4).add('oMatchProperties.parentLevelAbove = par.levelAbove;)').addNewLine();
+            oParentCode.addTab(4).add('aMatchers.push(new ParentMatcher(oMatchProperties));').addNewLine();
+            oParentCode.addTab(3).add('});').addNewLine();
+            oParentCode.addTab(2).add('}').addNewLine();
+            return oParentCode.toString();
+
+        },
         //#endregion
 
         /**
@@ -540,6 +604,10 @@ sap.ui.define([
                 oDependencies.add(',').addNewLine();
                 oDependencies.addTab().add('"sap/ui/test/actions/Press"');
             }
+            if (this._parentMatcher) {
+                oDependencies.add(',').addNewLine();
+                oDependencies.addTab().add('"').add(this.__namespace.replace(/\./g, '/')).add('/<testPath>/customMatcher/ParentMatcher"');
+            }
 
             oDependencies.addNewLine();
             oDependencies.add('], function(Opa5, MockServer');
@@ -574,6 +642,10 @@ sap.ui.define([
 
             if (this._pressAction) {
                 oDependencies.add(', Press');
+            }
+
+            if (this._parentMatcher) {
+                oDependencies.add(', ParentMatcher');
             }
 
             oDependencies.add('){').addNewLine();

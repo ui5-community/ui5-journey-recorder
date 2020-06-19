@@ -192,15 +192,15 @@ sap.ui.define([
         }
 
         //check if a parent attribute is requested, therefore add the dependencies to the page
-        var aMatching = [...oTestStep.attributeFilter, ...oTestStep.assertFilter];
+        /* var aMatching = [...oTestStep.attributeFilter, ...oTestStep.assertFilter];
         var aResults = aMatching.filter(filter => filter.attributeType.indexOf('PRT') > -1);
         if (aResults.length > 0) {
             if (!this.__customMatcher.parent) {
-                this.__pages[viewName].addCustomMatcher('parent', true);
-                this.__commonPage.addCustomMatcher('parent', true);
+                this.__pages[viewName].addParentMatcher('parent', true);
+                this.__commonPage.addParentMatcher('parent', true);
                 this.__customMatcher.parent = new ParentMatcherBuilder(namespace);
             }
-        }
+        } */
 
         switch (oTestStep.property.type) {
             case "ACT":
@@ -515,6 +515,7 @@ sap.ui.define([
             }
             oSB.replace(/,\s*$/, '');
             oSB.add("]");
+            oReturn.parent = true;
         }
         oSB.replace(/,\s*$/, '');
         return oReturn;
@@ -550,36 +551,29 @@ sap.ui.define([
         var oAGGProp = oStep.assertion;
         var oAggregationCheck = new StringBuilder().addTab(2).add('Then.on').add(viewName);
 
-        if (oAGGProp.assertMatchingCount === 0) {
-            if (oStep.property && oStep.property.expectCount === 'EMPT') {
-                oAggregationCheck.add('.aggregationShouldBeEmpty({');
-            }
-            if (oStep.property && oStep.property.expectCount === 'FILL') {
-                oAggregationCheck.add('.aggregationShouldBeFilled({');
-            }
+        if (oAGGProp.assertMatchingCount === 0 && oStep.property && oStep.property.expectCount === 'EMPT') {
+            oAggregationCheck.add('.aggregationShouldBeEmpty({');
+        } else if (oAGGProp.assertMatchingCount === 0 && oStep.property && oStep.property.expectCount === 'FILL') {
+            oAggregationCheck.add('.aggregationShouldBeFilled({');
         } else {
             oAggregationCheck.add('.aggregationLengthShouldBe({');
         }
 
         var oUsedMatchers = this.__createObjectMatcherInfos(oStep, oAggregationCheck, oCodeSettings);
 
-        if (oAGGProp.assertMatchingCount === 0) {
-            if (oStep.property && oStep.property.expectCount === 'EMPT') {
-                this.__pages[viewName].addAggregationEmptyCheck(oUsedMatchers);
-                if (this.__commonPage) {
-                    this.__commonPage.addAggregationEmptyCheck({
-                        aggEmpty: true
-                    });
-                }
+        if (oAGGProp.assertMatchingCount === 0 && oStep.property && oStep.property.expectCount === 'EMPT') {
+            this.__pages[viewName].addAggregationEmptyCheck(oUsedMatchers);
+            if (this.__commonPage) {
+                this.__commonPage.addAggregationEmptyCheck({
+                    aggEmpty: true
+                });
             }
-
-            if (oStep.property && oStep.property.expectCount === 'FILL') {
-                this.__pages[viewName].addAggregationFilledCheck(oUsedMatchers);
-                if (this.__commonPage) {
-                    this.__commonPage.addAggregationFilledCheck({
-                        aggFilled: true
-                    });
-                }
+        } else if (oAGGProp.assertMatchingCount === 0 && oStep.property && oStep.property.expectCount === 'FILL') {
+            this.__pages[viewName].addAggregationFilledCheck(oUsedMatchers);
+            if (this.__commonPage) {
+                this.__commonPage.addAggregationFilledCheck({
+                    aggFilled: true
+                });
             }
         } else {
             this.__pages[viewName].addAggregationCountCheck(oUsedMatchers);
@@ -592,7 +586,7 @@ sap.ui.define([
 
         oAggregationCheck.add(', ');
 
-        if (oAGGProp.assertMatchingCount > 0) {
+        if (oStep.property && oStep.property.expectCount === 'EXAC') {
             oAggregationCheck.add('count: ').add(oAGGProp.assertMatchingCount).add(', ');
         }
 

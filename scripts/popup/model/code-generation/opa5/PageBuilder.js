@@ -22,13 +22,15 @@ sap.ui.define([
                     render: false,
                     addBindingMatcher: false,
                     addI18NMatcher: false,
-                    addAttributeMatcher: false
+                    addAttributeMatcher: false,
+                    addParentMatcher: false
                 },
                 enterText: {
                     render: false,
                     addBindingMatcher: false,
                     addI18NMatcher: false,
-                    addAttributeMatcher: false
+                    addAttributeMatcher: false,
+                    addParentMatcher: false
                 }
                 // additional feature later on could be Drag&Drop
             };
@@ -37,31 +39,36 @@ sap.ui.define([
                     render: false,
                     addBindingMatcher: false,
                     addI18NMatcher: false,
-                    addAttributeMatcher: false
+                    addAttributeMatcher: false,
+                    addParentMatcher: false
                 },
                 attributes: {
                     render: false,
                     addBindingMatcher: false,
                     addI18NMatcher: false,
-                    addAttributeMatcher: false
+                    addAttributeMatcher: false,
+                    addParentMatcher: false
                 },
                 aggregationEmpty: {
                     render: false,
                     addBindingMatcher: false,
                     addI18NMatcher: false,
-                    addAttributeMatcher: false
+                    addAttributeMatcher: false,
+                    addParentMatcher: false
                 },
                 aggregationFilled: {
                     render: false,
                     addBindingMatcher: false,
                     addI18NMatcher: false,
-                    addAttributeMatcher: false
+                    addAttributeMatcher: false,
+                    addParentMatcher: false
                 },
                 aggregationCount: {
                     render: false,
                     addBindingMatcher: false,
                     addI18NMatcher: false,
-                    addAttributeMatcher: false
+                    addAttributeMatcher: false,
+                    addParentMatcher: false
                 }
             };
             this._customMatchers = {
@@ -95,15 +102,15 @@ sap.ui.define([
                 this._actions[sType].addBindingMatcher = oOptions && oOptions.binding ? true : this._actions[sType].addBindingMatcher;
                 this._actions[sType].addI18NMatcher = oOptions && oOptions.i18n ? true : this._actions[sType].addI18NMatcher;
                 this._actions[sType].addAttributeMatcher = oOptions && oOptions.attribute ? true : this._actions[sType].addAttributeMatcher;
+                this._actions[sType].addParentMatcher = oOptions && oOptions.parent ? true : this._actions[sType].addParentMatcher;
+
             }
             if (Object.keys(this._assertions).includes(sType)) {
                 this._assertions[sType].render = true;
                 this._assertions[sType].addBindingMatcher = oOptions && oOptions.binding ? true : this._assertions[sType].addBindingMatcher;
                 this._assertions[sType].addI18NMatcher = oOptions && oOptions.i18n ? true : this._assertions[sType].addI18NMatcher;
                 this._assertions[sType].addAttributeMatcher = oOptions && oOptions.attribute ? true : this._assertions[sType].addAttributeMatcher;
-            }
-            if (Object.keys(this._customMatchers).includes(sType)) {
-                this._customMatchers[sType] = true;
+                this._assertions[sType].addParentMatcher = oOptions && oOptions.parent ? true : this._assertions[sType].addParentMatcher;
             }
             return this;
         },
@@ -204,20 +211,6 @@ sap.ui.define([
          */
         addAggregationCountCheck: function (oOptions) {
             return this._adder("aggregationCount", oOptions);
-        },
-
-        /**
-         *
-         *
-         * @param {map} [oOptions] additional informations
-         * @param {boolean} [oOptions.binding] add a binding matcher for selection
-         * @param {boolean} [oOptions.i18n] add an i18n matcher for selection
-         * @param {boolean} [oOptions.attribute] add an attribute matcher for selection
-         *
-         * @returns {com.ui5.testing.model.code-generation.opa5.PageBuilder} self reference for chaining
-         */
-        addCustomMatcher: function (sName, oOptions) {
-            return this._adder(sName, oOptions);
         },
 
         /**
