@@ -44,25 +44,6 @@ sap.ui.define([
         /**
          * 
          */
-        /* __enhanceDependencies: function () {
-            if (this._actions.press.render) {
-                this.__dependencies.push({
-                    asyncDep: 'sap/ui/test/actions/Press',
-                    paraDep: 'Press'
-                });
-            }
-
-            if (this._actions.enterText.render) {
-                this.__dependencies.push({
-                    asyncDep: 'sap/ui/test/actions/EnterText',
-                    paraDep: 'EnterText'
-                });
-            }
-        }, */
-
-        /**
-         * 
-         */
         __generatePageObjectsHeader: function () {
             var oPageHeader = new StringBuilder();
             var opa5Dependency = Object.values(this.__dependencies).filter(dep => dep.asyncDep === 'sap/ui/test/Opa5')[0].paraDep;

@@ -49,7 +49,7 @@ sap.ui.define([
             ],
             countType: [{
                     key: "FILL",
-                    text: "Just Filled"
+                    text: "Filled (At least one)"
                 },
                 {
                     key: "EMPT",

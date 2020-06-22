@@ -30,7 +30,7 @@ sap.ui.define([
         var aCodes = [];
         this.__commonPage = new CommonBuilder();
 
-        this.__namespace = this.__pages[Object.keys(this.__pages)[0]] ? this.__pages[Object.keys(this.__pages)[0]].getNamespace() : 'mock.namespace';
+        this.__namespace = this.__pages[Object.keys(this.__pages)[0]] ? this.__pages[Object.keys(this.__pages)[0]].getNamespace() : 'template';
 
         //(2) execute script
         this.__code.codeName = oCodeSettings.testName;
@@ -70,7 +70,7 @@ sap.ui.define([
             aCodes.push(oCode);
         }.bind(this));
 
-        /* Object.keys(this.__customMatcher).forEach(function (key) {
+        Object.keys(this.__customMatcher).forEach(function (key) {
             order = order++;
             var oCode = {
                 codeName: `${this.__capitalize(key)}Matcher`,
@@ -79,7 +79,7 @@ sap.ui.define([
                 code: this.__customMatcher[key].generate()
             };
             aCodes.push(oCode);
-        }.bind(this)); */
+        }.bind(this));
 
         aCodes.push({
             codeName: 'Common',
@@ -192,15 +192,15 @@ sap.ui.define([
         }
 
         //check if a parent attribute is requested, therefore add the dependencies to the page
-        var aMatching = [...oTestStep.attributeFilter, ...oTestStep.assertFilter];
+        /* var aMatching = [...oTestStep.attributeFilter, ...oTestStep.assertFilter];
         var aResults = aMatching.filter(filter => filter.attributeType.indexOf('PRT') > -1);
         if (aResults.length > 0) {
             if (!this.__customMatcher.parent) {
-                this.__pages[viewName].addCustomMatcher('parent', true);
-                this.__commonPage.addCustomMatcher('parent', true);
+                this.__pages[viewName].addParentMatcher('parent', true);
+                this.__commonPage.addParentMatcher('parent', true);
                 this.__customMatcher.parent = new ParentMatcherBuilder(namespace);
             }
-        }
+        } */
 
         switch (oTestStep.property.type) {
             case "ACT":
@@ -500,26 +500,36 @@ sap.ui.define([
                 if (parentMatcher[key][ItemConstants.ATTRIBUTE]) {
                     parentMatcher[key][ItemConstants.ATTRIBUTE] = [...new Set(parentMatcher[key][ItemConstants.ATTRIBUTE])];
                     oSB.add(", attributes: [").addMultiple(parentMatcher[key][ItemConstants.ATTRIBUTE]).add("]");
+                    oReturn.attribute = true;
                 }
 
                 if (parentMatcher[key][ItemConstants.BINDING]) {
                     parentMatcher[key][ItemConstants.BINDING] = [...new Set(parentMatcher[key][ItemConstants.BINDING])];
                     oSB.add(", binding: [").addMultiple(parentMatcher[key][ItemConstants.BINDING]).add("]");
+                    oReturn.binding = true;
                 }
 
                 if (parentMatcher[key][ItemConstants.I18N]) {
                     parentMatcher[key][ItemConstants.I18N] = [...new Set(parentMatcher[key][ItemConstants.I18N])];
                     oSB.add(", i18n: [").addMultiple(parentMatcher[key][ItemConstants.I18N]).add("]");
+                    oReturn.i18n = true;
                 }
                 oSB.add('}, ');
             }
+            oReturn.parent = true;
             oSB.replace(/,\s*$/, '');
             oSB.add("]");
         }
         oSB.replace(/,\s*$/, '');
+        if (oReturn.parent && !this.__customMatcher.parent) {
+            this.__customMatcher.parent = new ParentMatcherBuilder(this.__namespace);
+        }
         return oReturn;
     };
 
+    /**
+     * 
+     */
     OPA5CodeStrategy.prototype.__createAttrValue = function (oToken, objectMatcher) {
         var value = this.__code.constants.filter(function (c) {
                 if (typeof oToken.criteriaValue === "boolean") {
@@ -537,12 +547,11 @@ sap.ui.define([
             oToken.criteriaValue :
             this.__sanatize(oToken.criteriaValue.trim());
 
-        if (typeof value === 'object') {
-            //console.log('stringify object');
-        }
-        objectMatcher['ATTR'] ?
-            objectMatcher['ATTR'].push('{' + oToken.subCriteriaType + ': ' + value + '}') :
+        if (objectMatcher['ATTR']) {
+            objectMatcher['ATTR'].push('{' + oToken.subCriteriaType + ': ' + value + '}')
+        } else {
             objectMatcher['ATTR'] = ['{' + oToken.subCriteriaType + ': ' + value + '}'];
+        }
     };
 
     OPA5CodeStrategy.prototype.__createAggregationCheck = function (oStep, oCodeSettings) {
@@ -550,49 +559,39 @@ sap.ui.define([
         var oAGGProp = oStep.assertion;
         var oAggregationCheck = new StringBuilder().addTab(2).add('Then.on').add(viewName);
 
-        if (oAGGProp.assertMatchingCount === 0) {
-            if (oStep.property && oStep.property.expectCount === 'EMPT') {
-                oAggregationCheck.add('.aggregationShouldBeEmpty({');
-            }
-            if (oStep.property && oStep.property.expectCount === 'FILL') {
-                oAggregationCheck.add('.aggregationShouldBeFilled({');
-            }
+        if (oAGGProp.assertMatchingCount === 0 && oStep.property && oStep.property.expectCount === 'EMPT') {
+            oAggregationCheck.add('.aggregationShouldBeEmpty({');
+        } else if (oAGGProp.assertMatchingCount === 0 && oStep.property && oStep.property.expectCount === 'FILL') {
+            oAggregationCheck.add('.aggregationShouldBeFilled({');
         } else {
             oAggregationCheck.add('.aggregationLengthShouldBe({');
         }
 
         var oUsedMatchers = this.__createObjectMatcherInfos(oStep, oAggregationCheck, oCodeSettings);
 
-        if (oAGGProp.assertMatchingCount === 0) {
-            if (oStep.property && oStep.property.expectCount === 'EMPT') {
-                this.__pages[viewName].addAggregationEmptyCheck(oUsedMatchers);
-                if (this.__commonPage) {
-                    this.__commonPage.addAggregationEmptyCheck({
-                        aggEmpty: true
-                    });
-                }
+        if (oAGGProp.assertMatchingCount === 0 && oStep.property && oStep.property.expectCount === 'EMPT') {
+            this.__pages[viewName].addAggregationEmptyCheck(oUsedMatchers);
+            oUsedMatchers.aggEmpty = true;
+            if (this.__commonPage) {
+                this.__commonPage.addAggregationEmptyCheck(oUsedMatchers);
             }
-
-            if (oStep.property && oStep.property.expectCount === 'FILL') {
-                this.__pages[viewName].addAggregationFilledCheck(oUsedMatchers);
-                if (this.__commonPage) {
-                    this.__commonPage.addAggregationFilledCheck({
-                        aggFilled: true
-                    });
-                }
+        } else if (oAGGProp.assertMatchingCount === 0 && oStep.property && oStep.property.expectCount === 'FILL') {
+            this.__pages[viewName].addAggregationFilledCheck(oUsedMatchers);
+            oUsedMatchers.aggFilled = true;
+            if (this.__commonPage) {
+                this.__commonPage.addAggregationFilledCheck(oUsedMatchers);
             }
         } else {
             this.__pages[viewName].addAggregationCountCheck(oUsedMatchers);
+            oUsedMatchers.aggCount = true;
             if (this.__commonPage) {
-                this.__commonPage.addAggregationCountCheck({
-                    aggCount: true
-                });
+                this.__commonPage.addAggregationCountCheck(oUsedMatchers);
             }
         }
 
         oAggregationCheck.add(', ');
 
-        if (oAGGProp.assertMatchingCount > 0) {
+        if (oStep.property && oStep.property.expectCount === 'EXAC') {
             oAggregationCheck.add('count: ').add(oAGGProp.assertMatchingCount).add(', ');
         }
 

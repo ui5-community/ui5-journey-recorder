@@ -25,7 +25,7 @@ sap.ui.define(["sap/ui/base/Object"],
              * @returns {com.ui5.testing.util.StringBuilder} self reference for chaining
              */
             add: function (sString) {
-                if (sString) {
+                if (typeof sString !== "undefined" && sString !== "") {
                     //added "" + just to ensure it is a string for further actions
                     this._aParts.push("" + sString);
                 }

@@ -364,6 +364,7 @@ sap.ui.define([
             } else {
                 this._oModel.setProperty('/element/property/assKeyMatchingCount', 0);
             }
+            this._updatePreview();
         },
 
         /**
@@ -1819,33 +1820,48 @@ sap.ui.define([
                         this._oTableContext
                     ]
                 }),
-                beginButton: new sap.m.Button({
-                    text: 'Close',
-                    press: function () {
-                        this._oSelectDialog.close();
-                    }.bind(this)
-                }),
-                endButton: new sap.m.Button({
-                    text: 'Save',
-                    press: function () {
-                        var aItems = this._oTableContext.getSelectedItems();
-                        if (aItems && aItems.length) {
-                            for (var j = 0; j < aItems.length; j++) {
-                                var oBndgCtxObj = aItems[j].getBindingContext("viewModel").getObject();
-                                this._add("/element/attributeFilter", {
-                                    attributeType: "OWN",
-                                    criteriaType: oBndgCtxObj.type,
-                                    subCriteriaType: oBndgCtxObj.bdgPath
-                                });
+                buttons: [
+                    new sap.m.Button({
+                        text: 'Close',
+                        press: function () {
+                            this._oSelectDialog.close();
+                        }.bind(this)
+                    }), new sap.m.Button({
+                        text: 'Save',
+                        press: function () {
+                            var aItems = this._oTableContext.getSelectedItems();
+                            if (aItems && aItems.length) {
+                                for (var j = 0; j < aItems.length; j++) {
+                                    var oBndgCtxObj = aItems[j].getBindingContext("viewModel").getObject();
+                                    this._add("/element/attributeFilter", {
+                                        attributeType: "OWN",
+                                        criteriaType: oBndgCtxObj.type,
+                                        subCriteriaType: oBndgCtxObj.bdgPath
+                                    });
+                                }
+                                Promise.all([
+                                    this._updatePreview(),
+                                    this._validateSelectedItemNumber()
+                                ]);
                             }
+                            this._oSelectDialog.close();
+                        }.bind(this)
+                    }), new sap.m.Button({
+                        text: 'Create Empty',
+                        press: function () {
+                            this._add("/element/attributeFilter", {
+                                attributeType: "OWN",
+                                criteriaType: 'MTA',
+                                subCriteriaType: 'ELM'
+                            });
                             Promise.all([
                                 this._updatePreview(),
                                 this._validateSelectedItemNumber()
                             ]);
-                        }
-                        this._oSelectDialog.close();
-                    }.bind(this)
-                })
+                            this._oSelectDialog.close();
+                        }.bind(this)
+                    })
+                ]
             });
 
             this._oSelectDialog.addStyleClass("sapUiSizeCompact");
