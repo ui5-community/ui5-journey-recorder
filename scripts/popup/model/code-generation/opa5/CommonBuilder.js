@@ -13,6 +13,7 @@ sap.ui.define([
             this._bindMatcher = false;
             this._i18nMatcher = false;
             this._attMatcher = false;
+            this._parentMatcher = false;
         },
 
         /**
@@ -496,7 +497,7 @@ sap.ui.define([
             oFunctCode.addTab(4).add('}').addNewLine();
             oFunctCode.addTab(4).add('aMatchers.push(new BindingPath(oBindObject));').addNewLine();
             oFunctCode.addTab(3).add('});').addNewLine();
-            oFunctCode.addTab(2).add('}').addNewLine();
+            oFunctCode.addTab(2).add('}');
             return oFunctCode.toString();
         },
 
@@ -519,7 +520,7 @@ sap.ui.define([
             oFunctCode.addTab(4).add('}').addNewLine();
             oFunctCode.addTab(4).add('aMatchers.push(new I18NText(oBindObject));').addNewLine();
             oFunctCode.addTab(3).add('});').addNewLine();
-            oFunctCode.addTab(2).add('}').addNewLine();
+            oFunctCode.addTab(2).add('}');
             return oFunctCode.toString();
         },
 
@@ -535,7 +536,7 @@ sap.ui.define([
             oFunctCode.addTab(5).add('value: Object.values(el)[0]').addNewLine();
             oFunctCode.addTab(4).add('}));').addNewLine();
             oFunctCode.addTab(3).add('});').addNewLine();
-            oFunctCode.addTab(2).add('}').addNewLine();
+            oFunctCode.addTab(2).add('}');
             return oFunctCode.toString();
         },
 
@@ -548,16 +549,16 @@ sap.ui.define([
             oParentCode.addTab(3).add('aParentInformations.forEach(function(par) {').addNewLine();
             oParentCode.addTab(4).add('var oMatchProperties = {};').addNewLine();
             oParentCode.addTab(4).add('if(par.id) {').addNewLine();
-            oParentCode.addTab(5).add('oMatchProperties.parentId = par.id;)').addNewLine();
+            oParentCode.addTab(5).add('oMatchProperties.parentId = par.id;').addNewLine();
             oParentCode.addTab(4).add('}').addNewLine();
             oParentCode.addTab(4).add('if(par.controlType) {').addNewLine();
-            oParentCode.addTab(5).add('oMatchProperties.parentClass = par.controlType;)').addNewLine();
+            oParentCode.addTab(5).add('oMatchProperties.parentClass = par.controlType;').addNewLine();
             oParentCode.addTab(4).add('}').addNewLine();
-            oParentCode.addTab(4).add('oMatchProperties.parentAttributes = par.attributes;)').addNewLine();
-            oParentCode.addTab(4).add('oMatchProperties.parentLevelAbove = par.levelAbove;)').addNewLine();
+            oParentCode.addTab(4).add('oMatchProperties.parentAttributes = par.attributes;').addNewLine();
+            oParentCode.addTab(4).add('oMatchProperties.parentLevelAbove = par.levelAbove;').addNewLine();
             oParentCode.addTab(4).add('aMatchers.push(new ParentMatcher(oMatchProperties));').addNewLine();
             oParentCode.addTab(3).add('});').addNewLine();
-            oParentCode.addTab(2).add('}').addNewLine();
+            oParentCode.addTab(2).add('}');
             return oParentCode.toString();
 
         },
