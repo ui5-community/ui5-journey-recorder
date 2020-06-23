@@ -1,9 +1,9 @@
 <mvc:View xmlns="sap.m" xmlns:f="sap.f" xmlns:mvc="sap.ui.core.mvc" controllerName="com.ui5.testing.controller.Mockdata">
     <f:DynamicPage headerExpanded="{/headerExpanded}" toggleHeaderOnTitleClick="{/titleClickable}">
-        <f:title>
+        <!-- <f:title>
             <f:DynamicPageTitle>
             </f:DynamicPageTitle>
-        </f:title>
+        </f:title> -->
         <!-- DynamicPage Header -->
         <f:header>
             <f:DynamicPageHeader pinnable="true">
@@ -11,19 +11,22 @@
             </f:DynamicPageHeader>
         </f:header>
         <f:content>
-            <IconTabBar class="sapUiResponsiveContentPadding">
+            <IconTabBar class="sapUiResponsiveContentPadding" showOverflowSelectList="true" expanded="true" items="{mockdataModel>/eSets}" expandable="false">
                 <items>
-                    <IconTabFilter text="Info">
-                        <Text text="Info content goes here ..." />
-                    </IconTabFilter>
-                    <IconTabFilter text="Attachments">
-                        <Text text="Attachments go here ..." />
-                    </IconTabFilter>
-                    <IconTabFilter text="Notes">
-                        <Text text="Notes go here ..." />
-                    </IconTabFilter>
-                    <IconTabFilter text="People">
-                        <Text text="People content goes here ..." />
+                    <IconTabFilter text="{mockdataModel>name}">
+                        <Table columns="{mockdataModel>lineType/properties}">
+                            <headerToolbar>
+                                <OverflowToolbar>
+                                    <ToolbarSpacer/>
+                                    <Button icon="sap-icon://add" press="addLine"/>
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column>
+                                    <Label text="{mockdataModel>name}" design="{path: 'mockdataModel>isKey', formatter: '.checkForKey'}"/>
+                                </Column>
+                            </columns>
+                        </Table>
                     </IconTabFilter>
                 </items>
             </IconTabBar>
