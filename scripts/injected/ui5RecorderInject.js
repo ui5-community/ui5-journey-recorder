@@ -156,19 +156,26 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
 
     TestHandler.prototype._getDataModelInformation = function () {
         return new Promise(function (resolve, reject) {
-            var oCoreObject = null;
-            var fakePlugin = {
-                startPlugin: function (core) {
-                    oCoreObject = core;
-                    return core;
-                }
-            };
-            sap.ui.getCore().registerPlugin(fakePlugin);
-            sap.ui.getCore().unregisterPlugin(fakePlugin);
+
+            var aComponents = [];
+            if (sap.ui.core.Component && sap.ui.core.Component.registry) {
+                aComponents = sap.ui.core.Component.registry.all();
+            } else {
+                var oCoreObject = null;
+                var fakePlugin = {
+                    startPlugin: function (core) {
+                        oCoreObject = core;
+                        return core;
+                    }
+                };
+                sap.ui.getCore().registerPlugin(fakePlugin);
+                sap.ui.getCore().unregisterPlugin(fakePlugin);
+                aComponents = oCoreObject.mObjects.component;
+            }
 
             var oReturn = {};
-            for (var sComponent in oCoreObject.mObjects.component) {
-                var oComponent = oCoreObject.mObjects.component[sComponent];
+            for (var sComponent in aComponents) {
+                var oComponent = aComponents[sComponent];
                 var oManifest = oComponent.getManifest();
                 if (oManifest && oManifest["sap.app"]) {
                     var oApp = oManifest["sap.app"];
@@ -747,7 +754,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                 /*@Adrian - Start				
                 //we are > 0 - our uniquness is 0, as bindings as MOST CERTAINLY not done per item (but globally)
                 iUniqueness = 0;
-				  @Adrian - End */
+                  @Adrian - End */
                 /*@Adrian - Start*/
                 //we are > 0 - our uniquness is 0, our binding will contain a primary key for the list binding
                 if (oObjectBndngs[sAttr]._totalAmount === oObjectBndngs[sAttr]._differentValues) {
@@ -1138,7 +1145,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             }.bind(this));
 
             //avoid closing any popups.. this is an extremly dirty hack
-            if(sap.ui.core.Popup) {
+            if (sap.ui.core.Popup) {
                 var fnOldEvent = sap.ui.core.Popup.prototype.onFocusEvent;
                 sap.ui.core.Popup.prototype.onFocusEvent = function (oBrowserEvent) {
                     if (that._bActive === false) {
@@ -1336,17 +1343,17 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             },
             "sap.m.SearchField": {
                 defaultAction: [{
-                        domChildWith: "-search",
-                        action: "PRS"
-                    },
-                    {
-                        domChildWith: "-reset",
-                        action: "PRS"
-                    },
-                    {
-                        domChildWith: "",
-                        action: "TYP"
-                    }
+                    domChildWith: "-search",
+                    action: "PRS"
+                },
+                {
+                    domChildWith: "-reset",
+                    action: "PRS"
+                },
+                {
+                    domChildWith: "",
+                    action: "TYP"
+                }
                 ]
             }
         };
@@ -1372,20 +1379,20 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                 return [];
             }
 
-            var oCoreObject = null;
-            var fakePlugin = {
-                startPlugin: function (core) {
-                    oCoreObject = core;
-                    return core;
-                }
-            };
-            sap.ui.getCore().registerPlugin(fakePlugin);
-            sap.ui.getCore().unregisterPlugin(fakePlugin);
-
             var aElements = {};
             if (sap.ui.core.Element && sap.ui.core.Element.registry) {
                 aElements = sap.ui.core.Element.registry.all();
             } else {
+                var oCoreObject = null;
+                var fakePlugin = {
+                    startPlugin: function (core) {
+                        oCoreObject = core;
+                        return core;
+                    }
+                };
+                sap.ui.getCore().registerPlugin(fakePlugin);
+                sap.ui.getCore().unregisterPlugin(fakePlugin);
+
                 aElements = oCoreObject.mElements;
             }
 
@@ -1550,20 +1557,6 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         }
 
         //(2) no custom data? search for special cases
-        //2.1: Multi-Combo-Box
-        //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-        /*@Adrian - Start
-        var oPrt = _getParentWithDom(oItem, 3);
-        if (oPrt && oPrt.getMetadata().getElementName() === "sap.m.MultiComboBox") {
-            if (oPrt._getItemByListItem) {
-                var oCtrl = oPrt._getItemByListItem(oItem);
-                if (oCtrl) {
-                    return oCtrl;
-                }
-            }
-        }
-		  @Adrian - End*/
-        /*@Adrian - Start*/
         var iIndex = 1;
         var oPrt = oItem;
         while (oPrt) {
@@ -1572,7 +1565,8 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             if (iIndex > 100) { //avoid endless loop..
                 return null;
             }
-            if (oPrt && oPrt.getMetadata().getElementName() === "sap.m.MultiComboBox") {
+            var sElementName = oPrt.getMetadata().getElementName();
+            if (oPrt && (sElementName === "sap.m.MultiComboBox" || sElementName === "sap.m.ComboBox")) {
                 if (oPrt._getItemByListItem) {
                     var oCtrl = oPrt._getItemByListItem(oItem);
                     if (oCtrl) {
@@ -1582,7 +1576,6 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             }
         }
         return null;
-        /*@Adrian - End*/
     };
 
     //on purpose implemented as local methods
@@ -1618,20 +1611,20 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             return oTestGlobalBuffer.label;
         }
         oTestGlobalBuffer.label = {};
-        var oCoreObject = null;
-        var fakePlugin = {
-            startPlugin: function (core) {
-                oCoreObject = core;
-                return core;
-            }
-        };
-        sap.ui.getCore().registerPlugin(fakePlugin);
-        sap.ui.getCore().unregisterPlugin(fakePlugin);
-
         var aElements = {};
         if (sap.ui.core.Element && sap.ui.core.Element.registry) {
             aElements = sap.ui.core.Element.registry.all();
         } else {
+            var oCoreObject = null;
+            var fakePlugin = {
+                startPlugin: function (core) {
+                    oCoreObject = core;
+                    return core;
+                }
+            };
+            sap.ui.getCore().registerPlugin(fakePlugin);
+            sap.ui.getCore().unregisterPlugin(fakePlugin);
+
             aElements = oCoreObject.mElements;
         }
 
@@ -1789,7 +1782,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             for (var sBinding in id.binding) {
                 //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 /*@Adrian - Start
-        		var oAggrInfo = oItem.getBindingInfo(sBinding);
+                var oAggrInfo = oItem.getBindingInfo(sBinding);
                 if (!oAggrInfo) {
                     //SPECIAL CASE for sap.m.Label in Forms, where the label is actually bound against the parent element (yay)
                   @Adrian - End*/
@@ -1813,7 +1806,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                     }
                     //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                     /*@Adrian - Start
-        		} else {
+                } else {
                     var oBinding = oItem.getBinding(sBinding);
                     if (!oBinding) {
                         if (oAggrInfo.path !== id.binding[sBinding].path) {

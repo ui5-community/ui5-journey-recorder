@@ -310,8 +310,8 @@ sap.ui.define([
                     return aReturn;
                 }.bind(this)
             },
-			//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-			/*@Adrian - Start
+            //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+            /*@Adrian - Start
             "MODL": {
                 criteriaKey: "MODL",
                 criteriaText: "Model-Keys (Specific)",
@@ -370,8 +370,8 @@ sap.ui.define([
                     return aReturn;
                 }
             },
-            @Adrian - End*/            
-            
+            @Adrian - End*/
+
             "BNDX": {
                 criteriaKey: "BNDX",
                 //criteriaText: "Binding Context",
@@ -454,7 +454,7 @@ sap.ui.define([
                     return aReturn;
                 }.bind(this)
             },
-            
+
             "ATTR": {
                 criteriaKey: "ATTR",
                 criteriaText: "Attributes",
@@ -503,7 +503,7 @@ sap.ui.define([
                 getItem: function (oItem) { return oItem; },
                 getScope: function (oScope) { return oScope; },
                 getAssertScope: function () { return ""; },
-            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["MODL"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["VIW"]]
             },
@@ -511,7 +511,7 @@ sap.ui.define([
                 getItem: function (oItem) { return oItem.view; },
                 getScope: function (oScope) { oScope.view = oScope.view ? oScope.view : {}; return oScope.view; },
                 getAssertScope: function () { return "view."; },
-            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
@@ -519,8 +519,8 @@ sap.ui.define([
                 getItem: function (oItem) { return oItem.parent; },
                 getAssertScope: function () { return "parent."; },
                 getScope: function (oScope) { oScope.parent = oScope.parent ? oScope.parent : {}; return oScope.parent; },
-                
-            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+
+                //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
@@ -528,8 +528,8 @@ sap.ui.define([
                 getItem: function (oItem) { return oItem.parentL2; },
                 getAssertScope: function () { return "parentL2."; },
                 getScope: function (oScope) { oScope.parentL2 = oScope.parentL2 ? oScope.parentL2 : {}; return oScope.parentL2; },
-                
-            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+
+                //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
@@ -537,8 +537,8 @@ sap.ui.define([
                 getItem: function (oItem) { return oItem.parentL3; },
                 getAssertScope: function () { return "parentL3."; },
                 getScope: function (oScope) { oScope.parentL3 = oScope.parentL3 ? oScope.parentL3 : {}; return oScope.parentL3; },
-                
-            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+
+                //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
@@ -546,8 +546,8 @@ sap.ui.define([
                 getItem: function (oItem) { return oItem.parentL4; },
                 getAssertScope: function () { return "parentL4."; },
                 getScope: function (oScope) { oScope.parentL4 = oScope.parentL4 ? oScope.parentL4 : {}; return oScope.parentL4; },
-                
-            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+
+                //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
@@ -555,8 +555,8 @@ sap.ui.define([
                 getItem: function (oItem) { return oItem.label; },
                 getAssertScope: function () { return "label."; },
                 getScope: function (oScope) { oScope.label = oScope.label ? oScope.label : {}; return oScope.label; },
-                
-            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+
+                //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
@@ -566,8 +566,8 @@ sap.ui.define([
                 },
                 getScope: function (oScope) { oScope.itemdata = oScope.itemdata ? oScope.itemdata : {}; return oScope.itemdata; },
                 getAssertScope: function () { return "itemdata."; },
-                
-            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+
+                //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             }
@@ -576,7 +576,7 @@ sap.ui.define([
         this._oElementMix = {
             "sap.m.StandardListItem": {
                 defaultAttributes: function (oItem) {
-	            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                    //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                     if (!oItem.itemdata || !oItem.itemdata.identifier || !oItem.itemdata.identifier.ui5Id) {
                         return [];
                     }
@@ -636,13 +636,13 @@ sap.ui.define([
             "sap.ui.core.Item": {
                 cloned: true,
                 defaultAttributes: function (oItem) {
-	            	//@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+                    //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                     //return [{ attributeType: "OWN", criteriaType: "ATTR", subCriteriaType: "key" }];
                     //the KEY attribute is better in case the item is bound against a JSON list binding..
                     var bPropertyIsBetter = true;
                     if (oItem.binding.key) {
                         //for odata we will access the actual key...
-                        if (oItem.binding.key.jsonBinding === false ) {
+                        if (oItem.binding.key.jsonBinding === false) {
                             bPropertyIsBetter = false;
                         }
                     }
@@ -672,7 +672,7 @@ sap.ui.define([
             "sap.m.GenericTile": {
                 defaultAction: "PRS",
                 defaultAttributes: [{ attributeType: "PRT2", criteriaType: "ATTR", subCriteriaType: "target" },
-                    { attributeType: "PRT2", criteriaType: "MTA", subCriteriaType: "ELM" }]
+                { attributeType: "PRT2", criteriaType: "MTA", subCriteriaType: "ELM" }]
             },
             "sap.m.MultiComboBox": {
                 defaultAction: "PRS",
