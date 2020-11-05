@@ -51,16 +51,17 @@
                     document.dispatchEvent(new CustomEvent('do-ui5-init'));
                 };
 
-                var head = document.head;
+                //identify tab to go into..
+                /*
                 var link = document.createElement('link');
                 link.id = "testing_ui5";
                 link.rel = 'stylesheet';
                 link.type = 'text/css';
                 link.href = chrome.extension.getURL('/scripts/injected/style.css');
-                link.media = 'all';
-
+                link.media = 'all';*/
+                var head = document.head;
                 head.appendChild(script);
-                head.appendChild(link);
+                //head.appendChild(link);
 
                 document.addEventListener('do-ui5-ok', function (oXMLEvent) {
                     if (!oXMLEvent.detail.ok) {

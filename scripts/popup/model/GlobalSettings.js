@@ -28,51 +28,53 @@ sap.ui.define([
                     key: "FIORI",
                     text: "Fiori Launchpad"
                 }],
-                codeLanguages: [
-                    {
-                        key: "UI5",
-                        text: "UIVeri5"
-                    },
-                    {
-                        key: "TCF",
-                        text: "Testcafe"
-                    },
-                    {
-                        key: "OPA",
-                        text: "OPA5"
-                    }/*,
-                    {
-                        key: "NAT",
-                        text: "Natural (Experimental)"
-                    }*/
+                codeLanguages: [{
+                    key: "UI5",
+                    text: "UIVeri5"
+                },
+                {
+                    key: "TCF_B",
+                    text: "Testcafe (Builder)"
+                },
+                {
+                    key: "TCF",
+                    text: "Testcafe (JSON)"
+                },
+                {
+                    key: "OPA",
+                    text: "OPA5"
+                }
+                    /*,
+                                        {
+                                            key: "NAT",
+                                            text: "Natural (Experimental)"
+                                        }*/
                 ],
-                naturalLanguages: [
-                    {
-                        key: "EN",
-                        text: "English"
-                    },
-                    {
-                        key: "DE",
-                        text: "German"
-                    }
+                naturalLanguages: [{
+                    key: "EN",
+                    text: "English"
+                },
+                {
+                    key: "DE",
+                    text: "German"
+                }
                 ],
-                replayModes: [
-                    {
-                        key: 0,
-                        mode: "Manual"
-                    },
-                    {
-                        key: 4,
-                        mode: "Slow (2 sec.)"
-                    },
-                    {
-                        key: 2,
-                        mode: "Medium (1 sec.)"
-                    },
-                    {
-                        key: 1,
-                        mode: "Fast (0.5 sec.)"
-                    }
+                replayModes: [{
+                    key: 0,
+                    mode: "Manual"
+                },
+                {
+                    key: 4,
+                    mode: "Slow (2 sec.)"
+                },
+                {
+                    key: 2,
+                    mode: "Medium (1 sec.)"
+                },
+                {
+                    key: 1,
+                    mode: "Fast (0.5 sec.)"
+                }
                 ]
             };
             this._oModel = new JSONModel(oJSON);
@@ -98,8 +100,9 @@ sap.ui.define([
 
     GlobalSettings.prototype.save = function () {
         var oData = this._oModel.getProperty("/settings");
-        chrome.storage.local.set({ "settings": oData }, function (data) {
-        });
+        chrome.storage.local.set({
+            "settings": oData
+        }, function (data) { });
     };
 
     GlobalSettings.prototype.getCriteriaTypes = function () {
@@ -128,7 +131,11 @@ sap.ui.define([
                             return oItem.identifier.ui5Id;
                         },
                         code: function (sValue) {
-                            return { identifier: { ui5Id: sValue } };
+                            return {
+                                identifier: {
+                                    ui5Id: sValue
+                                }
+                            };
                         },
                         getUi5Spec: function (oAdjust, oItem, iValue) {
                             iValue = typeof iValue === "undefined" ? this.value(oItem) : iValue;
@@ -147,7 +154,11 @@ sap.ui.define([
                             return oItem.identifier.ui5LocalId;
                         },
                         code: function (sValue) {
-                            return { identifier: { ui5LocalId: sValue } };
+                            return {
+                                identifier: {
+                                    ui5LocalId: sValue
+                                }
+                            };
                         },
                         getUi5Spec: function (oAdjust, oItem, iValue) {
                             iValue = typeof iValue === "undefined" ? this.value(oItem) : iValue;
@@ -164,6 +175,33 @@ sap.ui.define([
                                 type: "id"
                             };
                         }
+                    }, {
+                        subCriteriaType: "LUID",
+                        subCriteriaText: "Lumira-ID",
+                        value: function (oItem) {
+                            return oItem.identifier.lumiraId;
+                        },
+                        code: function (sValue) {
+                            return {
+                                identifier: {
+                                    lumiraId: sValue
+                                }
+                            };
+                        },
+                        getUi5Spec: function (oAdjust, oItem, sValue) {
+                            sValue = typeof sValue === "undefined" ? this.value(oItem) : sValue;
+                            oAdjust.id = {
+                                lumiraId: sValue,
+                            };
+                        },
+                        assert: function (sValue) {
+                            return "identifier.lumiraId";
+                        },
+                        assertField: function (sValue) {
+                            return {
+                                type: "lumiraId"
+                            };
+                        }
                     }];
                 }
             },
@@ -178,7 +216,11 @@ sap.ui.define([
                             return oItem.metadata.elementName;
                         },
                         code: function (sValue) {
-                            return { metadata: { elementName: sValue } };
+                            return {
+                                metadata: {
+                                    elementName: sValue
+                                }
+                            };
                         },
 
                         getUi5Spec: function (oAdjust, oItem, iValue) {
@@ -200,7 +242,11 @@ sap.ui.define([
                             return oItem.metadata.componentName;
                         },
                         code: function (sValue) {
-                            return { metadata: { componentName: sValue } };
+                            return {
+                                metadata: {
+                                    componentName: sValue
+                                }
+                            };
                         },
                         getUi5Spec: function (oAdjust, oItem, iValue) {
                             //not possible..
@@ -211,6 +257,30 @@ sap.ui.define([
                         assertField: function (sValue) {
                             return {
                                 type: "componentName"
+                            };
+                        }
+                    }, {
+                        subCriteriaType: "LMT",
+                        subCriteriaText: "Lumira-Type",
+                        value: function (oItem) {
+                            return oItem.metadata.lumiraType;
+                        },
+                        code: function (sValue) {
+                            return {
+                                metadata: {
+                                    lumiraType: sValue
+                                }
+                            };
+                        },
+                        getUi5Spec: function (oAdjust, oItem, iValue) {
+                            //not possible..
+                        },
+                        assert: function () {
+                            return "metadata.lumiraType";
+                        },
+                        assertField: function (sValue) {
+                            return {
+                                type: "lumiraType"
                             };
                         }
                     }];
@@ -227,7 +297,11 @@ sap.ui.define([
                             return oItem.viewProperty.viewName;
                         },
                         code: function (sValue) {
-                            return { viewProperty: { viewName: sValue } };
+                            return {
+                                viewProperty: {
+                                    viewName: sValue
+                                }
+                            };
                         },
                         getUi5Spec: function (oAdjust, oItem, iValue) {
                             oAdjust.viewName = iValue;
@@ -247,7 +321,11 @@ sap.ui.define([
                             return oItem.viewProperty.localViewName;
                         },
                         code: function (sValue) {
-                            return { viewProperty: { localViewName: sValue } };
+                            return {
+                                viewProperty: {
+                                    localViewName: sValue
+                                }
+                            };
                         },
                         getUi5Spec: function (oAdjust, oItem, iValue) {
                             iValue = typeof iValue === "undefined" ? this.value(oItem) : iValue;
@@ -264,6 +342,47 @@ sap.ui.define([
                     }];
                 }
             },
+            "LUMIRA": {
+                criteriaKey: "LUMIRA",
+                criteriaText: "Lumira Properties",
+                criteriaSpec: function (oItem) {
+                    var aReturn = [];
+                    for (var sProperty in oItem.lumiraProperty) {
+                        aReturn.push({
+                            subCriteriaType: sProperty,
+                            subCriteriaText: sProperty,
+                            code: function (sProperty, sValue) {
+                                var oReturn = {
+                                    lumiraProperty: {}
+                                };
+                                oReturn.lumiraProperty[sProperty] = sValue;
+                                return oReturn;
+                            }.bind(this, sProperty),
+                            value: function (subCriteriaType, oItem) {
+                                return oItem.lumiraProperty[subCriteriaType];
+                            }.bind(this, sProperty),
+                            getUi5Spec: function (oAdjust, oItem, iValue) {
+                                iValue = typeof iValue === "undefined" ? this.value(oItem, sProperty) : iValue;
+
+                                oAdjust.lumiraProperty = typeof oAdjust.lumiraProperty != "undefined" ? oAdjust.lumiraProperty : [];
+                                var oProp = {};
+                                oProp[this.subCriteriaType] = iValue;
+                                oAdjust.lumiraProperty.push(oProp);
+                            },
+                            assert: function (subCriteriaType) {
+                                return "lumiraProperty." + subCriteriaType;
+                            }.bind(this, sProperty),
+                            assertField: function (sValue) {
+                                return {
+                                    type: "lumiraProperty",
+                                    value: this.subCriteriaType
+                                };
+                            }
+                        });
+                    }
+                    return aReturn;
+                }
+            },
             "AGG": {
                 criteriaKey: "AGG",
                 criteriaText: "Aggregation",
@@ -276,8 +395,12 @@ sap.ui.define([
                             subCriteriaText: oAggregation.name + "/" + "length",
                             aggregationName: oAggregation.name,
                             code: function (sAggregation, sValue) {
-                                var oReturn = { aggregation: {} };
-                                oReturn.aggregation[sAggregation] = { length: sValue };
+                                var oReturn = {
+                                    aggregation: {}
+                                };
+                                oReturn.aggregation[sAggregation] = {
+                                    length: sValue
+                                };
                                 return oReturn;
                             }.bind(this, oAggregation.name),
                             value: function (sAggregation, oItem) {
@@ -384,7 +507,9 @@ sap.ui.define([
                             subCriteriaText: sBinding,
                             bindingRef: oItem.bindingContext[sBinding],
                             code: function (sBinding, sValue) {
-                                var oReturn = { bindingContext: {} };
+                                var oReturn = {
+                                    bindingContext: {}
+                                };
                                 oReturn.bindingContext[sBinding] = sValue;
                                 return oReturn;
                             }.bind(this, sBinding),
@@ -429,7 +554,9 @@ sap.ui.define([
                                 subCriteriaType: sModel + "/" + sProperty,
                                 subCriteriaText: sModel + "/" + sProperty,
                                 code: function (sModel, sProperty, sValue) {
-                                    var oReturn = { context: {} };
+                                    var oReturn = {
+                                        context: {}
+                                    };
                                     oReturn.context[sModel] = {};
                                     oReturn.context[sModel][sProperty] = sValue;
                                     return oReturn;
@@ -465,7 +592,9 @@ sap.ui.define([
                             subCriteriaType: sProperty,
                             subCriteriaText: sProperty,
                             code: function (sProperty, sValue) {
-                                var oReturn = { property: {} };
+                                var oReturn = {
+                                    property: {}
+                                };
                                 oReturn.property[sProperty] = sValue;
                                 return oReturn;
                             }.bind(this, sProperty),
@@ -500,61 +629,109 @@ sap.ui.define([
 
         this._attributeTypes = {
             "OWN": {
-                getItem: function (oItem) { return oItem; },
-                getScope: function (oScope) { return oScope; },
-                getAssertScope: function () { return ""; },
+                getItem: function (oItem) {
+                    return oItem;
+                },
+                getScope: function (oScope) {
+                    return oScope;
+                },
+                getAssertScope: function () {
+                    return "";
+                },
                 //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["MODL"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["VIW"]]
             },
             "VIW": {
-                getItem: function (oItem) { return oItem.view; },
-                getScope: function (oScope) { oScope.view = oScope.view ? oScope.view : {}; return oScope.view; },
-                getAssertScope: function () { return "view."; },
+                getItem: function (oItem) {
+                    return oItem.view;
+                },
+                getScope: function (oScope) {
+                    oScope.view = oScope.view ? oScope.view : {};
+                    return oScope.view;
+                },
+                getAssertScope: function () {
+                    return "view.";
+                },
                 //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
             "PRT": {
-                getItem: function (oItem) { return oItem.parent; },
-                getAssertScope: function () { return "parent."; },
-                getScope: function (oScope) { oScope.parent = oScope.parent ? oScope.parent : {}; return oScope.parent; },
+                getItem: function (oItem) {
+                    return oItem.parent;
+                },
+                getAssertScope: function () {
+                    return "parent.";
+                },
+                getScope: function (oScope) {
+                    oScope.parent = oScope.parent ? oScope.parent : {};
+                    return oScope.parent;
+                },
 
                 //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
             "PRT2": {
-                getItem: function (oItem) { return oItem.parentL2; },
-                getAssertScope: function () { return "parentL2."; },
-                getScope: function (oScope) { oScope.parentL2 = oScope.parentL2 ? oScope.parentL2 : {}; return oScope.parentL2; },
+                getItem: function (oItem) {
+                    return oItem.parentL2;
+                },
+                getAssertScope: function () {
+                    return "parentL2.";
+                },
+                getScope: function (oScope) {
+                    oScope.parentL2 = oScope.parentL2 ? oScope.parentL2 : {};
+                    return oScope.parentL2;
+                },
 
                 //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
             "PRT3": {
-                getItem: function (oItem) { return oItem.parentL3; },
-                getAssertScope: function () { return "parentL3."; },
-                getScope: function (oScope) { oScope.parentL3 = oScope.parentL3 ? oScope.parentL3 : {}; return oScope.parentL3; },
+                getItem: function (oItem) {
+                    return oItem.parentL3;
+                },
+                getAssertScope: function () {
+                    return "parentL3.";
+                },
+                getScope: function (oScope) {
+                    oScope.parentL3 = oScope.parentL3 ? oScope.parentL3 : {};
+                    return oScope.parentL3;
+                },
 
                 //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
             "PRT4": {
-                getItem: function (oItem) { return oItem.parentL4; },
-                getAssertScope: function () { return "parentL4."; },
-                getScope: function (oScope) { oScope.parentL4 = oScope.parentL4 ? oScope.parentL4 : {}; return oScope.parentL4; },
+                getItem: function (oItem) {
+                    return oItem.parentL4;
+                },
+                getAssertScope: function () {
+                    return "parentL4.";
+                },
+                getScope: function (oScope) {
+                    oScope.parentL4 = oScope.parentL4 ? oScope.parentL4 : {};
+                    return oScope.parentL4;
+                },
 
                 //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
                 criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["BNDX"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
             },
             "PLBL": {
-                getItem: function (oItem) { return oItem.label; },
-                getAssertScope: function () { return "label."; },
-                getScope: function (oScope) { oScope.label = oScope.label ? oScope.label : {}; return oScope.label; },
+                getItem: function (oItem) {
+                    return oItem.label;
+                },
+                getAssertScope: function () {
+                    return "label.";
+                },
+                getScope: function (oScope) {
+                    oScope.label = oScope.label ? oScope.label : {};
+                    return oScope.label;
+                },
 
                 //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
@@ -564,8 +741,13 @@ sap.ui.define([
                 getItem: function (oItem) {
                     return oItem.itemdata;
                 },
-                getScope: function (oScope) { oScope.itemdata = oScope.itemdata ? oScope.itemdata : {}; return oScope.itemdata; },
-                getAssertScope: function () { return "itemdata."; },
+                getScope: function (oScope) {
+                    oScope.itemdata = oScope.itemdata ? oScope.itemdata : {};
+                    return oScope.itemdata;
+                },
+                getAssertScope: function () {
+                    return "itemdata.";
+                },
 
                 //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
@@ -583,20 +765,36 @@ sap.ui.define([
                     if (!oItem.itemdata.identifier.ui5Id.length) {
                         return [];
                     }
-                    return [{ attributeType: "MCMB", criteriaType: "ATTR", subCriteriaType: "key" }];
+                    return [{
+                        attributeType: "MCMB",
+                        criteriaType: "ATTR",
+                        subCriteriaType: "key"
+                    }];
                 }
             },
             "sap.ui.core.Element": {
                 defaultAction: "PRS",
                 actions: {
-                    "PRS": [{ text: "Root", domChildWith: "", order: 99 }],
-                    "TYP": [{ text: "Root", domChildWith: "", order: 99 }]
+                    "PRS": [{
+                        text: "Root",
+                        domChildWith: "",
+                        order: 99
+                    }],
+                    "TYP": [{
+                        text: "Root",
+                        domChildWith: "",
+                        order: 99
+                    }]
                 }
             },
             "sap.ui.core.Icon": {
                 preferredProperties: ["src"],
                 defaultAttributes: function (oItem) {
-                    return [{ attributeType: "OWN", criteriaType: "ATTR", subCriteriaType: "src" }];
+                    return [{
+                        attributeType: "OWN",
+                        criteriaType: "ATTR",
+                        subCriteriaType: "src"
+                    }];
                 }
             },
             "sap.m.ObjectListItem": {
@@ -616,15 +814,31 @@ sap.ui.define([
                 defaultAttributes: function (oItem) {
                     var aReturn = [];
                     if (oItem.binding.text) {
-                        aReturn.push({ attributeType: "OWN", criteriaType: "BDG", subCriteriaType: "text" });
+                        aReturn.push({
+                            attributeType: "OWN",
+                            criteriaType: "BDG",
+                            subCriteriaType: "text"
+                        });
                     }
                     if (oItem.binding.icon) {
-                        aReturn.push({ attributeType: "OWN", criteriaType: "BDG", subCriteriaType: "icon" });
+                        aReturn.push({
+                            attributeType: "OWN",
+                            criteriaType: "BDG",
+                            subCriteriaType: "icon"
+                        });
                     } else if (oItem.property.icon) {
-                        aReturn.push({ attributeType: "OWN", criteriaType: "ATTR", subCriteriaType: "icon" });
+                        aReturn.push({
+                            attributeType: "OWN",
+                            criteriaType: "ATTR",
+                            subCriteriaType: "icon"
+                        });
                     }
                     if (oItem.binding.tooltip) {
-                        aReturn.push({ attributeType: "OWN", criteriaType: "BDG", subCriteriaType: "tooltip" });
+                        aReturn.push({
+                            attributeType: "OWN",
+                            criteriaType: "BDG",
+                            subCriteriaType: "tooltip"
+                        });
                     }
                     return aReturn;
                 }
@@ -646,38 +860,77 @@ sap.ui.define([
                             bPropertyIsBetter = false;
                         }
                     }
-                    return [{ attributeType: "OWN", criteriaType: bPropertyIsBetter ? "ATTR" : "BDG", subCriteriaType: "key" }];
+                    return [{
+                        attributeType: "OWN",
+                        criteriaType: bPropertyIsBetter ? "ATTR" : "BDG",
+                        subCriteriaType: "key"
+                    }];
                 }
             },
             "sap.m.Link": {
                 defaultAttributes: function (oItem) {
                     //if the text is static --> take the binding with priority..
                     if (oItem.binding && oItem.binding["text"] && oItem.binding["text"].static === true) {
-                        return [{ attributeType: "OWN", criteriaType: "BDG", subCriteriaType: "text" }];
+                        return [{
+                            attributeType: "OWN",
+                            criteriaType: "BDG",
+                            subCriteriaType: "text"
+                        }];
                     } else if (oItem.property.text && oItem.property.text.length > 0) {
-                        return [{ attributeType: "OWN", criteriaType: "ATTR", subCriteriaType: "text" }];
+                        return [{
+                            attributeType: "OWN",
+                            criteriaType: "ATTR",
+                            subCriteriaType: "text"
+                        }];
                     } else if (oItem.property.text && oItem.property.text.length > 0) {
-                        return [{ attributeType: "OWN", criteriaType: "ATTR", subCriteriaType: "target" }];
+                        return [{
+                            attributeType: "OWN",
+                            criteriaType: "ATTR",
+                            subCriteriaType: "target"
+                        }];
                     } else if (oItem.property.text && oItem.property.text.length > 0) {
-                        return [{ attributeType: "OWN", criteriaType: "ATTR", subCriteriaType: "href" }];
+                        return [{
+                            attributeType: "OWN",
+                            criteriaType: "ATTR",
+                            subCriteriaType: "href"
+                        }];
                     }
                 }
             },
             "sap.m.ComboBoxBase": {
                 defaultAction: "PRS",
                 actions: {
-                    "PRS": [{ text: "Arrow (Open List)", domChildWith: "-arrow", preferred: true, order: 1 }]
+                    "PRS": [{
+                        text: "Arrow (Open List)",
+                        domChildWith: "-arrow",
+                        preferred: true,
+                        order: 1
+                    }]
                 }
             },
             "sap.m.GenericTile": {
                 defaultAction: "PRS",
-                defaultAttributes: [{ attributeType: "PRT2", criteriaType: "ATTR", subCriteriaType: "target" },
-                { attributeType: "PRT2", criteriaType: "MTA", subCriteriaType: "ELM" }]
+                defaultAttributes: [{
+                    attributeType: "PRT2",
+                    criteriaType: "ATTR",
+                    subCriteriaType: "target"
+                },
+                {
+                    attributeType: "PRT2",
+                    criteriaType: "MTA",
+                    subCriteriaType: "ELM"
+                }
+                ]
             },
             "sap.m.MultiComboBox": {
                 defaultAction: "PRS",
                 actions: {
-                    "PRS": [{ text: "Arrow (Open List)", domChildWith: "-arrow", preferred: true, order: 1 }]
+                    "PRS": [{
+                        text: "Arrow (Open List)",
+                        domChildWith: "-arrow",
+                        preferred: true,
+                        order: 1
+                    }]
                 }
             },
             "sap.m.Text": {
@@ -687,26 +940,57 @@ sap.ui.define([
             "sap.m.Select": {
                 defaultAction: "PRS",
                 actions: {
-                    "PRS": [{ text: "Arrow (Open List)", domChildWith: "-arrow", preferred: true, order: 1 }]
+                    "PRS": [{
+                        text: "Arrow (Open List)",
+                        domChildWith: "-arrow",
+                        preferred: true,
+                        order: 1
+                    }]
                 }
             },
             "sap.m.InputBase": {
                 defaultAction: "TYP",
                 actions: {
-                    "TYP": [{ text: "In Input-Field", domChildWith: "-inner", preferred: true, order: 1 }]
+                    "TYP": [{
+                        text: "In Input-Field",
+                        domChildWith: "-inner",
+                        preferred: true,
+                        order: 1
+                    }],
+                    "PRS": [{
+                        text: "In F4-Dialog",
+                        domChildWith: "-vhi",
+                        preferred: true,
+                        order: 1
+                    }]
                 }
             },
             "sap.ui.table.Row": {
                 cloned: true,
                 defaultAction: "PRS",
                 actions: {
-                    "PRS": [{ text: "On Selection-Area", domChildWith: "-col0", preferred: true, order: 1 }]
+                    "PRS": [{
+                        text: "On Selection-Area",
+                        domChildWith: "-col0",
+                        preferred: true,
+                        order: 1
+                    }]
                 }
             },
             "sap.m.SearchField": {
-                defaultAction: [{ domChildWith: "-search", action: "PRS" },
-                { domChildWith: "-reset", action: "PRS" },
-                { domChildWith: "", action: "TYP" }]
+                defaultAction: [{
+                    domChildWith: "-search",
+                    action: "PRS"
+                },
+                {
+                    domChildWith: "-reset",
+                    action: "PRS"
+                },
+                {
+                    domChildWith: "",
+                    action: "TYP"
+                }
+                ]
             }
         };
     };

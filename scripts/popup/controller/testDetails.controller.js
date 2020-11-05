@@ -217,7 +217,6 @@ sap.ui.define([
          */
         _rejectConnection: function () {
             RecordController.stopRecording();
-            RecordController.closeTab();
         },
 
         /**
@@ -353,7 +352,6 @@ sap.ui.define([
          */
         onNavBack: function () {
             RecordController.stopRecording();
-            RecordController.closeTab();
             this._oRecordDialog.close();
             this.getRouter().navTo("start");
         },

@@ -4,13 +4,15 @@ sap.ui.define([
     "com/ui5/testing/model/OPA5CodeStrategy",
     "com/ui5/testing/model/NaturalCodeStrategy",
     "com/ui5/testing/model/TestCafeCodeStrategy",
+    "com/ui5/testing/model/TestCafeBuilderCodeStrategy",
     "com/ui5/testing/model/UIVeri5CodeStrategy"
 ], function (UI5Object,
-             JSONModel,
-             OPA5CodeStrategy,
-             NaturalCodeStrategy,
-             TestCafeCodeStrategy,
-             UIVeri5CodeStrategy) {
+    JSONModel,
+    OPA5CodeStrategy,
+    NaturalCodeStrategy,
+    TestCafeCodeStrategy,
+    TestCafeBuilderCodeStrategy,
+    UIVeri5CodeStrategy) {
     "use strict";
 
     var CodeHelper = UI5Object.extend("com.ui5.testing.model.CodeHelper", {
@@ -24,9 +26,11 @@ sap.ui.define([
 
     CodeHelper.prototype.getFullCode = function (oCodeSettings, aElements) {
         this._oModel.setProperty("/codeSettings", oCodeSettings);
-        switch(oCodeSettings.language) {
+        switch (oCodeSettings.language) {
             case 'OPA':
                 return new OPA5CodeStrategy().generate(oCodeSettings, aElements, this);
+            case 'TCF_B':
+                return new TestCafeBuilderCodeStrategy().generate(oCodeSettings, aElements, this);
             case 'TCF':
                 return new TestCafeCodeStrategy().generate(oCodeSettings, aElements, this);
             case 'UI5':
@@ -42,6 +46,8 @@ sap.ui.define([
         switch (oCodeSettings.language) {
             case 'OPA':
                 return [new OPA5CodeStrategy().createTestStep(oCodeSettings, oElement)];
+            case 'TCF_B':
+                return new TestCafeBuilderCodeStrategy().createTestStep(oCodeSettings, oElement);
             case 'TCF':
                 return new TestCafeCodeStrategy().createTestStep(oCodeSettings, oElement);
             case 'UI5':

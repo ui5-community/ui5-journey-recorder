@@ -1,47 +1,48 @@
 /* eslint-disable require-jsdoc */
 sap.ui.define([
-], function(){
+], function () {
     "use strict";
 
     var Utils = {
         statics: {
             stepTypes: [
-                {key: "ACT", text: "Action"},
-                {key: "ASS", text: "Assert"},
-                {key: "SUP", text: "Support Assistant"}
+                { key: "ACT", text: "Action" },
+                { key: "ASS", text: "Assert" },
+                { key: "SUP", text: "Support Assistant" }
             ],
             stepActions: [
-                {key: "PRS", text: "Press"},
-                {key: "TYP", text: "Type Text"}
+                { key: "PRS", text: "Press" },
+                { key: "TYP", text: "Type Text" }
             ],
             assertTypes: [
-                {key: "ATTR", text: "Attributes"},
-                {key: "EXS", text: "Exists"},
-                {key: "MTC", text: "Matching Count"}
+                { key: "ATTR", text: "Attributes" },
+                { key: "EXS", text: "Exists" },
+                { key: "VIS", text: "Visible" },
+                { key: "MTC", text: "Matching Count" }
             ],
             selTypes: [
-                {key: "UI5", text: "UI5-Identifier"},
-                {key: "ATTR", text: "Combination of Attributes"},
-                {key: 'DOM', text: "DOM-Identifiert"}
+                { key: "UI5", text: "UI5-Identifier" },
+                { key: "ATTR", text: "Combination of Attributes" },
+                { key: 'DOM', text: "DOM-Identifiert" }
             ],
             attrType: [
-                {key: "OWN", text: "Own Element"},
-                {key: "VIW", text: "View"},
-                {key: "PRT", text: "Parent-Element (L1)"},
-                {key: "PRT2", text: "Parent-Element (L2)"},
-                {key: "PRT3", text: "Parent-Element (L3)"},
-                {key: "PRT4", text: "Parent-Element (L4)"},
-                {key: "PLBL", text: "Label Element"},
-                {key: "MCMB", text: "Item-Data"},
-                {key: "AGR", text: "Aggregation"},
-                {key: "PEL", text: "Previous Element"},
-                {key: "NEL", text: "Next Element"}
+                { key: "OWN", text: "Own Element" },
+                { key: "VIW", text: "View" },
+                { key: "PRT", text: "Parent-Element (L1)" },
+                { key: "PRT2", text: "Parent-Element (L2)" },
+                { key: "PRT3", text: "Parent-Element (L3)" },
+                { key: "PRT4", text: "Parent-Element (L4)" },
+                { key: "PLBL", text: "Label Element" },
+                { key: "MCMB", text: "Item-Data" },
+                { key: "AGR", text: "Aggregation" },
+                { key: "PEL", text: "Previous Element" },
+                { key: "NEL", text: "Next Element" }
             ],
             operator: [
-                {key: "EQ", text: "Equal"},
-                {key: "NE", text: "Not Equal"},
-                {key: "CP", text: "Contains"},
-                {key: "NP", text: "Not Contains"}
+                { key: "EQ", text: "Equal" },
+                { key: "NE", text: "Not Equal" },
+                { key: "CP", text: "Contains" },
+                { key: "NP", text: "Not Contains" }
             ]
         },
         stringifyAttributes: function (script) {
@@ -52,7 +53,7 @@ sap.ui.define([
             let hits = [];
 
             while ((m = regex.exec(sScript)) !== null) {
-                hits.push({hit: m[0], match: m[1]});
+                hits.push({ hit: m[0], match: m[1] });
             }
 
             hits.forEach(h => {
@@ -61,7 +62,7 @@ sap.ui.define([
 
             return sScript;
         },
-        replaceUnsupportedFileSigns: function(sString, sReplacement) {
+        replaceUnsupportedFileSigns: function (sString, sReplacement) {
             return sString.replace(/[\s\/\\\:\*\?\"\<\>\|\-]+/gm, sReplacement);
         },
         getUUIDv4: function (oCaller) {

@@ -1,9 +1,10 @@
-<mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:code="sap.ui.codeeditor" xmlns:semantic="sap.m.semantic" controllerName="com.ui5.testing.controller.TestDetails">
-    <semantic:FullscreenPage 
-        navButtonPress="onNavBack" 
-        showNavButton="true" 
-        title="Test {viewModel>/codeSettings/testName}"
-        showFooter="{= ${viewModel>/activeTab} === 'settings' || ${viewModel>/activeTab} === 'code'}">
+<mvc:View xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:code="sap.ui.codeeditor"
+    xmlns:semantic="sap.m.semantic" controllerName="com.ui5.testing.controller.TestDetails">
+    <semantic:FullscreenPage navButtonPress="onNavBack" showNavButton="true" title="Test {viewModel>/codeSettings/testName}" showFooter="{= ${viewModel>/activeTab} === 'settings' || ${viewModel>/activeTab} === 'code'}">
         <semantic:subHeader>
             <Bar>
                 <contentRight>
@@ -35,30 +36,30 @@
             <IconTabBar id="idIconTabBarNoIcons" select="onTabChange" expanded="true" stretchContentHeight="true" applyContentPadding="false">
                 <items>
                     <IconTabFilter text="Test-Settings" key="settings">
-                        <f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
+                        <f:SimpleForm editable="false" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
                             <f:content>
                                 <Label required="true" text="Test-Category" />
                                 <Input value="{viewModel>/codeSettings/testCategory}" change="onUpdatePreview" />
-                                
+
                                 <Label required="true" text="Test-Name" />
                                 <Input value="{viewModel>/codeSettings/testName}" change="onUpdatePreview" />
-                                
+
                                 <Label text="Test-Page" />
                                 <Input value="{viewModel>/codeSettings/testUrl}" change="onUpdatePreview" />
                                 <Text text="{viewModel>/codeSettings/ui5Version}" />
-                                
+
                                 <Label text="Authentification" />
                                 <Select id="tstAuthentication" change="onUpdatePreview" items="{settings>/authentification}" selectedKey="{viewModel>/codeSettings/authentification}">
                                     <items>
                                         <core:Item text="{settings>text}" key="{settings>key}" />
                                     </items>
                                 </Select>
-                                
+
                                 <Label visible="false" text="Support-Assistant" tooltip="Add Support-Assistant steps, before every navigation step" />
                                 <CheckBox visible="false" selected="{viewModel>/codeSettings/supportAssistant}" select="onUpdatePreview" />
                             </f:content>
                         </f:SimpleForm>
-                        
+
                         <Panel expandable="false" expanded="true" width="auto">
                             <headerToolbar>
                                 <Toolbar press="onExpandControl" height="3rem" active="true" style="Clear">
@@ -66,7 +67,7 @@
                                     <ToolbarSpacer />
                                     <Label text="Replay" tooltip="Replay.." visible="false" />
                                     <!--<Button icon="sap-icon://play" text="{i18n>replayAuto}" press="onReplayAutomatic" />-->
-                                    
+
                                     <Select id="sReplayMode" items="{settings>/replayModes}" selectedKey="{settings>/settings/replayType}">
                                         <items>
                                             <core:Item text="{settings>mode}" key="{settings>key}" />
@@ -138,7 +139,7 @@
                             </content>
                         </Panel>
                     </IconTabFilter>
-                    
+
                     <IconTabFilter text="Code" key="code">
                         <IconTabBar id="codeTab" stretchContentHeight="true" backgroundDesign="Transparent" applyContentPadding="true" items="{ path:'viewModel>/codes', sorter: { path: 'order' }}">
                             <items>

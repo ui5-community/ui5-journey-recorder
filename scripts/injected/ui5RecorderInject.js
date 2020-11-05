@@ -1,5 +1,14 @@
 var TestHandlerSingleton = null;
 
+var _wnd = window;
+var iFrames = document.getElementsByTagName("iframe");
+for (var i = 0; i < iFrames.length; i++) {
+    if (iFrames[i].contentWindow && iFrames[i].contentWindow.sap) {
+        _wnd = iFrames[i].contentWindow;
+        break;
+    }
+}
+
 document.addEventListener('do-ui5-init', function (oXMLEvent) {
     //console.log("Handle event 'do-ui5-init'")
     if (TestHandlerSingleton) {
@@ -88,7 +97,7 @@ var oTestGlobalBuffer = {
 };
 
 //super shitty code - we are just architectuarlly not designed correctly here..
-if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui.getCore === "undefined" || !sap.ui.getCore() || !sap.ui.getCore().isInitialized()) {
+if (typeof _wnd.sap === "undefined" || typeof _wnd.sap.ui === "undefined" || typeof _wnd.sap.ui.getCore === "undefined" || !_wnd.sap.ui.getCore() || !_wnd.sap.ui.getCore().isInitialized()) {
     document.dispatchEvent(new CustomEvent('do-ui5-ok', {
         detail: {
             ok: false,
@@ -96,18 +105,42 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         }
     }));
 } else {
+    //load css into our own document window
+    _wnd.$("<style type='text/css'>.HVRReveal {  \
+        background-color:Yellow!important; \
+        border-style: solid!important; \
+        border-color:red!important; \
+        border-width: thin; \
+        box-sizing: border-box; \
+        -moz-box-sizing: border-box; \
+        -webkit-box-sizing: border-box; \
+      } \
+      \
+      .HVRPlayStopOverlay { \
+          position: fixed; \
+          top: 50%; \
+          left: 5; \
+          width: 25px; \
+          height: 25px; \
+          filter: alpha(opacity=100); \
+          -moz-opacity: 1.0; \
+          -khtml-opacity: 1.0; \
+          opacity: 1.0; \
+          z-index: 10000; \
+      };</style>").appendTo("head");
+
     document.dispatchEvent(new CustomEvent('do-ui5-ok', {
         detail: {
             ok: true,
-            version: sap.ui.version
+            version: _wnd.sap.ui.version
         }
     }));
 
     //woaah: that is shitty - but it is difficult to inject a lot of pages and make best practice coding here.. for personal use okee..
-    var BaseObject = sap.ui.require("sap/ui/base/Object");
-    var JSONModel = sap.ui.require("sap/ui/model/json/JSONModel");
-    var MessageToast = sap.ui.require("sap/m/MessageToast");
-    var ValueState = sap.ui.require("sap/ui/core/ValueState");
+    var BaseObject = _wnd.sap.ui.require("sap/ui/base/Object");
+    var JSONModel = _wnd.sap.ui.require("sap/ui/model/json/JSONModel");
+    var MessageToast = _wnd.sap.ui.require("sap/m/MessageToast");
+    var ValueState = _wnd.sap.ui.require("sap/ui/core/ValueState");
     var TestHandler = BaseObject.extend("com.tru.TestHandler", {
         _oDialog: null,
         _oPopoverAction: null,
@@ -158,8 +191,8 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         return new Promise(function (resolve, reject) {
 
             var aComponents = [];
-            if (sap.ui.core.Component && sap.ui.core.Component.registry) {
-                aComponents = sap.ui.core.Component.registry.all();
+            if (_wnd.sap.ui.core.Component && _wnd.sap.ui.core.Component.registry) {
+                aComponents = _wnd.sap.ui.core.Component.registry.all();
             } else {
                 var oCoreObject = null;
                 var fakePlugin = {
@@ -168,13 +201,16 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                         return core;
                     }
                 };
-                sap.ui.getCore().registerPlugin(fakePlugin);
-                sap.ui.getCore().unregisterPlugin(fakePlugin);
+                _wnd.sap.ui.getCore().registerPlugin(fakePlugin);
+                _wnd.sap.ui.getCore().unregisterPlugin(fakePlugin);
                 aComponents = oCoreObject.mObjects.component;
             }
 
             var oReturn = {};
             for (var sComponent in aComponents) {
+                if (typeof aComponents[sComponent] === "function") {
+                    continue;
+                }
                 var oComponent = aComponents[sComponent];
                 var oManifest = oComponent.getManifest();
                 if (oManifest && oManifest["sap.app"]) {
@@ -191,6 +227,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
 
                     if (oUI5.models) {
                         for (var sModel in oUI5.models) {
+                            if (typeof oUI5.models[sModel] === "function") {
+                                continue;
+                            }
                             var oModel = oUI5.models[sModel];
                             if (!oApp.dataSources || !oApp.dataSources[oModel.dataSource] || oApp.dataSources[oModel.dataSource].type !== "OData") {
                                 continue;
@@ -222,7 +261,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
     };
 
     TestHandler.prototype.handleEvent = function (sEventType, oEventData) {
-        //jQuery.sap.log.info(`Handle event ${sEventType} at the 'TestHandler'.`);
+        //_wnd.jQuery.sap.log.info(`Handle event ${sEventType} at the 'TestHandler'.`);
         switch (sEventType) {
             case "start":
                 this._start(oEventData);
@@ -262,7 +301,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
     };
 
     TestHandler.prototype._selectItem = function (oEventData) {
-        var oCtrl = sap.ui.getCore().byId(oEventData.element);
+        var oCtrl = _wnd.sap.ui.getCore().byId(oEventData.element);
         if (!oCtrl) {
             return;
         }
@@ -271,10 +310,10 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
 
     TestHandler.prototype._getWindowInfo = function () {
         return {
-            title: document.title,
+            title: _wnd.document.title,
             url: window.location.href,
             hash: window.location.hash,
-            ui5Version: sap.ui.version
+            ui5Version: _wnd.sap.ui.version
         };
     };
 
@@ -290,9 +329,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
     TestHandler.prototype._getControlFromDom = function (oDomNode) {
         var oControls = [];
         if (oDomNode.id) {
-            oControls = jQuery(document.getElementById(oDomNode.id)).control();
+            oControls = _wnd.jQuery(_wnd.document.getElementById(oDomNode.id)).control();
         } else {
-            oControls = jQuery(oDomNode).control()
+            oControls = _wnd.jQuery(oDomNode).control()
         }
 
         if (!oControls || !oControls.length) {
@@ -304,10 +343,10 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
     TestHandler.prototype._getFinalDomNode = function (oElement) {
         var sExtension = oElement.property.domChildWith;
         if (!sExtension.length) {
-            return $(sap.ui.getCore().byId(oElement.item.identifier.ui5AbsoluteId).getDomRef());
+            return _wnd.$(_wnd.sap.ui.getCore().byId(oElement.item.identifier.ui5AbsoluteId).getDomRef());
         }
 
-        return $("*[id$='" + (oElement.item.identifier.ui5AbsoluteId + sExtension) + "']");
+        return _wnd.$("*[id$='" + (oElement.item.identifier.ui5AbsoluteId + sExtension) + "']");
     };
 
     TestHandler.prototype._executeAction = function (oEventData) {
@@ -316,9 +355,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         var oItem = oEventData.element;
         var oDom = this._getFinalDomNode(oItem);
 
-        $(oDom).addClass("HVRReveal");
+        _wnd.$(oDom).addClass("HVRReveal");
         setTimeout(function () {
-            $(oDom).removeClass("HVRReveal");
+            _wnd.$(oDom).removeClass("HVRReveal");
         }, 500);
 
         if (oItem.property.actKey === "PRS") {
@@ -395,10 +434,10 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
     };
 
     TestHandler.prototype._getAllChildrenOfDom = function (oDom, oControl) {
-        var aChildren = $(oDom).children();
+        var aChildren = _wnd.$(oDom).children();
         var aReturn = [];
         for (var i = 0; i < aChildren.length; i++) {
-            var aControl = $(aChildren[i]).control();
+            var aControl = _wnd.$(aChildren[i]).control();
             if (aControl.length === 1 && aControl[0].getId() === oControl.getId()) {
                 aReturn.push(aChildren[i]);
                 aReturn = aReturn.concat(this._getAllChildrenOfDom(aChildren[i], oControl));
@@ -457,9 +496,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
     };
 
     TestHandler.prototype._showItemControl = function (oControl) {
-        var oJQ = $(oControl.getDomRef());
-        var oJQDialog = $(this._oDialog.getDomRef());
-        var oOldWithControl = $(".HVRReveal");
+        var oJQ = _wnd.$(oControl.getDomRef());
+        var oJQDialog = _wnd.$(this._oDialog.getDomRef());
+        var oOldWithControl = _wnd.$(".HVRReveal");
         oOldWithControl.removeClass("HVRReveal");
         oJQ.addClass("HVRReveal");
 
@@ -476,7 +515,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             var oSupSettings = oComponent.rules;
             var sComponent = oComponent.component;
 
-            sap.ui.require(["sap/ui/support/Bootstrap"], function (Bootstrap) {
+            _wnd.sap.ui.require(["sap/ui/support/Bootstrap"], function (Bootstrap) {
                 Bootstrap.initSupportRules(["silent"]);
                 var aExclude = oSupSettings.supportRules;
                 var aListAll = this._oModel.getProperty("/statics/supportRules");
@@ -493,11 +532,11 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                 }
 
                 setTimeout(function () {
-                    jQuery.sap.support.analyze({
+                    _wnd.jQuery.sap.support.analyze({
                         type: "components",
                         components: [sComponent]
                     }, aListAll.length > 0 ? aListAll : undefined).then(function () {
-                        var aIssues = jQuery.sap.support.getLastAnalysisHistory();
+                        var aIssues = _wnd.jQuery.sap.support.getLastAnalysisHistory();
                         var aStoreIssue = [];
                         for (var i = 0; i < aIssues.issues.length; i++) {
                             var oIssue = aIssues.issues[i];
@@ -530,7 +569,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                             }
                             return -1;
                         });
-                        var oLoader = sap.ui.require("sap/ui/support/supportRules/RuleSetLoader");
+                        var oLoader = _wnd.sap.ui.require("sap/ui/support/supportRules/RuleSetLoader");
                         var aRules = [];
                         if (oLoader) { //only as of 1.52.. so ignore that for the moment
                             aRules = oLoader.getAllRuleDescriptors();
@@ -630,6 +669,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                     continue;
                 }
                 for (var sModel in oItem.context) {
+                    if (typeof oItem.context[sModel] === "function") {
+                        continue;
+                    }
                     if (!oObjectCtx[sModel]) {
                         oObjectCtx[sModel] = {};
                     }
@@ -640,6 +682,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                     var oCtxObject = oCtx.getObject();
 
                     for (var sCtx in oItem.context[sModel]) {
+                        if (typeof oItem.context[sModel][sCtx] === "function") {
+                            continue;
+                        }
                         var sValue = null;
                         sValue = oCtxObject[sCtx];
                         if (!oObjectCtx[sModel][sCtx]) {
@@ -654,6 +699,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                         oObjectCtx[sModel][sCtx]._totalAmount = oObjectCtx[sModel][sCtx]._totalAmount + 1;
                     }
                     for (var sCtx in oItem.context[sModel]) {
+                        if (typeof oItem.context[sModel][sCtx] === "function") {
+                            continue;
+                        }
                         oObjectCtx[sModel][sCtx]._differentValues = this._getPropertiesInArray(oObjectCtx[sModel][sCtx]);
                     }
                 }
@@ -661,6 +709,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                 //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 /*@Adrian - Start*/
                 for (var sProperty in oItem.bindingContext) {
+                    if (typeof oItem.bindingContext[sProperty] === "function") {
+                        continue;
+                    }
                     if (!oObjectBndngContexts[sProperty]) {
                         oObjectBndngContexts[sProperty] = {
                             _totalAmount: 0
@@ -675,10 +726,16 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                     oObjectBndngContexts[sProperty]._totalAmount = oObjectBndngContexts[sProperty]._totalAmount + 1;
                 }
                 for (var sProperty in oItem.bindingContext) {
+                    if (typeof oItem.bindingContext[sProperty] === "function") {
+                        continue;
+                    }
                     oObjectBndngContexts[sProperty]._differentValues = this._getPropertiesInArray(oObjectBndngContexts[sProperty]);
                 }
 
                 for (var sProperty in oItem.binding) {
+                    if (typeof oItem.binding[sProperty] === "function") {
+                        continue;
+                    }
                     if (!oObjectBndngs[sProperty]) {
                         oObjectBndngs[sProperty] = {
                             _totalAmount: 0
@@ -693,11 +750,17 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                     oObjectBndngs[sProperty]._totalAmount = oObjectBndngs[sProperty]._totalAmount + 1;
                 }
                 for (var sProperty in oItem.binding) {
+                    if (typeof oItem.binding[sProperty] === "function") {
+                        continue;
+                    }
                     oObjectBndngs[sProperty]._differentValues = this._getPropertiesInArray(oObjectBndngs[sProperty]);
                 }
 
                 /*@Adrian - End*/
                 for (var sProperty in oItem.property) {
+                    if (typeof oItem.property[sProperty] === "function" || typeof oItem.property[sProperty] === "object") {
+                        continue;
+                    }
                     var sGetter = "get" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1);
                     if (!oObjectProps[sProperty]) {
                         oObjectProps[sProperty] = {
@@ -718,6 +781,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         }
 
         for (var sAttr in oItem.property) {
+            if (typeof oItem.property[sAttr] === "function") {
+                continue;
+            }
             iUniqueness = 0;
             var oAttrMeta = oItem.control.getMetadata().getProperty(sAttr);
             if (oAttrMeta && oAttrMeta.defaultValue && oAttrMeta.defaultValue === oItem.property[sAttr]) {
@@ -748,6 +814,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         }
 
         for (var sAttr in oItem.binding) {
+            if (typeof oItem.binding[sAttr] === "function") {
+                continue;
+            }
             iUniqueness = 0;
             if (oMerged.cloned === true) {
                 //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
@@ -778,6 +847,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
         /*@Adrian - Start*/
         for (var sAttr in oItem.bindingContext) {
+            if (typeof oItem.bindingContext[sAttr] === "function") {
+                continue;
+            }
             iUniqueness = 0;
             if (oMerged.cloned === true) {
                 //we are > 0 - our uniquness is 0, our binding will contain a primary key for the list binding
@@ -794,8 +866,14 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         }
         /*@Adrian - End*/
         for (var sModel in oItem.context) {
+            if (typeof oItem.context[sModel] === "function") {
+                continue;
+            }
             oItem.uniquness.context[sModel] = {};
             for (var sAttr in oItem.context[sModel]) {
+                if (typeof oItem.context[sModel][sAttr] === "function") {
+                    continue;
+                }
                 if (oMerged.cloned === true) {
                     if (oObjectCtx[sModel][sAttr]._totalAmount === oObjectCtx[sModel][sAttr]._differentValues) {
                         iUniqueness = 100;
@@ -807,6 +885,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                     //check if there is a binding referring to that element..
                     var bFound = false;
                     for (var sBndg in oItem.binding) {
+                        if (typeof oItem.context[sBndg] === "function") {
+                            continue;
+                        }
                         if (oItem.binding[sBndg].path === sAttr) {
                             oItem.uniquness.context[sModel][sAttr] = oItem.uniquness.binding[sBndg]; //should be pretty good - we are binding on it..
                             bFound = true;
@@ -861,12 +942,15 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
 
         for (var i = 0; i < aNode.length; i++) {
             oItem.children.push({
-                isInput: $(aNode[i]).is("input") || $(aNode[i]).is("textarea"),
+                isInput: _wnd.$(aNode[i]).is("input") || _wnd.$(aNode[i]).is("textarea"),
                 domChildWith: aNode[i].id.substr(oItem.control.getId().length)
             });
         }
 
         for (var sKey in oItem.aggregation) {
+            if (typeof oItem.aggregation[sKey] === "function") {
+                continue;
+            }
             oItem.aggregationArray.push(oItem.aggregation[sKey]);
         }
         var oItemCur = oItem.control;
@@ -881,11 +965,11 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         }
 
         if (this._oCurrentDomNode) {
-            $(this._oCurrentDomNode).removeClass('HVRReveal');
+            _wnd.$(this._oCurrentDomNode).removeClass('HVRReveal');
         }
         this._oCurrentDomNode = oDomNode;
         if (this._oCurrentDomNode) {
-            $(this._oCurrentDomNode).addClass('HVRReveal');
+            _wnd.$(this._oCurrentDomNode).addClass('HVRReveal');
         }
 
         return oItem;
@@ -924,6 +1008,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
 
             oReturn.askForBindingContext = typeof oClass.askForBindingContext !== "undefined" && oReturn.askForBindingContext === false ? oClass.askForBindingContext : oReturn.askForBindingContext;
             for (var sAction in oClass.actions) {
+                if (typeof oClass.actions[sAction] === "function") {
+                    continue;
+                }
                 if (typeof oReturn.actions[sAction] === "undefined") {
                     oReturn.actions[sAction] = oClass.actions[sAction];
                 } else {
@@ -956,7 +1043,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             }
             oMetadata = oMetadata.getParent();
         };
-        return $.extend(true, [], aReturn);
+        return aReturn;
     };
 
     TestHandler.prototype.onClick = function (oDomNode, bAssertion) {
@@ -967,7 +1054,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         //per default (on purpose) reset the clicked element to "root" - the user should activly (!!) set the lower aggregation as valid..
         var oOriginalDomNode = oDomNode;
         oDomNode = oControl.getDomRef();
-        $(oDomNode).addClass('HVRReveal');
+        _wnd.$(oDomNode).addClass('HVRReveal');
         this._resetCache();
 
 
@@ -975,7 +1062,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         //this means that we are actually a dumbshit (100% depending) child control - we will move up in that case..
         if (!oControl.getParent() && !oControl.sParentAggregationName && RegExp("([A-Z,a-z,0-9])-([A-Z,a-z,0-9])").test(oControl.getId()) === true) {
             var sItem = oControl.getId().substring(0, oControl.getId().lastIndexOf("-"));
-            var oCtrlTest = sap.ui.getCore().byId(sItem);
+            var oCtrlTest = _wnd.sap.ui.getCore().byId(sItem);
             if (oCtrlTest) {
                 oControl = oCtrlTest;
                 oDomNode = oControl.getDomRef();
@@ -1038,15 +1125,15 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
     TestHandler.prototype._start = function (oData) {
         this._bActive = true;
         this._bStarted = true;
-        $(".HVRReveal").removeClass('HVRReveal');
+        _wnd.$(".HVRReveal").removeClass('HVRReveal');
         this.lockScreen(); //we are locked until the next step occurs, or the overall test is stopped..
 
         if (oData && oData.startImmediate === true) {
             if (!oLastDom && oData.domId) {
-                oLastDom = document.getElementById(oData.domId);
+                oLastDom = _wnd.document.getElementById(oData.domId);
             }
             if (!oLastDom) {
-                oLastDom = document.activeElement;
+                oLastDom = _wnd.document.activeElement;
             }
 
             //Directly select again (woop)
@@ -1061,13 +1148,13 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
     TestHandler.prototype._stop = function () {
         this._bActive = false;
         this._bStarted = false;
-        $(".HVRReveal").removeClass('HVRReveal');
+        _wnd.$(".HVRReveal").removeClass('HVRReveal');
         this.fireEventToContent("stopped");
     };
 
     TestHandler.prototype.startFor = function (sId) {
         this._bActive = false;
-        var oElement = document.getElementById(sId);
+        var oElement = _wnd.document.getElementById(sId);
         if (!oElement) {
             return;
         }
@@ -1075,9 +1162,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
     };
 
     TestHandler.prototype.__showFastInformation = function (event) {
-        this.__popover = new sap.m.Popover();
+        this.__popover = new _wnd.sap.m.Popover();
         var control = this._getControlFromDom(event.target);
-        var controlInformation = new sap.ui.model.json.JSONModel({});
+        var controlInformation = new _wnd.sap.ui.model.json.JSONModel({});
         controlInformation.setProperty('/controlClass', control.getMetadata()._sClassName);
         controlInformation.setProperty('/controlId', control.getId());
         var genIdPatt = new RegExp('__' + control.getMetadata()._sUIDToken + '[0-9]+');
@@ -1100,12 +1187,12 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
 
         this.__popover.setContentHeight('500px');
         this.__popover.setContentWidth('300px');
-        this.__popover.setPlacement(sap.m.PlacementType.Auto);
+        this.__popover.setPlacement(_wnd.sap.m.PlacementType.Auto);
         this.__popover.setTitle(controlInformation.getProperty('/controlClass'));
 
-        var vBox = new sap.m.VBox();
+        var vBox = new _wnd.sap.m.VBox();
         controlInformation.getProperty('/primitiveProperties')
-            .forEach(el => vBox.addItem(new sap.m.ObjectAttribute({
+            .forEach(el => vBox.addItem(new _wnd.sap.m.ObjectAttribute({
                 title: el.property,
                 text: el.value
             })));
@@ -1116,11 +1203,11 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
     };
 
     TestHandler.prototype.init = function () {
-        $(document).ready(function () {
+        _wnd.$(document).ready(function () {
             var that = this;
 
             //create our global overlay..
-            $(document).on("keydown", function (e) {
+            _wnd.$(document).on("keydown", function (e) {
                 if (e.ctrlKey && e.altKey && e.shiftKey && e.which == 84) {
                     this._bActive = this._bActive !== true;
                 } else if (e.keyCode == 27) {
@@ -1130,24 +1217,24 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                 }
             }.bind(this));
 
-            $('*').mouseover(function (event) {
+            _wnd.$('*').mouseover(function (event) {
                 if (this._bActive === false) {
                     return;
                 }
                 //this.__showFastInformation(event);
-                $(event.target).addClass('HVRReveal');
+                _wnd.$(event.target).addClass('HVRReveal');
             }.bind(this));
-            $('*').mouseout(function (event) {
+            _wnd.$('*').mouseout(function (event) {
                 if (!that._oDialog || !that._oDialog.isOpen()) {
-                    $(event.target).removeClass('HVRReveal');
+                    _wnd.$(event.target).removeClass('HVRReveal');
                 }
                 //this.__popover.close();
             }.bind(this));
 
             //avoid closing any popups.. this is an extremly dirty hack
-            if (sap.ui.core.Popup) {
-                var fnOldEvent = sap.ui.core.Popup.prototype.onFocusEvent;
-                sap.ui.core.Popup.prototype.onFocusEvent = function (oBrowserEvent) {
+            if (_wnd.sap.ui.core.Popup) {
+                var fnOldEvent = _wnd.sap.ui.core.Popup.prototype.onFocusEvent;
+                _wnd.sap.ui.core.Popup.prototype.onFocusEvent = function (oBrowserEvent) {
                     if (that._bActive === false) {
                         if (that._bScreenLocked === false) {
                             return fnOldEvent.apply(this, arguments);
@@ -1158,7 +1245,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                 };
             }
 
-            $('*').on("mouseup mousedown mouseover mousemove mouseout", function (e) {
+            _wnd.$('*').on("mouseup mousedown mouseover mousemove mouseout", function (event) {
                 if (this._bActive === false && this._bScreenLocked === false) {
                     return;
                 }
@@ -1169,11 +1256,11 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             }.bind(this));
 
 
-            $('*').click(function (event) {
+            _wnd.$('*').click(function (event) {
                 if (this._bActive === false) {
                     //no active recording, but still recording ongoing (e.g. in the other tab..)
                     if (this._bScreenLocked === true) {
-                        sap.m.MessageToast.show("Please finalize the step in the Popup, before proceeding...");
+                        _wnd.sap.m.MessageToast.show("Please finalize the step in the Popup, before proceeding...");
                         event.preventDefault();
                         event.stopPropagation();
                         event.stopImmediatePropagation();
@@ -1189,7 +1276,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             }.bind(this));
         }.bind(this));
 
-        sap.m.MessageToast.show("Testing Framework Initialized...");
+        _wnd.sap.m.MessageToast.show("Testing Framework Initialized...");
     };
 
     TestHandler.prototype._getParentWithDom = function (oItem, iCounter, bViewOnly) {
@@ -1343,17 +1430,17 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             },
             "sap.m.SearchField": {
                 defaultAction: [{
-                    domChildWith: "-search",
-                    action: "PRS"
-                },
-                {
-                    domChildWith: "-reset",
-                    action: "PRS"
-                },
-                {
-                    domChildWith: "",
-                    action: "TYP"
-                }
+                        domChildWith: "-search",
+                        action: "PRS"
+                    },
+                    {
+                        domChildWith: "-reset",
+                        action: "PRS"
+                    },
+                    {
+                        domChildWith: "",
+                        action: "TYP"
+                    }
                 ]
             }
         };
@@ -1370,7 +1457,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
 
     TestHandler.prototype._findItem = function (id) {
         var aItem = null; //jQuery Object Array
-        if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui.getCore === "undefined" || !sap.ui.getCore() || !sap.ui.getCore().isInitialized()) {
+        if (typeof _wnd.sap === "undefined" || typeof _wnd.sap.ui === "undefined" || typeof _wnd.sap.ui.getCore === "undefined" || !_wnd.sap.ui.getCore() || !_wnd.sap.ui.getCore().isInitialized()) {
             return [];
         }
 
@@ -1380,8 +1467,8 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             }
 
             var aElements = {};
-            if (sap.ui.core.Element && sap.ui.core.Element.registry) {
-                aElements = sap.ui.core.Element.registry.all();
+            if (_wnd.sap.ui.core.Element && _wnd.sap.ui.core.Element.registry) {
+                aElements = _wnd.sap.ui.core.Element.registry.all();
             } else {
                 var oCoreObject = null;
                 var fakePlugin = {
@@ -1390,8 +1477,8 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                         return core;
                     }
                 };
-                sap.ui.getCore().registerPlugin(fakePlugin);
-                sap.ui.getCore().unregisterPlugin(fakePlugin);
+                _wnd.sap.ui.getCore().registerPlugin(fakePlugin);
+                _wnd.sap.ui.getCore().unregisterPlugin(fakePlugin);
 
                 aElements = oCoreObject.mElements;
             }
@@ -1400,6 +1487,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             var bFound = false;
             var sSelectorStringForJQuery = "";
             for (var sElement in aElements) {
+                if (typeof aElements[sElement] === "function") {
+                    continue;
+                }
                 var oItem = aElements[sElement];
                 bFound = true;
                 bFound = _checkItem(oItem, id);
@@ -1460,7 +1550,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                 sSelectorStringForJQuery += "*[id$='" + sIdFound + "']";
             }
             if (sSelectorStringForJQuery.length) {
-                aItem = $(sSelectorStringForJQuery);
+                aItem = _wnd.$(sSelectorStringForJQuery);
             } else {
                 aItem = [];
             }
@@ -1473,7 +1563,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                 id = id.substr(1); //remove the trailing "#" if any
             }
             var searchId = "*[id$='" + id + "']";
-            aItem = $(searchId);
+            aItem = _wnd.$(searchId);
         }
         if (!aItem || !aItem.length || !aItem.control() || !aItem.control().length) {
             return [];
@@ -1497,7 +1587,8 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                 idGenerated: false,
                 ui5LocalId: "",
                 localIdClonedOrGenerated: false,
-                ui5AbsoluteId: ""
+                ui5AbsoluteId: "",
+                lumiraId: ""
             },
             parent: {},
             parentL2: {},
@@ -1520,7 +1611,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         }
 
         //local methods on purpose (even if duplicated) (see above)
-        oReturn = $.extend(true, oReturn, fnGetElementInformation(oItem, oDomNode, bFull));
+        //oReturn = _wnd.$.extend(true, oReturn, );
+        oReturn = Object.assign(oReturn, fnGetElementInformation(oItem, oDomNode, bFull, true));
+
         if (bFull === false) {
             oTestGlobalBuffer["fnGetElementInfo"][bFull][oItem.getId()] = oReturn;
             return oReturn;
@@ -1542,15 +1635,18 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
 
     var _getItemForItem = function (oItem) {
         //(0) check if we are already an item - no issue than..
-        if (oItem instanceof sap.ui.core.Item) {
+        if (oItem instanceof _wnd.sap.ui.core.Item) {
             return oItem;
+        }
+        if (!oItem instanceof _wnd.sap.m.ListItemBase) {
+            return null;
         }
 
         //(1) check by custom data..
         if (oItem.getCustomData()) {
             for (var i = 0; i < oItem.getCustomData().length; i++) {
                 var oObj = oItem.getCustomData()[i].getValue();
-                if (oObj instanceof sap.ui.core.Item) {
+                if (oObj instanceof _wnd.sap.ui.core.Item) {
                     return oObj;
                 }
             }
@@ -1562,7 +1658,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         while (oPrt) {
             oPrt = _getParentWithDom(oItem, iIndex);
             iIndex += 1;
-            if (iIndex > 100) { //avoid endless loop..
+            if (!oPrt || iIndex > 100) { //avoid endless loop..
                 return null;
             }
             var sElementName = oPrt.getMetadata().getElementName();
@@ -1612,8 +1708,8 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         }
         oTestGlobalBuffer.label = {};
         var aElements = {};
-        if (sap.ui.core.Element && sap.ui.core.Element.registry) {
-            aElements = sap.ui.core.Element.registry.all();
+        if (_wnd.sap.ui.core.Element && _wnd.sap.ui.core.Element.registry) {
+            aElements = _wnd.sap.ui.core.Element.registry.all();
         } else {
             var oCoreObject = null;
             var fakePlugin = {
@@ -1622,14 +1718,17 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                     return core;
                 }
             };
-            sap.ui.getCore().registerPlugin(fakePlugin);
-            sap.ui.getCore().unregisterPlugin(fakePlugin);
+            _wnd.sap.ui.getCore().registerPlugin(fakePlugin);
+            _wnd.sap.ui.getCore().unregisterPlugin(fakePlugin);
 
             aElements = oCoreObject.mElements;
         }
 
 
         for (var sCoreObject in aElements) {
+            if (typeof aElements[sCoreObject] === "function") {
+                continue;
+            }
             var oObject = aElements[sCoreObject];
             if (oObject.getMetadata()._sClassName === "sap.m.Label") {
                 var oLabelFor = oObject.getLabelFor ? oObject.getLabelFor() : null;
@@ -1735,18 +1834,24 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             if (!oDomRef) {
                 return false;
             }
-            if ($("*[id$='" + oDomRef.id + id.domChildWith + "']").length === 0) {
+            if (_wnd.$("*[id$='" + oDomRef.id + id.domChildWith + "']").length === 0) {
                 return false;
             }
         }
 
         if (id.model) {
             for (var sModel in id.model) {
+                if (typeof id.model[sModel] === "function") {
+                    continue;
+                }
                 sModel = sModel === "undefined" ? undefined : sModel;
                 if (!oItem.getModel(sModel)) {
                     return false;
                 }
                 for (var sModelProp in id.model[sModel]) {
+                    if (typeof id.model[sModel][sModelProp] === "function") {
+                        continue;
+                    }
                     if (oItem.getModel(sModel).getProperty(sModelProp) !== id.model[sModel][sModelProp]) {
                         return false;
                     }
@@ -1767,6 +1872,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         /*@Adrian - Start*/
         if (id.bindingContext) {
             for (var sModel in id.bindingContext) {
+                if (typeof id.bindingContext[sModel] === "function") {
+                    continue;
+                }
                 var oCtx = oItem.getBindingContext(sModel === "undefined" ? undefined : sModel);
                 if (!oCtx) {
                     return false;
@@ -1780,6 +1888,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         /*@Adrian - End*/
         if (id.binding) {
             for (var sBinding in id.binding) {
+                if (typeof id.binding[sBinding] === "function") {
+                    continue;
+                }
                 //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                 /*@Adrian - Start
                 var oAggrInfo = oItem.getBindingInfo(sBinding);
@@ -1824,6 +1935,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
 
         if (id.aggregation) {
             for (var sAggregationName in id.aggregation) {
+                if (typeof id.aggregation[sAggregationName] === "function") {
+                    continue;
+                }
                 var oAggr = id.aggregation[sAggregationName];
                 if (!oAggr.name) {
                     continue; //no sense to search without aggregation name..
@@ -1840,6 +1954,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         }
         if (id.context) {
             for (var sModel in id.context) {
+                if (typeof id.context[sModel] === "function") {
+                    continue;
+                }
                 var oCtx = oItem.getBindingContext(sModel === "undefined" ? undefined : sModel);
                 if (!oCtx) {
                     return false;
@@ -1850,6 +1967,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                 }
                 var oObject = id.context[sModel];
                 for (var sAttr in oObject) {
+                    if (typeof oObject[sAttr] === "function") {
+                        continue;
+                    }
                     if (oObject[sAttr] !== oObjectCompare[sAttr]) {
                         return false;
                     }
@@ -1858,6 +1978,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         }
         if (id.property) {
             for (var sProperty in id.property) {
+                if (typeof id.property[sProperty] === "function" || typeof id.property[sProperty] === "object") {
+                    continue;
+                }
                 if (!oItem["get" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1)]) {
                     //property is not even available in that item.. just skip it..
                     bFound = false;
@@ -1913,8 +2036,8 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                 path: oBinding.sPath && oBinding.getPath(),
                 relativePath: oBinding.sPath && oBinding.getPath(), //relative path..
                 contextPath: sPathPre,
-                static: oBinding.oModel && oBinding.getModel() instanceof sap.ui.model.resource.ResourceModel,
-                jsonBinding: oBinding.oModel && oBinding.getModel() instanceof sap.ui.model.json.JSONModel
+                static: oBinding.oModel && oBinding.getModel() instanceof _wnd.sap.ui.model.resource.ResourceModel,
+                jsonBinding: oBinding.oModel && oBinding.getModel() instanceof _wnd.sap.ui.model.json.JSONModel
             };
 
             oReturn.path = sPathPre + oReturn.path;
@@ -1928,7 +2051,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         return oReturn;
     };
     /*@Adrian - End*/
-    var fnGetElementInformation = function (oItem, oDomNode, bFull) {
+    var fnGetElementInformation = function (oItem, oDomNode, bFull, bIsCurrent) {
         var oReturn = {
             property: {},
             aggregation: [],
@@ -1936,6 +2059,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             binding: {},
             //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
             bindingContext: {},
+            lumiraProperty: {},
             context: {},
             model: {},
             metadata: {},
@@ -1954,6 +2078,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             dom: null
         };
         bFull = typeof bFull === "undefined" ? true : bFull;
+        bIsCurrent = typeof bIsCurrent === "undefined" ? false : bIsCurrent;
 
         if (!oItem) {
             return oReturn;
@@ -2009,6 +2134,10 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         }
         oReturn.identifier.ui5AbsoluteId = oItem.getId();
 
+        if (oItem.zenPureId) {
+            oReturn.identifier.lumiraId = oItem.zenPureId;
+        }
+
         //get metadata..
         oReturn.metadata = {
             elementName: oItem.getMetadata().getElementName(),
@@ -2016,10 +2145,15 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             componentId: "",
             componentTitle: "",
             componentDescription: "",
-            componentDataSource: {}
+            componentDataSource: {},
+            lumiraType: ""
         };
+        if (oItem.zenType) {
+            oReturn.metadata.lumiraType = oItem.zenType;
+        }
+
         //enhance component information..
-        var oComponent = sap.ui.getCore().getComponent(oReturn.metadata.componentName);
+        var oComponent = _wnd.sap.ui.getCore().getComponent(oReturn.metadata.componentName);
         if (oComponent) {
             var oManifest = oComponent.getManifest();
             if (oManifest && oManifest["sap.app"]) {
@@ -2029,6 +2163,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                 oReturn.metadata.componentDescription = oApp.description;
                 if (oApp.dataSources) {
                     for (var sDs in oApp.dataSources) {
+                        if (typeof oApp.dataSources[sDs] === "function") {
+                            continue;
+                        }
                         var oDS = oApp.dataSources[sDs];
                         if (oDS.type !== "OData") {
                             continue;
@@ -2061,48 +2198,11 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
 
         //bindings..
         for (var sBinding in oItem.mBindingInfos) {
-            //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-            oReturn.binding[sBinding] = fnGetBindingInformation(oItem, sBinding);
-            /*@Adrian - Start
-            var oBindingInfo = oItem.getBindingInfo(sBinding);
-            var oBinding = oItem.getBinding(sBinding);
-            if (!oBindingInfo) {
+            if (typeof oItem.mBindingInfos[sBinding] === "function") {
                 continue;
             }
-
-            //not really perfect for composite bindings (what we are doing here) - we are just returning the first for that..
-            //in case of a real use case --> enhance
-            var oRelevantPart = oBindingInfo;
-            if (oBindingInfo.parts && oBindingInfo.parts.length > 0 ) {
-                oRelevantPart = oBindingInfo.parts[0];
-            }
-
-            if (oBinding) {
-                oReturn.binding[sBinding] = {
-                    model: oRelevantPart.model,
-                    path: oBinding.sPath && oBinding.getPath(),
-                    static: oBinding.oModel && oBinding.getModel() instanceof sap.ui.model.resource.ResourceModel
-                };
-            } else {
-                oReturn.binding[sBinding] = {
-                    path: oBindingInfo.path,
-                    model: oRelevantPart.model,
-                    static: true
-                };
-                //if (oBindingInfo.parts && oBindingInfo.parts.length > 0) {
-                    for (var i = 0; i < oBindingInfo.parts.length; i++) {
-                        if (!oBindingInfo.parts[i].path) {
-                            continue;
-                        }
-                        if (!oReturn.binding[sBinding]) {
-                            oReturn.binding[sBinding] = { path: oBindingInfo.parts[i].path, "static": true };
-                        } else {
-                            oReturn.binding[sBinding].path += ";" + oBindingInfo.parts[i].path;
-                        }
-                    }
-                }//
-            }
-            @Adrian - End*/
+            //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
+            oReturn.binding[sBinding] = fnGetBindingInformation(oItem, sBinding);
         }
 
         //very special for "sap.m.Label"..
@@ -2112,7 +2212,7 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
                 if (oParentBndg) {
                     oReturn.binding["text"] = {
                         path: oParentBndg.sPath && oParentBndg.getPath(),
-                        "static": oParentBndg.oModel && oParentBndg.getModel() instanceof sap.ui.model.resource.ResourceModel
+                        "static": oParentBndg.oModel && oParentBndg.getModel() instanceof _wnd.sap.ui.model.resource.ResourceModel
                     };
                 }
             }
@@ -2123,6 +2223,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         //binding context
         var aModels = fnGetContextModels(oItem);
         for (var sModel in aModels) {
+            if (typeof aModels[sModel] === "function") {
+                continue;
+            }
             var oBndg = fnGetBindingContextInformation(oItem, sModel);
             if (!oBndg) {
                 continue;
@@ -2133,6 +2236,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
 
         //return all simple properties
         for (var sProperty in oItem.mProperties) {
+            if (typeof oItem.mProperties[sProperty] === "function" || typeof oItem.mProperties[sProperty] === "object") {
+                continue;
+            }
             var fnGetter = oItem["get" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1)];
             if (fnGetter) {
                 oReturn.property[sProperty] = fnGetter.call(oItem);
@@ -2141,8 +2247,41 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             }
         }
 
-        //return all binding contexts
-        oReturn.context = fnGetContexts(oItem);
+        //return specific properties for element (especially reporting..)
+        if (oItem.getMetadata()._sClassName === "sap.zen.crosstab.Crosstab") {
+            oReturn.lumiraProperty["numberOfDimensionsOnRow"] = oItem.oHeaderInfo.getNumberOfDimensionsOnRowsAxis();
+            oReturn.lumiraProperty["numberOfDimensionsOnCol"] = oItem.oHeaderInfo.getNumberOfDimensionsOnColsAxis();
+            oReturn.lumiraProperty["numberOfRows"] = oItem.rowHeaderArea.oDataModel.getRowCnt();
+            oReturn.lumiraProperty["numberOfCols"] = oItem.columnHeaderArea.oDataModel.getColCnt();
+            oReturn.lumiraProperty["numberOfDataCells"] = oItem.getAggregation("dataCells").length;
+        }
+        if (oItem.getMetadata()._sClassName === "sap.designstudio.sdk.AdapterControl" &&
+            oItem.zenType === "com_sap_ip_bi_VizFrame" && oItem.widget) {
+            oReturn.lumiraProperty["chartTitle"] = oItem.widget.getTitleTextInternal();
+            oReturn.lumiraProperty["chartType"] = oItem.widget.vizType();
+            var aFeedItems = JSON.parse(oItem.widget.feedItems());
+            oReturn.lumiraProperty["dimensionCount"] = 0;
+            oReturn.lumiraProperty["measuresCount"] = 0;
+            aFeedItems.filter(function (e) {
+                return e.type == "Dimension";
+            }).forEach(function (e) {
+                oReturn.lumiraProperty["dimensionCount"] += e.values.length;
+            });
+            aFeedItems.filter(function (e) {
+                return e.type == "Measure";
+            }).forEach(function (e) {
+                oReturn.lumiraProperty["measuresCount"] += e.values.length;
+            });
+
+            oReturn.lumiraProperty["dataCellCount"] = 0;
+            oItem.widget._uvbVizFrame.vizData().data().data.forEach(function (e) {
+                oReturn.lumiraProperty["numberOfDataCells"] += e.length;
+            });
+        }
+
+        var aDataCells =
+            //return all binding contexts
+            oReturn.context = fnGetContexts(oItem);
 
         //get model information..
         var oMetadata = oItem.getMetadata();
@@ -2151,6 +2290,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         //return length of all aggregations
         var aMetadata = oItem.getMetadata().getAllAggregations();
         for (var sAggregation in aMetadata) {
+            if (typeof aMetadata[sAggregation] === "function") {
+                continue;
+            }
             if (aMetadata[sAggregation].multiple === false) {
                 continue;
             }
@@ -2167,12 +2309,18 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
             }
 
             //for every single line, get the binding context, and the row id, which can later on be analyzed again..
-            for (var i = 0; i < aAggregation.length; i++) {
-                oAggregationInfo.rows.push({
-                    context: fnGetContexts(aAggregation[i]),
-                    ui5Id: _getUi5Id(aAggregation[i]),
-                    ui5AbsoluteId: aAggregation[i].getId()
-                });
+            if (bIsCurrent) {
+                for (var i = 0; i < aAggregation.length; i++) {
+                    oAggregationInfo.rows.push({
+                        context: fnGetContexts(aAggregation[i]),
+                        ui5Id: _getUi5Id(aAggregation[i]),
+                        ui5AbsoluteId: aAggregation[i].getId()
+                    });
+                    //performance and navigation: in case we have more than 20 aggregation we normally do not want to navigate in here..
+                    if (i > 50) {
+                        break;
+                    }
+                }
             }
             oReturn.aggregation[oAggregationInfo.name] = oAggregationInfo;
         }
@@ -2192,8 +2340,8 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         }
 
         var oModel = {};
-        oModel = $.extend(true, oModel, oItem.oModels);
-        oModel = $.extend(true, oModel, oItem.oPropagatedProperties.oModels);
+        oModel = Object.assign(oModel, oItem.oModels);
+        oModel = Object.assign(oModel, oItem.oPropagatedProperties.oModels);
         return oModel;
         /*@Adrian - End*/
     };
@@ -2207,11 +2355,14 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
         }
 
         var oModel = {};
-        oModel = $.extend(true, oModel, oItem.oModels);
-        oModel = $.extend(true, oModel, oItem.oPropagatedProperties.oModels);
+        oModel = Object.assign(oModel, oItem.oModels);
+        oModel = Object.assign(oModel, oItem.oPropagatedProperties.oModels);
 
         //second, get all binding contexts
         for (var sModel in oModel) {
+            if (typeof oModel[sModel] === "function") {
+                continue;
+            }
             var oBindingContext = oItem.getBindingContext(sModel === "undefined" ? undefined : sModel);
             if (!oBindingContext) {
                 continue;
@@ -2222,6 +2373,9 @@ if (typeof sap === "undefined" || typeof sap.ui === "undefined" || typeof sap.ui
 
             //remove all properties which are a deep object..
             for (var sProperty in oCtxData) {
+                if (typeof oCtxData[sProperty] === "function") {
+                    continue;
+                }
                 var sType = typeof oCtxData[sProperty];
                 if (sType === "number" || sType === "boolean" || sType === "string") {
                     oReturn[sModel][sProperty] = oCtxData[sProperty];

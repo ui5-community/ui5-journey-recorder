@@ -403,6 +403,13 @@ sap.ui.define([
                 }
                 sCode += ")";
                 aCode.push(sCode);
+            } else if (sAssertType === "VIS") {
+                sCode = sBasisCode + ".visible).ok(";
+                if (sAssertMsg !== "") {
+                    sCode += '"' + sAssertMsg + '"';
+                }
+                sCode += ")";
+                aCode.push(sCode);
             } else if (sAssertType === "MTC") {
                 sCode = sBasisCode + ".count).eql(" + parseInt(sAssertCount, 10) + "";
                 if (sAssertMsg !== "") {
@@ -614,8 +621,8 @@ sap.ui.define([
                 //check if sIdChild is part of our current "domChildWith"
                 // eslint-disable-next-line no-loop-func
                 if (aRows.filter(function (e) {
-                        return e.domChildWith === sIdChild;
-                    }).length === 0) {
+                    return e.domChildWith === sIdChild;
+                }).length === 0) {
                     aRows.push({
                         text: aSubObjects[i].isInput === true ? "In Input-Field" : sIdChild,
                         domChildWith: sIdChild,
@@ -633,8 +640,8 @@ sap.ui.define([
 
             //check if the current value is fine..
             if (aRows.filter(function (e) {
-                    return e.domChildWith === sDomChildWith;
-                }).length === 0) {
+                return e.domChildWith === sDomChildWith;
+            }).length === 0) {
                 sDomChildWith = aRows.length >= 0 ? aRows[0].domChildWith : "";
                 this._oModel.setProperty("/element/property/domChildWith", sDomChildWith);
             }
@@ -1841,8 +1848,8 @@ sap.ui.define([
 
             //check if the current criteraType value is valid - if yes, keep it, otherwise reset it..
             if (oAttribute.criteriaTypes.filter(function (e) {
-                    return e.criteriaKey === oAttribute.criteriaType;
-                }).length === 0) {
+                return e.criteriaKey === oAttribute.criteriaType;
+            }).length === 0) {
                 oAttribute.criteriaType = oAttribute.criteriaTypes[0].criteriaKey;
             }
 
@@ -1864,8 +1871,8 @@ sap.ui.define([
             oAttribute.subCriteriaTypes = aSubCriteriaSettings;
             if (oAttribute.subCriteriaTypes.length > 0) {
                 if (oAttribute.subCriteriaTypes.filter(function (e) {
-                        return e.subCriteriaType === oAttribute.subCriteriaType;
-                    }).length === 0) {
+                    return e.subCriteriaType === oAttribute.subCriteriaType;
+                }).length === 0) {
                     oAttribute.subCriteriaType = oAttribute.subCriteriaTypes[0].subCriteriaType;
                 }
             } else {
@@ -1929,7 +1936,7 @@ sap.ui.define([
                             });
                         }
                     }
-                    if (aFound.length === 0 && (sType === "ACT" || (sAssType === "EXS" && sType === "ASS"))) {
+                    if (aFound.length === 0 && (sType === "ACT" || ((sAssType === "EXS" || sAssType === 'VIS') && sType === "ASS"))) {
                         iGrade = 1;
                         aMessages.push({
                             type: "Error",

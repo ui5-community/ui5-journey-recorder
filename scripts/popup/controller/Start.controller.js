@@ -82,6 +82,25 @@ sap.ui.define([
                                 return s.src.indexOf('/sap/bc/ui5_ui5/') > -1;
                             }).length >= 1;
 
+                            if (!normal && !onPremise) {
+                                //check if we are integrated into an iframe..
+                                var iFrames = document.getElementsByTagName("iframe");
+                                for (var i = 0; i < iFrames.length; i++) {
+                                    if (iFrames[i].contentDocument) {
+                                        normal = [].slice.call(iFrames[i].contentDocument.head.getElementsByTagName('script')).filter(function (s) {
+                                            return s.src.indexOf('sap-ui-core.js') > -1 || s.src.indexOf('sap-ui-m-zen.js') > -1;
+                                        }).length == 1;
+                                        onPremise = [].slice.call(iFrames[i].contentDocument.head.getElementsByTagName('script')).filter(function (s) {
+                                            return s.src.indexOf('/sap/bc/ui5_ui5/') > -1;
+                                        }).length >= 1;
+
+                                        if (normal || onPremise) {
+                                            return true;
+                                        }
+                                    }
+                                }
+                            }
+
                             return normal || onPremise;
                         }
 
