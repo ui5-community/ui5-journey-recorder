@@ -145,7 +145,7 @@ sap.ui.define([
             else {
                 //we have to split dom child with and id in all cases..
                 if (oElement.property.domChildWith !== '') {
-                    sStr += ".id('" + oElement.property.ui5Id + "').domChildWith('" + oElement.property.domChildWith + ')";
+                    sStr += ".id('" + oElement.property.ui5Id + "').domChildWith('" + oElement.property.domChildWith + "')";
                 } else {
                     sStr += ".id('" + oSelAttr + "')";
                 }
