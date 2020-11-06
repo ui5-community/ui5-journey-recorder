@@ -842,7 +842,7 @@ sap.ui.define([
             if (oPropAction) {
                 var sPrefDomChildWith = "";
                 for (var i = 0; i < oPropAction.length; i++) {
-                    if (oPropAction[i].preferred === true) {
+                    if (oPropAction[i].preferred === true && oItem.children.find(e => { return e.domChildWith === "" || e.domChildWith === oPropAction[i].domChildWith; })) {
                         sPrefDomChildWith = oPropAction[i].domChildWith;
                         break;
                     }
@@ -930,28 +930,28 @@ sap.ui.define([
                 }
 
                 // 3) we add the parent or the parent of the parent id in case the ID is unique..
-                if (oItem.parent.identifier.ui5Id.length && oItem.parent.identifier.idGenerated === false && oItem.parent.identifier.idCloned === false) {
+                if (oItem.parent.identifier.ui5Id.length && oItem.parent.identifier.idInternal === false && oItem.parent.identifier.idGenerated === false && oItem.parent.identifier.idCloned === false) {
                     this._add("/element/attributeFilter", {
                         attributeType: "PRT",
                         criteriaType: "ID",
                         subCriteriaType: "ID"
                     });
                     bSufficientForStop = true;
-                } else if (oItem.parentL2.identifier.ui5Id.length && oItem.parentL2.identifier.idGenerated === false && oItem.parentL2.identifier.idCloned === false) {
+                } else if (oItem.parentL2.identifier.ui5Id.length && oItem.parentL2.identifier.idInternal === false && oItem.parentL2.identifier.idGenerated === false && oItem.parentL2.identifier.idCloned === false) {
                     this._add("/element/attributeFilter", {
                         attributeType: "PRT2",
                         criteriaType: "ID",
                         subCriteriaType: "ID"
                     });
                     bSufficientForStop = true;
-                } else if (oItem.parentL3.identifier.ui5Id.length && oItem.parentL3.identifier.idGenerated === false && oItem.parentL3.identifier.idCloned === false) {
+                } else if (oItem.parentL3.identifier.ui5Id.length && oItem.parentL3.identifier.idInternal === false && oItem.parentL3.identifier.idGenerated === false && oItem.parentL3.identifier.idCloned === false) {
                     this._add("/element/attributeFilter", {
                         attributeType: "PRT3",
                         criteriaType: "ID",
                         subCriteriaType: "ID"
                     });
                     bSufficientForStop = true;
-                } else if (oItem.parentL4.identifier.ui5Id.length && oItem.parentL4.identifier.idGenerated === false && oItem.parentL4.identifier.idCloned === false) {
+                } else if (oItem.parentL4.identifier.ui5Id.length && oItem.parentL4.identifier.idInternal === false && oItem.parentL4.identifier.idGenerated === false && oItem.parentL4.identifier.idCloned === false) {
                     this._add("/element/attributeFilter", {
                         attributeType: "PRT4",
                         criteriaType: "ID",
@@ -1627,6 +1627,13 @@ sap.ui.define([
                 aRows = oItemMeta.actions[sAction];
             }
 
+            //remove those rows, which are not even existing in our children..
+            aRows = aRows.filter(function (e) {
+                return oItem.children.find(child => {
+                    return child.domChildWith === e.domChildWith || e.domChildWith === "";
+                });
+            });
+
             //add those children which we are missing at the moment (so basically, all chidlren with the same control)
             var aSubObjects = oItem.children;
             for (var i = 0; i < aSubObjects.length; i++) {
@@ -1996,6 +2003,8 @@ sap.ui.define([
                     return oItem.viewProperty && Object.keys(oItem.viewProperty).length > 0;
                 case "BNDG":
                     return oItem.binding && Object.keys(oItem.binding).length > 0;
+                case "LUMIRA":
+                    return oItem.lumiraProperty && Object.keys(oItem.lumiraProperty).length > 0;
                 case "ATTR":
                     return oItem.property && Object.keys(oItem.property).length > 0;
                 default:

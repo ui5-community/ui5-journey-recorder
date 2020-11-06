@@ -37,11 +37,10 @@ sap.ui.define([
                 /* this._oRecordDialog.attachClose(this.onStopRecord, this); */
                 var iTimeoutID = setTimeout(function () {
                     this._oWaitingDialog.open();
-                }.bind(this), 1000 /* 1 sec enough? */ );
+                }.bind(this), 1000 /* 1 sec enough? */);
                 ConnectionMessages.rootComponentAvailable(Connection.getInstance()).then(function (oData) {
                     clearTimeout(iTimeoutID);
                     this._oWaitingDialog.close();
-                    debugger;
                 }.bind(this));
             }.bind(this));
         },
@@ -51,7 +50,6 @@ sap.ui.define([
          */
         retrieveODataV2: function () {
             ConnectionMessages.getODataV2Models(Connection.getInstance()).then(function (oData) {
-                debugger;
             });
         }
     });

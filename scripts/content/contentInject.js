@@ -132,10 +132,6 @@
                         if (oMessage.data.data.status === "success") {
                             console.log('Finished setup, inform extension about success!');
 
-                            // inject CSS
-                            // eslint-disable-next-line no-use-before-define
-                            PageInjector.injectCSS();
-
                             // return UI5 information
                             data = {
                                 status: oMessage.data.data.status,
@@ -223,20 +219,6 @@
             if (oJSTag) {
                 oJSTag.remove();
             }
-        }
-
-        /**
-         * Inject the CSS part of the page injection (i.e., {@file /scripts/injected/pageInject.css}).
-         */
-        static injectCSS() {
-            //add the UI5-Testrecorder formatting
-            var link = document.createElement('link');
-            link.id = TAG_ID_PREFIX + "-css";
-            link.rel = 'stylesheet';
-            link.type = 'text/css';
-            link.href = chrome.extension.getURL('/scripts/injected/pageInject.css');
-            link.media = 'all';
-            document.head.appendChild(link);
         }
     }
 

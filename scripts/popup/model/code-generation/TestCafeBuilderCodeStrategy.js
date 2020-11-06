@@ -5,7 +5,6 @@ sap.ui.define([
     var TestCafeBuilderCodeStrategy = UI5Object.extend("com.ui5.testing.model.TestCafeBuilderCodeStrategy", {});
 
     TestCafeBuilderCodeStrategy.prototype.generate = function (oCodeSettings, aElements, oCodeHelper) {
-        debugger;
         var aCodes = [];
         var bSupportAssistant = oCodeSettings.supportAssistant;
 
@@ -117,6 +116,9 @@ sap.ui.define([
                     case 'sap.m.ObjectAttribute':
                         sStr += ".objectAttribute()";
                         break;
+                    case 'sap.ui.core.Item':
+                        sStr += ".coreItem()";
+                        break;
                     case 'sap.m.ComboBox':
                     case 'sap.m.Select':
                         sStr += ".comboBox()";
@@ -134,6 +136,17 @@ sap.ui.define([
             }
         }
 
+        if (typeof oSelAttr === "string") {
+            //pay a little attention - in a few edge cases we actually want to avoid to go into the complete id based access..
+            if ((oElement.item.metadata.elementName === "sap.m.ComboBox" || oElement.item.metadata.elementName === "sap.m.Select") &&
+                (oElement.property.domChildWith === '-arrow')) {
+                sStr += ".id('" + oElement.item.identifier.ui5Id + "').comboBox().arrow()";
+            }
+            else {
+                sStr += ".id('" + oSelAttr + "')";
+            }
+        }
+
         if (oSelAttr.identifier) {
             sStr += ".id('" + (oSelAttr.identifier.ui5LocalId || oSelAttr.identifier.ui5Id || oSelAttr.identifier.ui5AbsoluteId) + "')";
         }
@@ -147,6 +160,12 @@ sap.ui.define([
         if (oSelAttr.property) {
             for (var sAttr in oSelAttr.property) {
                 sStr += ".property('" + sAttr + "', '" + oSelAttr.property[sAttr] + "')";
+            }
+        }
+
+        if (oSelAttr.itemdata) {
+            for (var sAttr in oSelAttr.itemdata.property) {
+                sStr += ".itemdata('" + sAttr + "', '" + oSelAttr.itemdata.property[sAttr] + "')";
             }
         }
 
@@ -180,8 +199,6 @@ sap.ui.define([
                 }
             }
         }
-
-        sStr = sStr + ".build()";
         return sStr;
     };
 
@@ -197,26 +214,30 @@ sap.ui.define([
         var sUI5Selector = this.getUI5Selector(oElement);
 
         var sAction = "";
+        //in the builder variant we will always split the definition of our element and the actual action done on it..
+        sCode = "const " + oElement.property.technicalName + " = " + sUI5Selector + ";";
+        aCode = [sCode];
+
         if (sType === "SEL") {
-            sCode = "await " + sUI5Selector + ".getUI5();";
-            aCode = [sCode];
+            sCode = "const data = await " + oElement.property.technicalName + ".getUI5(); ";
+            aCode.push(sCode);
         } else if (sType === 'ACT') {
             sCode = "await ";
             switch (sActType) {
                 case "PRS":
-                    sAction = ".click";
+                    sAction = "click";
                     break;
                 case "TYP":
-                    sAction = oElement.property.selectActInsert.length === 0 ? ".clearText" : ".typeText";
+                    sAction = oElement.property.selectActInsert.length === 0 ? "clearText" : "typeText";
                     break;
                 default:
                     return "";
             }
 
-            sCode = sCode + sUI5Selector + sAction + "(";
+            sCode = "await ui5Action." + sAction + "(" + oElement.property.technicalName;
 
-            if (sAction === '.typeText') {
-                sCode = sCode + '"' + oElement.property.selectActInsert + '"';
+            if (sAction === 'typeText') {
+                sCode = sCode + ',"' + oElement.property.selectActInsert + '"';
                 if (oElement.property.actionSettings.pasteText === true ||
                     oElement.property.actionSettings.testSpeed !== 1 ||
                     oElement.property.actionSettings.replaceText === true) {
@@ -227,10 +248,10 @@ sap.ui.define([
                 }
             }
             sCode = sCode + ");";
-            aCode = [sCode];
-        } else if (sAction === '.clearText') {
+            aCode.push(sCode);
+        } else if (sAction === 'clearText') {
             sCode = sCode + ");";
-            aCode = [sCode];
+            aCode.push(sCode);
         } else if (sType === 'ASS') {
             for (var i = 0; i < oElement.assertion.code.length; i++) {
                 sCode = "await t." + "expect(" + sUI5Selector + oElement.assertion.code[i] + ";";
@@ -240,7 +261,7 @@ sap.ui.define([
 
         if (oElement.property.actionSettings.blur) {
             //this is just a dummy.. a utils method fireing a "blur" would be better..
-            aCode.push('await t.click(Selector(".sapUiBody"));');
+            aCode.push('await ui5Action.click(ui5(".sapUiBody"));');
         }
 
         return aCode;

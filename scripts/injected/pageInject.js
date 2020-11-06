@@ -1,3 +1,6 @@
+
+var _wnd = window;
+
 (function () {
 
     "use strict";
@@ -220,13 +223,13 @@
 
     function _checkRootComponent() {
         return new Promise(function (resolve) {
-            var aElements = sap.ui.core.Element.registry.filter((oElement) => oElement.getComponentInstance);
+            var aElements = _wnd.sap.ui.core.Element.registry.filter((oElement) => oElement.getComponentInstance);
 
             if (aElements.length > 0) {
                 resolve(aElements[0].getComponentInstance());
             } else {
                 const iIntervalID = setInterval(function () {
-                    aElements = sap.ui.core.Element.registry.filter((oElement) => oElement.getComponentInstance);
+                    aElements = _wnd.sap.ui.core.Element.registry.filter((oElement) => oElement.getComponentInstance);
                     if (aElements.length > 0) {
                         clearInterval(iIntervalID);
                         resolve(aElements[0].getComponentInstance());
@@ -254,7 +257,7 @@
     }
 
     function _selectItem(oEventData) {
-        var oCtrl = sap.ui.getCore().byId(oEventData.element);
+        var oCtrl = _wnd.sap.ui.getCore().byId(oEventData.element);
 
         if (!oCtrl) {
             return;
@@ -407,7 +410,7 @@
 
             aEvents.push(new Promise(function (resolve, reject) {
 
-                sap.ui.require(["sap/ui/test/actions/Press"], function (Press) {
+                _wnd.sap.ui.require(["sap/ui/test/actions/Press"], function (Press) {
                     var oPressAction = new Press();
                     oPressAction.executeOn(oControl);
                     resolve({
@@ -429,7 +432,7 @@
 
                 var oEnterTextActionPromise = new Promise(function (resolve, reject) {
 
-                    sap.ui.require(["sap/ui/test/actions/EnterText"], function (EnterText) {
+                    _wnd.sap.ui.require(["sap/ui/test/actions/EnterText"], function (EnterText) {
                         var oEnterTextAction = new EnterText();
 
                         oEnterTextAction.setText(sText);
@@ -686,6 +689,7 @@
                 break;
 
             case "EXS":
+            case "VIS":
 
                 // check whether there is no found element
                 if (aFoundElements.length === 0) {
@@ -761,7 +765,7 @@
             title: document.title,
             url: window.location.href,
             hash: window.location.hash,
-            ui5Version: sap.ui.version
+            ui5Version: _wnd.sap.ui.version
         };
     }
 
@@ -773,7 +777,7 @@
             var oSupSettings = oComponent.rules;
             var sComponent = oComponent.component;
 
-            sap.ui.require(["sap/ui/support/Bootstrap"], function (Bootstrap) {
+            _wnd.sap.ui.require(["sap/ui/support/Bootstrap"], function (Bootstrap) {
                 Bootstrap.initSupportRules(["silent"]);
 
                 // exclude rules that are selected in UI from being run:
@@ -789,13 +793,13 @@
 
                     // run support assistant with the given set of rules (or no rules at all if none have been cached yet)
                     // TODO this function is deprecated for UI5 >= 1.60. "Please use sap/ui/support/RuleAnalyzer instead."
-                    jQuery.sap.support.analyze({
-                            type: "components",
-                            components: [sComponent]
-                        }, appliedSupportAssistantRules.length > 0 ? appliedSupportAssistantRules : undefined)
+                    _wnd.jQuery.sap.support.analyze({
+                        type: "components",
+                        components: [sComponent]
+                    }, appliedSupportAssistantRules.length > 0 ? appliedSupportAssistantRules : undefined)
                         // post-process results
                         .then(function () {
-                            var aIssues = jQuery.sap.support.getLastAnalysisHistory();
+                            var aIssues = _wnd.jQuery.sap.support.getLastAnalysisHistory();
 
                             var aStoreIssue = [];
                             for (var i = 0; i < aIssues.issues.length; i++) {
@@ -840,7 +844,7 @@
 
                             // retrieve available rules and update cache (this cannot be done earlier, as the analysis triggers the
                             // loading of the rules itself; see excluded rules above)
-                            var oLoader = sap.ui.require("sap/ui/support/supportRules/RuleSetLoader");
+                            var oLoader = _wnd.sap.ui.require("sap/ui/support/supportRules/RuleSetLoader");
                             if (oLoader) { //only as of 1.52.. so ignore that for the moment
                                 _cachedSupportAssistantRules = oLoader.getAllRuleDescriptors();
                             }
@@ -889,18 +893,18 @@
         PageCommunication.getInstance().reset();
 
         // ask user whether to reload page to remove any injections
-        sap.ui.require(["sap/m/MessageBox"], function (MessageBox) {
+        _wnd.sap.ui.require(["sap/m/MessageBox"], function (MessageBox) {
             MessageBox.error(
                 "The connection to the UI5 test recorder has been lost. Do you want to reload this page to reset it?", {
-                    icon: MessageBox.Icon.QUESTION,
-                    title: "Reload page?",
-                    actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-                    onClose: function (sAction) {
-                        if (sAction === MessageBox.Action.YES) {
-                            location.reload();
-                        }
+                icon: MessageBox.Icon.QUESTION,
+                title: "Reload page?",
+                actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                onClose: function (sAction) {
+                    if (sAction === MessageBox.Action.YES) {
+                        location.reload();
                     }
                 }
+            }
             );
         });
     }
@@ -911,7 +915,7 @@
 
     function _getAppComponent() {
         return new Promise(function (resolve, reject) {
-            var aElements = sap.ui.core.Element.registry.filter((oElement) => oElement.getComponentInstance);
+            var aElements = _wnd.sap.ui.core.Element.registry.filter((oElement) => oElement.getComponentInstance);
             if (aElements.length > 0) {
                 resolve(aElements[0].getComponentInstance());
             } else {
@@ -1033,7 +1037,7 @@
 
             document.addEventListener('click', this._fnClickListener.bind(this), true);
 
-            sap.ui.require(["sap/m/MessageToast"], function (MessageToast) {
+            _wnd.sap.ui.require(["sap/m/MessageToast"], function (MessageToast) {
                 MessageToast.show("UI5 test recorder fully injected!");
             });
         }
@@ -1076,7 +1080,7 @@
                 // get ID of parent control
                 var sItem = oControl.getId().substring(0, oControl.getId().lastIndexOf("-"));
                 // obtain corresponding control
-                var oCtrlTest = sap.ui.getCore().byId(sItem);
+                var oCtrlTest = _wnd.sap.ui.getCore().byId(sItem);
 
                 // if we found a valid parent element, set this as the control to be returned
                 if (oCtrlTest) {
@@ -1113,7 +1117,7 @@
      * 3. Call .getData() on object to retrieve initialized item.
      *
      * @constructor
-     * @param {sap.ui.core.Element} oControl the UI5 control to handle
+     * @param {_wnd.sap.ui.core.Element} oControl the UI5 control to handle
      * @param {HTMLElement} oDOMNode the corresponding selected DOM node
      * @param {HTMLElement} oOriginalDOMNode the DOM node that has been initially selected on the site
      */
@@ -1293,6 +1297,7 @@
                     binding: {},
                     //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                     bindingContext: {},
+                    lumiraProperty: {},
                     context: {},
                     model: {},
                     metadata: {},
@@ -1303,6 +1308,7 @@
                         ui5Id: "",
                         idCloned: false,
                         idGenerated: false,
+                        idInternal: false,
                         ui5LocalId: "",
                         localIdClonedOrGenerated: false,
                         ui5AbsoluteId: ""
@@ -1338,6 +1344,10 @@
                 oReturn.identifier.ui5LocalId = UI5ControlHelper.getUi5LocalId(oItem);
                 oReturn.identifier.ui5AbsoluteId = oItem.getId();
 
+                if (oItem.zenPureId) {
+                    oReturn.identifier.lumiraId = oItem.zenPureId;
+                }
+
                 // get class names from metadata
                 oReturn.classArray = [];
                 var oMeta = oItem.getMetadata();
@@ -1362,7 +1372,7 @@
                         }
 
                         // item is cloned if it is an Item, a Row, or an ObjectListItem
-                        if (["sap.ui.core.Item", "sap.ui.table.Row", "sap.m.ObjectListItem"].includes(oMetadata._sClassName)) {
+                        if (["_wnd.sap.ui.core.Item", "_wnd.sap.ui.table.Row", "sap.m.ObjectListItem"].includes(oMetadata._sClassName)) {
                             oReturn.identifier.idCloned = true;
                         }
 
@@ -1380,6 +1390,11 @@
                     oReturn.identifier.idGenerated = true;
                 } else {
                     oReturn.identifier.idGenerated = false;
+                }
+                if (oReturn.identifier.ui5Id.includes("-")) {
+                    oReturn.identifier.idInternal = true;
+                } else {
+                    oReturn.identifier.idInternal = false;
                 }
 
                 // identify whether the local element ID is cloned or generated
@@ -1409,10 +1424,12 @@
                     componentId: "",
                     componentTitle: "",
                     componentDescription: "",
-                    componentDataSource: {}
+                    componentDataSource: {},
+                    lumiraType: oItem.zenType ? oItem.zenType : ""
                 };
+
                 // 2) enhance component information
-                var oComponent = sap.ui.getCore().getComponent(oReturn.metadata.componentName);
+                var oComponent = _wnd.sap.ui.getCore().getComponent(oReturn.metadata.componentName);
                 if (oComponent) {
                     // get manifest of component
                     var oManifest = oComponent.getManifest();
@@ -1475,16 +1492,48 @@
                 if (oReturn.metadata.elementName === "sap.m.Label" && !oReturn.binding.text) {
                     // TODO binding from parent: this needs testing!
                     // if the label is part of a FormElement, we may obtain further binding information based on the parent
-                    if (oItem.getParent() && oItem.getParent().getMetadata()._sClassName === "sap.ui.layout.form.FormElement") {
+                    if (oItem.getParent() && oItem.getParent().getMetadata()._sClassName === "_wnd.sap.ui.layout.form.FormElement") {
                         var oParentBndg = oItem.getParent().getBinding("label");
                         if (oParentBndg) {
                             oReturn.binding["text"] = [{
                                 path: oParentBndg.sPath && oParentBndg.getPath(),
                                 prefixedFullPath: oParentBndg.sPath && oParentBndg.getPath(), // TODO prefixedFullPath needs adjustments
-                                "static": oParentBndg.oModel && oParentBndg.getModel() instanceof sap.ui.model.resource.ResourceModel // TODO change in accordance with UI5ControlHelper.getBindingInformation
+                                "static": oParentBndg.oModel && oParentBndg.getModel() instanceof _wnd.sap.ui.model.resource.ResourceModel // TODO change in accordance with UI5ControlHelper.getBindingInformation
                             }];
                         }
                     }
+                }
+
+                //return specific properties for element (especially reporting..)
+                if (oItem.getMetadata()._sClassName === "sap.zen.crosstab.Crosstab") {
+                    oReturn.lumiraProperty["numberOfDimensionsOnRow"] = oItem.oHeaderInfo.getNumberOfDimensionsOnRowsAxis();
+                    oReturn.lumiraProperty["numberOfDimensionsOnCol"] = oItem.oHeaderInfo.getNumberOfDimensionsOnColsAxis();
+                    oReturn.lumiraProperty["numberOfRows"] = oItem.rowHeaderArea.oDataModel.getRowCnt();
+                    oReturn.lumiraProperty["numberOfCols"] = oItem.columnHeaderArea.oDataModel.getColCnt();
+                    oReturn.lumiraProperty["numberOfDataCells"] = oItem.getAggregation("dataCells").length;
+                }
+                if (oItem.getMetadata()._sClassName === "sap.designstudio.sdk.AdapterControl" &&
+                    oItem.zenType === "com_sap_ip_bi_VizFrame" && oItem.widget) {
+                    oReturn.lumiraProperty["chartTitle"] = oItem.widget.getTitleTextInternal();
+                    oReturn.lumiraProperty["chartType"] = oItem.widget.vizType();
+                    var aFeedItems = JSON.parse(oItem.widget.feedItems());
+                    oReturn.lumiraProperty["dimensionCount"] = 0;
+                    oReturn.lumiraProperty["measuresCount"] = 0;
+                    aFeedItems.filter(function (e) {
+                        return e.type == "Dimension";
+                    }).forEach(function (e) {
+                        oReturn.lumiraProperty["dimensionCount"] += e.values.length;
+                    });
+                    aFeedItems.filter(function (e) {
+                        return e.type == "Measure";
+                    }).forEach(function (e) {
+                        oReturn.lumiraProperty["measuresCount"] += e.values.length;
+                    });
+
+                    oReturn.lumiraProperty["dataCellCount"] = 0;
+                    oItem.widget._uvbVizFrame.vizData().data().data.forEach(function (e) {
+                        oReturn.lumiraProperty["numberOfDataCells"] += e.length;
+                    });
                 }
 
                 // get all simple properties
@@ -1507,7 +1556,7 @@
                 }
                 oReturn.aggregationNames = [];
                 for (var sAggregation in aAggregations) {
-                    oReturn.aggregationNames.push({name: sAggregation});
+                    oReturn.aggregationNames.push({ name: sAggregation });
                     // if there are not multiple items aggregated, this is not interesting
                     if (!aAggregations[sAggregation].multiple) {
                         continue;
@@ -1556,29 +1605,6 @@
 
             // construct raw return value
             var oReturn = {
-                /* property: {},
-                aggregation: {},
-                //association: {}, //TODO: had to be setup;
-                context: {},
-                metadata: {},
-                identifier: {
-                    domId: "",
-                    ui5Id: "",
-                    idCloned: false,
-                    idGenerated: false,
-                    ui5LocalId: "",
-                    localIdClonedOrGenerated: false,
-                    ui5AbsoluteId: ""
-                },
-                parent: {},
-                parentL2: {},
-                parentL3: {},
-                parentL4: {},
-                itemdata: {},
-                label: {},
-                parents: [],
-                control: null,
-                dom: null */
             };
 
             // if there is no control given, return empty information object
@@ -1674,6 +1700,7 @@
                             };
                         }
                         var sValue = undefined;
+
                         if (typeof aItems[i][sGetter] === "function") {
                             sValue = aItems[i][sGetter]();
                         }
@@ -1821,7 +1848,7 @@
          *
          * Using the returned element, it is possible to retrieve all registered UI5 elements (see {UI5ControlHelper.getRegisteredElements}) before UI5 v1.67.
          *
-         * @returns {sap.ui.core.Core} the fully initialized Core instance
+         * @returns {_wnd.sap.ui.core.Core} the fully initialized Core instance
          *
          * @see UI5ControlHelper.getRegisteredElements
          *
@@ -1840,8 +1867,8 @@
             };
 
             // register plugin to retrieve core and unregister it immediately
-            sap.ui.getCore().registerPlugin(fakePlugin);
-            sap.ui.getCore().unregisterPlugin(fakePlugin);
+            _wnd.sap.ui.getCore().registerPlugin(fakePlugin);
+            _wnd.sap.ui.getCore().unregisterPlugin(fakePlugin);
 
             return oCoreObject;
         }
@@ -1849,14 +1876,14 @@
         /**
          * Retrieves all registered UI5 elements from the Core object.
          *
-         * @returns {Object.<sap.ui.core.ID, sap.ui.core.Element>} object with all registered elements, keyed by their ID
+         * @returns {Object.<_wnd.sap.ui.core.ID, _wnd.sap.ui.core.Element>} object with all registered elements, keyed by their ID
          */
         static getRegisteredElements() {
             var oElements = {};
 
             // try to use registry (UI5 >= v1.67)
-            if (sap.ui.core.Element && sap.ui.core.Element.registry) {
-                oElements = sap.ui.core.Element.registry.all();
+            if (_wnd.sap.ui.core.Element && _wnd.sap.ui.core.Element.registry) {
+                oElements = _wnd.sap.ui.core.Element.registry.all();
             }
             // use workaround with fully initialized core otherwise
             else {
@@ -1891,7 +1918,7 @@
          *
          * @param {HTMLElement} oDOMNode a DOM node (e.g., selected in UI)
          *
-         * @returns {sap.ui.core.Element} the UI5 controls associated with the given DOM node
+         * @returns {_wnd.sap.ui.core.Element} the UI5 controls associated with the given DOM node
          *
          * @see sap/ui/dom/jquery/control-dbg.js
          */
@@ -1934,7 +1961,7 @@
             }
 
             // obtain and return UI5 control by the ID we found
-            return sap.ui.getCore().byId(sResultID);
+            return _wnd.sap.ui.getCore().byId(sResultID);
         }
 
         /**
@@ -1942,7 +1969,7 @@
          *
          * @param {Array} oDOMNodes an Array of DOM nodes
          *
-         * @returns {Array(sap.ui.core.Element)} the UI5 controls associated with the given DOM nodes
+         * @returns {Array(_wnd.sap.ui.core.Element)} the UI5 controls associated with the given DOM nodes
          *
          * @see sap/ui/dom/jquery/control-dbg.js
          */
@@ -1961,14 +1988,14 @@
             // check whether the given control is not embedded into another one
             var sExtension = oControlData.property.domChildWith;
             if (!sExtension.length) {
-                return sap.ui.getCore().byId(oControlData.item.identifier.ui5AbsoluteId).getDomRef();
+                return _wnd.sap.ui.getCore().byId(oControlData.item.identifier.ui5AbsoluteId).getDomRef();
             }
 
             // construct a default query for the combined ID
             var sIdSelector = "*[id$='" + (oControlData.item.identifier.ui5AbsoluteId + sExtension) + "']";
             var aDomNodes = document.querySelectorAll(sIdSelector);
 
-            // unwrap single item to establish compatibility with 'sap.ui.getCore().byId' as used above
+            // unwrap single item to establish compatibility with '_wnd.sap.ui.getCore().byId' as used above
             if (aDomNodes.length === 1) {
                 return aDomNodes.item(0);
             } else {
@@ -1996,7 +2023,7 @@
             // if yes, check also all children of this DOM node
             for (var oChild of aChildren) {
                 var oChildControl = UI5ControlHelper.getControlFromDom(oChild);
-                if (oChildControl && oChildControl.getId() === oControl.getId()) {
+                if (oChildControl && (oChildControl.getId() === oControl.getId() || oChildControl.getId().startsWith(oControl.getId() + "-"))) {
                     aReturn.push(oChild);
                     aReturn = aReturn.concat(UI5ControlHelper.getAllChildrenOfDom(oChild, oControl));
                 }
@@ -2229,8 +2256,8 @@
                     contextPath: bNeedsContextPrefix ? sBndgContextPrefix : "",
                     relativePath: sPath,
                     prefixedFullPath: sPrefixedFullPath,
-                    static: mPartBindingInfo.mode !== sap.ui.model.BindingMode.TwoWay,
-                    jsonBinding: oModel && oModel instanceof sap.ui.model.json.JSONModel
+                    static: mPartBindingInfo.mode !== _wnd.sap.ui.model.BindingMode.TwoWay,
+                    jsonBinding: oModel && oModel instanceof _wnd.sap.ui.model.json.JSONModel
                 };
             });
 
@@ -2338,34 +2365,23 @@
 
         static getItemDataForItem(oItem) {
             //(0) check if we are already an item - no issue then..
-            if (oItem instanceof sap.ui.core.Item) {
+            if (oItem instanceof _wnd.sap.ui.core.Item) {
                 return oItem;
+            }
+            if (!oItem instanceof _wnd.sap.m.ListItemBase) {
+                return null;
             }
 
             //(1) check by custom data..
             if (oItem.getCustomData()) {
                 for (var i = 0; i < oItem.getCustomData().length; i++) {
                     var oObj = oItem.getCustomData()[i].getValue();
-                    if (oObj instanceof sap.ui.core.Item) {
+                    if (oObj instanceof _wnd.sap.ui.core.Item) {
                         return oObj;
                     }
                 }
             }
 
-            //(2) no custom data? search for special cases
-            //2.1: Multi-Combo-Box
-            //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
-            /*@Adrian - Start
-            var oPrt = _getParentWithDom(oItem, 3);
-            if (oPrt && oPrt.getMetadata().getElementName() === "sap.m.MultiComboBox") {
-                if (oPrt._getItemByListItem) {
-                    var oCtrl = oPrt._getItemByListItem(oItem);
-                    if (oCtrl) {
-                        return oCtrl;
-                    }
-                }
-            }
-                @Adrian - End*/
             var iIndex = 1;
             var oPrt = oItem;
             while (oPrt) {
@@ -2376,12 +2392,10 @@
                     return null;
                 }
 
-                if (oPrt && oPrt.getMetadata().getElementName() === "sap.m.MultiComboBox") {
-                    if (oPrt._getItemByListItem) {
-                        var oCtrl = oPrt._getItemByListItem(oItem);
-                        if (oCtrl) {
-                            return oCtrl;
-                        }
+                if (oPrt && oPrt._getItemByListItem) {
+                    var oCtrl = oPrt._getItemByListItem(oItem);
+                    if (oCtrl) {
+                        return oCtrl;
                     }
                 }
             }
@@ -2526,7 +2540,12 @@
                         bFound = false;
                         break;
                     }
+                    //do not return objects (as certainly might be dom elements..)
+
                     var sPropertyValueItem = oItem["get" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1)]();
+                    if (typeof sPropertyValueItem === "object") {
+                        continue;
+                    }
                     var sPropertyValueSearch = oSelector.property[sProperty];
                     if (sPropertyValueItem !== sPropertyValueSearch) {
                         bFound = false;
@@ -2723,17 +2742,17 @@
         },
         "sap.m.SearchField": {
             defaultAction: [{
-                    domChildWith: "-search",
-                    action: "PRS"
-                },
-                {
-                    domChildWith: "-reset",
-                    action: "PRS"
-                },
-                {
-                    domChildWith: "",
-                    action: "TYP"
-                }
+                domChildWith: "-search",
+                action: "PRS"
+            },
+            {
+                domChildWith: "-reset",
+                action: "PRS"
+            },
+            {
+                domChildWith: "",
+                action: "TYP"
+            }
             ]
         }
     };
@@ -2768,7 +2787,7 @@
          */
 
         // Detect obvious negatives
-        // Use toString instead of jQuery.type to catch host objects
+        // Use toString instead of _wnd.jQuery.type to catch host objects
         if (!obj || {}.toString.call(obj) !== "[object Object]") {
             return false;
         }
@@ -2794,7 +2813,7 @@
      */
     function deepExtend(target) {
         /**
-         * The code in this function is taken from jQuery 3.4.1 "jQuery.extend" and got modified.
+         * The code in this function is taken from jQuery 3.4.1 "_wnd.jQuery.extend" and got modified.
          * Furthermore, code from "You might not need jQuery" (deep extend) is used.
          *
          * jQuery JavaScript Library v3.4.1
@@ -2918,21 +2937,46 @@
 
     // #region Initialization
 
+    function _loadCss() {
+        _wnd.$("<style type='text/css'>.UI5TR_ElementHover,\
+            .UI5TR_ElementHover * {\
+                background: rgba(193, 137, 156,0.5)!important;\
+            }\
+            \
+                .UI5TR_ControlFound,\
+            .UI5TR_ControlFound * {\
+                background: rgba(113, 148, 175,0.5)!important;\
+            }\
+            \
+            #UI5TR_BusyDialog - Dialog.sapUiLocalBusyIndicatorAnimation > div:: before {\
+            \
+            background: #a01441; \
+        } \
+        </style > ").appendTo("head");
+    }
+
     function checkPageForUI5() {
         var oData = {};
-        if (window.sap && window.sap.ui) {
+        var iFrames = document.getElementsByTagName("iframe");
+        for (var i = 0; i < iFrames.length; i++) {
+            if (iFrames[i].contentWindow && iFrames[i].contentWindow.sap) {
+                _wnd = iFrames[i].contentWindow;
+                break;
+            }
+        }
+        if (_wnd.sap && _wnd.sap.ui) {
             oData.status = "success";
 
             // Get framework version
             try {
-                oData.version = sap.ui.getVersionInfo().version;
+                oData.version = _wnd.sap.ui.getVersionInfo().version;
             } catch (e) {
                 oData.version = '';
             }
 
             // Get framework name
             try {
-                var versionInfo = sap.ui.getVersionInfo();
+                var versionInfo = _wnd.sap.ui.getVersionInfo();
 
                 // Use group artifact version for maven builds or name for other builds (like SAPUI5-on-ABAP)
                 var frameworkInfo = versionInfo.gav ? versionInfo.gav : versionInfo.name;
@@ -2943,7 +2987,12 @@
             }
 
             // Check if the version is supported
-            oData.isVersionSupported = !!sap.ui.require;
+            oData.isVersionSupported = !!_wnd.sap.ui.require;
+
+            if (oData.isVersionSupported) {
+                //load css...
+                _loadCss();
+            }
 
         } else {
             oData.status = "error";
@@ -2958,7 +3007,7 @@
         var intvervalID = setInterval(function () {
             waited = waited + 100;
             if (waited % 500 === 0) {
-                console.log(`- checking UI5 appearance (${waited/1000.0})...`);
+                console.log(`- checking UI5 appearance (${waited / 1000.0})...`);
             }
             var oCheckData = checkPageForUI5();
             if (oCheckData.status === "success") {
@@ -2974,7 +3023,7 @@
 
     function setupTestRecorderFunctions() {
         // create a BusyDialog for screen locking
-        sap.ui.require(["sap/m/BusyDialog"], function (BusyDialog) {
+        _wnd.sap.ui.require(["sap/m/BusyDialog"], function (BusyDialog) {
             _oPageLockBusyDialog = new BusyDialog("UI5TR_BusyDialog", {
                 title: "Finalize test step",
                 text: "Waiting until user saves test step in test-recorder popup..."

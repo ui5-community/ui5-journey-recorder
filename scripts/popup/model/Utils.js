@@ -642,6 +642,10 @@ sap.ui.define([
                             attributeType: "MCMB",
                             criteriaType: "ATTR",
                             subCriteriaType: "key"
+                        }, {
+                            attributeType: "PRT3",
+                            criteriaType: "ID",
+                            subCriteriaType: "ID"
                         }];
                     }
                 },
@@ -834,7 +838,7 @@ sap.ui.define([
                             text: "In F4-Dialog",
                             domChildWith: "-vhi",
                             preferred: true,
-                            order: 1
+                            order: 2
                         }]
                     }
                 },
