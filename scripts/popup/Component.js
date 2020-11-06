@@ -1,5 +1,5 @@
 sap.ui.define([
-    'sap/ui/core/UIComponent',
+    'sap/ui/core/UIComponent'
 ], function (UIComponent) {
     'use strict';
 
@@ -80,33 +80,28 @@ sap.ui.define([
                         },
                         routes: [
                             {
-                                pattern: "/TestDetails/{TestId}/elementCreate/{ElementId}",
+                                pattern: "/TestDetails/{TestId}/elementCreate/{ElementId}/{ui5Version}",
                                 name: "elementCreate",
                                 target: "testElement"
                             },
                             {
-                                pattern: "/TestDetails/{TestId}/elementCreateQuick/{ElementId}",
+                                pattern: "/TestDetails/{TestId}/elementCreateQuick/{ElementId}/{ui5Version}",
                                 name: "elementCreateQuick",
                                 target: "testElement"
                             },
                             {
-                                pattern: "/elementDisplay/{TestId}/{ElementId}",
+                                pattern: "/elementDisplay/{TestId}/{ElementId}/{ui5Version}",
                                 name: "elementDisplay",
                                 target: "testElement"
                             },
                             {
-                                pattern: "/mockserver",
-                                name: "mockserver",
-                                target: "mockserver"
+                                pattern: "/mockdata",
+                                name: "mockdata",
+                                target: "mockdata"
                             },
                             {
                                 pattern: "/TestDetails/{TestId}",
                                 name: "TestDetails",
-                                target: "TestDetails"
-                            },
-                            {
-                                pattern: "/testReplay/{TestId}",
-                                name: "testReplay",
                                 target: "TestDetails"
                             },
                             {
@@ -131,10 +126,10 @@ sap.ui.define([
                             }
                         ],
                         targets: {
-                            mockserver: {
-                                viewName: "mockserver",
+                            mockdata: {
+                                viewName: "Mockdata",
                                 viewLevel: 1,
-                                viewId: "mockserver",
+                                viewId: "Mockdata",
                                 controlAggregation: "pages"
                             },
                             testElement: {
@@ -150,13 +145,13 @@ sap.ui.define([
                                 controlAggregation: "pages"
                             },
                             start: {
-                                viewName: "start",
+                                viewName: "Start",
                                 viewLevel: 1,
                                 viewId: "start",
                                 controlAggregation: "pages"
                             },
                             settings: {
-                                viewName: "settings",
+                                viewName: "Settings",
                                 viewLevel: 1,
                                 viewId: "settings",
                                 controlAggregation: "pages"
@@ -164,14 +159,9 @@ sap.ui.define([
                         }
                     },
                     resources: {
-                        css: [
-                            {
-                                uri: "css/style.css"
-                            },
-                            {
-                                uri: "css/additional.css"
-                            }
-                        ]
+                        css: [{
+                            uri: "css/additional.css"
+                        }]
                     }
                 }
             }

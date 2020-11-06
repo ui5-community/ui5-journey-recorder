@@ -4,8 +4,8 @@ sap.ui.define([
     "use strict";
     var ChromeStorage = {
         /**
-         * 
-         * @param {*} oSettings 
+         *
+         * @param {*} oSettings
          */
         set: function (oSettings) {
             const requestKey = oSettings.key;
@@ -105,7 +105,7 @@ sap.ui.define([
                     //check if we are already existing (do not add twice to the array..)
                     var iIndex = aExisting.indexOf(sTestId);
                     if (iIndex === -1) {
-                        return;
+                        reject();
                     }
                     aExisting.splice(iIndex, 1);
                     chrome.storage.local.set({

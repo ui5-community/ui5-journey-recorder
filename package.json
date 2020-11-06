@@ -1,12 +1,18 @@
 {
-    "name": "ui5TestAutomation",
-    "description": "Test-Automation for UI5",
-    "version": "0.5.2",
+    "name": "ui5-testrecorder",
+    "description": "A point-and-click adventure for your UI5 tests",
+    "version": "0.6.0",
+    "license": "Apache-2.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/msg-systems/ui5-testrecorder.git"
     },
     "devDependencies": {
-        "eslint": "^5.7.0"
+        "eslint": "*",
+        "showdown": "*"
+    },
+    "dependencies": {
+        "grunt": "^1.1.0",
+        "grunt-zip": "^0.18.2"
     }
 }

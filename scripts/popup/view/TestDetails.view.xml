@@ -1,0 +1,152 @@
+<mvc:View xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:code="sap.ui.codeeditor"
+    xmlns:semantic="sap.m.semantic" controllerName="com.ui5.testing.controller.TestDetails">
+    <semantic:FullscreenPage navButtonPress="onNavBack" showNavButton="true" title="Test {viewModel>/codeSettings/testName}" showFooter="{= ${viewModel>/activeTab} === 'settings' || ${viewModel>/activeTab} === 'code'}">
+        <semantic:subHeader>
+            <Bar>
+                <contentRight>
+                    <Label text="Language" visible="{= ${viewModel>/activeTab} === 'code' }" />
+                    <Select id="tstLanguage" change="onUpdatePreview" items="{settings>/codeLanguages}" visible="{= ${viewModel>/activeTab} === 'code' }" selectedKey="{settings>/settings/defaultLanguage}">
+                        <items>
+                            <core:Item text="{settings>text}" key="{settings>key}" />
+                        </items>
+                    </Select>
+                    <Select id="natLanguage" change="onUpdatePreview" items="{settings>/naturalLanguages}" visible="{= ${viewModel>/activeTab} === 'code' &amp;&amp; ${settings>/settings/defaultLanguage} === 'NAT'}" selectedKey="{settings>/settings/defaultNatLanguage}">
+                        <items>
+                            <core:Item text="{settings>text}" key="{settings>key}" />
+                        </items>
+                    </Select>
+                </contentRight>
+            </Bar>
+        </semantic:subHeader>
+
+        <semantic:customFooterContent>
+            <Button icon="sap-icon://record" text="Record" press="onContinueRecording" enabled="{= ${recordModel>/isReplaying} || ${recordModel>/isRecording} }" visible="{= ${viewModel>/activeTab} === 'settings'}" />
+            <Button id="beExport" text="Export" icon="sap-icon://action" press="onExport" visible="{= ${viewModel>/activeTab} === 'settings'}" />
+            <Button id="beDelete" type="Reject" text="Delete" press="onDelete" visible="{= ${viewModel>/activeTab} === 'settings'}" />
+            <Button id="btCancel" type="Emphasized" text="Cancel" press="onNavBack" visible="{= ${viewModel>/activeTab} === 'settings'}" />
+            <Button id="btSave" type="Accept" text="Save" press="onSave" visible="{= ${viewModel>/activeTab} === 'settings'}" />
+            <Button id="btDownload" icon="sap-icon://download-from-cloud" text="Download Sources" press="onDownloadAll" visible="{= ${viewModel>/activeTab} === 'code'}" />
+        </semantic:customFooterContent>
+
+        <semantic:content>
+            <IconTabBar id="idIconTabBarNoIcons" select="onTabChange" expandable="false" expanded="true" stretchContentHeight="true" applyContentPadding="false">
+                <items>
+                    <IconTabFilter text="Test Settings" key="settings">
+                        <f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
+                            <f:content>
+                                <Label required="true" text="Test Category" />
+                                <Input value="{viewModel>/codeSettings/testCategory}" change="onUpdatePreview" />
+
+                                <Label required="true" text="Test Name" />
+                                <Input value="{viewModel>/codeSettings/testName}" change="onUpdatePreview" />
+
+                                <Label text="Test Page" />
+                                <Input value="{viewModel>/codeSettings/testUrl}" change="onUpdatePreview" />
+                                <Text text="{viewModel>/codeSettings/ui5Version}" />
+
+                                <Label text="Authentication" />
+                                <Select id="tstAuthentication" change="onUpdatePreview" items="{settings>/authentification}" selectedKey="{viewModel>/codeSettings/authentification}">
+                                    <items>
+                                        <core:Item text="{settings>text}" key="{settings>key}" />
+                                    </items>
+                                </Select>
+
+                                <Label visible="false" text="Support-Assistant" tooltip="Add Support-Assistant steps, before every navigation step" />
+                                <CheckBox visible="false" selected="{viewModel>/codeSettings/supportAssistant}" select="onUpdatePreview" />
+                            </f:content>
+                        </f:SimpleForm>
+
+                        <Panel expandable="false" expanded="true" width="auto">
+                            <headerToolbar>
+                                <Toolbar height="3rem" active="true" style="Clear">
+                                    <Title titleStyle="H5" text="Steps ( {= ${recordModel>/elements}.length } )" />
+                                    <ToolbarSpacer />
+
+                                    <!-- <Label text="Replay timeout:" />
+                                    <Select id="sReplayTimeout" items="{settings>/replayTimeouts}" selectedKey="{settings>/settings/defaultReplayTimeout}" enabled="{= !${recordModel>/isReplaying} }">
+                                        <items>
+                                            <core:Item text="{settings>mode}" key="{settings>key}" />
+                                        </items>
+                                    </Select> -->
+
+                                    <Label text="Replay interval:" />
+                                    <Select id="sReplayMode" items="{settings>/replayModes}" selectedKey="{settings>/settings/defaultReplayInterval}" enabled="{= !${recordModel>/isReplaying} }">
+                                        <items>
+                                            <core:Item text="{settings>mode}" key="{settings>key}" />
+                                        </items>
+                                    </Select>
+
+                                    <Button icon="sap-icon://play" text="{i18n>replay}" enabled="{= !${recordModel>/isReplaying} }" press="onReplayStart" />
+                                </Toolbar>
+                            </headerToolbar>
+                            <content>
+                                <Table fixedLayout="false" id="tblPerformedSteps" inset="false" items="{path: 'recordModel>/elements', templateShareable: false}" noDataText="{i18n>notFoundTitle}">
+                                    <headerToolbar>
+                                        <Toolbar height="3rem" active="true" design="Solid" visible="{= ${recordModel>/isReplaying} || !!${recordModel>/replayMessages}.length }">
+                                            <Button icon="sap-icon://step" text="Replay next step" type="Accept" press="onReplaySingleStep" visible="{= ${recordModel>/isReplaying} &amp;&amp; ${recordModel>/replayInterval} === 0 }" busy="{= ${recordModel>/isExecuting} }"/>
+                                            <Button icon="sap-icon://stop" text="Stop replay" type="Reject" press="onReplayStop" visible="{recordModel>/isReplaying}" />
+
+                                            <ToolbarSpacer />
+
+                                            <Button id="replayMessagePopoverBtn" icon="sap-icon://message-popup" type="Emphasized" text="{= ${recordModel>/replayMessages}.length }" press="onShowReplayMessages" />
+                                        </Toolbar>
+                                    </headerToolbar>
+                                    <columns>
+                                        <Column>
+                                            <Text text="Type" />
+                                        </Column>
+                                        <Column>
+                                            <Text text="Activity" />
+                                        </Column>
+                                        <Column>
+                                            <Text text="UI5-Id" />
+                                        </Column>
+                                        <Column minScreenWidth="Tablet" demandPopin="true">
+                                            <Text text="Type" />
+                                        </Column>
+                                        <Column minScreenWidth="Tablet" demandPopin="true">
+                                            <Text text="Delete" />
+                                        </Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem type="{= ${recordModel>/isReplaying} ? 'Inactive' : 'Navigation' }" press="onStepClick" highlight="{recordModel>replay/executionState}" selected="true">
+                                            <cells>
+                                                <Text text="{parts: ['recordModel>property/type', 'constants>/stepTypes'], formatter: '._formatTestStepDetails'}" />
+                                                <HBox>
+                                                    <Text visible="{= ( ${recordModel>property/type} === 'ACT' ) }" text="{parts: ['recordModel>property/actKey', 'constants>/stepActions'], formatter: '._formatTestStepDetails'}" />
+                                                    <Text visible="{= ( ${recordModel>property/type} === 'ASS' ) }" text="{parts: ['recordModel>property/assKey', 'constants>/assertTypes'], formatter: '._formatTestStepDetails'}" />
+                                                </HBox>
+                                                <Text text="{recordModel>item/identifier/ui5Id}{recordModel>property/domChildWith}" />
+                                                <Text text="{recordModel>item/metadata/elementName}" />
+                                                <HBox alignContent="Start" alignItems="Start">
+                                                    <Button icon="sap-icon://delete" press="onDeleteStep" enabled="{= !${recordModel>/isReplaying} }" />
+                                                </HBox>
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                            </content>
+                        </Panel>
+                    </IconTabFilter>
+
+                    <IconTabFilter text="Code" key="code">
+                        <IconTabBar id="codeTab" expanded="true" expandable="false" stretchContentHeight="true" backgroundDesign="Transparent" applyContentPadding="true" items="{ path:'viewModel>/codes', sorter: { path: 'order' }}">
+                            <items>
+                                <IconTabFilter text="{viewModel>codeName}">
+                                    <code:CodeEditor visible="{= ${viewModel>type} === 'CODE'}" value="{viewModel>code}" editable="true"></code:CodeEditor>
+                                    <FormattedText visible="{= ${viewModel>type} === 'FTXT'}" htmlText="{viewModel>code}" />
+                                    <Text visible="{= ${viewModel>type} === 'CTXT'}" text="{viewModel>code}" />
+                                    <Button id="downloadButton" type="Transparent" class="btnFloat btnCircle" icon="sap-icon://download" press="onDownloadSource" visible="{= ${viewModel>type} === 'CODE' || ${settings>/settings/defaultLanguage} === 'NAT'}" />
+                                </IconTabFilter>
+                            </items>
+                        </IconTabBar>
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </semantic:content>
+    </semantic:FullscreenPage>
+</mvc:View>

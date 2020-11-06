@@ -14,5 +14,6 @@ Packaging:
 - bilder
 - ui5
 - README.md
+- CHANGELOG.md
 - manifest.json
 - LICENSE

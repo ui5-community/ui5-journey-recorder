@@ -1,11 +1,11 @@
 sap.ui.define([
     "sap/ui/base/Object",
     "sap/ui/model/json/JSONModel",
-    "com/ui5/testing/model/OPA5CodeStrategy",
-    "com/ui5/testing/model/NaturalCodeStrategy",
-    "com/ui5/testing/model/TestCafeCodeStrategy",
-    "com/ui5/testing/model/TestCafeBuilderCodeStrategy",
-    "com/ui5/testing/model/UIVeri5CodeStrategy"
+    "com/ui5/testing/model/code-generation/OPA5CodeStrategy",
+    "com/ui5/testing/model/code-generation/NaturalCodeStrategy",
+    "com/ui5/testing/model/code-generation/TestCafeCodeStrategy",
+    "com/ui5/testing/model/code-generation/TestCafeBuilCodeStrategy",
+    "com/ui5/testing/model/code-generation/UIVeri5CodeStrategy"
 ], function (UI5Object,
     JSONModel,
     OPA5CodeStrategy,
