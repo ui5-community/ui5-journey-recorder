@@ -1657,6 +1657,13 @@ sap.ui.define([
                     return -1;
                 }
             });
+            if (!aRows.length) {
+                aRows.push({
+                    text: "Root",
+                    domChildWith: "",
+                    order: 9999
+                });
+            }
 
             //check if the current value is fine..
             if (aRows.filter(function (e) {

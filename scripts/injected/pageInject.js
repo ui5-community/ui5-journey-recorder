@@ -195,10 +195,10 @@ var _wnd = window;
 
         if (oInformation && oInformation.startImmediate === true) {
             if (!oLastDom && oInformation.domId) {
-                oLastDom = document.getElementById(oInformation.domId);
+                oLastDom = _wnd.document.getElementById(oInformation.domId);
             }
             if (!oLastDom) {
-                oLastDom = document.activeElement;
+                oLastDom = _wnd.document.activeElement;
             }
 
             //Directly select again (woop)
@@ -332,6 +332,9 @@ var _wnd = window;
         // add DOM node to result if configured
         if (bReturnSelectedNode) {
             oResult.domNode = oDOMNode;
+            if (Array.isArray(oResult.domNode)) {
+                oResult.domNode = oResult.domNode.length ? oResult.domNode[0] : null;
+            }
         }
 
         return oResult;
@@ -409,15 +412,47 @@ var _wnd = window;
         if (oItem.property.actKey === "PRS") {
 
             aEvents.push(new Promise(function (resolve, reject) {
+                var Press = null;
+                try {
+                    Press = _wnd.sap.ui.requireSync("sap/ui/test/actions/Press");
+                } catch (err) {
 
-                _wnd.sap.ui.require(["sap/ui/test/actions/Press"], function (Press) {
+                }
+                if (Press) {
                     var oPressAction = new Press();
                     oPressAction.executeOn(oControl);
                     resolve({
                         result: "success"
                     });
-                });
+                } else {
+                    //fallback for old versions..
+                    var event = new MouseEvent('mousedown', {
+                        view: _wnd.window,
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    event.originalEvent = event; //self refer
+                    oDOMNode.dispatchEvent(event);
 
+                    var event = new MouseEvent('mouseup', {
+                        view: _wnd.window,
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    event.originalEvent = event; //self refer
+                    oDOMNode.dispatchEvent(event);
+
+                    var event = new MouseEvent('click', {
+                        view: _wnd.window,
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    event.originalEvent = event; //self refer
+                    oDOMNode.dispatchEvent(event);
+                    resolve({
+                        result: "success"
+                    });
+                }
             }));
 
         } else
@@ -431,8 +466,13 @@ var _wnd = window;
                 var bEnterPressed = false;
 
                 var oEnterTextActionPromise = new Promise(function (resolve, reject) {
+                    var EnterText = null;
+                    try {
+                        EnterText = _wnd.sap.ui.requireSync("sap/ui/test/actions/Press");
+                    } catch (err) {
 
-                    _wnd.sap.ui.require(["sap/ui/test/actions/EnterText"], function (EnterText) {
+                    }
+                    if (EnterText) {
                         var oEnterTextAction = new EnterText();
 
                         oEnterTextAction.setText(sText);
@@ -450,8 +490,26 @@ var _wnd = window;
                         resolve({
                             result: "success"
                         });
-                    });
+                    } else {
+                        oDOMNode.focus();
+                        if (sText.length > 0 && oItem.property.actionSettings.replaceText === false) {
+                            oDOMNode.val(oDom.val() + sText);
+                        } else {
+                            oDOMNode.val(sText);
+                        }
 
+                        var event = new KeyboardEvent('input', {
+                            view: window,
+                            data: '',
+                            bubbles: true,
+                            cancelable: true
+                        });
+                        event.originalEvent = event;
+                        oDOMNode.dispatchEvent(event);
+                        resolve({
+                            result: "success"
+                        });
+                    }
                 });
 
                 // chain Promise to execute press on Enter key:
@@ -762,9 +820,9 @@ var _wnd = window;
 
     function _getWindowInfo() {
         return {
-            title: document.title,
-            url: window.location.href,
-            hash: window.location.hash,
+            title: _wnd.document.title,
+            url: _wnd.window.location.href,
+            hash: _wnd.window.location.hash,
             ui5Version: _wnd.sap.ui.version
         };
     }
@@ -991,7 +1049,7 @@ var _wnd = window;
         }
 
         _fnClickListener(event) {
-            var event = event || window.event,
+            var event = event || _wnd.window.event,
                 el = event.target || event.srcElement;
 
             if (_bActive === false) {
@@ -1016,26 +1074,26 @@ var _wnd = window;
 
         setupPageListener() {
             /** use the css hovering class */
-            document.onmouseover = function (e) {
+            _wnd.document.onmouseover = function (e) {
                 if (_bActive === false) {
                     return;
                 }
-                var e = e || window.event,
+                var e = e || _wnd.window.event,
                     el = e.target || e.srcElement;
                 el.classList.add("UI5TR_ElementHover");
             };
 
-            document.onmouseout = function (e) {
+            _wnd.document.onmouseout = function (e) {
                 if (!_oDialog || !_oDialog.isOpen()) {
-                    var e = e || window.event,
+                    var e = e || _wnd.window.event,
                         el = e.target || e.srcElement;
                     el.classList.remove("UI5TR_ElementHover");
                 }
             };
 
-            document.addEventListener("mousedown", this._fnMouseDownListener, true);
+            _wnd.document.addEventListener("mousedown", this._fnMouseDownListener, true);
 
-            document.addEventListener('click', this._fnClickListener.bind(this), true);
+            _wnd.document.addEventListener('click', this._fnClickListener.bind(this), true);
 
             _wnd.sap.ui.require(["sap/m/MessageToast"], function (MessageToast) {
                 MessageToast.show("UI5 test recorder fully injected!");
@@ -1046,11 +1104,11 @@ var _wnd = window;
          * Resets the page listener by removing all page listeners and destroying the instance.
          */
         reset() {
-            document.onmouseover = null;
-            document.mousedown = null;
-            document.removeEventListener('mousedown', this._fnMouseDownListener, true);
-            document.removeEventListener('click', this._fnClickListener.bind(this), true);
-            document.onclick = null;
+            _wnd.document.onmouseover = null;
+            _wnd.document.mousedown = null;
+            _wnd.document.removeEventListener('mousedown', this._fnMouseDownListener, true);
+            _wnd.document.removeEventListener('click', this._fnClickListener.bind(this), true);
+            _wnd.document.onclick = null;
 
             PageListener._oInstance = null;
         }
@@ -1931,6 +1989,10 @@ var _wnd = window;
                 return null;
             }
 
+            if (Array.isArray(oDOMNode)) {
+                oDOMNode = oDOMNode[0];
+            }
+
             // TODO test this with LTS releases! (see version overview)
             // traverse up in the DOM tree until finding a proper UI5 control,
             // starting with the given DOM node
@@ -1988,18 +2050,18 @@ var _wnd = window;
             // check whether the given control is not embedded into another one
             var sExtension = oControlData.property.domChildWith;
             if (!sExtension.length) {
-                return _wnd.sap.ui.getCore().byId(oControlData.item.identifier.ui5AbsoluteId).getDomRef();
+                return [_wnd.sap.ui.getCore().byId(oControlData.item.identifier.ui5AbsoluteId).getDomRef()];
             }
 
             // construct a default query for the combined ID
             var sIdSelector = "*[id$='" + (oControlData.item.identifier.ui5AbsoluteId + sExtension) + "']";
-            var aDomNodes = document.querySelectorAll(sIdSelector);
+            var aDomNodes = _wnd.document.querySelectorAll(sIdSelector);
 
             // unwrap single item to establish compatibility with '_wnd.sap.ui.getCore().byId' as used above
-            if (aDomNodes.length === 1) {
-                return aDomNodes.item(0);
-            } else {
+            if (aDomNodes.length >= 1) {
                 return aDomNodes;
+            } else {
+                return [];
             }
         }
 
@@ -2106,7 +2168,7 @@ var _wnd = window;
 
             // select DOM nodes based on selector strings
             var aDOMNodes = aSelectorStrings.map(function (sIdSelector) {
-                return document.querySelector(sIdSelector);
+                return _wnd.document.querySelector(sIdSelector);
             });
 
             // if the result does not make sense or is no UI5 control, return empty
@@ -2450,7 +2512,7 @@ var _wnd = window;
                 if (!oDomRef) {
                     return false;
                 }
-                if ($("*[id$='" + oDomRef.id + oSelector.domChildWith + "']").length === 0) {
+                if (_wnd.$("*[id$='" + oDomRef.id + oSelector.domChildWith + "']").length === 0) {
                     return false;
                 }
             }
@@ -2858,7 +2920,7 @@ var _wnd = window;
                 copy = obj[key];
 
                 // skip undefined values, overriding the same value, and the __proto__ key
-                if (copy === undefined || target === copy || key === "__proto__") {
+                if (copy === undefined || target === copy || key === "__proto__" || typeof copy === "function" || typeof src === "function") {
                     continue;
                 }
 
@@ -2919,7 +2981,7 @@ var _wnd = window;
      */
     function revealDOMNode(oDOMNode) {
         // 1) remove all previously enabled highlightings
-        var prevFoundElements = document.getElementsByClassName("UI5TR_ControlFound");
+        var prevFoundElements = _wnd.document.getElementsByClassName("UI5TR_ControlFound");
         Array.prototype.forEach.call(prevFoundElements, function (oElement) {
             oElement.classList.remove("UI5TR_ControlFound");
         });
@@ -2971,7 +3033,7 @@ var _wnd = window;
             try {
                 oData.version = _wnd.sap.ui.getVersionInfo().version;
             } catch (e) {
-                oData.version = '';
+                oData.version = _wnd.sap.ui.version; //fallback..
             }
 
             // Get framework name
