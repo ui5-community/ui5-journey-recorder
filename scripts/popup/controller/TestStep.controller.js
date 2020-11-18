@@ -2012,6 +2012,8 @@ sap.ui.define([
                     return oItem.binding && Object.keys(oItem.binding).length > 0;
                 case "LUMIRA":
                     return oItem.lumiraProperty && Object.keys(oItem.lumiraProperty).length > 0;
+                case "CNTX":
+                    return oItem.context && Object.keys(oItem.context).length > 0;
                 case "ATTR":
                     return oItem.property && Object.keys(oItem.property).length > 0;
                 default:

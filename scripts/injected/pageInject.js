@@ -1353,7 +1353,6 @@ var _wnd = window;
                     aggregation: {},
                     association: {},
                     binding: {},
-                    //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                     bindingContext: {},
                     lumiraProperty: {},
                     context: {},
@@ -1525,6 +1524,69 @@ var _wnd = window;
                 if (bFull === false) {
                     TestItem._oTestGlobalCache["fnGetElement"][bFull][oItem.getId()] = oReturn;
                     return oReturn;
+                }
+
+
+                var oContextsAll = UI5ControlHelper.getContexts(oItem);
+                //contexts are always relevant if we are inside a table - in such a scenario we normally want to know the items/rows context model of our table
+                //as with this context, we can actually go foreward and select by this item
+                var oCur = oItem;
+                var sModelName = "";
+                while (oCur) {
+                    var sControl = oCur.getMetadata()._sClassName;
+                    if (sControl === "sap.m.Table" || sControl === "sap.m.PlanningCalendar" || sControl === "sap.m.Tree" || sControl === "sap.m.List" || sControl === "sap.ui.table.Table" || sControl === "sap.ui.table.TreeTable" || sControl === "sap.zen.crosstab.Crosstab") {
+                        //get the binding info-model..
+                        if (oCur.mBindingInfos["items"] || oCur.mBindingInfos["rows"]) {
+                            var oBndg = oCur.mBindingInfos["items"] ? oCur.mBindingInfos["items"] : oCur.mBindingInfos["rows"];
+                            if (oBndg.parts) {
+                                for (let i = 0; i < oBndg.parts.length; i++) {
+                                    sModelName = oItem.mBindingInfos[sBinding].parts[i].model;
+                                    break;
+                                }
+                            } else {
+                                sModelName = oBndg.model;
+                            }
+                        }
+                        break;
+                    }
+                    oCur = oCur.getParent();
+                }
+                var bAnyBinding = false;
+                if (sModelName.length === 0) {
+                    for (let sBinding in oItem.mBindingInfos) {
+                        if (!oItem.mBindingInfos[sBinding].parts) {
+                            if (oItem.mBindingInfos[sBinding].model) {
+                                bAnyBinding = true;
+                                sModelName = oItem.mBindingInfos[sBinding].model;
+                                break;
+                            }
+                            continue;
+                        }
+                        for (let i = 0; i < oItem.mBindingInfos[sBinding].parts.length; i++) {
+                            sModelName = oItem.mBindingInfos[sBinding].parts[i].model;
+                        }
+                        bAnyBinding = true;
+                    }
+                    if (!bAnyBinding) {
+                        //search up the binding context hierarchy (first=direct element bindings, than bindings coming directly from parent, than via propagated views/elements)
+                        let bndgCtx = {};
+                        if (!$.isEmptyObject(oItem.mElementBindingContexts)) {
+                            bndgCtx = oItem.mElementBindingContexts;
+                        } else if (!$.isEmptyObject(oItem.oBindingContexts)) {
+                            bndgCtx = oItem.oBindingContexts;
+                        } else if (!$.isEmptyObject(oItem.oPropagatedProperties.oBindingContexts)) {
+                            bndgCtx = oItem.oPropagatedProperties.oBindingContexts;
+                        } else {
+                            return false;
+                        }
+                        for (let sModelNameLoc in bndgCtx) {
+                            sModelName = sModelNameLoc;
+                            break;
+                        }
+                    }
+                }
+                if (sModelName && oContextsAll && oContextsAll[sModelName]) {
+                    oReturn.context = oContextsAll[sModelName];
                 }
 
                 // get view information

@@ -342,66 +342,6 @@ sap.ui.define([
                         return aReturn;
                     }.bind(this)
                 },
-                /*@Adrian - Start
-                "MODL": {
-                    criteriaKey: "MODL",
-                    criteriaText: "Model-Keys (Specific)",
-                    criteriaSpec: function (oItem) {
-                        var oMetadata = oItem.classArray;
-                        var aReturn = [];
-                        for (var i = 0; i < oMetadata.length; i++) {
-                            var sElementName = oMetadata[i].elementName;
-                            /*
-                            var oType = _oElementModelValues[sElementName];
-
-                            if (oType) {
-                                for (var sModel in oType) {
-
-                                    if (!oItem.model[sModel === "undefined" ? undefined : sModel]) {
-                                        continue;
-                                    }
-
-                                    for (var sProperty in oType[sModel]) {
-                                        var sPropertyValue = oItem.model[sModel === "undefined" ? undefined : sModel][sProperty];
-                                        if (typeof sPropertyValue === "undefined") {
-                                            continue;
-                                        }
-
-                                        aReturn.push({
-                                            subCriteriaType: sModel + "/" + sProperty,
-                                            subCriteriaText: oType[sModel][sProperty],
-                                            code: function (sModel, sProperty, sValue) {
-                                                var oReturn = { model: {} };
-                                                oReturn.model[sModel] = {};
-                                                oReturn.model[sModel][sProperty] = sValue;
-                                                return oReturn;
-                                            }.bind(this, sModel, sProperty),
-                                            value: function (sModel, sProperty, oItem) {
-                                                if (!oItem.model[sModel]) {
-                                                    return "";
-                                                }
-                                                return oItem.model[sModel][sProperty];
-                                            }.bind(this, sModel, sProperty),
-                                            getUi5Spec: function (oAdjust, oItem, iValue) {
-                                                return ""; //not really possible
-                                            },
-                                            assert: function (sModel, sProperty) {
-                                                return "model." + sModel + "." + sProperty;
-                                            }.bind(this, sModel, sProperty),
-                                            assertField: function (sValue) {
-                                                return {
-                                                    type: "prop"
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            }//
-                        }
-                        return aReturn;
-                    }
-                },
-                @Adrian - End*/
                 "BNDG": {
                     criteriaKey: "BNDG",
                     criteriaText: "Binding path",
@@ -458,6 +398,50 @@ sap.ui.define([
                         return aReturn;
                     }.bind(this)
                 },
+
+                "CNTX": {
+                    criteriaKey: "CNTX",
+                    criteriaText: "Context",
+                    criteriaSpec: function (oItem) {
+                        var aReturn = [];
+                        for (var sProperty in oItem.context) {
+                            aReturn.push({
+                                subCriteriaType: sProperty,
+                                subCriteriaText: sProperty,
+                                code: function (sProperty, sValue) {
+                                    var oReturn = {
+                                        context: {}
+                                    };
+                                    oReturn.context[sProperty] = sValue;
+                                    return oReturn;
+                                }.bind(this, sProperty),
+                                value: function (subCriteriaType, oItem) {
+                                    return oItem.context[subCriteriaType];
+                                }.bind(this, sProperty),
+                                getUi5Spec: function (oAdjust, oItem, iValue) {
+                                    //restriction: maximum one binding path apperently?
+                                    iValue = typeof iValue === "undefined" ? this.value(oItem, sProperty) : iValue;
+
+                                    oAdjust.context = typeof oAdjust.context != "undefined" ? oAdjust.context : [];
+                                    var oProp = {};
+                                    oProp[this.subCriteriaType] = iValue;
+                                    oAdjust.context.push(oProp);
+                                },
+                                assert: function (subCriteriaType) {
+                                    return "context." + subCriteriaType;
+                                }.bind(this, sProperty),
+                                assertField: function (sValue) {
+                                    return {
+                                        type: "context",
+                                        value: this.subCriteriaType
+                                    };
+                                }
+                            });
+                        }
+                        return aReturn;
+                    }
+                },
+
                 "ATTR": {
                     criteriaKey: "ATTR",
                     criteriaText: "Attributes",
@@ -515,7 +499,7 @@ sap.ui.define([
                     },
                     //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                     //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["MODL"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
-                    criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["VIW"]]
+                    criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["LUMIRA"], this._criteriaTypes["CNTX"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["VIW"]]
                 },
                 "VIW": {
                     getItem: function (oItem) {
@@ -544,7 +528,7 @@ sap.ui.define([
 
                     //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                     //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
-                    criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
+                    criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["LUMIRA"], this._criteriaTypes["CNTX"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
                 },
                 "PRT2": {
                     getItem: function (oItem) {
@@ -560,7 +544,7 @@ sap.ui.define([
 
                     //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                     //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
-                    criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
+                    criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["LUMIRA"], this._criteriaTypes["CNTX"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
                 },
                 "PRT3": {
                     getItem: function (oItem) {
@@ -576,7 +560,7 @@ sap.ui.define([
 
                     //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                     //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
-                    criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
+                    criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["LUMIRA"], this._criteriaTypes["CNTX"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
                 },
                 "PRT4": {
                     getItem: function (oItem) {
@@ -592,7 +576,7 @@ sap.ui.define([
 
                     //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                     //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"]]
-                    criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
+                    criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["LUMIRA"], this._criteriaTypes["CNTX"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"]]
                 },
                 "PLBL": {
                     getItem: function (oItem) {
