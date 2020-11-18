@@ -1537,7 +1537,8 @@ var _wnd = window;
                     if (sControl === "sap.m.Table" || sControl === "sap.m.PlanningCalendar" || sControl === "sap.m.Tree" || sControl === "sap.m.List" || sControl === "sap.ui.table.Table" || sControl === "sap.ui.table.TreeTable" || sControl === "sap.zen.crosstab.Crosstab") {
                         //get the binding info-model..
                         if (oCur.mBindingInfos["items"] || oCur.mBindingInfos["rows"]) {
-                            var oBndg = oCur.mBindingInfos["items"] ? oCur.mBindingInfos["items"] : oCur.mBindingInfos["rows"];
+                            var sBinding = oCur.mBindingInfos["items"] ? "items" : "rows";
+                            var oBndg = oCur.mBindingInfos[sBinding];
                             if (oBndg.parts) {
                                 for (let i = 0; i < oBndg.parts.length; i++) {
                                     sModelName = oItem.mBindingInfos[sBinding].parts[i].model;
