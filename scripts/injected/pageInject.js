@@ -332,7 +332,7 @@ var _wnd = window;
         // add DOM node to result if configured
         if (bReturnSelectedNode) {
             oResult.domNode = oDOMNode;
-            if (Array.isArray(oResult.domNode)) {
+            if (Array.isArray(oResult.domNode) || oResult.domNode instanceof NodeList) {
                 oResult.domNode = oResult.domNode.length ? oResult.domNode[0] : null;
             }
         }
@@ -468,7 +468,7 @@ var _wnd = window;
                 var oEnterTextActionPromise = new Promise(function (resolve, reject) {
                     var EnterText = null;
                     try {
-                        EnterText = _wnd.sap.ui.requireSync("sap/ui/test/actions/Press");
+                        EnterText = _wnd.sap.ui.requireSync("sap/ui/test/actions/EnterText");
                     } catch (err) {
 
                     }
@@ -1992,6 +1992,10 @@ var _wnd = window;
             if (Array.isArray(oDOMNode)) {
                 oDOMNode = oDOMNode[0];
             }
+            if (oDOMNode instanceof NodeList) {
+                oDOMNode = oDOMNode[0];
+            }
+
 
             // TODO test this with LTS releases! (see version overview)
             // traverse up in the DOM tree until finding a proper UI5 control,
