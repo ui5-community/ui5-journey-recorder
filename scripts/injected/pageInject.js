@@ -1577,12 +1577,12 @@ var _wnd = window;
                             bndgCtx = oItem.oBindingContexts;
                         } else if (!$.isEmptyObject(oItem.oPropagatedProperties.oBindingContexts)) {
                             bndgCtx = oItem.oPropagatedProperties.oBindingContexts;
-                        } else {
-                            return false;
                         }
-                        for (let sModelNameLoc in bndgCtx) {
-                            sModelName = sModelNameLoc;
-                            break;
+                        if ( bndgCtx ) {
+                           for (let sModelNameLoc in bndgCtx) {
+                                sModelName = sModelNameLoc;
+                                break;
+                            }
                         }
                     }
                 }
