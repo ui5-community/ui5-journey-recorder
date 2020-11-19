@@ -2714,6 +2714,17 @@ var _wnd = window;
                 }
             }
 
+            if (oSelector.tableInfo) {
+                var oTableInfo = UI5ControlHelper.getTableInformation(oItem);
+                if ((typeof oSelector.tableInfo.tableCol !== "undefined" && oTableInfo.tableCol !== oSelector.tableInfo.tableCol) ||
+                    (typeof oSelector.tableInfo.tableRow !== "undefined" && oTableInfo.tableRow !== oSelector.tableInfo.tableRow) ||
+                    (typeof oSelector.tableInfo.insideATable !== "undefined" && oTableInfo.insideATable !== oSelector.tableInfo.insideATable) ||
+                    (typeof oSelector.tableInfo.tableColId !== "undefined" && oTableInfo.tableColId !== oSelector.tableInfo.tableColId) ||
+                    (typeof oSelector.tableInfo.tableColDescr !== "undefined" && oTableInfo.tableColDescr !== oSelector.tableInfo.tableColDescr)) {
+                    return false;
+                }
+            }
+
             if (oSelector.aggregation) {
                 for (var sAggregationName in oSelector.aggregation) {
                     var oAggr = oSelector.aggregation[sAggregationName];

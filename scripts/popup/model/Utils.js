@@ -252,6 +252,32 @@ sap.ui.define([
                                 };
                             }
                         }, {
+                            subCriteriaType: "TABLE_COL_DESCR",
+                            subCriteriaText: "Table-Column-Descr",
+                            value: function (oItem) {
+                                return oItem.tableInfo.tableColDescr;
+                            },
+                            code: function (sValue) {
+                                return {
+                                    tableInfo: {
+                                        tableColDescr: sValue
+                                    }
+                                };
+                            },
+
+                            getUi5Spec: function (oAdjust, oItem, iValue) {
+                                iValue = typeof iValue === "undefined" ? this.value(oItem) : iValue;
+                                oAdjust.tableColDescr = iValue;
+                            },
+                            assert: function () {
+                                return "tableInfo.tableColDescr";
+                            },
+                            assertField: function (sValue) {
+                                return {
+                                    type: "tableColDescr"
+                                };
+                            }
+                        }, {
                             subCriteriaType: "TABLECOL",
                             subCriteriaText: "Table-Column",
                             value: function (oItem) {
