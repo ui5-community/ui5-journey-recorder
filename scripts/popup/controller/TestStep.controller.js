@@ -2006,6 +2006,8 @@ sap.ui.define([
                     return oItem.identifier && Object.keys(oItem.identifier).length > 0;
                 case "MTA":
                     return oItem.metadata && Object.keys(oItem.metadata).length > 0;
+                case "TBL":
+                    return oItem.tableInfo && Object.keys(oItem.tableInfo).length > 0;
                 case "VIW":
                     return oItem.viewProperty && Object.keys(oItem.viewProperty).length > 0;
                 case "BNDG":

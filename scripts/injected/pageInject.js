@@ -1358,6 +1358,7 @@ var _wnd = window;
                     context: {},
                     model: {},
                     metadata: {},
+                    tableInfo: {},
                     viewProperty: {},
                     classArray: [],
                     identifier: {
@@ -1589,6 +1590,9 @@ var _wnd = window;
                 if (sModelName && oContextsAll && oContextsAll[sModelName]) {
                     oReturn.context = oContextsAll[sModelName];
                 }
+
+                //get table information..
+                oReturn.tableInfo = UI5ControlHelper.getTableInformation(oItem); // get the table-information!
 
                 // get view information
                 var oView = UI5ControlHelper.getParentControlAtLevel(oItem, 1, true); // get the view!
@@ -2273,6 +2277,52 @@ var _wnd = window;
                 oItem = oItem.getParent();
             }
             return sCurrentComponent;
+        }
+
+        static getTableInformation(oItem) {
+            let aParentIds = [];
+            var oReturn = {
+                insideATable: false,
+                tableRow: 0,
+                tableCol: 0
+            };
+
+            aParentIds.push(oItem.getId());
+            let oParent = oItem.getParent();
+            while (oParent) {
+                aParentIds.push(oParent.getId());
+                var sControl = oParent.getMetadata()._sClassName;
+                if (sControl === "sap.m.Table" || sControl === "sap.m.PlanningCalendar" || sControl === "sap.m.List" || sControl === "sap.ui.table.Table" ||
+                    sControl === "sap.ui.table.TreeTable" || sControl === "sap.zen.crosstab.Crosstab") {
+                    oReturn.insideATable = true;
+
+                    let aRows = oParent.getAggregation("rows") ? oParent.getAggregation("rows") : oParent.getAggregation("items");
+                    if (aRows) {
+                        for (let j = 0; j < aRows.length; j++) {
+                            if (aParentIds.indexOf(aRows[j].getId()) !== -1) {
+                                oReturn.tableRow = j;
+                                oReturn.tableCol = 0;
+                                let aCells = aRows[j].getCells() ? aRows[j].getCells() : [];
+                                for (let x = 0; x < aCells.length; x++) {
+                                    if (aParentIds.indexOf(aCells[x].getId()) !== -1) {
+                                        oReturn.tableCol = x;
+                                        if (oParent.getColumns) {
+                                            var oCol = oParent.getColumns().filter(e => e.getVisible())[x];
+                                            oReturn.tableColId = this.getUi5Id(oCol);
+                                            oReturn.tableColDescr = oCol.getLabel ? oCol.getLabel().getText() : "";
+                                        }
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                }
+                oParent = oParent.getParent();
+            }
+            return oReturn;
         }
 
         static getParentControlAtLevel(oItem, iLevel, bViewOnly) {

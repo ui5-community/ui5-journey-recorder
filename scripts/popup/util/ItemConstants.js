@@ -19,6 +19,7 @@ sap.ui.define(["sap/ui/base/Object"],
 		ItemConstants.define("CONTEXT", "CNTX");
 		ItemConstants.define("I18N", "I18N");
 		ItemConstants.define("METADATA", "MTA");
+		ItemConstants.define("TABLEINFO", "TBL");
 
 		return ItemConstants;
 	});

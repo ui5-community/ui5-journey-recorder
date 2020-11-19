@@ -195,6 +195,118 @@ sap.ui.define([
                     }
                 },
 
+                "TBL": {
+                    criteriaKey: "TBL",
+                    criteriaText: "Table-Information",
+                    criteriaSpec: function () {
+                        return [{
+                            subCriteriaType: "INSIDETABLE",
+                            subCriteriaText: "Inside a table",
+                            value: function (oItem) {
+                                return oItem.tableInfo.insideATable;
+                            },
+                            code: function (sValue) {
+                                return {
+                                    tableInfo: {
+                                        insideATable: sValue
+                                    }
+                                };
+                            },
+
+                            getUi5Spec: function (oAdjust, oItem, iValue) {
+                                iValue = typeof iValue === "undefined" ? this.value(oItem) : iValue;
+                                oAdjust.insideATable = iValue;
+                            },
+                            assert: function () {
+                                return "tableInfo.insideATable";
+                            },
+                            assertField: function (sValue) {
+                                return {
+                                    type: "insideATable"
+                                };
+                            }
+                        }, {
+                            subCriteriaType: "TABLE_COL_ID",
+                            subCriteriaText: "Table-Column-Id",
+                            value: function (oItem) {
+                                return oItem.tableInfo.tableColId;
+                            },
+                            code: function (sValue) {
+                                return {
+                                    tableInfo: {
+                                        tableColId: sValue
+                                    }
+                                };
+                            },
+
+                            getUi5Spec: function (oAdjust, oItem, iValue) {
+                                iValue = typeof iValue === "undefined" ? this.value(oItem) : iValue;
+                                oAdjust.tableColId = iValue;
+                            },
+                            assert: function () {
+                                return "tableInfo.tableColId";
+                            },
+                            assertField: function (sValue) {
+                                return {
+                                    type: "tableColId"
+                                };
+                            }
+                        }, {
+                            subCriteriaType: "TABLECOL",
+                            subCriteriaText: "Table-Column",
+                            value: function (oItem) {
+                                return oItem.tableInfo.tableCol;
+                            },
+                            code: function (sValue) {
+                                return {
+                                    tableInfo: {
+                                        tableCol: sValue
+                                    }
+                                };
+                            },
+
+                            getUi5Spec: function (oAdjust, oItem, iValue) {
+                                iValue = typeof iValue === "undefined" ? this.value(oItem) : iValue;
+                                oAdjust.tableCol = iValue;
+                            },
+                            assert: function () {
+                                return "tableInfo.tableCol";
+                            },
+                            assertField: function (sValue) {
+                                return {
+                                    type: "tableCol"
+                                };
+                            }
+                        }, {
+                            subCriteriaType: "TABLE_ROW",
+                            subCriteriaText: "Table-Row",
+                            value: function (oItem) {
+                                return oItem.tableInfo.tableRow;
+                            },
+                            code: function (sValue) {
+                                return {
+                                    tableInfo: {
+                                        tableRow: sValue
+                                    }
+                                };
+                            },
+
+                            getUi5Spec: function (oAdjust, oItem, iValue) {
+                                iValue = typeof iValue === "undefined" ? this.value(oItem) : iValue;
+                                oAdjust.tableRow = iValue;
+                            },
+                            assert: function () {
+                                return "tableInfo.tableRow";
+                            },
+                            assertField: function (sValue) {
+                                return {
+                                    type: "tableRow"
+                                };
+                            }
+                        }];
+                    }
+                },
+
                 "LUMIRA": {
                     criteriaKey: "LUMIRA",
                     criteriaText: "Lumira Properties",
@@ -499,7 +611,7 @@ sap.ui.define([
                     },
                     //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                     //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["MODL"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
-                    criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["LUMIRA"], this._criteriaTypes["CNTX"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["VIW"]]
+                    criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["LUMIRA"], this._criteriaTypes["CNTX"], this._criteriaTypes["TBL"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["VIW"]]
                 },
                 "VIW": {
                     getItem: function (oItem) {
