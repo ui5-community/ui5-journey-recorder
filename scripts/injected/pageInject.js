@@ -1578,8 +1578,8 @@ var _wnd = window;
                         } else if (!$.isEmptyObject(oItem.oPropagatedProperties.oBindingContexts)) {
                             bndgCtx = oItem.oPropagatedProperties.oBindingContexts;
                         }
-                        if ( bndgCtx ) {
-                           for (let sModelNameLoc in bndgCtx) {
+                        if (bndgCtx) {
+                            for (let sModelNameLoc in bndgCtx) {
                                 sModelName = sModelNameLoc;
                                 break;
                             }
@@ -2594,6 +2594,24 @@ var _wnd = window;
                         if (oItem.getModel(sModel).getProperty(sModelProp) !== oSelector.model[sModel][sModelProp]) {
                             return false;
                         }
+                    }
+                }
+            }
+
+            if (oSelector.context) {
+                var oContextsAll = UI5ControlHelper.getContexts(oItem);
+                for (var sContextPropName in oSelector.context) {
+                    var bFoundCntx = false;
+                    for (var sCntxAll in oContextsAll) {
+                        var sContext = sCntxAll === "undefined" ? undefined : sCntxAll;
+                        var oCtx = oItem.getBindingContext(sContext);
+                        if (oCtx && oCtx.getObject() && oCtx.getObject()[sContextPropName] === oSelector.context[sContextPropName]) {
+                            bFoundCntx = true;
+                            break;
+                        }
+                    }
+                    if (!bFoundCntx) {
+                        return false;
                     }
                 }
             }
