@@ -2297,7 +2297,7 @@ var _wnd = window;
                     oReturn.insideATable = true;
 
                     let aRows = oParent.getAggregation("rows") ? oParent.getAggregation("rows") : oParent.getAggregation("items");
-                    let aCol = oParent.getColumns ? oParent.getColumns().filter(e => e.getVisible()) : [];
+                    let aCol = oParent.getColumns ? oParent.getColumns() : [];
                     if (aRows) {
                         for (let j = 0; j < aRows.length; j++) {
                             if (aParentIds.indexOf(aRows[j].getId()) !== -1) {
@@ -2311,7 +2311,6 @@ var _wnd = window;
                                             continue;
                                         }
                                     }
-                                    iVisibleColCounter = iVisibleColCounter + 1;
                                     if (aParentIds.indexOf(aCells[x].getId()) !== -1) {
                                         oReturn.tableCol = iVisibleColCounter;
                                         if (aCol && aCol.length && aCol.length > x) {
@@ -2320,6 +2319,7 @@ var _wnd = window;
                                         }
                                         break;
                                     }
+                                    iVisibleColCounter = iVisibleColCounter + 1;
                                 }
                                 break;
                             }
