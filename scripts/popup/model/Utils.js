@@ -281,12 +281,12 @@ sap.ui.define([
                             subCriteriaType: "TABLECOL",
                             subCriteriaText: "Table-Column",
                             value: function (oItem) {
-                                return oItem.tableInfo.tableCol;
+                                return parseInt(oItem.tableInfo.tableCol, 10);
                             },
                             code: function (sValue) {
                                 return {
                                     tableInfo: {
-                                        tableCol: sValue
+                                        tableCol: parseInt(sValue, 10)
                                     }
                                 };
                             },
@@ -307,12 +307,12 @@ sap.ui.define([
                             subCriteriaType: "TABLE_ROW",
                             subCriteriaText: "Table-Row",
                             value: function (oItem) {
-                                return oItem.tableInfo.tableRow;
+                                return parseInt(oItem.tableInfo.tableRow, 10);
                             },
                             code: function (sValue) {
                                 return {
                                     tableInfo: {
-                                        tableRow: sValue
+                                        tableRow: parseInt(sValue, 10)
                                     }
                                 };
                             },
