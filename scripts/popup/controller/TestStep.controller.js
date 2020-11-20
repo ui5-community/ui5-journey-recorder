@@ -701,27 +701,6 @@ sap.ui.define([
 
                     var aList = [];
 
-                    // add information on binding context and path
-                    if (!jQuery.isEmptyObject(oItem.binding)) {
-                        for (var sAttr in oItem.binding) {
-                            for (var iBindingPartIndex in oItem.binding[sAttr]) {
-                                var mBindingPart = oItem.binding[sAttr][iBindingPartIndex];
-
-                                if (typeof mBindingPart.path !== "object") {
-                                    aList.push({
-                                        type: "BNDG",
-                                        typeTxt: "Binding path",
-                                        bdgPath: iBindingPartIndex,
-                                        attribute: sAttr,
-                                        importance: 100, //oItem.uniquness.binding[sAttr],
-                                        value: mBindingPart.prefixedFullPath,
-                                        valueToString: mBindingPart.prefixedFullPath
-                                    });
-                                }
-                            }
-                        }
-                    }
-
                     // add information on properties
                     if (!jQuery.isEmptyObject(oItem.property)) {
                         for (var sAttr in oItem.property) {
@@ -755,6 +734,20 @@ sap.ui.define([
                         }
                     }
 
+                    if (!jQuery.isEmptyObject(oItem.tableInfo)) {
+                        for (var sId in oItem.tableInfo) {
+                            aList.push({
+                                type: "TBL",
+                                typeTxt: "Table-Settings",
+                                bdgPath: sId,
+                                attribute: sId,
+                                importance: 60,
+                                value: oItem.tableInfo[sId],
+                                valueToString: oItem.tableInfo[sId].toString ? oItem.tableInfo[sId].toString() : oItem.tableInfo[sId]
+                            });
+                        }
+                    }
+
                     if (!jQuery.isEmptyObject(oItem.metadata)) {
                         for (var sMeta in oItem.metadata) {
                             if (typeof oItem.metadata[sMeta] !== "object") {
@@ -766,6 +759,22 @@ sap.ui.define([
                                     importance: 50,
                                     value: oItem.metadata[sMeta],
                                     valueToString: oItem.metadata[sMeta].toString ? oItem.metadata[sMeta].toString() : oItem.metadata[sMeta]
+                                });
+                            }
+                        }
+                    }
+
+                    if (!jQuery.isEmptyObject(oItem.context)) {
+                        for (var sView in oItem.context) {
+                            if (typeof oItem.context[sView] !== "object") {
+                                aList.push({
+                                    type: "CNTX",
+                                    typeTxt: "Context",
+                                    bdgPath: sView,
+                                    attribute: sView,
+                                    importance: 50,
+                                    value: oItem.context[sView],
+                                    valueToString: oItem.context[sView].toString ? oItem.context[sView].toString() : oItem.context[sView]
                                 });
                             }
                         }
@@ -798,6 +807,35 @@ sap.ui.define([
                                 value: 'length: ' + oItem.aggregation[sAgg].length,
                                 valueToString: 'length: ' + oItem.aggregation[sAgg].length
                             });
+                        }
+                    }
+
+                    if (!jQuery.isEmptyObject(oItem.binding)) {
+                        for (var sAttr in oItem.binding) {
+                            for (var iBindingPartIndex in oItem.binding[sAttr]) {
+                                var mBindingPart = oItem.binding[sAttr][iBindingPartIndex];
+
+                                if (typeof mBindingPart.path !== "object") {
+                                    aList.push({
+                                        type: "LCLBNDG",
+                                        typeTxt: "Relative Binding Path path",
+                                        bdgPath: iBindingPartIndex,
+                                        attribute: sAttr,
+                                        importance: 100,
+                                        value: mBindingPart.prefixedFullPath,
+                                        valueToString: mBindingPart.relativePath
+                                    });
+                                    aList.push({
+                                        type: "BNDG",
+                                        typeTxt: "Binding path",
+                                        bdgPath: iBindingPartIndex,
+                                        attribute: sAttr,
+                                        importance: 100, //oItem.uniquness.binding[sAttr],
+                                        value: mBindingPart.prefixedFullPath,
+                                        valueToString: mBindingPart.prefixedFullPath
+                                    });
+                                }
+                            }
                         }
                     }
 

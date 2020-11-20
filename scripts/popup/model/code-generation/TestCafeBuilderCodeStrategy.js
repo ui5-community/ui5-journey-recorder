@@ -192,9 +192,9 @@ sap.ui.define([
 
         if (oSelAttr.relativeBinding) {
             for (var sAttr in oSelAttr.relativeBinding) {
-                for (var sPart in oSelAttr.binding[sAttr]) {
-                    var oBdng = oSelAttr.binding[sAttr][sPart];
-                    sStr += ".binding('" + sAttr + "', '" + oSelAttr.binding[sAttr][sPart] + "')";
+                for (var sPart in oSelAttr.relativeBinding[sAttr]) {
+                    var oBdng = oSelAttr.relativeBinding[sAttr][sPart];
+                    sStr += ".binding('" + sAttr + "', '" + oSelAttr.relativeBinding[sAttr][sPart] + "')";
                 }
             }
         }
