@@ -233,7 +233,7 @@ sap.ui.define([
 
             }
             if (oPar.identifier) {
-                sStr += ".parentId('" + (oPar.identifier.ui5Id) + "')";
+                sStr += ".parentId('" + (oPar.identifier.ui5Id || oPar.identifier.ui5LocalId || oPar.identifier.ui5AbsoluteId) + "')";
             }
             if (oPar.property) {
                 for (var sProp in oPar.property) {
