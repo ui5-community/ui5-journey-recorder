@@ -537,6 +537,57 @@ sap.ui.define([
                     }.bind(this)
                 },
 
+                "LCLBNDG": {
+                    criteriaKey: "LCLBNDG",
+                    criteriaText: "Relative Binding path",
+                    criteriaSpec: function (oItem) {
+                        var aReturn = [];
+
+                        for (var sAttr in oItem.binding) {
+                            if (typeof oItem.binding[sAttr].path !== "object") {
+
+                                var aBindingParts = oItem.binding[sAttr];
+
+                                for (var iBindingPartIndex in aBindingParts) {
+                                    var oBindingPart = aBindingParts[iBindingPartIndex];
+
+                                    aReturn.push({
+                                        subCriteriaType: iBindingPartIndex, // due to CompositeBindings, a unique name (e.g., 'enabled#1') to enable correct selection
+                                        subcriteriaTypeProperty: sAttr, // name of the control's property (e.g., 'enabled')
+                                        subCriteriaText: "Attribute '" + sAttr + "'",
+                                        value: function (sAttribute, iPartIndex, oItem) {
+                                            return oItem.binding[sAttribute][iPartIndex].relativePath;
+                                        }.bind(this, sAttr, iBindingPartIndex),
+                                        code: function (sAttribute, sKey, oPart, sValue) {
+                                            var oReturn = {
+                                                relativeBinding: {}
+                                            };
+                                            oReturn.relativeBinding[sAttribute] = {};
+                                            oReturn.relativeBinding[sAttribute][sKey] = oPart.relativePath;
+                                            return oReturn;
+                                        }.bind(this, sAttr, iBindingPartIndex, oBindingPart),
+                                        getUi5Spec: function (oAdjust, oItem, iValue) {
+                                            return ""; //not really possible right?
+                                        },
+                                        assert: function (sModel, sAttr) {
+                                            return "relativeBinding." + sModel + "." + sAttr;
+                                        }.bind(this, oBindingPart.model, sAttr),
+                                        assertField: function (sValue) {
+                                            return {
+                                                type: "relativeBinding"
+                                            }
+                                        }
+                                    });
+
+                                }
+
+                            }
+                        }
+
+                        return aReturn;
+                    }.bind(this)
+                },
+
                 "CNTX": {
                     criteriaKey: "CNTX",
                     criteriaText: "Context",
@@ -637,7 +688,7 @@ sap.ui.define([
                     },
                     //@Adrian - Fix bnd-ctxt uiveri5 2019/06/25
                     //criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["MODL"], this._criteriaTypes["AGG"], this._criteriaTypes["BNDG"], this._criteriaTypes["VIW"]]
-                    criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["LUMIRA"], this._criteriaTypes["CNTX"], this._criteriaTypes["TBL"], this._criteriaTypes["BNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["VIW"]]
+                    criteriaTypes: [this._criteriaTypes["ID"], this._criteriaTypes["ATTR"], this._criteriaTypes["LUMIRA"], this._criteriaTypes["CNTX"], this._criteriaTypes["TBL"], this._criteriaTypes["BNDG"], this._criteriaTypes["LCLBNDG"], this._criteriaTypes["MTA"], this._criteriaTypes["AGG"], this._criteriaTypes["VIW"]]
                 },
                 "VIW": {
                     getItem: function (oItem) {

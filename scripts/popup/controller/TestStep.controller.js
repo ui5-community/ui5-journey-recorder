@@ -2012,6 +2012,8 @@ sap.ui.define([
                     return oItem.viewProperty && Object.keys(oItem.viewProperty).length > 0;
                 case "BNDG":
                     return oItem.binding && Object.keys(oItem.binding).length > 0;
+                case "LCLBNDG":
+                    return oItem.binding && Object.keys(oItem.binding).length > 0;
                 case "LUMIRA":
                     return oItem.lumiraProperty && Object.keys(oItem.lumiraProperty).length > 0;
                 case "CNTX":

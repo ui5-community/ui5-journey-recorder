@@ -180,6 +180,25 @@ sap.ui.define([
             }
         }
 
+        if (oSelAttr.binding) {
+            for (var sAttr in oSelAttr.binding) {
+                for (var sPart in oSelAttr.binding[sAttr]) {
+                    var oBdng = oSelAttr.binding[sAttr][sPart];
+                    sStr += ".binding('" + sAttr + "', '" + oBdng.prefixedFullPath + "')";
+                    break;
+                }
+            }
+        }
+
+        if (oSelAttr.relativeBinding) {
+            for (var sAttr in oSelAttr.relativeBinding) {
+                for (var sPart in oSelAttr.binding[sAttr]) {
+                    var oBdng = oSelAttr.binding[sAttr][sPart];
+                    sStr += ".binding('" + sAttr + "', '" + oSelAttr.binding[sAttr][sPart] + "')";
+                }
+            }
+        }
+
         if (oSelAttr.tableInfo) {
             if (oSelAttr.tableInfo.tableRow) {
                 sStr += ".row(" + oSelAttr.tableInfo.tableRow + ")";

@@ -2676,6 +2676,28 @@ var _wnd = window;
             }
 
             if (oSelector.binding) {
+                for (var sBinding in oSelector.relativeBinding) {
+                    var aBndgInfoParts = UI5ControlHelper.getBindingInformation(oItem, sBinding);
+
+                    var aMatchingValues = Object.keys(oSelector.binding[sBinding]).map(function (sKey) {
+                        var mBindingInfo = aBndgInfoParts[sKey];
+                        var mSelectorBindingInfo = oSelector.binding[sBinding][sKey];
+
+                        // return early if a binding part does not exist actually
+                        if (!mBindingInfo || !mSelectorBindingInfo) {
+                            return false;
+                        }
+
+                        if (mBindingInfo.relativePath !== mSelectorBindingInfo.relativePath) {
+                            return false;
+                        }
+                    });
+                }
+                if (aMatchingValues.every((bIsMatching) => !bIsMatching)) {
+                    return false;
+                }
+
+
                 for (var sBinding in oSelector.binding) {
                     var aBndgInfoParts = UI5ControlHelper.getBindingInformation(oItem, sBinding);
 
