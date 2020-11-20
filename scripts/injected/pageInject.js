@@ -2297,19 +2297,26 @@ var _wnd = window;
                     oReturn.insideATable = true;
 
                     let aRows = oParent.getAggregation("rows") ? oParent.getAggregation("rows") : oParent.getAggregation("items");
+                    let aCol = oParent.getColumns ? [] : oParent.getColumns().filter(e => e.getVisible());
                     if (aRows) {
                         for (let j = 0; j < aRows.length; j++) {
                             if (aParentIds.indexOf(aRows[j].getId()) !== -1) {
                                 oReturn.tableRow = j;
                                 oReturn.tableCol = 0;
+                                let iVisibleColCounter = 0;
                                 let aCells = aRows[j].getCells() ? aRows[j].getCells() : [];
                                 for (let x = 0; x < aCells.length; x++) {
+                                    if (aCol && aCol.length && aCol.length > x) {
+                                        if (aCol[x].getVisible() === false) {
+                                            continue;
+                                        }
+                                    }
+                                    iVisibleColCounter = iVisibleColCounter + 1;
                                     if (aParentIds.indexOf(aCells[x].getId()) !== -1) {
-                                        oReturn.tableCol = x;
-                                        if (oParent.getColumns) {
-                                            var oCol = oParent.getColumns().filter(e => e.getVisible())[x];
-                                            oReturn.tableColId = this.getUi5Id(oCol);
-                                            oReturn.tableColDescr = oCol.getLabel ? oCol.getLabel().getText() : "";
+                                        oReturn.tableCol = iVisibleColCounter;
+                                        if (aCol && aCol.length && aCol.length > x) {
+                                            oReturn.tableColId = this.getUi5Id(aCol[x]);
+                                            oReturn.tableColDescr = aCol[x].getLabel ? aCol[x].getLabel().getText() : "";
                                         }
                                         break;
                                     }
