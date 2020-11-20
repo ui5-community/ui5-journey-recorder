@@ -1559,13 +1559,13 @@ var _wnd = window;
                         if (!oItem.mBindingInfos[sBinding].parts) {
                             if (oItem.mBindingInfos[sBinding].model) {
                                 bAnyBinding = true;
-                                sModelName = oItem.mBindingInfos[sBinding].model;
+                                sModelName = oItem.mBindingInfos[sBinding].model ? oItem.mBindingInfos[sBinding].model : "undefined";
                                 break;
                             }
                             continue;
                         }
                         for (let i = 0; i < oItem.mBindingInfos[sBinding].parts.length; i++) {
-                            sModelName = oItem.mBindingInfos[sBinding].parts[i].model;
+                            sModelName = oItem.mBindingInfos[sBinding].parts[i].model ? oItem.mBindingInfos[sBinding].parts[i].model : "undefined";
                         }
                         bAnyBinding = true;
                     }
@@ -1581,14 +1581,15 @@ var _wnd = window;
                         }
                         if (bndgCtx) {
                             for (let sModelNameLoc in bndgCtx) {
-                                sModelName = sModelNameLoc;
+                                sModelName = sModelNameLoc ? sModelNameLoc : "undefined";
                                 break;
                             }
                         }
                     }
                 }
+
                 if (sModelName && oContextsAll && oContextsAll[sModelName]) {
-                    oReturn.context = oContextsAll[sModelName];
+                    oReturn.context = oContextsAll[sModelName === "undefined" ? undefined : sModelName];
                 }
 
                 //get table information..
