@@ -1542,11 +1542,11 @@ var _wnd = window;
                             var oBndg = oCur.mBindingInfos[sBinding];
                             if (oBndg.parts) {
                                 for (let i = 0; i < oBndg.parts.length; i++) {
-                                    sModelName = oItem.mBindingInfos[sBinding].parts[i].model;
+                                    sModelName = oItem.mBindingInfos[sBinding].parts[i].model ? oItem.mBindingInfos[sBinding].parts[i].model : "undefined";
                                     break;
                                 }
                             } else {
-                                sModelName = oBndg.model;
+                                sModelName = oBndg.model ? oBndg.model : "undefined";
                             }
                         }
                         break;
