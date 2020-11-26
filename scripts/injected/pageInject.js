@@ -73,10 +73,6 @@ var _wnd = window;
             }
 
             if (event.data.type && (event.data.origin === "FROM_EXTENSION")) {
-                console.log("Page injection received message: ");
-                console.log("- type: " + oMessage.data.type);
-                console.log("- data: " + JSON.stringify(oMessage.data.data));
-
                 this._handleIncomingMessage(oMessage);
             }
         }
@@ -1263,7 +1259,6 @@ var _wnd = window;
          */
         getData() {
             if (!this._testItem) {
-                console.log("Test item not initalized. Initializing now...");
                 this.initializeItem();
             }
 
@@ -2305,21 +2300,27 @@ var _wnd = window;
                                 oReturn.tableRow = j;
                                 oReturn.tableCol = 0;
                                 let iVisibleColCounter = 0;
-                                let aCells = aRows[j].getCells() ? aRows[j].getCells() : [];
+                                let iCurrentCountCel = 0;
+                                let aCells = aRows[j].getCells ? aRows[j].getCells() : [];
                                 for (let x = 0; x < aCells.length; x++) {
-                                    if (aCol && aCol.length && aCol.length > x) {
-                                        if (aCol[x].getVisible() === false) {
+                                    if (aCol && aCol.length && aCol.length > iCurrentCountCel) {
+                                        if (aCol[iCurrentCountCel].getVisible() === false) {
+                                            x -= 1;
+                                            iCurrentCountCel += 1;
                                             continue;
                                         }
                                     }
+                                    iCurrentCountCel += 1;
                                     if (aParentIds.indexOf(aCells[x].getId()) !== -1) {
                                         oReturn.tableCol = iVisibleColCounter;
+
                                         if (aCol && aCol.length && aCol.length > x) {
                                             oReturn.tableColId = this.getUi5Id(aCol[x]);
                                             oReturn.tableColDescr = aCol[x].getLabel ? aCol[x].getLabel().getText() : "";
                                         }
                                         break;
                                     }
+
                                     iVisibleColCounter = iVisibleColCounter + 1;
                                 }
                                 break;
@@ -3131,12 +3132,20 @@ var _wnd = window;
     var _bActive = false,
         _bPageLocked = false,
         _oDialog = null,
+        _fnFocusEvent = null,
         oLastDom = null;
 
     var _oPageLockBusyDialog;
 
     function lockPage() {
         _bPageLocked = true;
+
+        //do NOT close eventually active popovers now!!
+        _fnFocusEvent = sap.ui.core.Popup.prototype.onFocusEvent;
+        sap.ui.core.Popup.prototype.onFocusEvent = function () {
+            return;
+        };
+
 
         if (_oPageLockBusyDialog) {
             _oPageLockBusyDialog.open();
@@ -3149,6 +3158,7 @@ var _wnd = window;
         if (_oPageLockBusyDialog) {
             _oPageLockBusyDialog.close();
         }
+        sap.ui.core.Popup.prototype.onFocusEvent = _fnFocusEvent;
     }
 
     /**
@@ -3242,11 +3252,9 @@ var _wnd = window;
     function initializePage() {
         const maxWaitTime = 3000;
         var waited = 0;
-        console.log('- checking UI5 appearance...');
         var intvervalID = setInterval(function () {
             waited = waited + 100;
             if (waited % 500 === 0) {
-                console.log(`- checking UI5 appearance (${waited / 1000.0})...`);
             }
             var oCheckData = checkPageForUI5();
             if (oCheckData.status === "success") {
@@ -3275,7 +3283,6 @@ var _wnd = window;
     }
 
     // Finished setting up the coding now check if UI5 is loaded on the page.
-    console.log("- UI5-Testrecorder code appended");
     initializePage();
 
     // #endregion

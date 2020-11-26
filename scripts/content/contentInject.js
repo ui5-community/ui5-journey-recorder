@@ -33,7 +33,6 @@
          * @returns {string} the generated injection ID
          */
         static _generateInjectID() {
-            console.log('- Generating injection id');
             var sInjectId = 'xxxyxxxy'.replace(/[xy]/g, function (c) {
                 var r = Math.random() * 16 | 0,
                     v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -61,7 +60,6 @@
          * Open the port for extension messaging.
          */
         _openPort() {
-            console.log("- Create connection to extension");
             this._port = chrome.runtime.connect({
                 name: ConnectionProxy._generateInjectID() + "-UI5TR"
             });
@@ -130,8 +128,6 @@
 
                         // UI5 found on page
                         if (oMessage.data.data.status === "success") {
-                            console.log('Finished setup, inform extension about success!');
-
                             // return UI5 information
                             data = {
                                 status: oMessage.data.data.status,
@@ -139,8 +135,6 @@
                                 name: oMessage.data.data.name
                             };
                         } /* *no* UI5 found on page */ else {
-                            console.log('Finished setup, inform extension about failure!');
-
                             // remove injected JS
                             // eslint-disable-next-line no-use-before-define
                             PageInjector.removeJS();
@@ -205,7 +199,6 @@
          * Inject the JS part of the page injection (i.e., {@file /scripts/injected/pageInject.js}).
          */
         static injectJS() {
-            console.log("- Inject page script and wait until UI5 is loaded");
             var script = document.createElement('script');
             script.id = TAG_ID_PREFIX + "-js";
             script.src = chrome.extension.getURL('/scripts/injected/pageInject.js');
