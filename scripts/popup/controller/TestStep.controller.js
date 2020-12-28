@@ -875,6 +875,9 @@ sap.ui.define([
          */
         _adjustDomChildWith: function (oItem) {
             var oMerged = this._getMergedClassArray(oItem);
+
+            this._oModel.setProperty("/element/property/domChildWith", "");
+
             //check if there is any preferred action, and that action is actually available..
             var oPropAction = oMerged.actions[this._oModel.getProperty("/element/property/actKey")];
             if (oPropAction) {
@@ -888,22 +891,6 @@ sap.ui.define([
                 if (sPrefDomChildWith.length) {
                     this._oModel.setProperty("/element/property/domChildWith", sPrefDomChildWith);
                     return;
-                }
-            }
-
-            var sStringDomNodeOriginal = this._oModel.getProperty("/element/property/domChildWith");
-            if (this._oModel.getProperty("/element/property/actKey") === "TYP") {
-                //find the first "input" or "textarea" element type
-                for (var i = 0; i < oItem.children.length; i++) {
-                    if (oItem.children[i].isInput === true) {
-                        this._oModel.setProperty("/element/property/domChildWith", oItem.children[i].domChildWith);
-                        break;
-                    }
-                }
-            } else {
-                //set to root, in case we are not allowed to work on that node..
-                if (!oMerged.defaultAction[sStringDomNodeOriginal]) {
-                    this._oModel.setProperty("/element/property/domChildWith", "");
                 }
             }
         },

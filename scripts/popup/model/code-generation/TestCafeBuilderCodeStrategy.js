@@ -1,6 +1,7 @@
 sap.ui.define([
-    "sap/ui/base/Object"
-], function (UI5Object) {
+    "sap/ui/base/Object",
+    "com/ui5/testing/model/Utils"
+], function (UI5Object, Utils) {
     "use strict";
     var TestCafeBuilderCodeStrategy = UI5Object.extend("com.ui5.testing.model.TestCafeBuilderCodeStrategy", {});
 
@@ -254,6 +255,7 @@ sap.ui.define([
 
         //generate selector..
         var sUI5Selector = this.getUI5Selector(oElement);
+        var aAttributeTypes = Utils.getAttributeTypes();
 
         var sAction = "";
         //in the builder variant we will always split the definition of our element and the actual action done on it..
@@ -276,7 +278,7 @@ sap.ui.define([
                     return "";
             }
 
-            sCode = "await ui5Action." + sAction + "(" + oElement.property.technicalName;
+            sCode = "await u." + sAction + "(" + oElement.property.technicalName;
 
             if (sAction === 'typeText') {
                 sCode = sCode + ',"' + oElement.property.selectActInsert + '"';
@@ -295,15 +297,66 @@ sap.ui.define([
             sCode = sCode + ");";
             aCode.push(sCode);
         } else if (sType === 'ASS') {
-            for (var i = 0; i < oElement.assertion.code.length; i++) {
-                sCode = "await t." + "expect(" + sUI5Selector + oElement.assertion.code[i] + ";";
+            debugger;
+
+            var aAsserts = oElement.assertFilter;
+            var sAssertType = oElement.property.assKey;
+            var sAssertMsg = oElement.property.assertMessage ? "'" + oElement.property.assertMessage + "'" : "";
+            var sAssertCount = oElement.property.assKeyMatchingCount;
+
+            if (sAssertType === "EXS") {
+                sCode = "await u.expect(" + sUI5Selector + ").exists().ok(" + sAssertMsg + ");";
                 aCode.push(sCode);
+            } else if (sAssertType === "MTC") {
+                sCode = "await u.expect(" + sUI5Selector + ").count().equal( " + sAssertCount + (sAssertMsg.length ? "," : "") + sAssertMsg + " ); ";
+                aCode.push(sCode);
+            } else if (sAssertType === "VIS") {
+                sCode = "await u.expect(" + sUI5Selector + ").visible().ok(" + sAssertMsg + ");";
+                aCode.push(sCode);
+            } else if (sAssertType === "ATTR") {
+                for (var x = 0; x < aAsserts.length; x++) {
+                    var oAssertScope = {}; //reset per line..
+                    var oAssert = aAsserts[x];
+
+                    var oAssertLocalScope = aAttributeTypes[oAssert.attributeType].getAssertScope(oAssertScope);
+                    oAssert.localScope = oAssertLocalScope;
+                    var oAssertSpec = Utils.getValueSpec(oAssert, oElement.item);
+                    if (oAssertSpec === null) {
+                        continue;
+                    }
+
+                    var sAssertFunc = "";
+                    if (oAssert.operatorType == 'EQ') {
+                        sAssertFunc = 'equal';
+                    } else if (oAssert.operatorType === 'NE') {
+                        sAssertFunc = 'notEqual';
+                    } else if (oAssert.operatorType === 'CP') {
+                        sAssertFunc = 'contains';
+                    } else if (oAssert.operatorType === 'NP') {
+                        sAssertFunc = 'notContains';
+                    }
+
+                    var sAssertCode = oAssertSpec.assert();
+                    var oUI5Spec = {};
+                    oAssertSpec.getUi5Spec(oUI5Spec, oElement.item, oAssert.criteriaValue);
+
+                    var sCriteriaValueFormatted = oAssert.criteriaValue;
+                    if (typeof oAssert.criteriaValue === "string") {
+                        sCriteriaValueFormatted = "'" + sCriteriaValueFormatted + "'";
+                    }
+
+                    if (oAssert.criteriaType === "ATTR") {
+                        sCode = "await u.expect(" + sUI5Selector + ").property('" + oAssert.subCriteriaType + "')." + sAssertFunc + "(" + sCriteriaValueFormatted + "" + (sAssertMsg.length ? "," : "") + sAssertMsg + ");";
+                    } else {
+                        sCode = "await u.expect(" + sUI5Selector + ").dynamic(e => " + "e." + sAssertCode + ")." + sAssertFunc + "(" + sCriteriaValueFormatted + "" + (sAssertMsg.length ? "," : "") + sAssertMsg + ");";
+                    }
+                    aCode.push(sCode);
+                }
             }
         }
 
         if (oElement.property.actionSettings.blur) {
-            //this is just a dummy.. a utils method fireing a "blur" would be better..
-            aCode.push('await ui5Action.click(ui5(".sapUiBody"));');
+            aCode.push('await u.blur();');
         }
 
         return aCode;

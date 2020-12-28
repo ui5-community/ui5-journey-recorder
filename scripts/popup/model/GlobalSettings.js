@@ -14,7 +14,7 @@ sap.ui.define([
                 settingsDefault: {
                     defaultReplayInterval: 0,
                     defaultReplayTimeout: 5,
-                    defaultLanguage: "UI5",
+                    defaultLanguage: "TCF_B",
                     defaultNatLanguage: "EN",
                     defaultAuthentification: "NONE"
                 },
