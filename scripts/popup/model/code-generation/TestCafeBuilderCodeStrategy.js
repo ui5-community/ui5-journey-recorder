@@ -159,7 +159,7 @@ sap.ui.define([
 
         if (oSelAttr.bindingContext) {
             for (var sAttr in oSelAttr.bindingContext) {
-                sStr += ".bindingPath('" + sAttr + "', '" + oSelAttr.bindingContext[sAttr] + "')";
+                sStr += ".bindingContextPath('" + sAttr + "', '" + oSelAttr.bindingContext[sAttr] + "')";
             }
         }
 
@@ -185,7 +185,7 @@ sap.ui.define([
             for (var sAttr in oSelAttr.binding) {
                 for (var sPart in oSelAttr.binding[sAttr]) {
                     var oBdng = oSelAttr.binding[sAttr][sPart];
-                    sStr += ".binding('" + sAttr + "', '" + oBdng.prefixedFullPath + "')";
+                    sStr += ".bindingPath('" + sAttr + "', '" + oBdng.prefixedFullPath + "')";
                     break;
                 }
             }
@@ -195,7 +195,7 @@ sap.ui.define([
             for (var sAttr in oSelAttr.relativeBinding) {
                 for (var sPart in oSelAttr.relativeBinding[sAttr]) {
                     var oBdng = oSelAttr.relativeBinding[sAttr][sPart];
-                    sStr += ".binding('" + sAttr + "', '" + oSelAttr.relativeBinding[sAttr][sPart] + "')";
+                    sStr += ".bindingPath('" + sAttr + "', '" + oSelAttr.relativeBinding[sAttr][sPart] + "')";
                 }
             }
         }
