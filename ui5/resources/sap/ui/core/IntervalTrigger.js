@@ -1,0 +1,6 @@
+/*!
+ * UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+sap.ui.define(['../base/Object','./EventBus',"sap/base/assert","sap/ui/thirdparty/jquery"],function(B,E,a,q){"use strict";var _="sapUiIntervalTrigger-event";var I=B.extend("sap.ui.core.IntervalTrigger",{constructor:function(i){B.apply(this);this._oEventBus=new E();this._delayedCallId=null;this._triggerProxy=q.proxy(t,this);this._iInterval=0;if(i){this.setInterval(i);}}});var t=function(){clearTimeout(this._delayedCallId);var h=this._oEventBus._defaultChannel.hasListeners(_);if(this._iInterval>0&&h){this._oEventBus.publish(_);this._delayedCallId=setTimeout(this._triggerProxy.bind(this),this._iInterval);}};I.prototype.destroy=function(){B.prototype.destroy.apply(this,arguments);delete this._triggerProxy;this._oEventBus.destroy();delete this._oEventBus;};I.prototype.setInterval=function(i){a((typeof i==="number"),"Interval must be an integer value");if(this._iInterval!==i){this._iInterval=i;this._triggerProxy();}};I.prototype.addListener=function(f,l){this._oEventBus.subscribe(_,f,l);this._triggerProxy();};I.prototype.removeListener=function(f,l){this._oEventBus.unsubscribe(_,f,l);};I.prototype.getInterface=function(){return this;};return I;});

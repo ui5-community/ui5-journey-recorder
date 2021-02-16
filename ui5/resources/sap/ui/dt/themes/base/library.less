@@ -1,0 +1,146 @@
+/* NOTE: This file was generated as an optimized version of "library.source.less" for the Theme Designer. */
+
+/*!
+ * UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
+@import "../../../../../../Base/baseLib/baseTheme/base.less"; /* ORIGINAL IMPORT PATH: "../../../../../sap/ui/core/themes/base/base.less" */
+
+@import "../../../../../sap/ui/core/themes/base/global.less";
+/* START "Overlay.less" */
+@_sap_ui_dt_Overlay_FocusColor : @sapUiContentFocusColor;
+@_sap_ui_dt_Overlay_TargetZoneColor : @sapUiSelected;
+@_sap_ui_dt_Overlay_SelectionColor : #35F;
+@_sap_ui_dt_Overlay_CuttedColor : white;
+
+#overlay-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.sapUiDtOverlay {
+	position: absolute;
+	outline: none;
+
+	// please, don't use border property, it cause the size change of an overtla and box-sizing: border box doesn't work with position: absolute and absolute sizing
+	// please, don't use outline property, outline can be invisible due to overflow:hidden of parent
+	// instead you should use pseudo elements to special border-like styling:
+	// :before pseudoelement should be used for focus visualisation
+	// :after pseudoelement should be used for other border-like visualisations
+
+	&:before, &:after {
+		position: absolute;
+		pointer-events: none;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		box-sizing: border-box;
+	}
+}
+
+.sapUiDtOverlayFocusable {
+	&:focus {
+		&:before {
+			content: " ";
+			border: 1px dotted @_sap_ui_dt_Overlay_FocusColor;
+		}
+	}
+}
+
+.sapUiDtDummyScrollContainer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	pointer-events: none;
+}
+
+.sapUiDtOverlayDropZone {
+	z-index: 9999999 !important;
+}
+
+.sapUiDtOverlayTargetZone {
+	&:after {
+		content: " ";
+		border: 1px dashed @_sap_ui_dt_Overlay_TargetZoneColor;
+	}
+}
+
+.sapUiDtOverlaySelected {
+	&:after {
+		content: " ";
+		border: 1px solid @_sap_ui_dt_Overlay_SelectionColor;
+	}
+}
+
+.sapUiDtOverlayMovable {
+	cursor: move;
+}
+
+.sapUiDtOverlayCutted {
+	background-color: @_sap_ui_dt_Overlay_CuttedColor !important;
+	opacity: 0.5;
+}
+
+.sapUiDtDragGhostWrapper {
+	position: fixed;
+	pointer-events: none;
+}
+
+/* fix for chrome */
+.sap-desktop[data-sap-ui-browser^="cr"] {
+
+	.sapUiDtDragGhostWrapper {
+		padding-left : -500px;
+		padding-bottom: 500px;
+		bottom: -1000px;
+	}
+
+}
+
+.sapUiDtClonedDom {
+	position: absolute;
+	top: 0;
+	left: 0;
+	pointer-events: none;
+
+	* {
+		pointer-events: none !important;
+	}
+}
+
+.sapUiDtOverlayScrollContainer {
+	position: absolute;
+}
+/* END "Overlay.less" */
+
+/* START "ContextMenu.less" */
+.sapUiDtContextMenu.sapMPopover {
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}
+
+.sapUiDtContextMenu .sapMPopoverScroll {
+	margin-right: 0px !important;
+}
+
+.sapUiDtContextMenu .sapMBtnInner {
+	text-align: left;
+}
+
+.sapUiDtContextMenu.sapMPopover {
+	min-width: 0px;
+}
+
+.sapUiDtContextMenu.sapMPopover.sapUiSizeCompact {
+	padding-left: 0.2rem;
+	padding-right: 0.2rem;
+}
+/* END "ContextMenu.less" */
+
+/* START "shared.less" */
+/* This CSS shares it rules with all other CSS of this library */
+/* END "shared.less" */

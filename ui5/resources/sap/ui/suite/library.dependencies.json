@@ -1,0 +1,76 @@
+{
+  "modules" : [
+    {
+      "name" : "sap/ui/suite/QuickViewUtils.js",
+      "description" : "Provides",
+      "size" : 6331,
+      "compressedSize" : 3930,
+      "required" : ["sap/ui/core/Control.js", "sap/ui/core/Element.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/suite/TaskCircle.js",
+      "description" : "Provides control sap.ui.suite.TaskCircle.",
+      "size" : 3377,
+      "compressedSize" : 1100,
+      "required" : ["sap/ui/core/Control.js", "sap/ui/core/EnabledPropagator.js", "sap/ui/suite/TaskCircleRenderer.js", "sap/ui/suite/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/suite/TaskCircleRenderer.js",
+      "description" : "provides default renderer for sap.ui.suite.TaskCircle",
+      "size" : 3599,
+      "compressedSize" : 1706,
+      "required" : ["sap/ui/core/Core.js", "sap/ui/suite/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/suite/VerticalProgressIndicator.js",
+      "description" : "Provides control sap.ui.suite.VerticalProgressIndicator.",
+      "size" : 4529,
+      "compressedSize" : 1385,
+      "required" : ["sap/ui/core/Control.js", "sap/ui/core/EnabledPropagator.js", "sap/ui/suite/VerticalProgressIndicatorRenderer.js", "sap/ui/suite/library.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/suite/VerticalProgressIndicatorRenderer.js",
+      "description" : "provides default renderer for sap.ui.suite.VerticalProgressIndicator",
+      "size" : 2523,
+      "compressedSize" : 1177,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/suite/library-h2-preload.js",
+      "size" : 2130,
+      "required" : ["sap/ui/core/Control.js", "sap/ui/core/Core.js", "sap/ui/core/Element.js", "sap/ui/core/EnabledPropagator.js", "sap/ui/core/library.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : ["sap/ui/suite/library.js", "sap/ui/suite/manifest.json", "sap/ui/suite/QuickViewUtils.js", "sap/ui/suite/TaskCircle.js", "sap/ui/suite/TaskCircleRenderer.js", "sap/ui/suite/VerticalProgressIndicator.js", "sap/ui/suite/VerticalProgressIndicatorRenderer.js"]
+    },
+    {
+      "name" : "sap/ui/suite/library-preload.js",
+      "size" : 10023,
+      "required" : ["sap/ui/core/Control.js", "sap/ui/core/Core.js", "sap/ui/core/Element.js", "sap/ui/core/EnabledPropagator.js", "sap/ui/core/library.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : ["sap/ui/suite/QuickViewUtils.js", "sap/ui/suite/TaskCircle.js", "sap/ui/suite/TaskCircleRenderer.js", "sap/ui/suite/VerticalProgressIndicator.js", "sap/ui/suite/VerticalProgressIndicatorRenderer.js", "sap/ui/suite/library.js", "sap/ui/suite/manifest.json"]
+    },
+    {
+      "name" : "sap/ui/suite/library-preload.json",
+      "size" : 0,
+      "required" : ["sap/ui/core/Control.js", "sap/ui/core/Core.js", "sap/ui/core/Element.js", "sap/ui/core/EnabledPropagator.js", "sap/ui/core/library-preload.json", "sap/ui/core/library.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : ["sap/ui/suite/QuickViewUtils.js", "sap/ui/suite/TaskCircle.js", "sap/ui/suite/TaskCircleRenderer.js", "sap/ui/suite/VerticalProgressIndicator.js", "sap/ui/suite/VerticalProgressIndicatorRenderer.js", "sap/ui/suite/library.js", "sap/ui/suite/manifest.json"]
+    },
+    {
+      "name" : "sap/ui/suite/library.js",
+      "description" : "Initialization Code and shared classes of library sap.ui.suite.",
+      "size" : 1472,
+      "compressedSize" : 613,
+      "required" : ["sap/ui/core/Core.js", "sap/ui/core/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/suite/manifest.json",
+      "size" : 972,
+      "required" : [],
+      "includes" : []
+    }
+  ]
+}

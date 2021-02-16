@@ -1,0 +1,1009 @@
+/* NOTE: This file was generated as an optimized version of "library.source.less" for the Theme Designer. */
+
+/*!
+ * UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
+@import "../../../../../Base/baseLib/baseTheme/base.less"; /* ORIGINAL IMPORT PATH: "../../../../sap/ui/core/themes/base/base.less" */
+
+@import "../../../../sap/ui/core/themes/base/global.less";
+
+/* START "Avatar.less" */
+/* ============================= */
+/* CSS for control sap.f/Avatar  */
+/* Base theme                    */
+/* ============================= */
+
+.sapFAvatar {
+	display: inline-block;
+	position: relative;
+}
+
+.sapFAvatarImage {
+	background: no-repeat center;
+}
+
+.sapFAvatarImageCover {
+	background-size: cover;
+}
+
+.sapFAvatarImageContain {
+	background-size: contain;
+	background-color: @sapUiContentImagePlaceholderBackground;
+}
+
+.sapFAvatarIcon {
+	text-align: center;
+	background-color: @sapUiContentImagePlaceholderBackground;
+	color: @sapUiContentIconColor;
+
+	.sapUiIcon {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		-webkit-transform: translate(-50%, -50%);
+	}
+}
+
+.sapFAvatarInitialsHolder {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%);
+}
+
+.sapFAvatarCircle {
+	border-radius: 100%;
+	-webkit-border-radius: 100%;
+
+	.sapMImg {
+		border-radius: 100%;
+		-webkit-border-radius: 100%;
+	}
+}
+
+.sapFAvatarXS {
+	height: 2rem;
+	width: 2rem;
+	font-size: 1rem;
+
+	.sapFAvatarInitialsHolder {
+		font-size: 0.75rem;
+	}
+}
+
+.sapFAvatarS {
+	height: 3rem;
+	width: 3rem;
+	font-size: 1.5rem;
+
+	.sapFAvatarInitialsHolder {
+		font-size: 1.125rem;
+	}
+}
+
+.sapFAvatarM {
+	height: 4rem;
+	width: 4rem;
+	font-size: 2rem;
+
+	.sapFAvatarInitialsHolder {
+		font-size: 1.625rem;
+	}
+}
+
+.sapFAvatarL {
+	height: 5rem;
+	width: 5rem;
+	font-size: 2.5rem;
+
+	.sapFAvatarInitialsHolder {
+		font-size: 2rem;
+	}
+}
+
+.sapFAvatarXL {
+	height: 7rem;
+	width: 7rem;
+	font-size: 3rem;
+
+	.sapFAvatarInitialsHolder {
+		font-size: 2.75rem;
+	}
+}
+
+.sapFAvatarFocusable:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
+}
+
+.sapFAvatarInitials {
+	background-color: @sapUiContentImagePlaceholderBackground;
+
+	.sapFAvatarInitialsHolder {
+		color: @sapUiContentIconColor;
+	}
+}
+
+// Apply LightBox Magnifying glass mixin to control
+.lightBoxMagnifyingGlassMixing(~".sapFAvatar", ~".sapFAvatarMagnifyingGlass");
+/* END "Avatar.less" */
+
+/* START "DynamicPage.less" */
+/* ================================== */
+/* CSS for control sap.f/DynamicPage  */
+/* Base theme                         */
+/* ================================== */
+
+.sapFDynamicPage {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	isolation: isolate;
+	z-index: 0;
+}
+
+.sapFDynamicPageContent {
+	flex-grow: 1;
+	-webkit-flex-grow: 1;
+	z-index: 0;
+
+	background: @sapUiGroupContentBackground;
+
+	.sapFDynamicPageAlignContent {
+		margin-left: -@sapUiMarginSmall;
+		margin-right: -@sapUiMarginSmall;
+	}
+}
+
+/* TODO remove after 1.62 version */
+html[data-sap-ui-browser^="ie"] {
+	.sapFDynamicPageContent {
+		flex-shrink: 0;
+	}
+}
+
+.sapFDynamicPageContentWrapper {
+	.sapFDynamicPageContentWrapperSpacer {
+		height: 4rem;
+		flex: 0 0 4rem;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapFDynamicPageContentWrapper {
+		.sapFDynamicPageContentWrapperSpacer {
+			height: 3.5rem;
+			flex: 0 0 3.5rem;
+		}
+	}
+}
+
+.sapFDynamicPageContent,
+.sapFDynamicPageContentFitContainer {
+	position: relative;
+	padding: 1rem 3rem 0 3rem;
+}
+
+.sapFDynamicPageContent > .sapFDynamicPageContentFitContainer {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+
+	&.sapFDynamicPageContentFitContainerFooterVisible {
+		bottom: 4rem;
+	}
+}
+
+.sapFDynamicPage-Std-Tablet {
+	.sapFDynamicPageContent,
+	.sapFDynamicPageContentFitContainer {
+		padding: 2rem 2rem 0 2rem;
+	}
+}
+
+.sapFDynamicPage-Std-Phone {
+	.sapFDynamicPageContent,
+	.sapFDynamicPageContentFitContainer {
+		padding: 2rem 1rem 0 1rem;
+	}
+}
+
+.sapUiContainerContentPadding(~".sapFDynamicPage", ~".sapFDynamicPageContent");
+.sapUiContainerContentPadding(~".sapFDynamicPage", ~".sapFDynamicPageContentFitContainer");
+
+.sapFDynamicPage.sapUiContentPadding,
+.sapFDynamicPage.sapUiNoContentPadding,
+.sapFDynamicPage.sapUiResponsiveContentPadding {
+	.sapFDynamicPageAlignContent {
+		margin: 0;
+	}
+}
+
+.sapFDynamicPage.sapUiContentPadding {
+	.sapFDynamicPage-Std-Phone {
+		.sapFDynamicPageAlignContent {
+			margin: 0 -1rem;
+		}
+	}
+}
+
+.sapFDynamicPage.sapUiResponsiveContentPadding {
+	&.sapFDynamicPage-Std-Phone {
+		.sapFDynamicPageContent,
+		.sapFDynamicPageContentFitContainer {
+			padding: 0;
+		}
+	}
+
+	&.sapFDynamicPage-Std-Tablet {
+		.sapFDynamicPageContent,
+		.sapFDynamicPageContentFitContainer {
+			padding: 1rem;
+		}
+	}
+
+	&.sapFDynamicPage-Std-Desktop {
+		.sapFDynamicPageContent,
+		.sapFDynamicPageContentFitContainer {
+			padding: 1rem 2rem;
+		}
+	}
+}
+
+.sapFDynamicPageContentWrapper {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	will-change: transform;
+	-webkit-overflow-scrolling: auto;
+
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+
+	-webkit-flex-direction: column;
+	flex-direction: column;
+
+	// Scroll anchoring adjusts the scroll position to prevent visible jumps (or "reflows"),
+	// when content changes above the viewport.
+	// See: https://github.com/WICG/ScrollAnchoring/blob/master/explainer.md
+	overflow-anchor: none;
+
+	overflow-y: auto;
+}
+
+.sapFDynamicPageSupressScroll {
+	.sapFDynamicPageContentWrapper {
+		overflow: hidden;
+	}
+}
+
+.sapFDynamicPageScrollBar {
+	right: 0;
+	position: absolute;
+	z-index: 10;
+}
+
+.sapFDynamicPage .sapFDynamicPageTitleWrapper {
+	display: flex;
+	display: -webkit-flex;
+	flex-direction: column;
+	-webkit-flex-direction: column;
+	flex-shrink: 0;
+	-webkit-flex-shrink: 0;
+}
+
+.sapFDynamicPageContentWrapper {
+	-webkit-flex-grow: 1;
+	flex-grow: 1;
+}
+
+.sapFDynamicPage,
+.sapFDynamicPage.sapFNavItem {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: column;
+	flex-direction: column;
+}
+
+// DynamicPageTitle hover
+.sapFDynamicPage.sapFDynamicPageTitleClickEnabled {
+	.sapFDynamicPageTitle:hover,
+	&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
+		cursor: pointer;
+	}
+}
+
+.sapFDynamicPageTitleMainHeading,
+.sapFDynamicPageTitleMainContent,
+.sapFDynamicPageTitleMainActions {
+	// BCP: 1870261908 - CSS cursor reset is needed here to prevent showing pointer for not clickable control types
+	cursor: default;
+}
+
+.sapFDynamicPage {
+	.sapFDynamicPageFooter {
+		position: relative;
+
+		.sapFDynamicPageActualFooterControl {
+			position: absolute;
+			height: 3rem;
+			width: auto;
+			bottom: 0;
+			right: 0;
+			left: 0;
+			border-radius: 0.25rem;
+			margin-left: 0.5rem;
+			margin-right: 0.5rem;
+			margin-bottom: 0.5rem;
+		}
+	}
+}
+
+.sapUiSizeCompact .sapFDynamicPage .sapFDynamicPageFooter .sapFDynamicPageActualFooterControl {
+	height: 2.5rem;
+}
+
+/* ============================== */
+/* Toggle Header Visual Indicator */
+/* ============================== */
+.sapFDynamicPageToggleHeaderIndicator.sapMBtn,
+.sapFDynamicPageHeaderPinButton.sapMBtn {
+	position: absolute;
+	left: 50%;
+	padding: 0;
+
+	.sapMBtnInner {
+		position: absolute !important;
+		border-radius: 0.1875rem;
+	}
+}
+
+/* Tablet and Desktop */
+.sapFDynamicPageToggleHeaderIndicator,
+.sapFDynamicPageHeaderPinButton {
+	width: 2.5rem;
+	height: 2.5rem;
+	font-size: 1.375rem;
+	bottom: -1.375rem;
+
+	.sapMBtnInner {
+		height: 2rem;
+		bottom: 0.5rem;
+
+		.sapMBtnIcon {
+			line-height: 2rem;
+		}
+	}
+}
+
+.sapFDynamicPageToggleHeaderIndicator,
+.sapFDynamicPage:not(.sapFDynamicPageTitleClickEnabled) .sapFDynamicPageHeaderPinButton {
+	margin-left: -1.25rem;
+}
+
+.sapFDynamicPageHeaderPinnable .sapFDynamicPageToggleHeaderIndicator {
+	margin-left: -2.5rem;
+}
+
+.sapFDynamicPageHeaderPinButton {
+	margin-left: 0.25rem;
+
+	.sapMBtnInner {
+		border: none;
+		&:not(.sapMToggleBtnPressed) {
+			background-color: @sapUiObjectHeaderBorderColor;
+		}
+	}
+}
+
+.sapFDynamicPageHeaderPinButton:hover > .sapMBtnInner {
+	background-color: darken(@sapUiObjectHeaderBorderColor, 3);
+}
+
+.sapFDynamicPageHeaderPinButton:active > .sapMBtnInner {
+	background-color: @sapUiSelected;
+}
+
+/* Compact */
+.sapUiSizeCompact {
+	.sapFDynamicPageToggleHeaderIndicator,
+	.sapFDynamicPageHeaderPinButton {
+		width: 2rem;
+		height: 2rem;
+		font-size: 1rem;
+		bottom: -0.875rem;
+
+		.sapMBtnInner {
+			height: 1.25rem;
+			bottom: 0.375rem;
+
+			.sapMBtnIcon {
+				line-height: 1.25rem;
+			}
+		}
+	}
+	.sapFDynamicPageToggleHeaderIndicator {
+		margin-left: -1rem;
+	}
+	.sapFDynamicPageHeaderPinnable .sapFDynamicPageToggleHeaderIndicator {
+		margin-left: -2rem;
+	}
+}
+
+/* ============= */
+/* Animations    */
+/* ============= */
+
+html[data-sap-ui-animation='on'] .sapFDynamicPage {
+	.sapFDynamicPageActualFooterControlShow {
+		-webkit-animation: bounceShow 0.35s forwards ease-in-out;
+		animation: bounceShow 0.35s forwards ease-in-out;
+	}
+	.sapFDynamicPageActualFooterControlHide {
+		-webkit-animation: bounceHide 0.35s forwards ease-in-out;
+		animation: bounceHide 0.35s forwards ease-in-out;
+	}
+
+	@-webkit-keyframes bounceShow {
+		0% {
+			-webkit-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@keyframes bounceShow {
+		0% {
+			transform: translateY(100%);
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@-webkit-keyframes bounceHide {
+		0% {
+			-webkit-transform: translateY(-5%);
+			transform: translateY(-5%);
+			opacity: 1;
+		}
+		100% {
+			-webkit-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+	}
+	@keyframes bounceHide {
+		0% {
+			transform: translateY(-5%);
+			opacity: 1;
+		}
+		100% {
+			transform: translateY(100%);
+			opacity: 0;
+		}
+	}
+}
+/* END "DynamicPage.less" */
+
+/* START "DynamicPageTitle.less" */
+/* ======================================= */
+/* CSS for control sap.f/DynamicPageTitle  */
+/* Base theme                              */
+/* ======================================= */
+.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle,
+.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly > .sapFDynamicPageTitle {
+	box-shadow: @sapUiShadowHeader;
+
+	.sapFDynamicPageHeader {
+		border-bottom: none;
+	}
+}
+
+.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
+	.sapFDynamicPageTitleMain {
+		.sapFDynamicPageTitleMainContent {
+			padding-bottom: 0;
+		}
+	}
+}
+
+.sapFDynamicPageTitle {
+	z-index: 3;
+	position: relative;
+	min-height: 3rem;
+	padding: 0.5rem 2rem 0.5rem 3rem;
+	display: flex;
+	display: -webkit-flex;
+	flex-direction: column;
+	-webkit-flex-direction: column;
+	box-sizing: border-box;
+	background: @sapUiObjectHeaderBackground;
+
+	&:focus {
+		outline: 0.0625rem dotted @sapUiContentFocusColor;
+		outline-offset: -0.0625rem;
+	}
+
+	.sapFDynamicPageTitleTop {
+		display: flex;
+		display: -webkit-flex;
+		align-items: center;
+		-webkit-align-items: center;
+
+		justify-content: space-between;
+		-webkit-justify-content: space-between;
+
+		&> .sapFDynamicPageTitleTopLeft {
+			min-height: 1rem;
+			width: 75%;
+
+			&> :first-child {
+				margin: 0;
+			}
+		}
+
+		&> .sapFDynamicPageTitleTopRight {
+			width: 25%;
+			dispaly: flex;
+			display: -webkit-flex;
+			align-items: center;
+			-webkit-align-items: center;
+			justify-content: flex-end;
+			-webkit-justify-content: flex-end;
+		}
+
+		&.sapFDynamicPageTitleTopBreadCrumbsOnly > .sapFDynamicPageTitleTopLeft {
+			width: 100%;
+		}
+
+		&.sapFDynamicPageTitleTopNavActionsOnly > .sapFDynamicPageTitleTopRight{
+			width: 100%;
+		}
+	}
+
+	.sapFDynamicPageTitleMain {
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		align-items: flex-start;
+		-webkit-align-items: flex-start;
+		flex-direction: row;
+		-webkit-flex-direction: row;
+		box-sizing: border-box;
+
+		&> .sapFDynamicPageTitleMainNavigationArea,
+		&> .sapFDynamicPageTitleMainNavigationArea > .sapFDynamicPageTitleMainNavigationAreaInner{
+			display: flex;
+			display: -webkit-flex;
+			align-items: center;
+			-webkit-align-items: center;
+		}
+	}
+
+	.sapFDynamicPageTitleActionsBar.sapMTB {
+		justify-content: flex-end;
+		-webkit-justify-content: flex-end;
+	}
+}
+
+/* TODO remove after 1.62 version */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapFDynamicPageTitleMain {
+		height: 100%; /* fixes IE flexbox item centering issue BCP: 1680351222 */
+	}
+}
+
+/* IE and Edge ignores outline-offset. Use an overlay: */
+/* TODO remove after 1.62 version */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapFDynamicPageTitle:focus {
+		outline: none;
+		position: relative;
+	}
+	.sapFDynamicPageTitle:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.0625rem dashed @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+}
+
+/* Firefox fix due to focus cut out from top and left */
+html[data-sap-ui-browser^="ff"].sap-desktop {
+	.sapFDynamicPageTitle:focus {
+		outline: none;
+		position: relative;
+	}
+	.sapFDynamicPageTitle:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.0625rem dotted @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+}
+
+/* ========== */
+/* Title Main */
+/* ========== */
+
+/* Heading area */
+.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainInner {
+	display: flex;
+	display: -webkit-flex;
+	align-items: flex-start;
+	-webkit-align-items: flex-start;
+	flex-grow: 1;
+	width: 100%; // to make Edge work
+
+	.sapFDynamicPageTitleMainHeading {
+		display: flex;
+		display: -webkit-flex;
+		align-items: flex-start;
+		-webkit-align-items: flex-start;
+		flex-direction: column;
+		-webkit-flex-direction: column;
+		justify-content: space-between;
+		-webkit-justify-content: space-between;
+		min-width: 48px;
+
+		.sapFDynamicPageTitleMainHeadingInner,
+		.sapFDynamicPageTitleMainHeadingSnappedExpandContent {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			box-sizing: border-box;
+			vertical-align: middle;
+		}
+
+		.sapFDynamicPageTitleMainHeadingInner {
+			min-width: 1px;
+			max-width: 100%;
+			color: @sapUiGroupTitleTextColor;
+			font-size: @sapMFontHeader3Size;
+			margin-top: 0.1875rem;
+		}
+
+		.sapFDynamicPageTitleMainHeadingSnappedExpandContent {
+			color: @sapUiContentLabelColor;
+			font-size: @sapMFontMediumSize;
+		}
+
+		.sapFDynamicPageTitleMainHeadingSnappedExpandContent.sapFDynamicPageTitleMainSnapContentVisible,
+		.sapFDynamicPageTitleMainHeadingSnappedExpandContent.sapFDynamicPageTitleMainExpandContentVisible {
+			min-width: 4rem;
+			max-width: 100%;
+		}
+	}
+
+	.sapFDynamicPageTitleMainContent {
+		min-width: 48px;
+		padding: 0 0 0.5rem 0.5rem;
+	}
+
+	.sapFDynamicPageTitleMainActions {
+		margin-left: auto;
+		min-width: 48px;
+
+	.sapFDynamicPageTitleActionsBar .sapMLabel.sapMLabelMaxWidth,
+	.sapFDynamicPageTitleActionsBar .sapMLnk.sapMLnkMaxWidth {
+		// overwriting the existing max-width constraint of sapMLabel and sapMLnk
+		// because in this context the label/link parent should instead adjust its flex-basis with respect to its content width
+		max-width: none;
+	}
+  }
+
+	/* Override Title and Label styles, required by VD */
+	.sapMTitle {
+		font-size: @sapMFontHeader3Size;
+	}
+}
+
+.sapFDynamicPageTitleMain.sapFDynamicPageTitleMainNoContent > .sapFDynamicPageTitleMainInner {
+	width: 60%;
+}
+.sapFDynamicPageTitleMain.sapFDynamicPageTitleMainNoContent > .sapFDynamicPageTitleMainRight {
+	width: 40%;
+}
+
+/* Tablet Size */
+.sapFDynamicPage-Std-Tablet {
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
+		padding: 0.5rem 1rem 1rem 2rem;
+	}
+
+	.sapFDynamicPageTitle {
+		padding: 0.5rem 1rem 0.5rem 2rem;
+
+		.sapFDynamicPageTitleTop > .sapFDynamicPageTitleTopLeft {
+			width: 65%;
+		}
+
+		.sapFDynamicPageTitleTop > .sapFDynamicPageTitleTopRight {
+			width: 35%;
+		}
+
+		.sapFDynamicPageTitleTop.sapFDynamicPageTitleTopBreadCrumbsOnly > .sapFDynamicPageTitleTopLeft {
+			width: 100%;
+		}
+
+		.sapFDynamicPageTitleTop.sapFDynamicPageTitleTopNavActionsOnly > .sapFDynamicPageTitleTopRight {
+			width: 100%;
+		}
+	}
+}
+
+/* Phone Size */
+.sapFDynamicPage-Std-Phone {
+
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
+		.sapFDynamicPageTitleMain {
+			.sapFDynamicPageTitleMainContent {
+				padding-bottom: 0;
+			}
+		}
+	}
+
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
+		padding: 0.5rem 0rem 1rem 1rem;
+	}
+
+	.sapFDynamicPageTitle,
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly > .sapFDynamicPageTitle {
+		padding: 0.5rem 0rem 0.5rem 1rem;
+
+		.sapFDynamicPageTitleTop > .sapFDynamicPageTitleTopLeft {
+			width: 60%;
+		}
+
+		.sapFDynamicPageTitleTop > .sapFDynamicPageTitleTopRight {
+			width: 40%;
+		}
+
+		.sapFDynamicPageTitleTop.sapFDynamicPageTitleTopBreadCrumbsOnly > .sapFDynamicPageTitleTopLeft {
+			width: 100%;
+		}
+
+		.sapFDynamicPageTitleTop.sapFDynamicPageTitleTopNavActionsOnly > .sapFDynamicPageTitleTopRight {
+			width: 100%;
+		}
+	}
+}
+
+/* END "DynamicPageTitle.less" */
+
+/* START "DynamicPageHeader.less" */
+/* ======================================== */
+/* CSS for control sap.f/DynamicPageHeader  */
+/* Base theme                               */
+/* ======================================== */
+
+.sapFDynamicPageHeader {
+	z-index: 2;
+	position: relative;
+
+	-webkit-flex-shrink: 0;
+	flex-shrink: 0;
+	box-sizing: border-box;
+	background: @sapUiObjectHeaderBackground;
+}
+
+.sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent {
+	padding: 1rem 3rem;
+	box-shadow: @sapUiShadowHeader;
+}
+
+.sapFDynamicPageHeader.sapFDynamicPageHeaderPinnable {
+	min-height: 2rem;
+}
+
+.sapFDynamicPageHeader:focus {
+	outline: none;
+}
+
+.sapFDynamicPageHeaderHidden {
+	display: none;
+}
+
+.sapFDynamicPage-Std-Tablet {
+	.sapFDynamicPageHeaderWithContent {
+		padding: 1rem 2rem;
+	}
+
+	.sapFDynamicPageHeader.sapFDynamicPageHeaderPinnable {
+		min-height: 3rem;
+	}
+}
+
+.sapFDynamicPage-Std-Phone {
+	.sapFDynamicPageHeaderWithContent {
+		padding: 0.5rem 1rem 1rem 1rem;
+	}
+}
+/* END "DynamicPageHeader.less" */
+
+/* START "FlexibleColumnLayout.less" */
+/* =========================================== */
+/* CSS for control sap.f/FlexibleColumnLayout  */
+/* Base theme                                  */
+/* =========================================== */
+
+.sapFFCL {
+	&, &.sapMNavItem:not(.sapMNavItemHidden) {
+		display: -webkit-flex;
+		display: flex;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+		isolation: isolate;
+		z-index: 0;
+		position: relative;
+	}
+
+	&.sapFFCLBackgroundDesignSolid {
+		background: @sapUiObjectHeaderBackground;
+	}
+
+	&.sapFFCLBackgroundDesignTranslucent {
+		background: @sapUiShellBackgroundGradient;
+	}
+
+	.sapFFCLColumn {
+		height: 100%;
+		position: relative;
+		visibility: hidden;
+
+		// When there are more than one panels, the latter get margin
+		&.sapFFCLColumnMargin {
+			margin: 0 0 0 0.5rem;
+		}
+
+		// When there is content in a panel, it needs min-width
+		&.sapFFCLColumnActive {
+			visibility: visible;
+		}
+
+		.sapFFCLNavigationButton {
+			// Button hit area size
+			width: 2rem;
+			height: 2.5rem;
+			padding: 0; // Vertical button hit area must be the same size as its visible area
+			position: absolute;
+			top: 45%;
+			z-index: 10000;
+
+			&.sapFFCLNavigationButtonLeft {
+				// Button clickable|hit area additional 0.5rem must overlap the area separator
+				left: -0.5rem;
+				.sapMBtnInner {
+					// Compensate for the aditional hit area of 0.5rem only for the left button
+					margin-left: 0.5rem;
+				}
+			}
+
+			&.sapFFCLNavigationButtonRight {
+				// Button clickable|hit-area additional 0.5rem must overlap the area separator
+				right: -0.5rem;
+			}
+
+			.sapMBtnInner {
+				width: 1.5rem;
+				height: 2.5rem;
+				min-width: 1.5rem;
+			}
+		}
+
+		.sapFFCLContainer {
+			height: 100%;
+		}
+
+		// In order to have reveal effect, columns should overlap each other
+		&.sapFFCLColumnBegin {
+			z-index: 300;
+		}
+
+		&.sapFFCLColumnMid {
+			z-index: 200;
+		}
+
+		&.sapFFCLColumnEnd {
+			z-index: 100;
+		}
+
+		&.sapFFCLPinnedColumn {
+			position: absolute;
+			right: 0;
+		}
+	}
+
+	.sapFFCLColumnContent {
+		height: 100%;
+	}
+
+	.sapUiLocalBusyIndicator {
+		z-index: 400;
+	}
+}
+
+html[data-sap-ui-animation='on'] {
+	.sapFFCL {
+		.sapFFCLColumn {
+			&:not(.sapFFCLPinnedColumn) {
+				transition: width 560ms cubic-bezier(0.1, 0, 0.05, 1), visibility 560ms ease-in;
+				-webkit-transition: width 560ms cubic-bezier(0.1, 0, 0.05, 1), visibility 560ms ease-in;
+			}
+		}
+	}
+}
+
+// Compact mode
+.sapUiSizeCompact {
+	.sapFFCL {
+		.sapFFCLNavigationButton {
+			// Button hit area size
+			width: 1.5rem;
+			height: 2rem;
+
+			.sapMBtnInner {
+				// Button visible area size
+				width: 1rem;
+				height: 2rem;
+				min-width: 1rem;
+				.sapMBtnIcon {
+					line-height: 2rem;
+					width: 1rem;
+					font-size: 1rem;
+					margin-left: 0;
+					margin-right: 0;
+				}
+			}
+		}
+	}
+}
+
+
+/* END "FlexibleColumnLayout.less" */
+
+/* START "SemanticPage.less" */
+/* =================================== */
+/* CSS for control sap.f/SemanticPage  */
+/* Base theme                          */
+/* =================================== */
+
+.sapFSemanticPage {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	overflow: hidden;
+
+	.sapFDynamicPageContent {
+		.sapFSemanticPageAlignContent {
+			margin-left: -@sapUiMarginSmall;
+			margin-right: -@sapUiMarginSmall;
+		}
+	}
+}
+/* END "SemanticPage.less" */

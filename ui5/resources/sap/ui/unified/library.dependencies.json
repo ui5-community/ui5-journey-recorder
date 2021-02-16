@@ -1,0 +1,1138 @@
+{
+  "modules" : [
+    {
+      "name" : "sap/ui/unified/Calendar.js",
+      "description" : "Provides control sap.ui.unified.Calendar.",
+      "size" : 74296,
+      "compressedSize" : 35528,
+      "required" : ["sap/base/Log.js", "sap/base/util/deepEqual.js", "sap/ui/Device.js", "sap/ui/core/Control.js", "sap/ui/core/Locale.js", "sap/ui/core/LocaleData.js", "sap/ui/core/ResizeHandler.js", "sap/ui/core/format/DateFormat.js", "sap/ui/dom/containsOrEquals.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/CalendarRenderer.js", "sap/ui/unified/DateRange.js", "sap/ui/unified/calendar/CalendarDate.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/calendar/Header.js", "sap/ui/unified/calendar/Month.js", "sap/ui/unified/calendar/MonthPicker.js", "sap/ui/unified/calendar/YearPicker.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CalendarAppointment.js",
+      "description" : "Provides control sap.ui.unified.CalendarAppointment.",
+      "size" : 6779,
+      "compressedSize" : 2430,
+      "required" : ["sap/base/Log.js", "sap/ui/core/format/DateFormat.js", "sap/ui/unified/DateTypeRange.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CalendarDateInterval.js",
+      "description" : "Provides control sap.ui.unified.Calendar.",
+      "size" : 32109,
+      "compressedSize" : 15022,
+      "required" : ["sap/base/Log.js", "sap/base/util/deepEqual.js", "sap/ui/Device.js", "sap/ui/core/Popup.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/Calendar.js", "sap/ui/unified/CalendarDateIntervalRenderer.js", "sap/ui/unified/calendar/CalendarDate.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/calendar/DatesRow.js", "sap/ui/unified/calendar/MonthPicker.js", "sap/ui/unified/calendar/YearPicker.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CalendarDateIntervalRenderer.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 1221,
+      "compressedSize" : 745,
+      "required" : ["sap/ui/core/Renderer.js", "sap/ui/unified/CalendarRenderer.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CalendarLegend.js",
+      "description" : "Provides control sap.ui.unified.CalendarLegend.",
+      "size" : 7372,
+      "compressedSize" : 2764,
+      "required" : ["sap/base/Log.js", "sap/ui/Device.js", "sap/ui/core/Control.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/CalendarLegendRenderer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CalendarLegendItem.js",
+      "description" : "Provides control sap.ui.unified.CalendarLegendItem.",
+      "size" : 1986,
+      "compressedSize" : 612,
+      "required" : ["sap/ui/core/Element.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CalendarLegendRenderer.js",
+      "description" : "UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 7802,
+      "compressedSize" : 2543,
+      "required" : ["sap/ui/core/InvisibleText.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CalendarMonthInterval.js",
+      "description" : "Provides control sap.ui.unified.Calendar.",
+      "size" : 42736,
+      "compressedSize" : 20610,
+      "required" : ["sap/base/Log.js", "sap/base/util/deepEqual.js", "sap/ui/Device.js", "sap/ui/core/Control.js", "sap/ui/core/Locale.js", "sap/ui/core/LocaleData.js", "sap/ui/core/Popup.js", "sap/ui/core/Renderer.js", "sap/ui/core/format/DateFormat.js", "sap/ui/dom/containsOrEquals.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/Calendar.js", "sap/ui/unified/CalendarMonthIntervalRenderer.js", "sap/ui/unified/CalendarRenderer.js", "sap/ui/unified/calendar/CalendarDate.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/calendar/Header.js", "sap/ui/unified/calendar/MonthsRow.js", "sap/ui/unified/calendar/YearPicker.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CalendarMonthIntervalRenderer.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 2648,
+      "compressedSize" : 1459,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CalendarOneMonthInterval.js",
+      "description" : "Provides control sap.ui.unified.CalendarOneMonthInterval.",
+      "size" : 13209,
+      "compressedSize" : 4487,
+      "required" : ["sap/ui/core/Renderer.js", "sap/ui/dom/containsOrEquals.js", "sap/ui/unified/Calendar.js", "sap/ui/unified/CalendarDateInterval.js", "sap/ui/unified/CalendarDateIntervalRenderer.js", "sap/ui/unified/CalendarOneMonthIntervalRenderer.js", "sap/ui/unified/CalendarRenderer.js", "sap/ui/unified/calendar/CalendarDate.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/calendar/OneMonthDatesRow.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CalendarOneMonthIntervalRenderer.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 736,
+      "compressedSize" : 425,
+      "required" : ["sap/ui/core/Renderer.js", "sap/ui/unified/CalendarDateIntervalRenderer.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CalendarRenderer.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 3361,
+      "compressedSize" : 1879,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CalendarRow.js",
+      "description" : "Provides control sap.ui.unified.Calendar.",
+      "size" : 63240,
+      "compressedSize" : 24986,
+      "required" : ["sap/ui/Device.js", "sap/ui/core/Control.js", "sap/ui/core/InvisibleText.js", "sap/ui/core/Locale.js", "sap/ui/core/LocaleData.js", "sap/ui/core/ResizeHandler.js", "sap/ui/core/date/UniversalDate.js", "sap/ui/core/format/DateFormat.js", "sap/ui/dom/containsOrEquals.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/CalendarRowRenderer.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CalendarRowRenderer.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 24637,
+      "compressedSize" : 11911,
+      "required" : ["sap/base/Log.js", "sap/ui/Device.js", "sap/ui/core/InvisibleText.js", "sap/ui/core/date/UniversalDate.js", "sap/ui/unified/CalendarAppointment.js", "sap/ui/unified/CalendarLegendRenderer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CalendarTimeInterval.js",
+      "description" : "Provides control sap.ui.unified.Calendar.",
+      "size" : 64663,
+      "compressedSize" : 34103,
+      "required" : ["sap/base/Log.js", "sap/base/util/deepEqual.js", "sap/ui/Device.js", "sap/ui/core/Control.js", "sap/ui/core/Locale.js", "sap/ui/core/LocaleData.js", "sap/ui/core/Popup.js", "sap/ui/core/date/UniversalDate.js", "sap/ui/core/format/DateFormat.js", "sap/ui/core/library.js", "sap/ui/dom/containsOrEquals.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/CalendarTimeIntervalRenderer.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/calendar/DatesRow.js", "sap/ui/unified/calendar/Header.js", "sap/ui/unified/calendar/MonthPicker.js", "sap/ui/unified/calendar/TimesRow.js", "sap/ui/unified/calendar/YearPicker.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CalendarTimeIntervalRenderer.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 2712,
+      "compressedSize" : 1512,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CalendarWeekInterval.js",
+      "description" : "Provides control sap.ui.unified.CalendarWeekInterval.",
+      "size" : 8424,
+      "compressedSize" : 2583,
+      "required" : ["sap/ui/unified/CalendarDateInterval.js", "sap/ui/unified/CalendarDateIntervalRenderer.js", "sap/ui/unified/calendar/CalendarDate.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/ColorPicker.js",
+      "description" : "Provides control sap.ui.unified.ColorPicker.",
+      "size" : 79947,
+      "compressedSize" : 40430,
+      "required" : ["sap/base/Log.js", "sap/ui/Device.js", "sap/ui/Global.js", "sap/ui/core/Control.js", "sap/ui/core/HTML.js", "sap/ui/core/Icon.js", "sap/ui/core/InvisibleText.js", "sap/ui/core/ResizeHandler.js", "sap/ui/core/library.js", "sap/ui/core/theming/Parameters.js", "sap/ui/layout/Grid.js", "sap/ui/layout/GridData.js", "sap/ui/layout/HorizontalLayout.js", "sap/ui/layout/VerticalLayout.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/ColorPickerRenderer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/ColorPickerRenderer.js",
+      "description" : "Provides default renderer for control sap.ui.unified.ColorPicker",
+      "size" : 1111,
+      "compressedSize" : 478,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/ContentSwitcher.js",
+      "description" : "Provides control sap.ui.unified.ContentSwitcher.",
+      "size" : 6027,
+      "compressedSize" : 1997,
+      "required" : ["sap/base/Log.js", "sap/ui/core/Control.js", "sap/ui/unified/ContentSwitcherRenderer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/ContentSwitcherRenderer.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 2189,
+      "compressedSize" : 1158,
+      "required" : ["sap/base/security/encodeXML.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/Currency.js",
+      "description" : "Provides control sap.ui.unified.Currency.",
+      "size" : 11102,
+      "compressedSize" : 3431,
+      "required" : ["sap/ui/core/Control.js", "sap/ui/core/format/NumberFormat.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/CurrencyRenderer.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/CurrencyRenderer.js",
+      "description" : "Provides default renderer for control sap.ui.unified.Menu",
+      "size" : 1829,
+      "compressedSize" : 938,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/DateRange.js",
+      "description" : "Provides control sap.ui.unified.DateRange.",
+      "size" : 2077,
+      "compressedSize" : 848,
+      "required" : ["sap/ui/core/Element.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/DateTypeRange.js",
+      "description" : "Provides control sap.ui.unified.DateTypeRange.",
+      "size" : 1573,
+      "compressedSize" : 476,
+      "required" : ["sap/ui/unified/DateRange.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/FileUploader.js",
+      "description" : "Provides control sap.ui.unified.FileUploader.",
+      "size" : 57607,
+      "compressedSize" : 22998,
+      "required" : ["sap/base/Log.js", "sap/base/security/encodeXML.js", "sap/ui/Device.js", "sap/ui/core/Control.js", "sap/ui/core/LabelEnablement.js", "sap/ui/core/library.js", "sap/ui/dom/containsOrEquals.js", "sap/ui/dom/jquery/Aria.js", "sap/ui/events/KeyCodes.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/FileUploaderRenderer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/FileUploaderParameter.js",
+      "description" : "Provides control sap.ui.unified.FileUploaderParameter.",
+      "size" : 1477,
+      "compressedSize" : 487,
+      "required" : ["sap/ui/core/Element.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/FileUploaderRenderer.js",
+      "description" : "Provides default renderer for control sap.ui.unified.FileUploader",
+      "size" : 4362,
+      "compressedSize" : 2522,
+      "required" : ["sap/ui/thirdparty/jquery.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/FileUploaderXHRSettings.js",
+      "description" : "Provides element sap.ui.unified.FileUploaderXHRSettings.",
+      "size" : 1439,
+      "compressedSize" : 447,
+      "required" : ["sap/ui/core/Element.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/Menu.js",
+      "description" : "Provides control sap.ui.unified.Menu.",
+      "size" : 43241,
+      "compressedSize" : 19291,
+      "required" : ["sap/base/Log.js", "sap/ui/Device.js", "sap/ui/core/Control.js", "sap/ui/core/Element.js", "sap/ui/core/Popup.js", "sap/ui/core/library.js", "sap/ui/dom/containsOrEquals.js", "sap/ui/events/ControlEvents.js", "sap/ui/events/KeyCodes.js", "sap/ui/events/PseudoEvents.js", "sap/ui/events/checkMouseEnterOrLeave.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/MenuItemBase.js", "sap/ui/unified/MenuRenderer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/MenuItem.js",
+      "description" : "Provides control sap.ui.unified.MenuItem.",
+      "size" : 3729,
+      "compressedSize" : 1893,
+      "required" : ["sap/ui/core/IconPool.js", "sap/ui/unified/MenuItemBase.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/MenuItemBase.js",
+      "description" : "Provides control sap.ui.unified.MenuItemBase.",
+      "size" : 5424,
+      "compressedSize" : 1723,
+      "required" : ["sap/ui/core/Element.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/MenuRenderer.js",
+      "description" : "Provides default renderer for control sap.ui.unified.Menu",
+      "size" : 3766,
+      "compressedSize" : 1986,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/MenuTextFieldItem.js",
+      "description" : "Provides control sap.ui.unified.MenuTextFieldItem.",
+      "size" : 10709,
+      "compressedSize" : 5265,
+      "required" : ["sap/base/Log.js", "sap/ui/Device.js", "sap/ui/core/ValueStateSupport.js", "sap/ui/core/library.js", "sap/ui/dom/jquery/cursorPos.js", "sap/ui/events/PseudoEvents.js", "sap/ui/unified/MenuItemBase.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/Shell.js",
+      "description" : "Provides control sap.ui.unified.Shell.",
+      "size" : 6307,
+      "compressedSize" : 2460,
+      "required" : ["sap/ui/unified/ShellHeader.js", "sap/ui/unified/ShellLayout.js", "sap/ui/unified/ShellRenderer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/ShellHeadItem.js",
+      "description" : "Provides control sap.ui.unified.ShellHeadItem.",
+      "size" : 6273,
+      "compressedSize" : 2829,
+      "required" : ["sap/base/security/encodeXML.js", "sap/ui/core/Element.js", "sap/ui/core/IconPool.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/ShellHeadUserItem.js",
+      "description" : "Provides control sap.ui.unified.ShellHeadUserItem.",
+      "size" : 4480,
+      "compressedSize" : 1940,
+      "required" : ["sap/base/security/encodeXML.js", "sap/ui/core/Element.js", "sap/ui/core/IconPool.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/ShellHeader.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 7906,
+      "compressedSize" : 5715,
+      "required" : ["sap/ui/Device.js", "sap/ui/core/Control.js", "sap/ui/core/theming/Parameters.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/ShellLayout.js",
+      "description" : "Provides control sap.ui.unified.ShellLayout.",
+      "size" : 17440,
+      "compressedSize" : 10740,
+      "required" : ["sap/base/Log.js", "sap/ui/Device.js", "sap/ui/core/Control.js", "sap/ui/core/Popup.js", "sap/ui/core/theming/Parameters.js", "sap/ui/dom/containsOrEquals.js", "sap/ui/dom/jquery/Focusable.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/ShellLayoutRenderer.js", "sap/ui/unified/SplitContainer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/ShellLayoutRenderer.js",
+      "description" : "Provides default renderer for control sap.ui.unified.ShellLayout",
+      "size" : 2792,
+      "compressedSize" : 1906,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/ShellOverlay.js",
+      "description" : "Provides control sap.ui.unified.ShellOverlay.",
+      "size" : 10681,
+      "compressedSize" : 6441,
+      "required" : ["sap/ui/Device.js", "sap/ui/core/Control.js", "sap/ui/core/Popup.js", "sap/ui/core/theming/Parameters.js", "sap/ui/dom/jquery/Selectors.js", "sap/ui/dom/jquery/rect.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/ShellOverlayRenderer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/ShellOverlayRenderer.js",
+      "description" : "Provides default renderer for control sap.ui.unified.ShellOverlay",
+      "size" : 3303,
+      "compressedSize" : 2088,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/ShellRenderer.js",
+      "description" : "Provides default renderer for control sap.ui.unified.Shell",
+      "size" : 589,
+      "compressedSize" : 312,
+      "required" : ["sap/ui/core/Renderer.js", "sap/ui/unified/ShellLayoutRenderer.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/SplitContainer.js",
+      "description" : "Provides control sap.ui.unified.SplitContainer.",
+      "size" : 12031,
+      "compressedSize" : 5310,
+      "required" : ["sap/base/Log.js", "sap/ui/core/Control.js", "sap/ui/core/library.js", "sap/ui/core/theming/Parameters.js", "sap/ui/unified/SplitContainerRenderer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/SplitContainerRenderer.js",
+      "description" : "Provides default renderer for control sap.ui.unified.SplitContainer",
+      "size" : 2641,
+      "compressedSize" : 1455,
+      "required" : ["sap/ui/core/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/CalendarDate.js",
+      "description" : "Provides class sap.ui.unified.calendar.CalendarDate",
+      "size" : 15395,
+      "compressedSize" : 3346,
+      "required" : ["sap/ui/base/Object.js", "sap/ui/core/date/UniversalDate.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/CalendarUtils.js",
+      "description" : "Provides class sap.ui.unified.calendar.CalendarUtils",
+      "size" : 22364,
+      "compressedSize" : 5509,
+      "required" : ["sap/ui/core/Locale.js", "sap/ui/core/LocaleData.js", "sap/ui/core/date/UniversalDate.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/calendar/CalendarDate.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/DatesRow.js",
+      "description" : "Provides control sap.ui.unified.Calendar.",
+      "size" : 10703,
+      "compressedSize" : 4255,
+      "required" : ["sap/ui/thirdparty/jquery.js", "sap/ui/unified/calendar/CalendarDate.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/calendar/DatesRowRenderer.js", "sap/ui/unified/calendar/Month.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/DatesRowRenderer.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 5951,
+      "compressedSize" : 2688,
+      "required" : ["sap/ui/core/Renderer.js", "sap/ui/unified/calendar/CalendarDate.js", "sap/ui/unified/calendar/MonthRenderer.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/Header.js",
+      "description" : "Provides control sap.ui.unified.Calendar.",
+      "size" : 12686,
+      "compressedSize" : 5759,
+      "required" : ["sap/ui/core/Control.js", "sap/ui/dom/containsOrEquals.js", "sap/ui/unified/calendar/HeaderRenderer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/HeaderRenderer.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 5843,
+      "compressedSize" : 3501,
+      "required" : ["sap/base/security/encodeXML.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/Month.js",
+      "description" : "Provides control sap.ui.unified.Calendar.",
+      "size" : 58734,
+      "compressedSize" : 26242,
+      "required" : ["sap/ui/Device.js", "sap/ui/core/Control.js", "sap/ui/core/Locale.js", "sap/ui/core/LocaleData.js", "sap/ui/core/delegate/ItemNavigation.js", "sap/ui/core/format/DateFormat.js", "sap/ui/core/library.js", "sap/ui/dom/containsOrEquals.js", "sap/ui/events/KeyCodes.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/calendar/CalendarDate.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/calendar/MonthRenderer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/MonthPicker.js",
+      "description" : "Provides control sap.ui.unified.Calendar.",
+      "size" : 17371,
+      "compressedSize" : 8187,
+      "required" : ["sap/ui/Device.js", "sap/ui/core/Control.js", "sap/ui/core/Locale.js", "sap/ui/core/LocaleData.js", "sap/ui/core/delegate/ItemNavigation.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/calendar/MonthPickerRenderer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/MonthPickerRenderer.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 3443,
+      "compressedSize" : 1660,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/MonthRenderer.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 16722,
+      "compressedSize" : 7934,
+      "required" : ["sap/base/Log.js", "sap/ui/core/library.js", "sap/ui/unified/CalendarLegend.js", "sap/ui/unified/CalendarLegendRenderer.js", "sap/ui/unified/calendar/CalendarDate.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/MonthsRow.js",
+      "description" : "Provides control sap.ui.unified.CalendarMonthInterval.",
+      "size" : 42825,
+      "compressedSize" : 18609,
+      "required" : ["sap/ui/core/Control.js", "sap/ui/core/Locale.js", "sap/ui/core/LocaleData.js", "sap/ui/core/delegate/ItemNavigation.js", "sap/ui/core/format/DateFormat.js", "sap/ui/core/library.js", "sap/ui/dom/containsOrEquals.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/calendar/CalendarDate.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/calendar/MonthsRowRenderer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/MonthsRowRenderer.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 10631,
+      "compressedSize" : 4786,
+      "required" : ["sap/base/Log.js", "sap/ui/unified/CalendarLegendRenderer.js", "sap/ui/unified/calendar/CalendarDate.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/OneMonthDatesRow.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 5134,
+      "compressedSize" : 1789,
+      "required" : ["sap/ui/unified/calendar/CalendarDate.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/calendar/DatesRow.js", "sap/ui/unified/calendar/OneMonthDatesRowRenderer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/OneMonthDatesRowRenderer.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 923,
+      "compressedSize" : 511,
+      "required" : ["sap/ui/core/Renderer.js", "sap/ui/unified/calendar/DatesRowRenderer.js", "sap/ui/unified/calendar/MonthRenderer.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/TimesRow.js",
+      "description" : "Provides control sap.ui.unified.CalendarTimeInterval.",
+      "size" : 42642,
+      "compressedSize" : 20323,
+      "required" : ["sap/base/util/deepEqual.js", "sap/ui/core/Control.js", "sap/ui/core/Locale.js", "sap/ui/core/LocaleData.js", "sap/ui/core/date/UniversalDate.js", "sap/ui/core/delegate/ItemNavigation.js", "sap/ui/core/format/DateFormat.js", "sap/ui/core/library.js", "sap/ui/dom/containsOrEquals.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/calendar/TimesRowRenderer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/TimesRowRenderer.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 8805,
+      "compressedSize" : 4909,
+      "required" : ["sap/base/Log.js", "sap/ui/core/date/UniversalDate.js", "sap/ui/unified/CalendarLegendRenderer.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/YearPicker.js",
+      "description" : "Provides control sap.ui.unified.Calendar.",
+      "size" : 19449,
+      "compressedSize" : 8887,
+      "required" : ["sap/ui/Device.js", "sap/ui/core/Control.js", "sap/ui/core/date/UniversalDate.js", "sap/ui/core/delegate/ItemNavigation.js", "sap/ui/core/format/DateFormat.js", "sap/ui/core/library.js", "sap/ui/events/KeyCodes.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/calendar/CalendarDate.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/calendar/YearPickerRenderer.js", "sap/ui/unified/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/calendar/YearPickerRenderer.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 3621,
+      "compressedSize" : 1733,
+      "required" : ["sap/ui/core/date/UniversalDate.js", "sap/ui/unified/calendar/CalendarDate.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/Calendar.designtime.js",
+      "description" : "Provides the Design Time Metadata for the sap.ui.unified.Calendar control",
+      "size" : 461,
+      "compressedSize" : 327,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/CalendarDateInterval.create.fragment.xml",
+      "size" : 139,
+      "required" : ["sap/ui/core/Fragment.js", "sap/ui/unified/CalendarDateInterval.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/CalendarDateInterval.designtime.js",
+      "description" : "Provides the Design Time Metadata for the sap.ui.unified.CalendarDateInterval control",
+      "size" : 705,
+      "compressedSize" : 513,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/CalendarLegend.create.fragment.xml",
+      "size" : 350,
+      "required" : ["sap/ui/core/Fragment.js", "sap/ui/unified/CalendarLegend.js", "sap/ui/unified/CalendarLegendItem.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/CalendarLegend.designtime.js",
+      "description" : "Provides the Design Time Metadata for the sap.ui.unified.CalendarLegend control",
+      "size" : 730,
+      "compressedSize" : 427,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/Currency.create.fragment.xml",
+      "size" : 144,
+      "required" : ["sap/ui/core/Fragment.js", "sap/ui/unified/Currency.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/Currency.designtime.js",
+      "description" : "Provides the Design Time Metadata for the sap.ui.unified.Currency control",
+      "size" : 647,
+      "compressedSize" : 467,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/FileUploader.designtime.js",
+      "description" : "Provides the Design Time Metadata for the sap.ui.unified.FileUploader control",
+      "size" : 469,
+      "compressedSize" : 331,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/library-preload.designtime.js",
+      "size" : 1756,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : ["sap/ui/unified/designtime/Calendar.designtime.js", "sap/ui/unified/designtime/CalendarDateInterval.designtime.js", "sap/ui/unified/designtime/CalendarLegend.designtime.js", "sap/ui/unified/designtime/Currency.designtime.js", "sap/ui/unified/designtime/FileUploader.designtime.js", "sap/ui/unified/designtime/library.designtime.js"]
+    },
+    {
+      "name" : "sap/ui/unified/designtime/library.designtime.js",
+      "description" : "Initialization of designtime Code and shared classes for the library sap.m.",
+      "size" : 335,
+      "compressedSize" : 240,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle.properties",
+      "size" : 697,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_ar.properties",
+      "size" : 1041,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_bg.properties",
+      "size" : 1077,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_ca.properties",
+      "size" : 638,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_cs.properties",
+      "size" : 681,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_da.properties",
+      "size" : 618,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_de.properties",
+      "size" : 627,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_el.properties",
+      "size" : 1103,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_en.properties",
+      "size" : 617,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_en_US_sappsd.properties",
+      "size" : 1291,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_en_US_saptrc.properties",
+      "size" : 755,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_es.properties",
+      "size" : 644,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_et.properties",
+      "size" : 630,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_fi.properties",
+      "size" : 689,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_fr.properties",
+      "size" : 656,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_hi.properties",
+      "size" : 997,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_hr.properties",
+      "size" : 633,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_hu.properties",
+      "size" : 675,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_it.properties",
+      "size" : 635,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_iw.properties",
+      "size" : 929,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_ja.properties",
+      "size" : 715,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_kk.properties",
+      "size" : 1129,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_ko.properties",
+      "size" : 673,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_lt.properties",
+      "size" : 648,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_lv.properties",
+      "size" : 698,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_ms.properties",
+      "size" : 619,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_nl.properties",
+      "size" : 614,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_no.properties",
+      "size" : 619,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_pl.properties",
+      "size" : 630,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_pt.properties",
+      "size" : 661,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_ro.properties",
+      "size" : 668,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_ru.properties",
+      "size" : 1063,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_sh.properties",
+      "size" : 626,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_sk.properties",
+      "size" : 652,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_sl.properties",
+      "size" : 627,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_sv.properties",
+      "size" : 628,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_th.properties",
+      "size" : 1003,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_tr.properties",
+      "size" : 682,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_uk.properties",
+      "size" : 1063,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_vi.properties",
+      "size" : 721,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_zh_CN.properties",
+      "size" : 667,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/designtime/messagebundle_zh_TW.properties",
+      "size" : 691,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/library-h2-preload.js",
+      "size" : 20967,
+      "required" : ["sap/base/Log.js", "sap/base/security/encodeXML.js", "sap/base/util/deepEqual.js", "sap/ui/Device.js", "sap/ui/Global.js", "sap/ui/base/Object.js", "sap/ui/core/Control.js", "sap/ui/core/Core.js", "sap/ui/core/Element.js", "sap/ui/core/Fragment.js", "sap/ui/core/HTML.js", "sap/ui/core/Icon.js", "sap/ui/core/IconPool.js", "sap/ui/core/InvisibleText.js", "sap/ui/core/LabelEnablement.js", "sap/ui/core/Locale.js", "sap/ui/core/LocaleData.js", "sap/ui/core/Popup.js", "sap/ui/core/Renderer.js", "sap/ui/core/ResizeHandler.js", "sap/ui/core/ValueStateSupport.js", "sap/ui/core/date/UniversalDate.js", "sap/ui/core/delegate/ItemNavigation.js", "sap/ui/core/format/DateFormat.js", "sap/ui/core/format/NumberFormat.js", "sap/ui/core/library.js", "sap/ui/core/theming/Parameters.js", "sap/ui/dom/containsOrEquals.js", "sap/ui/dom/jquery/Aria.js", "sap/ui/dom/jquery/Focusable.js", "sap/ui/dom/jquery/Selectors.js", "sap/ui/dom/jquery/cursorPos.js", "sap/ui/dom/jquery/rect.js", "sap/ui/events/ControlEvents.js", "sap/ui/events/KeyCodes.js", "sap/ui/events/PseudoEvents.js", "sap/ui/events/checkMouseEnterOrLeave.js", "sap/ui/layout/Grid.js", "sap/ui/layout/GridData.js", "sap/ui/layout/HorizontalLayout.js", "sap/ui/layout/VerticalLayout.js", "sap/ui/support/library.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : ["sap/ui/unified/library.js", "sap/ui/unified/manifest.json", "sap/ui/unified/Calendar.js", "sap/ui/unified/CalendarAppointment.js", "sap/ui/unified/CalendarDateInterval.js", "sap/ui/unified/CalendarDateIntervalRenderer.js", "sap/ui/unified/CalendarLegend.js", "sap/ui/unified/CalendarLegendItem.js", "sap/ui/unified/CalendarLegendRenderer.js", "sap/ui/unified/CalendarMonthInterval.js", "sap/ui/unified/CalendarMonthIntervalRenderer.js", "sap/ui/unified/CalendarOneMonthInterval.js", "sap/ui/unified/CalendarOneMonthIntervalRenderer.js", "sap/ui/unified/CalendarRenderer.js", "sap/ui/unified/CalendarRow.js", "sap/ui/unified/CalendarRowRenderer.js", "sap/ui/unified/CalendarTimeInterval.js", "sap/ui/unified/CalendarTimeIntervalRenderer.js", "sap/ui/unified/CalendarWeekInterval.js", "sap/ui/unified/ColorPicker.js", "sap/ui/unified/ColorPickerRenderer.js", "sap/ui/unified/ContentSwitcher.js", "sap/ui/unified/ContentSwitcherRenderer.js", "sap/ui/unified/Currency.js", "sap/ui/unified/CurrencyRenderer.js", "sap/ui/unified/DateRange.js", "sap/ui/unified/DateTypeRange.js", "sap/ui/unified/FileUploader.js", "sap/ui/unified/FileUploaderParameter.js", "sap/ui/unified/FileUploaderRenderer.js", "sap/ui/unified/FileUploaderXHRSettings.js", "sap/ui/unified/Menu.js", "sap/ui/unified/MenuItem.js", "sap/ui/unified/MenuItemBase.js", "sap/ui/unified/MenuRenderer.js", "sap/ui/unified/MenuTextFieldItem.js", "sap/ui/unified/Shell.js", "sap/ui/unified/ShellHeadItem.js", "sap/ui/unified/ShellHeadUserItem.js", "sap/ui/unified/ShellHeader.js", "sap/ui/unified/ShellLayout.js", "sap/ui/unified/ShellLayoutRenderer.js", "sap/ui/unified/ShellOverlay.js", "sap/ui/unified/ShellOverlayRenderer.js", "sap/ui/unified/ShellRenderer.js", "sap/ui/unified/SplitContainer.js", "sap/ui/unified/SplitContainerRenderer.js", "sap/ui/unified/calendar/CalendarDate.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/calendar/DatesRow.js", "sap/ui/unified/calendar/DatesRowRenderer.js", "sap/ui/unified/calendar/Header.js", "sap/ui/unified/calendar/HeaderRenderer.js", "sap/ui/unified/calendar/Month.js", "sap/ui/unified/calendar/MonthPicker.js", "sap/ui/unified/calendar/MonthPickerRenderer.js", "sap/ui/unified/calendar/MonthRenderer.js", "sap/ui/unified/calendar/MonthsRow.js", "sap/ui/unified/calendar/MonthsRowRenderer.js", "sap/ui/unified/calendar/OneMonthDatesRow.js", "sap/ui/unified/calendar/OneMonthDatesRowRenderer.js", "sap/ui/unified/calendar/TimesRow.js", "sap/ui/unified/calendar/TimesRowRenderer.js", "sap/ui/unified/calendar/YearPicker.js", "sap/ui/unified/calendar/YearPickerRenderer.js", "sap/ui/unified/designtime/Calendar.designtime.js", "sap/ui/unified/designtime/CalendarDateInterval.create.fragment.xml", "sap/ui/unified/designtime/CalendarDateInterval.designtime.js", "sap/ui/unified/designtime/CalendarLegend.create.fragment.xml", "sap/ui/unified/designtime/CalendarLegend.designtime.js", "sap/ui/unified/designtime/Currency.create.fragment.xml", "sap/ui/unified/designtime/Currency.designtime.js", "sap/ui/unified/designtime/FileUploader.designtime.js", "sap/ui/unified/designtime/library.designtime.js", "sap/ui/unified/library.support.js", "sap/ui/unified/rules/FileUploader.support.js"]
+    },
+    {
+      "name" : "sap/ui/unified/library-preload.js",
+      "size" : 440614,
+      "required" : ["sap/base/Log.js", "sap/base/security/encodeXML.js", "sap/base/util/deepEqual.js", "sap/ui/Device.js", "sap/ui/Global.js", "sap/ui/base/Object.js", "sap/ui/core/Control.js", "sap/ui/core/Core.js", "sap/ui/core/Element.js", "sap/ui/core/HTML.js", "sap/ui/core/Icon.js", "sap/ui/core/IconPool.js", "sap/ui/core/InvisibleText.js", "sap/ui/core/LabelEnablement.js", "sap/ui/core/Locale.js", "sap/ui/core/LocaleData.js", "sap/ui/core/Popup.js", "sap/ui/core/Renderer.js", "sap/ui/core/ResizeHandler.js", "sap/ui/core/ValueStateSupport.js", "sap/ui/core/date/UniversalDate.js", "sap/ui/core/delegate/ItemNavigation.js", "sap/ui/core/format/DateFormat.js", "sap/ui/core/format/NumberFormat.js", "sap/ui/core/library.js", "sap/ui/core/theming/Parameters.js", "sap/ui/dom/containsOrEquals.js", "sap/ui/dom/jquery/Aria.js", "sap/ui/dom/jquery/Focusable.js", "sap/ui/dom/jquery/Selectors.js", "sap/ui/dom/jquery/cursorPos.js", "sap/ui/dom/jquery/rect.js", "sap/ui/events/ControlEvents.js", "sap/ui/events/KeyCodes.js", "sap/ui/events/PseudoEvents.js", "sap/ui/events/checkMouseEnterOrLeave.js", "sap/ui/layout/Grid.js", "sap/ui/layout/GridData.js", "sap/ui/layout/HorizontalLayout.js", "sap/ui/layout/VerticalLayout.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : ["sap/ui/unified/Calendar.js", "sap/ui/unified/CalendarAppointment.js", "sap/ui/unified/CalendarDateInterval.js", "sap/ui/unified/CalendarDateIntervalRenderer.js", "sap/ui/unified/CalendarLegend.js", "sap/ui/unified/CalendarLegendItem.js", "sap/ui/unified/CalendarLegendRenderer.js", "sap/ui/unified/CalendarMonthInterval.js", "sap/ui/unified/CalendarMonthIntervalRenderer.js", "sap/ui/unified/CalendarOneMonthInterval.js", "sap/ui/unified/CalendarOneMonthIntervalRenderer.js", "sap/ui/unified/CalendarRenderer.js", "sap/ui/unified/CalendarRow.js", "sap/ui/unified/CalendarRowRenderer.js", "sap/ui/unified/CalendarTimeInterval.js", "sap/ui/unified/CalendarTimeIntervalRenderer.js", "sap/ui/unified/CalendarWeekInterval.js", "sap/ui/unified/ColorPicker.js", "sap/ui/unified/ColorPickerRenderer.js", "sap/ui/unified/ContentSwitcher.js", "sap/ui/unified/ContentSwitcherRenderer.js", "sap/ui/unified/Currency.js", "sap/ui/unified/CurrencyRenderer.js", "sap/ui/unified/DateRange.js", "sap/ui/unified/DateTypeRange.js", "sap/ui/unified/FileUploader.js", "sap/ui/unified/FileUploaderParameter.js", "sap/ui/unified/FileUploaderRenderer.js", "sap/ui/unified/FileUploaderXHRSettings.js", "sap/ui/unified/Menu.js", "sap/ui/unified/MenuItem.js", "sap/ui/unified/MenuItemBase.js", "sap/ui/unified/MenuRenderer.js", "sap/ui/unified/MenuTextFieldItem.js", "sap/ui/unified/Shell.js", "sap/ui/unified/ShellHeadItem.js", "sap/ui/unified/ShellHeadUserItem.js", "sap/ui/unified/ShellHeader.js", "sap/ui/unified/ShellLayout.js", "sap/ui/unified/ShellLayoutRenderer.js", "sap/ui/unified/ShellOverlay.js", "sap/ui/unified/ShellOverlayRenderer.js", "sap/ui/unified/ShellRenderer.js", "sap/ui/unified/SplitContainer.js", "sap/ui/unified/SplitContainerRenderer.js", "sap/ui/unified/calendar/CalendarDate.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/calendar/DatesRow.js", "sap/ui/unified/calendar/DatesRowRenderer.js", "sap/ui/unified/calendar/Header.js", "sap/ui/unified/calendar/HeaderRenderer.js", "sap/ui/unified/calendar/Month.js", "sap/ui/unified/calendar/MonthPicker.js", "sap/ui/unified/calendar/MonthPickerRenderer.js", "sap/ui/unified/calendar/MonthRenderer.js", "sap/ui/unified/calendar/MonthsRow.js", "sap/ui/unified/calendar/MonthsRowRenderer.js", "sap/ui/unified/calendar/OneMonthDatesRow.js", "sap/ui/unified/calendar/OneMonthDatesRowRenderer.js", "sap/ui/unified/calendar/TimesRow.js", "sap/ui/unified/calendar/TimesRowRenderer.js", "sap/ui/unified/calendar/YearPicker.js", "sap/ui/unified/calendar/YearPickerRenderer.js", "sap/ui/unified/library.js", "sap/ui/unified/manifest.json"]
+    },
+    {
+      "name" : "sap/ui/unified/library-preload.json",
+      "size" : 0,
+      "required" : ["sap/base/Log.js", "sap/base/security/encodeXML.js", "sap/base/util/deepEqual.js", "sap/ui/Device.js", "sap/ui/Global.js", "sap/ui/base/Object.js", "sap/ui/core/Control.js", "sap/ui/core/Core.js", "sap/ui/core/Element.js", "sap/ui/core/HTML.js", "sap/ui/core/Icon.js", "sap/ui/core/IconPool.js", "sap/ui/core/InvisibleText.js", "sap/ui/core/LabelEnablement.js", "sap/ui/core/Locale.js", "sap/ui/core/LocaleData.js", "sap/ui/core/Popup.js", "sap/ui/core/Renderer.js", "sap/ui/core/ResizeHandler.js", "sap/ui/core/ValueStateSupport.js", "sap/ui/core/date/UniversalDate.js", "sap/ui/core/delegate/ItemNavigation.js", "sap/ui/core/format/DateFormat.js", "sap/ui/core/format/NumberFormat.js", "sap/ui/core/library-preload.json", "sap/ui/core/library.js", "sap/ui/core/theming/Parameters.js", "sap/ui/dom/containsOrEquals.js", "sap/ui/dom/jquery/Aria.js", "sap/ui/dom/jquery/Focusable.js", "sap/ui/dom/jquery/Selectors.js", "sap/ui/dom/jquery/cursorPos.js", "sap/ui/dom/jquery/rect.js", "sap/ui/events/ControlEvents.js", "sap/ui/events/KeyCodes.js", "sap/ui/events/PseudoEvents.js", "sap/ui/events/checkMouseEnterOrLeave.js", "sap/ui/layout/Grid.js", "sap/ui/layout/GridData.js", "sap/ui/layout/HorizontalLayout.js", "sap/ui/layout/VerticalLayout.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : ["sap/ui/unified/Calendar.js", "sap/ui/unified/CalendarAppointment.js", "sap/ui/unified/CalendarDateInterval.js", "sap/ui/unified/CalendarDateIntervalRenderer.js", "sap/ui/unified/CalendarLegend.js", "sap/ui/unified/CalendarLegendItem.js", "sap/ui/unified/CalendarLegendRenderer.js", "sap/ui/unified/CalendarMonthInterval.js", "sap/ui/unified/CalendarMonthIntervalRenderer.js", "sap/ui/unified/CalendarOneMonthInterval.js", "sap/ui/unified/CalendarOneMonthIntervalRenderer.js", "sap/ui/unified/CalendarRenderer.js", "sap/ui/unified/CalendarRow.js", "sap/ui/unified/CalendarRowRenderer.js", "sap/ui/unified/CalendarTimeInterval.js", "sap/ui/unified/CalendarTimeIntervalRenderer.js", "sap/ui/unified/CalendarWeekInterval.js", "sap/ui/unified/ColorPicker.js", "sap/ui/unified/ColorPickerRenderer.js", "sap/ui/unified/ContentSwitcher.js", "sap/ui/unified/ContentSwitcherRenderer.js", "sap/ui/unified/Currency.js", "sap/ui/unified/CurrencyRenderer.js", "sap/ui/unified/DateRange.js", "sap/ui/unified/DateTypeRange.js", "sap/ui/unified/FileUploader.js", "sap/ui/unified/FileUploaderParameter.js", "sap/ui/unified/FileUploaderRenderer.js", "sap/ui/unified/FileUploaderXHRSettings.js", "sap/ui/unified/Menu.js", "sap/ui/unified/MenuItem.js", "sap/ui/unified/MenuItemBase.js", "sap/ui/unified/MenuRenderer.js", "sap/ui/unified/MenuTextFieldItem.js", "sap/ui/unified/Shell.js", "sap/ui/unified/ShellHeadItem.js", "sap/ui/unified/ShellHeadUserItem.js", "sap/ui/unified/ShellHeader.js", "sap/ui/unified/ShellLayout.js", "sap/ui/unified/ShellLayoutRenderer.js", "sap/ui/unified/ShellOverlay.js", "sap/ui/unified/ShellOverlayRenderer.js", "sap/ui/unified/ShellRenderer.js", "sap/ui/unified/SplitContainer.js", "sap/ui/unified/SplitContainerRenderer.js", "sap/ui/unified/calendar/CalendarDate.js", "sap/ui/unified/calendar/CalendarUtils.js", "sap/ui/unified/calendar/DatesRow.js", "sap/ui/unified/calendar/DatesRowRenderer.js", "sap/ui/unified/calendar/Header.js", "sap/ui/unified/calendar/HeaderRenderer.js", "sap/ui/unified/calendar/Month.js", "sap/ui/unified/calendar/MonthPicker.js", "sap/ui/unified/calendar/MonthPickerRenderer.js", "sap/ui/unified/calendar/MonthRenderer.js", "sap/ui/unified/calendar/MonthsRow.js", "sap/ui/unified/calendar/MonthsRowRenderer.js", "sap/ui/unified/calendar/OneMonthDatesRow.js", "sap/ui/unified/calendar/OneMonthDatesRowRenderer.js", "sap/ui/unified/calendar/TimesRow.js", "sap/ui/unified/calendar/TimesRowRenderer.js", "sap/ui/unified/calendar/YearPicker.js", "sap/ui/unified/calendar/YearPickerRenderer.js", "sap/ui/unified/library.js", "sap/ui/unified/manifest.json"]
+    },
+    {
+      "name" : "sap/ui/unified/library-preload.support.js",
+      "size" : 5681,
+      "required" : ["sap/ui/support/library.js", "ui5loader-autoconfig.js"],
+      "includes" : ["sap/ui/unified/library.support.js", "sap/ui/unified/rules/FileUploader.support.js"]
+    },
+    {
+      "name" : "sap/ui/unified/library.js",
+      "description" : "Initialization Code and shared classes of library sap.ui.unified.",
+      "size" : 14792,
+      "compressedSize" : 4680,
+      "required" : ["sap/ui/base/Object.js", "sap/ui/core/Core.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/library.support.js",
+      "description" : "Adds support rules of the sap.ui.unified library to the support infrastructure.",
+      "size" : 534,
+      "compressedSize" : 364,
+      "required" : ["sap/ui/support/library.js", "sap/ui/unified/rules/FileUploader.support.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/manifest.json",
+      "size" : 2688,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle.properties",
+      "size" : 3329,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_ar.properties",
+      "size" : 4861,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_bg.properties",
+      "size" : 5186,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_ca.properties",
+      "size" : 3225,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_cs.properties",
+      "size" : 3493,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_da.properties",
+      "size" : 3166,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_de.properties",
+      "size" : 3235,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_el.properties",
+      "size" : 5290,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_en.properties",
+      "size" : 3153,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_en_US_sappsd.properties",
+      "size" : 6452,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_en_US_saptrc.properties",
+      "size" : 4050,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_es.properties",
+      "size" : 3238,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_et.properties",
+      "size" : 3265,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_fi.properties",
+      "size" : 3343,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_fr.properties",
+      "size" : 3313,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_hi.properties",
+      "size" : 5008,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_hr.properties",
+      "size" : 3281,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_hu.properties",
+      "size" : 3492,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_it.properties",
+      "size" : 3266,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_iw.properties",
+      "size" : 4511,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_ja.properties",
+      "size" : 3631,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_kk.properties",
+      "size" : 5073,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_ko.properties",
+      "size" : 3554,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_lt.properties",
+      "size" : 3383,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_lv.properties",
+      "size" : 3480,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_ms.properties",
+      "size" : 3186,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_nl.properties",
+      "size" : 3182,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_no.properties",
+      "size" : 3168,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_pl.properties",
+      "size" : 3389,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_pt.properties",
+      "size" : 3245,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_ro.properties",
+      "size" : 3504,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_ru.properties",
+      "size" : 5237,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_sh.properties",
+      "size" : 3263,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_sk.properties",
+      "size" : 3493,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_sl.properties",
+      "size" : 3237,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_sv.properties",
+      "size" : 3204,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_th.properties",
+      "size" : 5035,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_tr.properties",
+      "size" : 3430,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_uk.properties",
+      "size" : 5383,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_vi.properties",
+      "size" : 3975,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_zh_CN.properties",
+      "size" : 3481,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/messagebundle_zh_TW.properties",
+      "size" : 3505,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/unified/rules/FileUploader.support.js",
+      "description" : "Defines support rules for the FileUploader control of sap.ui.unified library.",
+      "size" : 5011,
+      "compressedSize" : 3063,
+      "required" : ["sap/ui/support/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    }
+  ]
+}

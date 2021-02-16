@@ -1,0 +1,961 @@
+<?xml version="1.0" ?>
+<library  version="2.0" name="sap.ui.support">
+  <module name="sap/ui/support/Bootstrap.js" size="1087" compressedSize="596">
+    <description>Provides control sap.ui.support.Bootstrap.</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/ui/support/supportRules/Main.js" conditional="true"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/library-h2-preload.js" size="12899">
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/m/Bar.js"/>
+      <module name="sap/m/Button.js"/>
+      <module name="sap/m/CheckBox.js"/>
+      <module name="sap/m/CustomListItem.js"/>
+      <module name="sap/m/Dialog.js"/>
+      <module name="sap/m/FlexBox.js"/>
+      <module name="sap/m/FlexItemData.js"/>
+      <module name="sap/m/FormattedText.js"/>
+      <module name="sap/m/HBox.js"/>
+      <module name="sap/m/IconTabFilter.js"/>
+      <module name="sap/m/IconTabHeader.js"/>
+      <module name="sap/m/Image.js"/>
+      <module name="sap/m/Input.js"/>
+      <module name="sap/m/InputListItem.js"/>
+      <module name="sap/m/Label.js"/>
+      <module name="sap/m/Link.js"/>
+      <module name="sap/m/List.js"/>
+      <module name="sap/m/ListItemBase.js"/>
+      <module name="sap/m/Menu.js"/>
+      <module name="sap/m/MenuButton.js"/>
+      <module name="sap/m/MenuItem.js"/>
+      <module name="sap/m/MessageBox.js"/>
+      <module name="sap/m/MessageStrip.js"/>
+      <module name="sap/m/MessageToast.js"/>
+      <module name="sap/m/MultiComboBox.js"/>
+      <module name="sap/m/NavContainer.js"/>
+      <module name="sap/m/OverflowToolbarAssociativePopoverControls.js"/>
+      <module name="sap/m/OverflowToolbarLayoutData.js"/>
+      <module name="sap/m/Page.js"/>
+      <module name="sap/m/Panel.js"/>
+      <module name="sap/m/Popover.js"/>
+      <module name="sap/m/ProgressIndicator.js"/>
+      <module name="sap/m/RadioButton.js"/>
+      <module name="sap/m/ResponsivePopover.js"/>
+      <module name="sap/m/ScrollContainer.js"/>
+      <module name="sap/m/Select.js"/>
+      <module name="sap/m/StandardListItem.js"/>
+      <module name="sap/m/Text.js"/>
+      <module name="sap/m/TextArea.js"/>
+      <module name="sap/m/Title.js"/>
+      <module name="sap/m/Toolbar.js"/>
+      <module name="sap/m/ToolbarSpacer.js"/>
+      <module name="sap/m/VBox.js"/>
+      <module name="sap/m/library.js"/>
+      <module name="sap/ui/base/EventProvider.js"/>
+      <module name="sap/ui/base/ManagedObject.js"/>
+      <module name="sap/ui/base/Object.js"/>
+      <module name="sap/ui/codeeditor/CodeEditor.js"/>
+      <module name="sap/ui/core/CustomData.js"/>
+      <module name="sap/ui/core/Fragment.js"/>
+      <module name="sap/ui/core/HTML.js"/>
+      <module name="sap/ui/core/Icon.js"/>
+      <module name="sap/ui/core/Item.js"/>
+      <module name="sap/ui/core/ListItem.js"/>
+      <module name="sap/ui/core/ValueState.js"/>
+      <module name="sap/ui/core/library.js"/>
+      <module name="sap/ui/core/mvc/Controller.js"/>
+      <module name="sap/ui/core/mvc/XMLView.js"/>
+      <module name="sap/ui/core/support/ToolsAPI.js"/>
+      <module name="sap/ui/core/util/File.js"/>
+      <module name="sap/ui/layout/FixFlex.js"/>
+      <module name="sap/ui/layout/HorizontalLayout.js"/>
+      <module name="sap/ui/layout/Splitter.js"/>
+      <module name="sap/ui/layout/SplitterLayoutData.js"/>
+      <module name="sap/ui/layout/VerticalLayout.js"/>
+      <module name="sap/ui/layout/form/SimpleForm.js"/>
+      <module name="sap/ui/model/SelectionModel.js"/>
+      <module name="sap/ui/model/json/JSONModel.js"/>
+      <module name="sap/ui/thirdparty/URI.js"/>
+      <module name="sap/ui/thirdparty/handlebars.js"/>
+      <module name="sap/ui/thirdparty/jszip.js"/>
+      <module name="sap/ui/unified/FileUploader.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+    <includes>
+      <module name="sap/ui/support/library.js"/>
+      <module name="sap/ui/support/manifest.json"/>
+      <module name="sap/ui/support/Bootstrap.js"/>
+      <module name="sap/ui/support/supportRules/Analyzer.js"/>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="sap/ui/support/supportRules/CoreFacade.js"/>
+      <module name="sap/ui/support/supportRules/ExecutionScope.js"/>
+      <module name="sap/ui/support/supportRules/History.js"/>
+      <module name="sap/ui/support/supportRules/IssueManager.js"/>
+      <module name="sap/ui/support/supportRules/Main.js"/>
+      <module name="sap/ui/support/supportRules/RuleSerializer.js"/>
+      <module name="sap/ui/support/supportRules/RuleSet.js"/>
+      <module name="sap/ui/support/supportRules/RuleSetLoader.js"/>
+      <module name="sap/ui/support/supportRules/Storage.js"/>
+      <module name="sap/ui/support/supportRules/WCBChannels.js"/>
+      <module name="sap/ui/support/supportRules/WindowCommunicationBus.js"/>
+      <module name="sap/ui/support/supportRules/report/AbapHistoryFormatter.js"/>
+      <module name="sap/ui/support/supportRules/report/Archiver.js"/>
+      <module name="sap/ui/support/supportRules/report/DataCollector.js"/>
+      <module name="sap/ui/support/supportRules/report/IssueRenderer.js"/>
+      <module name="sap/ui/support/supportRules/report/ReportProvider.js"/>
+      <module name="sap/ui/support/supportRules/report/StringHistoryFormatter.js"/>
+      <module name="sap/ui/support/supportRules/report/resources/collapseExpand.js"/>
+      <module name="sap/ui/support/supportRules/report/resources/filter.js"/>
+      <module name="sap/ui/support/supportRules/ui/IFrameController.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/Analysis.controller.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/BaseController.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/Issues.controller.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/Main.controller.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/PresetsController.js"/>
+      <module name="sap/ui/support/supportRules/ui/external/ElementTree.js"/>
+      <module name="sap/ui/support/supportRules/ui/external/Highlighter.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/CustomJSONListSelection.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/CustomListSelection.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/Documentation.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/PresetsUtils.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/SelectionUtils.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/SharedModel.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/formatter.js"/>
+      <module name="sap/ui/support/supportRules/ui/views/Analysis.view.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/AnalyzeSettings.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/Issues.view.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/Main.view.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/PresetExport.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/PresetImport.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/Presets.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/RuleDetails.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/RuleUpdate.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/StorageSettings.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/util/RuleValidator.js"/>
+      <module name="sap/ui/support/supportRules/util/StringAnalyzer.js"/>
+      <module name="sap/ui/support/supportRules/util/Utils.js"/>
+    </includes>
+  </module>
+  <module name="sap/ui/support/library-preload.js" size="167240">
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/m/Bar.js"/>
+      <module name="sap/m/Button.js"/>
+      <module name="sap/m/CheckBox.js"/>
+      <module name="sap/m/CustomListItem.js"/>
+      <module name="sap/m/Dialog.js"/>
+      <module name="sap/m/FlexBox.js"/>
+      <module name="sap/m/FlexItemData.js"/>
+      <module name="sap/m/FormattedText.js"/>
+      <module name="sap/m/HBox.js"/>
+      <module name="sap/m/IconTabFilter.js"/>
+      <module name="sap/m/IconTabHeader.js"/>
+      <module name="sap/m/Image.js"/>
+      <module name="sap/m/Input.js"/>
+      <module name="sap/m/InputListItem.js"/>
+      <module name="sap/m/Label.js"/>
+      <module name="sap/m/Link.js"/>
+      <module name="sap/m/List.js"/>
+      <module name="sap/m/ListItemBase.js"/>
+      <module name="sap/m/Menu.js"/>
+      <module name="sap/m/MenuButton.js"/>
+      <module name="sap/m/MenuItem.js"/>
+      <module name="sap/m/MessageBox.js"/>
+      <module name="sap/m/MessageStrip.js"/>
+      <module name="sap/m/MessageToast.js"/>
+      <module name="sap/m/MultiComboBox.js"/>
+      <module name="sap/m/NavContainer.js"/>
+      <module name="sap/m/OverflowToolbarAssociativePopoverControls.js"/>
+      <module name="sap/m/OverflowToolbarLayoutData.js"/>
+      <module name="sap/m/Page.js"/>
+      <module name="sap/m/Panel.js"/>
+      <module name="sap/m/Popover.js"/>
+      <module name="sap/m/ProgressIndicator.js"/>
+      <module name="sap/m/RadioButton.js"/>
+      <module name="sap/m/ResponsivePopover.js"/>
+      <module name="sap/m/ScrollContainer.js"/>
+      <module name="sap/m/Select.js"/>
+      <module name="sap/m/StandardListItem.js"/>
+      <module name="sap/m/Text.js"/>
+      <module name="sap/m/TextArea.js"/>
+      <module name="sap/m/Title.js"/>
+      <module name="sap/m/Toolbar.js"/>
+      <module name="sap/m/ToolbarSpacer.js"/>
+      <module name="sap/m/VBox.js"/>
+      <module name="sap/m/library.js"/>
+      <module name="sap/ui/base/EventProvider.js"/>
+      <module name="sap/ui/base/ManagedObject.js"/>
+      <module name="sap/ui/base/Object.js"/>
+      <module name="sap/ui/codeeditor/CodeEditor.js"/>
+      <module name="sap/ui/core/CustomData.js"/>
+      <module name="sap/ui/core/Fragment.js"/>
+      <module name="sap/ui/core/HTML.js"/>
+      <module name="sap/ui/core/Icon.js"/>
+      <module name="sap/ui/core/Item.js"/>
+      <module name="sap/ui/core/ListItem.js"/>
+      <module name="sap/ui/core/ValueState.js"/>
+      <module name="sap/ui/core/library.js"/>
+      <module name="sap/ui/core/mvc/Controller.js"/>
+      <module name="sap/ui/core/mvc/XMLView.js"/>
+      <module name="sap/ui/core/support/ToolsAPI.js"/>
+      <module name="sap/ui/core/util/File.js"/>
+      <module name="sap/ui/layout/FixFlex.js"/>
+      <module name="sap/ui/layout/HorizontalLayout.js"/>
+      <module name="sap/ui/layout/Splitter.js"/>
+      <module name="sap/ui/layout/SplitterLayoutData.js"/>
+      <module name="sap/ui/layout/VerticalLayout.js"/>
+      <module name="sap/ui/layout/form/SimpleForm.js"/>
+      <module name="sap/ui/model/SelectionModel.js"/>
+      <module name="sap/ui/model/json/JSONModel.js"/>
+      <module name="sap/ui/thirdparty/URI.js"/>
+      <module name="sap/ui/thirdparty/handlebars.js"/>
+      <module name="sap/ui/thirdparty/jszip.js"/>
+      <module name="sap/ui/unified/FileUploader.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+    <includes>
+      <module name="sap/ui/support/Bootstrap.js"/>
+      <module name="sap/ui/support/library.js"/>
+      <module name="sap/ui/support/manifest.json"/>
+      <module name="sap/ui/support/supportRules/Analyzer.js"/>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="sap/ui/support/supportRules/CoreFacade.js"/>
+      <module name="sap/ui/support/supportRules/ExecutionScope.js"/>
+      <module name="sap/ui/support/supportRules/History.js"/>
+      <module name="sap/ui/support/supportRules/IssueManager.js"/>
+      <module name="sap/ui/support/supportRules/Main.js"/>
+      <module name="sap/ui/support/supportRules/RuleSerializer.js"/>
+      <module name="sap/ui/support/supportRules/RuleSet.js"/>
+      <module name="sap/ui/support/supportRules/RuleSetLoader.js"/>
+      <module name="sap/ui/support/supportRules/Storage.js"/>
+      <module name="sap/ui/support/supportRules/WCBChannels.js"/>
+      <module name="sap/ui/support/supportRules/WindowCommunicationBus.js"/>
+      <module name="sap/ui/support/supportRules/report/AbapHistoryFormatter.js"/>
+      <module name="sap/ui/support/supportRules/report/Archiver.js"/>
+      <module name="sap/ui/support/supportRules/report/DataCollector.js"/>
+      <module name="sap/ui/support/supportRules/report/IssueRenderer.js"/>
+      <module name="sap/ui/support/supportRules/report/ReportProvider.js"/>
+      <module name="sap/ui/support/supportRules/report/StringHistoryFormatter.js"/>
+      <module name="sap/ui/support/supportRules/report/resources/collapseExpand.js"/>
+      <module name="sap/ui/support/supportRules/report/resources/filter.js"/>
+      <module name="sap/ui/support/supportRules/ui/IFrameController.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/Analysis.controller.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/BaseController.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/Issues.controller.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/Main.controller.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/PresetsController.js"/>
+      <module name="sap/ui/support/supportRules/ui/external/ElementTree.js"/>
+      <module name="sap/ui/support/supportRules/ui/external/Highlighter.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/CustomJSONListSelection.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/CustomListSelection.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/Documentation.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/PresetsUtils.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/SelectionUtils.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/SharedModel.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/formatter.js"/>
+      <module name="sap/ui/support/supportRules/ui/views/Analysis.view.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/AnalyzeSettings.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/Issues.view.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/Main.view.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/PresetExport.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/PresetImport.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/Presets.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/RuleDetails.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/RuleUpdate.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/StorageSettings.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/util/RuleValidator.js"/>
+      <module name="sap/ui/support/supportRules/util/StringAnalyzer.js"/>
+      <module name="sap/ui/support/supportRules/util/Utils.js"/>
+    </includes>
+  </module>
+  <module name="sap/ui/support/library-preload.json" size="0">
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/m/Bar.js"/>
+      <module name="sap/m/Button.js"/>
+      <module name="sap/m/CheckBox.js"/>
+      <module name="sap/m/CustomListItem.js"/>
+      <module name="sap/m/Dialog.js"/>
+      <module name="sap/m/FlexBox.js"/>
+      <module name="sap/m/FlexItemData.js"/>
+      <module name="sap/m/FormattedText.js"/>
+      <module name="sap/m/HBox.js"/>
+      <module name="sap/m/IconTabFilter.js"/>
+      <module name="sap/m/IconTabHeader.js"/>
+      <module name="sap/m/Image.js"/>
+      <module name="sap/m/Input.js"/>
+      <module name="sap/m/InputListItem.js"/>
+      <module name="sap/m/Label.js"/>
+      <module name="sap/m/Link.js"/>
+      <module name="sap/m/List.js"/>
+      <module name="sap/m/ListItemBase.js"/>
+      <module name="sap/m/Menu.js"/>
+      <module name="sap/m/MenuButton.js"/>
+      <module name="sap/m/MenuItem.js"/>
+      <module name="sap/m/MessageBox.js"/>
+      <module name="sap/m/MessageStrip.js"/>
+      <module name="sap/m/MessageToast.js"/>
+      <module name="sap/m/MultiComboBox.js"/>
+      <module name="sap/m/NavContainer.js"/>
+      <module name="sap/m/OverflowToolbarAssociativePopoverControls.js"/>
+      <module name="sap/m/OverflowToolbarLayoutData.js"/>
+      <module name="sap/m/Page.js"/>
+      <module name="sap/m/Panel.js"/>
+      <module name="sap/m/Popover.js"/>
+      <module name="sap/m/ProgressIndicator.js"/>
+      <module name="sap/m/RadioButton.js"/>
+      <module name="sap/m/ResponsivePopover.js"/>
+      <module name="sap/m/ScrollContainer.js"/>
+      <module name="sap/m/Select.js"/>
+      <module name="sap/m/StandardListItem.js"/>
+      <module name="sap/m/Text.js"/>
+      <module name="sap/m/TextArea.js"/>
+      <module name="sap/m/Title.js"/>
+      <module name="sap/m/Toolbar.js"/>
+      <module name="sap/m/ToolbarSpacer.js"/>
+      <module name="sap/m/VBox.js"/>
+      <module name="sap/m/library.js"/>
+      <module name="sap/ui/base/EventProvider.js"/>
+      <module name="sap/ui/base/ManagedObject.js"/>
+      <module name="sap/ui/base/Object.js"/>
+      <module name="sap/ui/codeeditor/CodeEditor.js"/>
+      <module name="sap/ui/core/CustomData.js"/>
+      <module name="sap/ui/core/Fragment.js"/>
+      <module name="sap/ui/core/HTML.js"/>
+      <module name="sap/ui/core/Icon.js"/>
+      <module name="sap/ui/core/Item.js"/>
+      <module name="sap/ui/core/ListItem.js"/>
+      <module name="sap/ui/core/ValueState.js"/>
+      <module name="sap/ui/core/library-preload.json"/>
+      <module name="sap/ui/core/library.js"/>
+      <module name="sap/ui/core/mvc/Controller.js"/>
+      <module name="sap/ui/core/mvc/XMLView.js"/>
+      <module name="sap/ui/core/support/ToolsAPI.js"/>
+      <module name="sap/ui/core/util/File.js"/>
+      <module name="sap/ui/layout/FixFlex.js"/>
+      <module name="sap/ui/layout/HorizontalLayout.js"/>
+      <module name="sap/ui/layout/Splitter.js"/>
+      <module name="sap/ui/layout/SplitterLayoutData.js"/>
+      <module name="sap/ui/layout/VerticalLayout.js"/>
+      <module name="sap/ui/layout/form/SimpleForm.js"/>
+      <module name="sap/ui/model/SelectionModel.js"/>
+      <module name="sap/ui/model/json/JSONModel.js"/>
+      <module name="sap/ui/thirdparty/URI.js"/>
+      <module name="sap/ui/thirdparty/handlebars.js"/>
+      <module name="sap/ui/thirdparty/jszip.js"/>
+      <module name="sap/ui/unified/FileUploader.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+    <includes>
+      <module name="sap/ui/support/Bootstrap.js"/>
+      <module name="sap/ui/support/library.js"/>
+      <module name="sap/ui/support/manifest.json"/>
+      <module name="sap/ui/support/supportRules/Analyzer.js"/>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="sap/ui/support/supportRules/CoreFacade.js"/>
+      <module name="sap/ui/support/supportRules/ExecutionScope.js"/>
+      <module name="sap/ui/support/supportRules/History.js"/>
+      <module name="sap/ui/support/supportRules/IssueManager.js"/>
+      <module name="sap/ui/support/supportRules/Main.js"/>
+      <module name="sap/ui/support/supportRules/RuleSerializer.js"/>
+      <module name="sap/ui/support/supportRules/RuleSet.js"/>
+      <module name="sap/ui/support/supportRules/RuleSetLoader.js"/>
+      <module name="sap/ui/support/supportRules/Storage.js"/>
+      <module name="sap/ui/support/supportRules/WCBChannels.js"/>
+      <module name="sap/ui/support/supportRules/WindowCommunicationBus.js"/>
+      <module name="sap/ui/support/supportRules/report/AbapHistoryFormatter.js"/>
+      <module name="sap/ui/support/supportRules/report/Archiver.js"/>
+      <module name="sap/ui/support/supportRules/report/DataCollector.js"/>
+      <module name="sap/ui/support/supportRules/report/IssueRenderer.js"/>
+      <module name="sap/ui/support/supportRules/report/ReportProvider.js"/>
+      <module name="sap/ui/support/supportRules/report/StringHistoryFormatter.js"/>
+      <module name="sap/ui/support/supportRules/report/resources/collapseExpand.js"/>
+      <module name="sap/ui/support/supportRules/report/resources/filter.js"/>
+      <module name="sap/ui/support/supportRules/ui/IFrameController.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/Analysis.controller.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/BaseController.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/Issues.controller.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/Main.controller.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/PresetsController.js"/>
+      <module name="sap/ui/support/supportRules/ui/external/ElementTree.js"/>
+      <module name="sap/ui/support/supportRules/ui/external/Highlighter.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/CustomJSONListSelection.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/CustomListSelection.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/Documentation.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/PresetsUtils.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/SelectionUtils.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/SharedModel.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/formatter.js"/>
+      <module name="sap/ui/support/supportRules/ui/views/Analysis.view.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/AnalyzeSettings.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/Issues.view.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/Main.view.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/PresetExport.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/PresetImport.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/Presets.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/RuleDetails.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/RuleUpdate.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/ui/views/StorageSettings.fragment.xml"/>
+      <module name="sap/ui/support/supportRules/util/RuleValidator.js"/>
+      <module name="sap/ui/support/supportRules/util/StringAnalyzer.js"/>
+      <module name="sap/ui/support/supportRules/util/Utils.js"/>
+    </includes>
+  </module>
+  <module name="sap/ui/support/library.js" size="3438" compressedSize="1045">
+    <description>Initialization Code and shared classes of library sap.ui.support.</description>
+    <requires>
+      <module name="sap/ui/core/library.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/manifest.json" size="796">
+  </module>
+  <module name="sap/ui/support/supportRules/Analyzer.js" size="6173" compressedSize="2284">
+    <description>Creates an Analyzer that asynchronously runs tasks added by addTask function. Analysis can be started, stopped, restarted, paused and continued. runs tasks added by addTask function. Analysis can be started, stopped, restarted, paused and continued. The analyzer can be used to update the UI with the current progress of a task while it's running.</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="sap/ui/support/supportRules/IssueManager.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/Constants.js" size="3164" compressedSize="1290">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/CoreFacade.js" size="1640" compressedSize="468">
+    <description>! An interface to the core to be used by rules</description>
+    <requires>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ExecutionScope.js" size="9609" compressedSize="2987">
+    <description>@class Allows to select the scope of analysis on an application.  &lt;h3&gt;Overview&lt;/h3&gt;  &lt;code&gt;ExecutionScope&lt;/code&gt; is the third parameter of a rule check function. It provides access to internal UI5 objects available for inspection. The &lt;code&gt;getElements&lt;/code&gt; API method allows the user to select a specific subset of elements valid for their case. It accepts one query object argument.  &lt;h3&gt;Usage&lt;/h3&gt;  When a rule is executed, three parameters are passed: &lt;code&gt;oIssueManager&lt;/code&gt;, &lt;code&gt;oCoreFacade&lt;/code&gt; and &lt;code&gt;oScope&lt;/code&gt;.  An &lt;code&gt;ExecutionScope&lt;/code&gt; instance is passed to every call of a rule check function. When you analyze your application, available objects are collected depending on the settings passed to the Support Assistant at the moment when you start it. @public @since 1.48 @class sap.ui.support.ExecutionScope</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/History.js" size="5968" compressedSize="2392">
+    <description>UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="sap/ui/support/library.js"/>
+      <module name="sap/ui/support/supportRules/IssueManager.js"/>
+      <module name="sap/ui/support/supportRules/RuleSetLoader.js"/>
+      <module name="sap/ui/support/supportRules/report/AbapHistoryFormatter.js"/>
+      <module name="sap/ui/support/supportRules/report/StringHistoryFormatter.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/IssueManager.js" size="15077" compressedSize="5042">
+    <description>The IssueManager interface stores, groups and converts issues from the Core Object to a usable model by the Support Assistant. Issues can be added only through the IssueManager using &lt;code&gt;addIssue&lt;/code&gt; method.</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/ui/base/Object.js"/>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/Main.js" size="21876" compressedSize="9745">
+    <description>@typedef {object} Event Certain event that's fired by the user action in the browser</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/ui/base/ManagedObject.js"/>
+      <module name="sap/ui/support/supportRules/Analyzer.js"/>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="sap/ui/support/supportRules/CoreFacade.js"/>
+      <module name="sap/ui/support/supportRules/ExecutionScope.js"/>
+      <module name="sap/ui/support/supportRules/History.js"/>
+      <module name="sap/ui/support/supportRules/IssueManager.js"/>
+      <module name="sap/ui/support/supportRules/RuleSetLoader.js"/>
+      <module name="sap/ui/support/supportRules/WCBChannels.js"/>
+      <module name="sap/ui/support/supportRules/WindowCommunicationBus.js"/>
+      <module name="sap/ui/support/supportRules/report/DataCollector.js"/>
+      <module name="sap/ui/support/supportRules/ui/external/Highlighter.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/RuleSerializer.js" size="945" compressedSize="650">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/RuleSet.js" size="10186" compressedSize="4004">
+    <description>The RuleSet is an interface used to create, update and delete ruleset containing rules.</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="sap/ui/support/supportRules/Storage.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/RuleSetLoader.js" size="15934" compressedSize="5715">
+    <description>Creates a RuleSetLoader that handles the loading of the RuleSets in the different libraries as well as stores the data for the loaded RuleSets</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="sap/ui/support/supportRules/RuleSerializer.js"/>
+      <module name="sap/ui/support/supportRules/RuleSet.js"/>
+      <module name="sap/ui/support/supportRules/WCBChannels.js"/>
+      <module name="sap/ui/support/supportRules/WindowCommunicationBus.js"/>
+      <module name="sap/ui/support/supportRules/util/Utils.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/Storage.js" size="9540" compressedSize="2834">
+    <description>global localStorage</description>
+    <requires>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="sap/ui/support/supportRules/RuleSerializer.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/WCBChannels.js" size="4810" compressedSize="1516">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/WindowCommunicationBus.js" size="5366" compressedSize="1745">
+    <description>@typedef {object} EventListener</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/report/AbapHistoryFormatter.js" size="2361" compressedSize="1285">
+    <description>Formats the history in ABAP friendly JSON.</description>
+    <requires>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/report/Archiver.js" size="2258" compressedSize="1441">
+    <description>Creates a zip file</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/ui/core/util/File.js"/>
+      <module name="sap/ui/thirdparty/jszip.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/report/DataCollector.js" size="4895" compressedSize="2867">
+    <description>Provides methods for information retrieval from the core.</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/ui/core/support/ToolsAPI.js"/>
+      <module name="sap/ui/thirdparty/URI.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/report/IssueRenderer.js" size="7834" compressedSize="4150">
+    <description>Renders issues</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/report/ReportProvider.js" size="16169" compressedSize="9232">
+    <description>Creates a report from data.</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/ui/support/supportRules/report/Archiver.js"/>
+      <module name="sap/ui/support/supportRules/report/IssueRenderer.js"/>
+      <module name="sap/ui/thirdparty/handlebars.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/report/StringHistoryFormatter.js" size="3394" compressedSize="1467">
+    <description>Formats the analysis history in a single string.</description>
+    <requires>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/report/resources/collapseExpand.js" size="2000" compressedSize="1251" raw="true">
+  </module>
+  <module name="sap/ui/support/supportRules/report/resources/filter.js" size="3612" compressedSize="1913" raw="true">
+  </module>
+  <module name="sap/ui/support/supportRules/ui/IFrameController.js" size="5526" compressedSize="3292">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/ui/base/ManagedObject.js"/>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="sap/ui/support/supportRules/WCBChannels.js"/>
+      <module name="sap/ui/support/supportRules/WindowCommunicationBus.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/controllers/Analysis.controller.js" size="32318" compressedSize="19409">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/m/Button.js"/>
+      <module name="sap/m/InputListItem.js"/>
+      <module name="sap/m/Label.js"/>
+      <module name="sap/m/List.js"/>
+      <module name="sap/m/ListItemBase.js"/>
+      <module name="sap/m/MessageToast.js"/>
+      <module name="sap/m/Panel.js"/>
+      <module name="sap/m/StandardListItem.js"/>
+      <module name="sap/m/Toolbar.js"/>
+      <module name="sap/m/ToolbarSpacer.js"/>
+      <module name="sap/ui/model/json/JSONModel.js"/>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="sap/ui/support/supportRules/RuleSerializer.js"/>
+      <module name="sap/ui/support/supportRules/RuleSet.js"/>
+      <module name="sap/ui/support/supportRules/RuleSetLoader.js"/>
+      <module name="sap/ui/support/supportRules/Storage.js"/>
+      <module name="sap/ui/support/supportRules/WCBChannels.js"/>
+      <module name="sap/ui/support/supportRules/WindowCommunicationBus.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/BaseController.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/PresetsController.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/CustomJSONListSelection.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/PresetsUtils.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/SelectionUtils.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/SharedModel.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/controllers/BaseController.js" size="2221" compressedSize="1579">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="sap/ui/core/mvc/Controller.js"/>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="sap/ui/support/supportRules/Storage.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/PresetsUtils.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/SelectionUtils.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/controllers/Issues.controller.js" size="10006" compressedSize="6576">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/m/OverflowToolbarAssociativePopoverControls.js"/>
+      <module name="sap/ui/model/json/JSONModel.js"/>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="sap/ui/support/supportRules/IssueManager.js"/>
+      <module name="sap/ui/support/supportRules/WCBChannels.js"/>
+      <module name="sap/ui/support/supportRules/WindowCommunicationBus.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/BaseController.js"/>
+      <module name="sap/ui/support/supportRules/ui/external/ElementTree.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/SharedModel.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/formatter.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/controllers/Main.controller.js" size="8260" compressedSize="5586">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="sap/ui/model/json/JSONModel.js"/>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="sap/ui/support/supportRules/Storage.js"/>
+      <module name="sap/ui/support/supportRules/WCBChannels.js"/>
+      <module name="sap/ui/support/supportRules/WindowCommunicationBus.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/BaseController.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/Documentation.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/SharedModel.js"/>
+      <module name="sap/ui/thirdparty/URI.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/controllers/PresetsController.js" size="16976" compressedSize="8571">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="sap/m/MessageBox.js"/>
+      <module name="sap/m/MessageToast.js"/>
+      <module name="sap/ui/core/Fragment.js"/>
+      <module name="sap/ui/core/ValueState.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/BaseController.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/Documentation.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/PresetsUtils.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/SelectionUtils.js"/>
+      <module name="sap/ui/support/supportRules/util/Utils.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/external/ElementTree.js" size="17506" compressedSize="7980">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/external/Highlighter.js" size="2438" compressedSize="1089">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/models/CustomJSONListSelection.js" size="2920" compressedSize="1615">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="sap/ui/support/supportRules/Storage.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/CustomListSelection.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/SelectionUtils.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/models/CustomListSelection.js" size="11379" compressedSize="6927">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="sap/ui/base/EventProvider.js"/>
+      <module name="sap/ui/model/SelectionModel.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/SharedModel.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/models/Documentation.js" size="2226" compressedSize="1001">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/m/library.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/models/PresetsUtils.js" size="4223" compressedSize="1848">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="sap/ui/core/util/File.js"/>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="sap/ui/support/supportRules/Storage.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/SharedModel.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/models/SelectionUtils.js" size="5504" compressedSize="2223">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="jquery.sap.global.js"/>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="sap/ui/support/supportRules/Storage.js"/>
+      <module name="sap/ui/support/supportRules/ui/models/SharedModel.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/models/SharedModel.js" size="3557" compressedSize="2942">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="sap/ui/model/json/JSONModel.js"/>
+      <module name="sap/ui/support/library.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/models/formatter.js" size="1190" compressedSize="720">
+    <description>! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</description>
+    <requires>
+      <module name="sap/ui/support/supportRules/Constants.js"/>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/views/Analysis.view.xml" size="5707">
+    <requires>
+      <module name="sap/m/Bar.js"/>
+      <module name="sap/m/Button.js"/>
+      <module name="sap/m/IconTabFilter.js"/>
+      <module name="sap/m/IconTabHeader.js"/>
+      <module name="sap/m/Label.js"/>
+      <module name="sap/m/Link.js"/>
+      <module name="sap/m/List.js"/>
+      <module name="sap/m/NavContainer.js"/>
+      <module name="sap/m/Page.js"/>
+      <module name="sap/m/StandardListItem.js"/>
+      <module name="sap/m/Text.js"/>
+      <module name="sap/ui/core/mvc/XMLView.js"/>
+      <module name="sap/ui/layout/HorizontalLayout.js"/>
+      <module name="sap/ui/layout/Splitter.js"/>
+      <module name="sap/ui/layout/VerticalLayout.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/Analysis.controller.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/views/AnalyzeSettings.fragment.xml" size="2113">
+    <requires>
+      <module name="sap/m/CheckBox.js"/>
+      <module name="sap/m/Input.js"/>
+      <module name="sap/m/Popover.js"/>
+      <module name="sap/m/RadioButton.js"/>
+      <module name="sap/m/VBox.js"/>
+      <module name="sap/ui/core/CustomData.js"/>
+      <module name="sap/ui/core/Fragment.js"/>
+      <module name="sap/ui/layout/VerticalLayout.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/views/Issues.view.xml" size="7382">
+    <requires>
+      <module name="sap/m/Bar.js"/>
+      <module name="sap/m/Button.js"/>
+      <module name="sap/m/FlexBox.js"/>
+      <module name="sap/m/FlexItemData.js"/>
+      <module name="sap/m/FormattedText.js"/>
+      <module name="sap/m/HBox.js"/>
+      <module name="sap/m/Label.js"/>
+      <module name="sap/m/Link.js"/>
+      <module name="sap/m/Menu.js"/>
+      <module name="sap/m/MenuButton.js"/>
+      <module name="sap/m/MenuItem.js"/>
+      <module name="sap/m/OverflowToolbarLayoutData.js"/>
+      <module name="sap/m/Page.js"/>
+      <module name="sap/m/Panel.js"/>
+      <module name="sap/m/Select.js"/>
+      <module name="sap/m/Text.js"/>
+      <module name="sap/m/Title.js"/>
+      <module name="sap/m/Toolbar.js"/>
+      <module name="sap/m/ToolbarSpacer.js"/>
+      <module name="sap/ui/core/HTML.js"/>
+      <module name="sap/ui/core/Icon.js"/>
+      <module name="sap/ui/core/ListItem.js"/>
+      <module name="sap/ui/core/mvc/XMLView.js"/>
+      <module name="sap/ui/layout/Splitter.js"/>
+      <module name="sap/ui/layout/VerticalLayout.js"/>
+      <module name="sap/ui/layout/form/SimpleForm.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/Issues.controller.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/views/Main.view.xml" size="3663">
+    <requires>
+      <module name="sap/m/Bar.js"/>
+      <module name="sap/m/Button.js"/>
+      <module name="sap/m/FlexBox.js"/>
+      <module name="sap/m/FlexItemData.js"/>
+      <module name="sap/m/Image.js"/>
+      <module name="sap/m/NavContainer.js"/>
+      <module name="sap/m/Page.js"/>
+      <module name="sap/m/ProgressIndicator.js"/>
+      <module name="sap/m/Text.js"/>
+      <module name="sap/m/Toolbar.js"/>
+      <module name="sap/ui/core/Icon.js"/>
+      <module name="sap/ui/core/mvc/XMLView.js"/>
+      <module name="sap/ui/layout/FixFlex.js"/>
+      <module name="sap/ui/support/supportRules/ui/controllers/Main.controller.js"/>
+      <module name="sap/ui/support/supportRules/ui/views/Analysis.view.xml"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/views/PresetExport.fragment.xml" size="1874">
+    <requires>
+      <module name="sap/m/Button.js"/>
+      <module name="sap/m/Dialog.js"/>
+      <module name="sap/m/Input.js"/>
+      <module name="sap/m/Label.js"/>
+      <module name="sap/m/Text.js"/>
+      <module name="sap/m/TextArea.js"/>
+      <module name="sap/ui/core/Fragment.js"/>
+      <module name="sap/ui/layout/form/SimpleForm.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/views/PresetImport.fragment.xml" size="2811">
+    <requires>
+      <module name="sap/m/Button.js"/>
+      <module name="sap/m/Dialog.js"/>
+      <module name="sap/m/HBox.js"/>
+      <module name="sap/m/Label.js"/>
+      <module name="sap/m/MessageStrip.js"/>
+      <module name="sap/m/ScrollContainer.js"/>
+      <module name="sap/m/Text.js"/>
+      <module name="sap/m/VBox.js"/>
+      <module name="sap/ui/core/Fragment.js"/>
+      <module name="sap/ui/layout/form/SimpleForm.js"/>
+      <module name="sap/ui/unified/FileUploader.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/views/Presets.fragment.xml" size="1449">
+    <requires>
+      <module name="sap/m/Bar.js"/>
+      <module name="sap/m/Button.js"/>
+      <module name="sap/m/CustomListItem.js"/>
+      <module name="sap/m/HBox.js"/>
+      <module name="sap/m/List.js"/>
+      <module name="sap/m/Page.js"/>
+      <module name="sap/m/ResponsivePopover.js"/>
+      <module name="sap/m/Text.js"/>
+      <module name="sap/m/Title.js"/>
+      <module name="sap/m/Toolbar.js"/>
+      <module name="sap/m/ToolbarSpacer.js"/>
+      <module name="sap/ui/core/Fragment.js"/>
+      <module name="sap/ui/core/Icon.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/views/RuleDetails.fragment.xml" size="3185">
+    <requires>
+      <module name="sap/m/Bar.js"/>
+      <module name="sap/m/IconTabFilter.js"/>
+      <module name="sap/m/IconTabHeader.js"/>
+      <module name="sap/m/Label.js"/>
+      <module name="sap/m/Link.js"/>
+      <module name="sap/m/Page.js"/>
+      <module name="sap/m/Panel.js"/>
+      <module name="sap/m/Text.js"/>
+      <module name="sap/m/Title.js"/>
+      <module name="sap/ui/codeeditor/CodeEditor.js"/>
+      <module name="sap/ui/core/Fragment.js"/>
+      <module name="sap/ui/layout/SplitterLayoutData.js"/>
+      <module name="sap/ui/layout/VerticalLayout.js"/>
+      <module name="sap/ui/layout/form/SimpleForm.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/views/RuleUpdate.fragment.xml" size="8853">
+    <requires>
+      <module name="sap/m/Bar.js"/>
+      <module name="sap/m/Button.js"/>
+      <module name="sap/m/FlexItemData.js"/>
+      <module name="sap/m/HBox.js"/>
+      <module name="sap/m/IconTabFilter.js"/>
+      <module name="sap/m/IconTabHeader.js"/>
+      <module name="sap/m/Input.js"/>
+      <module name="sap/m/Label.js"/>
+      <module name="sap/m/Link.js"/>
+      <module name="sap/m/MultiComboBox.js"/>
+      <module name="sap/m/Page.js"/>
+      <module name="sap/m/Panel.js"/>
+      <module name="sap/m/RadioButton.js"/>
+      <module name="sap/m/Text.js"/>
+      <module name="sap/m/TextArea.js"/>
+      <module name="sap/ui/codeeditor/CodeEditor.js"/>
+      <module name="sap/ui/core/CustomData.js"/>
+      <module name="sap/ui/core/Fragment.js"/>
+      <module name="sap/ui/core/Icon.js"/>
+      <module name="sap/ui/core/Item.js"/>
+      <module name="sap/ui/layout/HorizontalLayout.js"/>
+      <module name="sap/ui/layout/VerticalLayout.js"/>
+      <module name="sap/ui/layout/form/SimpleForm.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/ui/views/StorageSettings.fragment.xml" size="1800">
+    <requires>
+      <module name="sap/m/Button.js"/>
+      <module name="sap/m/CheckBox.js"/>
+      <module name="sap/m/FlexBox.js"/>
+      <module name="sap/m/Popover.js"/>
+      <module name="sap/m/Text.js"/>
+      <module name="sap/ui/core/Fragment.js"/>
+      <module name="sap/ui/core/Icon.js"/>
+      <module name="sap/ui/layout/HorizontalLayout.js"/>
+      <module name="sap/ui/layout/VerticalLayout.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/util/RuleValidator.js" size="3218" compressedSize="819">
+    <description>Contains rule validation functionality such as validating version, rule collections, id and strings.</description>
+    <requires>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/util/StringAnalyzer.js" size="2059" compressedSize="651">
+    <description>Contains String analyzing functionality such as calculating the levenshtein distance between 2 strings</description>
+    <requires>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+  <module name="sap/ui/support/supportRules/util/Utils.js" size="2028" compressedSize="837">
+    <description>Contains functionality that may be used trough the whole Support Assistant</description>
+    <requires>
+      <module name="ui5loader-autoconfig.js"/>
+    </requires>
+  </module>
+</library>

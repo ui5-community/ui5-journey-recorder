@@ -1,0 +1,189 @@
+{
+	"name": "OpenUI5 Distribution",
+	"version": "1.58.5",
+	"buildTimestamp": "201810261155",
+	"scmRevision": "",
+	"gav": "com.sap.openui5.dist:runtime:1.58.5:war",
+	"libraries": [
+		{
+			"name": "sap.ui.core",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:core:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "sap.f",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:fiori:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "sap.m",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:mobile:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "sap.tnt",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:tnt:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "sap.ui.codeeditor",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:codeeditor:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "sap.ui.commons",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:commons:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "sap.ui.dt",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:dt:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "sap.ui.fl",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:fl:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "sap.ui.layout",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:layout:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "sap.ui.rta",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:rta:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "sap.ui.suite",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:suite:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "sap.ui.support",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:support:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "sap.ui.table",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:table:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "sap.ui.unified",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:unified:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "sap.ui.ux3",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:ux3:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "sap.uxap",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.uxap:uxap-uilib:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "themelib_sap_belize",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:themelib_sap_belize:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		},
+		{
+			"name": "themelib_sap_bluecrystal",
+			"version": "1.58.5",
+			"buildTimestamp": "201810261155",
+			"scmRevision": "",
+			"gav": "com.sap.ui5:themelib_sap_bluecrystal:1.58.5:jar",
+			"patchHistory": [
+				"1.58.0", "1.58.1", "1.58.2", "1.58.3", "1.58.4", "1.58.5"
+			]
+		}
+	]
+}

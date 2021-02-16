@@ -1,0 +1,6 @@
+/*!
+ * UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+sap.ui.define(["./DragDropBase","sap/base/Log"],function(D,L){"use strict";var a=D.extend("sap.ui.core.dnd.DragInfo",{metadata:{library:"sap.ui.core",interfaces:["sap.ui.core.dnd.IDragInfo"],properties:{sourceAggregation:{type:"string",defaultValue:null}},events:{dragStart:{allowPreventDefault:true},dragEnd:{}}}});a.prototype.isDraggable=function(c){if(!this.getEnabled()){return false;}var d=this.getParent();if(!d){return false;}var s=this.getSourceAggregation();var m=d.getMetadata().getDragDropInfo(s);if(!m.draggable){L.warning((s?s+" aggregation of ":"")+d+" is not configured to be draggable");return false;}if(d===c&&!s){return true;}if(c.getParent()===d&&s===c.sParentAggregationName){return true;}return false;};a.prototype.fireDragStart=function(e){if(!e||!e.dragSession){return;}var d=e.dragSession;return this.fireEvent("dragStart",{dragSession:d,browserEvent:e.originalEvent,target:d.getDragControl()},true);};a.prototype.fireDragEnd=function(e){if(!e||!e.dragSession){return;}var d=e.dragSession;return this.fireEvent("dragEnd",{dragSession:d,browserEvent:e.originalEvent,target:d.getDragControl()});};return a;},true);

@@ -1,0 +1,12 @@
+/*!
+ * UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+ 
+/*!
+ * UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+ #overlay-container{position:absolute;top:0;right:0}.sapUiDtOverlay{position:absolute;outline:none}.sapUiDtOverlay:before,.sapUiDtOverlay:after{position:absolute;pointer-events:none;top:0;right:0;left:0;bottom:0;box-sizing:border-box}.sapUiDtOverlayFocusable:focus:before{content:" ";border:1px dotted #000000}.sapUiDtDummyScrollContainer{position:absolute;top:0;right:0;pointer-events:none}.sapUiDtOverlayDropZone{z-index:9999999!important}.sapUiDtOverlayTargetZone:after{content:" ";border:1px dashed #007cc0}.sapUiDtOverlaySelected:after{content:" ";border:1px solid #3355ff}.sapUiDtOverlayMovable{cursor:move}.sapUiDtOverlayCutted{background-color:#ffffff!important;opacity:0.5}.sapUiDtDragGhostWrapper{position:fixed;pointer-events:none}.sap-desktop[data-sap-ui-browser^="cr"] .sapUiDtDragGhostWrapper{padding-right:-500px;padding-bottom:500px;bottom:-1000px}.sapUiDtClonedDom{position:absolute;top:0;right:0;pointer-events:none}.sapUiDtClonedDom *{pointer-events:none!important}.sapUiDtOverlayScrollContainer{position:absolute}.sapUiDtContextMenu.sapMPopover{padding-right:0.5rem;padding-left:0.5rem}.sapUiDtContextMenu .sapMPopoverScroll{margin-left:0!important}.sapUiDtContextMenu .sapMBtnInner{text-align:left}.sapUiDtContextMenu.sapMPopover{min-width:0}.sapUiDtContextMenu.sapMPopover.sapUiSizeCompact{padding-right:0.2rem;padding-left:0.2rem}#sap-ui-theme-sap\.ui\.dt{background-image:url('data:text/plain;utf-8,%7B%22_sap_ui_dt_Overlay_FocusColor%22%3A%22%23000000%22%2C%22_sap_ui_dt_Overlay_TargetZoneColor%22%3A%22%23007cc0%22%2C%22_sap_ui_dt_Overlay_SelectionColor%22%3A%22%233355ff%22%2C%22_sap_ui_dt_Overlay_CuttedColor%22%3A%22%23ffffff%22%7D')}

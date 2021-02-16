@@ -1,0 +1,6 @@
+/*!
+ * UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+sap.ui.define(["sap/ui/base/Object","sap/ui/test/Opa5","sap/ui/test/OpaPlugin","sap/ui/test/actions/Press","sap/ui/thirdparty/jquery"],function(U,O,a,P,q){"use strict";var p=new a();var _=U.extend("sap.ui.test._ControlFinder",{});_._findControls=function(o){var c=p._getFilteredControlsByDeclaration(o);var r;if(c===a.FILTER_FOUND_NO_CONTROLS){r=[];}else{r=q.isArray(c)?c:[c];}return r;};_._findElements=function(o){var c=_._findControls(o);var g=function(C){return new P().$(C)[0]||C.getDomRef();};return c.map(function(C){switch(o.interaction){case"root":return C.getDomRef();case"focus":return C.getFocusDomRef();case"press":var i=new P()._getAdapter(C.getMetadata());return C.$(i)[0];case"auto":return g(C);default:i=o.interaction&&o.interaction.idSuffix;return i?C.$(i)[0]:g(C);}});};_._getControlForElement=function(e){var c=jQuery("#"+e).closest("[data-sap-ui]").control();return c&&c[0];};_._getControlProperty=function(c,s){var b=jQuery.extend({},c.mProperties,{id:c.getId()});return Object.keys(b).indexOf(s)>-1?b[s]:null;};return _;});

@@ -1,0 +1,1052 @@
+{
+  "modules" : [
+    {
+      "name" : "sap/ui/fl/Cache.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 18652,
+      "compressedSize" : 5390,
+      "required" : ["sap/base/Log.js", "sap/base/strings/formatMessage.js", "sap/base/util/LoaderExtensions.js", "sap/ui/fl/LrepConnector.js", "sap/ui/fl/Utils.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/Change.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 24463,
+      "compressedSize" : 8411,
+      "required" : ["sap/ui/base/ManagedObject.js", "sap/ui/fl/Utils.js", "sap/ui/fl/registry/Settings.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/ChangePersistence.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 49824,
+      "compressedSize" : 18465,
+      "required" : ["sap/base/util/merge.js", "sap/m/MessageBox.js", "sap/ui/core/BusyIndicator.js", "sap/ui/core/Component.js", "sap/ui/fl/Cache.js", "sap/ui/fl/Change.js", "sap/ui/fl/LrepConnector.js", "sap/ui/fl/Utils.js", "sap/ui/fl/Variant.js", "sap/ui/fl/context/ContextManager.js", "sap/ui/fl/registry/Settings.js", "sap/ui/fl/transport/TransportSelection.js", "sap/ui/fl/variants/VariantController.js", "sap/ui/model/json/JSONModel.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/ChangePersistenceFactory.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 8658,
+      "compressedSize" : 2673,
+      "required" : ["sap/ui/core/Component.js", "sap/ui/fl/ChangePersistence.js", "sap/ui/fl/Utils.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/ControlPersonalizationAPI.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 13064,
+      "compressedSize" : 4672,
+      "required" : ["sap/ui/core/Component.js", "sap/ui/core/Element.js", "sap/ui/core/util/reflection/JsControlTreeModifier.js", "sap/ui/fl/Utils.js", "sap/ui/fl/registry/ChangeRegistry.js", "sap/ui/fl/variants/VariantManagement.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/DefaultVariant.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 5173,
+      "compressedSize" : 1544,
+      "required" : ["sap/ui/fl/Change.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/EventHistory.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 2198,
+      "compressedSize" : 934,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/FakeLrepConnector.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 9948,
+      "compressedSize" : 3463,
+      "required" : ["sap/ui/fl/Cache.js", "sap/ui/fl/ChangePersistenceFactory.js", "sap/ui/fl/LrepConnector.js", "sap/ui/fl/Utils.js", "sap/ui/thirdparty/URI.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/FakeLrepConnectorLocalStorage.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 675,
+      "compressedSize" : 321,
+      "required" : ["sap/ui/fl/FakeLrepConnectorStorage.js", "sap/ui/fl/FakeLrepLocalStorage.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/FakeLrepConnectorSessionStorage.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 685,
+      "compressedSize" : 323,
+      "required" : ["sap/ui/fl/FakeLrepConnectorStorage.js", "sap/ui/fl/FakeLrepSessionStorage.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/FakeLrepConnectorStorage.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 17613,
+      "compressedSize" : 7255,
+      "required" : ["sap/ui/fl/Cache.js", "sap/ui/fl/ChangePersistenceFactory.js", "sap/ui/fl/FakeLrepConnector.js", "sap/ui/fl/LrepConnector.js", "sap/ui/fl/Utils.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/FakeLrepLocalStorage.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 568,
+      "compressedSize" : 295,
+      "required" : ["sap/ui/fl/FakeLrepStorage.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/FakeLrepSessionStorage.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 574,
+      "compressedSize" : 297,
+      "required" : ["sap/ui/fl/FakeLrepStorage.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/FakeLrepStorage.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 4702,
+      "compressedSize" : 1730,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/FlexController.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 57089,
+      "compressedSize" : 20534,
+      "required" : ["sap/base/Log.js", "sap/base/strings/formatMessage.js", "sap/ui/core/Component.js", "sap/ui/core/Element.js", "sap/ui/core/mvc/View.js", "sap/ui/core/util/reflection/JsControlTreeModifier.js", "sap/ui/core/util/reflection/XmlTreeModifier.js", "sap/ui/fl/Cache.js", "sap/ui/fl/Change.js", "sap/ui/fl/ChangePersistenceFactory.js", "sap/ui/fl/LrepConnector.js", "sap/ui/fl/Persistence.js", "sap/ui/fl/Utils.js", "sap/ui/fl/Variant.js", "sap/ui/fl/context/ContextManager.js", "sap/ui/fl/registry/ChangeRegistry.js", "sap/ui/fl/registry/Settings.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/FlexControllerFactory.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 4545,
+      "compressedSize" : 1336,
+      "required" : ["sap/ui/fl/ChangePersistenceFactory.js", "sap/ui/fl/FlexController.js", "sap/ui/fl/Utils.js", "sap/ui/fl/variants/VariantModel.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/LrepConnector.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 25393,
+      "compressedSize" : 8206,
+      "required" : ["sap/base/util/merge.js", "sap/ui/fl/Utils.js", "sap/ui/thirdparty/URI.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/Persistence.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 9603,
+      "compressedSize" : 3142,
+      "required" : ["sap/ui/fl/Change.js", "sap/ui/fl/ChangePersistenceFactory.js", "sap/ui/fl/DefaultVariant.js", "sap/ui/fl/StandardVariant.js", "sap/ui/fl/Utils.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/Preprocessor.js",
+      "description" : "Provides object sap.ui.fl.Processor",
+      "size" : 727,
+      "compressedSize" : 302,
+      "required" : ["sap/ui/base/Object.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/PreprocessorImpl.js",
+      "description" : "Provides object sap.ui.fl.ProcessorImpl",
+      "size" : 4633,
+      "compressedSize" : 2281,
+      "required" : ["sap/base/Log.js", "sap/ui/core/Component.js", "sap/ui/fl/ChangePersistenceFactory.js", "sap/ui/fl/Utils.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/RegistrationDelegator.js",
+      "description" : "Provides object sap.ui.fl.RegistrationDelegator",
+      "size" : 2685,
+      "compressedSize" : 1270,
+      "required" : ["sap/ui/core/Component.js", "sap/ui/core/mvc/Controller.js", "sap/ui/core/mvc/XMLView.js", "sap/ui/fl/ChangePersistenceFactory.js", "sap/ui/fl/EventHistory.js", "sap/ui/fl/FlexControllerFactory.js", "sap/ui/fl/registry/ChangeHandlerRegistration.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/StandardVariant.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 5242,
+      "compressedSize" : 1543,
+      "required" : ["sap/ui/fl/Change.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/Utils.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 41540,
+      "compressedSize" : 12609,
+      "required" : ["sap/base/Log.js", "sap/base/util/UriParameters.js", "sap/base/util/uid.js", "sap/ui/base/ManagedObject.js", "sap/ui/core/Component.js", "sap/ui/core/mvc/View.js", "sap/ui/core/util/reflection/BaseTreeModifier.js", "sap/ui/thirdparty/hasher.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/Variant.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 17239,
+      "compressedSize" : 6521,
+      "required" : ["sap/base/util/merge.js", "sap/ui/base/ManagedObject.js", "sap/ui/fl/Utils.js", "sap/ui/fl/registry/Settings.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/XmlPreprocessorImpl.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 4698,
+      "compressedSize" : 2086,
+      "required" : ["sap/base/Log.js", "sap/ui/core/Component.js", "sap/ui/fl/ChangePersistence.js", "sap/ui/fl/ChangePersistenceFactory.js", "sap/ui/fl/FlexControllerFactory.js", "sap/ui/fl/LrepConnector.js", "sap/ui/fl/Utils.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/changeHandler/AddXML.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 6022,
+      "compressedSize" : 2108,
+      "required" : ["sap/ui/fl/Utils.js", "sap/ui/fl/changeHandler/Base.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/changeHandler/Base.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 1001,
+      "compressedSize" : 382,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/changeHandler/BaseRename.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 4894,
+      "compressedSize" : 1518,
+      "required" : ["sap/ui/fl/Utils.js", "sap/ui/fl/changeHandler/Base.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/changeHandler/BaseTreeModifier.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 367,
+      "compressedSize" : 287,
+      "required" : ["sap/ui/core/util/reflection/BaseTreeModifier.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/changeHandler/ChangeHandlerMediator.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 6622,
+      "compressedSize" : 2502,
+      "required" : ["sap/base/Log.js", "sap/base/strings/capitalize.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/changeHandler/HideControl.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 2343,
+      "compressedSize" : 648,
+      "required" : ["sap/base/Log.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/changeHandler/JsControlTreeModifier.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 402,
+      "compressedSize" : 297,
+      "required" : ["sap/ui/core/util/reflection/JsControlTreeModifier.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/changeHandler/MoveControls.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 12409,
+      "compressedSize" : 4824,
+      "required" : ["sap/ui/fl/Utils.js", "sap/ui/fl/changeHandler/Base.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/changeHandler/MoveElements.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 5255,
+      "compressedSize" : 2126,
+      "required" : ["sap/ui/fl/Utils.js", "sap/ui/fl/changeHandler/Base.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/changeHandler/PropertyBindingChange.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 3291,
+      "compressedSize" : 953,
+      "required" : ["sap/base/Log.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/changeHandler/PropertyChange.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 3808,
+      "compressedSize" : 1178,
+      "required" : ["sap/base/Log.js", "sap/ui/fl/Utils.js", "sap/ui/fl/changeHandler/Base.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/changeHandler/StashControl.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 2364,
+      "compressedSize" : 647,
+      "required" : ["sap/base/Log.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/changeHandler/UnhideControl.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 2329,
+      "compressedSize" : 658,
+      "required" : ["sap/base/Log.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/changeHandler/UnstashControl.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 3144,
+      "compressedSize" : 914,
+      "required" : ["sap/base/Log.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/changeHandler/XmlTreeModifier.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 383,
+      "compressedSize" : 291,
+      "required" : ["sap/ui/core/util/reflection/XmlTreeModifier.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/codeExt/CodeExtManager.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 4294,
+      "compressedSize" : 1937,
+      "required" : ["sap/ui/fl/Change.js", "sap/ui/fl/LrepConnector.js", "sap/ui/fl/Utils.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/context/BaseContextProvider.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 1994,
+      "compressedSize" : 801,
+      "required" : ["sap/ui/base/ManagedObject.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/context/Context.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 5860,
+      "compressedSize" : 2693,
+      "required" : ["sap/base/Log.js", "sap/ui/base/ManagedObject.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/context/ContextManager.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 10446,
+      "compressedSize" : 2835,
+      "required" : ["sap/base/Log.js", "sap/ui/fl/LrepConnector.js", "sap/ui/fl/Utils.js", "sap/ui/fl/context/Context.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/context/DeviceContextProvider.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 1356,
+      "compressedSize" : 700,
+      "required" : ["sap/ui/Device.js", "sap/ui/fl/context/BaseContextProvider.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/context/SwitchContextProvider.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 1420,
+      "compressedSize" : 766,
+      "required" : ["sap/ui/fl/Cache.js", "sap/ui/fl/context/BaseContextProvider.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/core/EventDelegate.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 4101,
+      "compressedSize" : 1528,
+      "required" : ["sap/ui/base/EventProvider.js", "sap/ui/fl/Utils.js", "sap/ui/fl/core/FlexVisualizer.js", "sap/ui/fl/registry/ChangeRegistry.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/core/FlexVisualizer.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 925,
+      "compressedSize" : 320,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 7241,
+      "compressedSize" : 2562,
+      "required" : ["sap/base/util/merge.js", "sap/ui/fl/Change.js", "sap/ui/fl/ChangePersistence.js", "sap/ui/fl/ChangePersistenceFactory.js", "sap/ui/fl/Utils.js", "sap/ui/fl/descriptorRelated/internal/Utils.js", "sap/ui/fl/registry/Settings.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 34908,
+      "compressedSize" : 9214,
+      "required" : ["sap/ui/fl/descriptorRelated/internal/Utils.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 13378,
+      "compressedSize" : 5064,
+      "required" : ["sap/base/util/merge.js", "sap/ui/fl/LrepConnector.js", "sap/ui/fl/Utils.js", "sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory.js", "sap/ui/fl/descriptorRelated/internal/Utils.js", "sap/ui/fl/registry/Settings.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/descriptorRelated/internal/Utils.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 3384,
+      "compressedSize" : 2060,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/designtime/library-preload.designtime.js",
+      "size" : 977,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : ["sap/ui/fl/designtime/library.designtime.js", "sap/ui/fl/designtime/variants/VariantManagement.designtime.js"]
+    },
+    {
+      "name" : "sap/ui/fl/designtime/library.designtime.js",
+      "description" : "Initialization of designtime Code and shared classes for the library sap.ui.fl.",
+      "size" : 339,
+      "compressedSize" : 240,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/designtime/messagebundle.properties",
+      "size" : 138,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/designtime/variants/VariantManagement.designtime.js",
+      "description" : "Provides the Design Time Metadata for the sap.ui.fl.variants.VariantManagement control.",
+      "size" : 857,
+      "compressedSize" : 574,
+      "required" : ["ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/fieldExt/Access.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 19482,
+      "compressedSize" : 6098,
+      "required" : ["sap/base/security/encodeURLParameters.js", "sap/ui/thirdparty/jquery.js", "sap/ui/util/Storage.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/library-h2-preload.js",
+      "size" : 17896,
+      "required" : ["sap/base/Log.js", "sap/base/security/encodeURLParameters.js", "sap/base/strings/capitalize.js", "sap/base/strings/formatMessage.js", "sap/base/util/LoaderExtensions.js", "sap/base/util/UriParameters.js", "sap/base/util/deepEqual.js", "sap/base/util/merge.js", "sap/base/util/uid.js", "sap/m/App.js", "sap/m/Bar.js", "sap/m/Button.js", "sap/m/ButtonType.js", "sap/m/CheckBox.js", "sap/m/Column.js", "sap/m/ColumnListItem.js", "sap/m/ComboBox.js", "sap/m/Dialog.js", "sap/m/DialogRenderer.js", "sap/m/DisplayListItem.js", "sap/m/FlexBox.js", "sap/m/FlexItemData.js", "sap/m/GroupHeaderListItem.js", "sap/m/IconTabBar.js", "sap/m/IconTabFilter.js", "sap/m/Input.js", "sap/m/InputListItem.js", "sap/m/Label.js", "sap/m/Link.js", "sap/m/List.js", "sap/m/MessageBox.js", "sap/m/MessagePopover.js", "sap/m/MessagePopoverItem.js", "sap/m/MessageToast.js", "sap/m/ObjectIdentifier.js", "sap/m/OverflowToolbar.js", "sap/m/OverflowToolbarLayoutData.js", "sap/m/OverflowToolbarPriority.js", "sap/m/Page.js", "sap/m/PlacementType.js", "sap/m/PopinDisplay.js", "sap/m/RadioButton.js", "sap/m/ResponsivePopover.js", "sap/m/ScreenSize.js", "sap/m/SearchField.js", "sap/m/SelectList.js", "sap/m/SplitApp.js", "sap/m/StandardListItem.js", "sap/m/Table.js", "sap/m/Text.js", "sap/m/TextArea.js", "sap/m/Title.js", "sap/m/Toolbar.js", "sap/m/ToolbarSpacer.js", "sap/m/VBox.js", "sap/ui/Device.js", "sap/ui/base/EventProvider.js", "sap/ui/base/ManagedObject.js", "sap/ui/base/Object.js", "sap/ui/core/BusyIndicator.js", "sap/ui/core/Component.js", "sap/ui/core/Control.js", "sap/ui/core/Element.js", "sap/ui/core/HTML.js", "sap/ui/core/Icon.js", "sap/ui/core/InvisibleText.js", "sap/ui/core/ListItem.js", "sap/ui/core/TextAlign.js", "sap/ui/core/UIComponent.js", "sap/ui/core/ValueState.js", "sap/ui/core/mvc/Controller.js", "sap/ui/core/mvc/View.js", "sap/ui/core/mvc/XMLView.js", "sap/ui/core/routing/HashChanger.js", "sap/ui/core/routing/History.js", "sap/ui/core/support/Plugin.js", "sap/ui/core/support/Support.js", "sap/ui/core/util/File.js", "sap/ui/core/util/reflection/BaseTreeModifier.js", "sap/ui/core/util/reflection/JsControlTreeModifier.js", "sap/ui/core/util/reflection/XmlTreeModifier.js", "sap/ui/dt/DesignTime.js", "sap/ui/events/KeyCodes.js", "sap/ui/layout/Grid.js", "sap/ui/layout/HorizontalLayout.js", "sap/ui/layout/VerticalLayout.js", "sap/ui/layout/form/SimpleForm.js", "sap/ui/model/Context.js", "sap/ui/model/Filter.js", "sap/ui/model/FilterOperator.js", "sap/ui/model/PropertyBinding.js", "sap/ui/model/json/JSONModel.js", "sap/ui/support/library.js", "sap/ui/thirdparty/URI.js", "sap/ui/thirdparty/hasher.js", "sap/ui/thirdparty/jquery.js", "sap/ui/unified/FileUploader.js", "sap/ui/util/Storage.js", "ui5loader-autoconfig.js"],
+      "includes" : ["sap/ui/fl/library.js", "sap/ui/fl/manifest.json", "sap/ui/fl/Cache.js", "sap/ui/fl/Change.js", "sap/ui/fl/ChangePersistence.js", "sap/ui/fl/ChangePersistenceFactory.js", "sap/ui/fl/ControlPersonalizationAPI.js", "sap/ui/fl/DefaultVariant.js", "sap/ui/fl/EventHistory.js", "sap/ui/fl/FakeLrepConnector.js", "sap/ui/fl/FakeLrepConnectorLocalStorage.js", "sap/ui/fl/FakeLrepConnectorSessionStorage.js", "sap/ui/fl/FakeLrepConnectorStorage.js", "sap/ui/fl/FakeLrepLocalStorage.js", "sap/ui/fl/FakeLrepSessionStorage.js", "sap/ui/fl/FakeLrepStorage.js", "sap/ui/fl/FlexController.js", "sap/ui/fl/FlexControllerFactory.js", "sap/ui/fl/LrepConnector.js", "sap/ui/fl/Persistence.js", "sap/ui/fl/Preprocessor.js", "sap/ui/fl/PreprocessorImpl.js", "sap/ui/fl/RegistrationDelegator.js", "sap/ui/fl/StandardVariant.js", "sap/ui/fl/Utils.js", "sap/ui/fl/Variant.js", "sap/ui/fl/XmlPreprocessorImpl.js", "sap/ui/fl/changeHandler/AddXML.js", "sap/ui/fl/changeHandler/Base.js", "sap/ui/fl/changeHandler/BaseRename.js", "sap/ui/fl/changeHandler/BaseTreeModifier.js", "sap/ui/fl/changeHandler/ChangeHandlerMediator.js", "sap/ui/fl/changeHandler/HideControl.js", "sap/ui/fl/changeHandler/JsControlTreeModifier.js", "sap/ui/fl/changeHandler/MoveControls.js", "sap/ui/fl/changeHandler/MoveElements.js", "sap/ui/fl/changeHandler/PropertyBindingChange.js", "sap/ui/fl/changeHandler/PropertyChange.js", "sap/ui/fl/changeHandler/StashControl.js", "sap/ui/fl/changeHandler/UnhideControl.js", "sap/ui/fl/changeHandler/UnstashControl.js", "sap/ui/fl/changeHandler/XmlTreeModifier.js", "sap/ui/fl/codeExt/CodeExtManager.js", "sap/ui/fl/context/BaseContextProvider.js", "sap/ui/fl/context/Context.js", "sap/ui/fl/context/ContextManager.js", "sap/ui/fl/context/DeviceContextProvider.js", "sap/ui/fl/context/SwitchContextProvider.js", "sap/ui/fl/core/EventDelegate.js", "sap/ui/fl/core/FlexVisualizer.js", "sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory.js", "sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory.js", "sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory.js", "sap/ui/fl/descriptorRelated/internal/Utils.js", "sap/ui/fl/designtime/library.designtime.js", "sap/ui/fl/designtime/variants/VariantManagement.designtime.js", "sap/ui/fl/fieldExt/Access.js", "sap/ui/fl/library.support.js", "sap/ui/fl/registry/ChangeHandlerRegistration.js", "sap/ui/fl/registry/ChangeRegistry.js", "sap/ui/fl/registry/ChangeRegistryItem.js", "sap/ui/fl/registry/ChangeTypeMetadata.js", "sap/ui/fl/registry/Settings.js", "sap/ui/fl/registry/SimpleChanges.js", "sap/ui/fl/support/Flexibility.js", "sap/ui/fl/support/apps/contentbrowser/Component.js", "sap/ui/fl/support/apps/contentbrowser/controller/ContentDetails.controller.js", "sap/ui/fl/support/apps/contentbrowser/controller/ContentDetailsEdit.controller.js", "sap/ui/fl/support/apps/contentbrowser/controller/LayerContentMaster.controller.js", "sap/ui/fl/support/apps/contentbrowser/controller/Layers.controller.js", "sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector.js", "sap/ui/fl/support/apps/contentbrowser/manifest.json", "sap/ui/fl/support/apps/contentbrowser/utils/DataUtils.js", "sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils.js", "sap/ui/fl/support/apps/contentbrowser/view/ContentDetails.view.xml", "sap/ui/fl/support/apps/contentbrowser/view/ContentDetailsEdit.view.xml", "sap/ui/fl/support/apps/contentbrowser/view/EmptyDetails.view.xml", "sap/ui/fl/support/apps/contentbrowser/view/LayerContentMaster.view.xml", "sap/ui/fl/support/apps/contentbrowser/view/Layers.view.xml", "sap/ui/fl/support/apps/contentbrowser/view/MainView.view.xml", "sap/ui/fl/support/apps/uiFlexibilityDiagnostics/Component.js", "sap/ui/fl/support/apps/uiFlexibilityDiagnostics/controller/Root.controller.js", "sap/ui/fl/support/apps/uiFlexibilityDiagnostics/helper/Extractor.js", "sap/ui/fl/support/apps/uiFlexibilityDiagnostics/manifest.json", "sap/ui/fl/support/apps/uiFlexibilityDiagnostics/view/Root.view.xml", "sap/ui/fl/support/diagnostics/Flexibility.controller.js", "sap/ui/fl/support/diagnostics/Flexibility.view.xml", "sap/ui/fl/transport/TransportDialog.js", "sap/ui/fl/transport/TransportSelection.js", "sap/ui/fl/transport/Transports.js", "sap/ui/fl/variants/VariantController.js", "sap/ui/fl/variants/VariantManagement.js", "sap/ui/fl/variants/VariantModel.js", "sap/ui/fl/variants/util/VariantUtil.js"]
+    },
+    {
+      "name" : "sap/ui/fl/library-preload.js",
+      "size" : 251389,
+      "required" : ["sap/base/Log.js", "sap/base/security/encodeURLParameters.js", "sap/base/strings/capitalize.js", "sap/base/strings/formatMessage.js", "sap/base/util/LoaderExtensions.js", "sap/base/util/UriParameters.js", "sap/base/util/deepEqual.js", "sap/base/util/merge.js", "sap/base/util/uid.js", "sap/m/Bar.js", "sap/m/Button.js", "sap/m/ButtonType.js", "sap/m/CheckBox.js", "sap/m/Column.js", "sap/m/ColumnListItem.js", "sap/m/ComboBox.js", "sap/m/Dialog.js", "sap/m/DialogRenderer.js", "sap/m/Input.js", "sap/m/InputListItem.js", "sap/m/Label.js", "sap/m/List.js", "sap/m/MessageBox.js", "sap/m/MessageToast.js", "sap/m/ObjectIdentifier.js", "sap/m/OverflowToolbar.js", "sap/m/OverflowToolbarLayoutData.js", "sap/m/OverflowToolbarPriority.js", "sap/m/Page.js", "sap/m/PlacementType.js", "sap/m/PopinDisplay.js", "sap/m/RadioButton.js", "sap/m/ResponsivePopover.js", "sap/m/ScreenSize.js", "sap/m/SearchField.js", "sap/m/SelectList.js", "sap/m/Table.js", "sap/m/Text.js", "sap/m/Title.js", "sap/m/Toolbar.js", "sap/m/ToolbarSpacer.js", "sap/m/VBox.js", "sap/ui/Device.js", "sap/ui/base/EventProvider.js", "sap/ui/base/ManagedObject.js", "sap/ui/base/Object.js", "sap/ui/core/BusyIndicator.js", "sap/ui/core/Component.js", "sap/ui/core/Control.js", "sap/ui/core/Element.js", "sap/ui/core/Icon.js", "sap/ui/core/InvisibleText.js", "sap/ui/core/ListItem.js", "sap/ui/core/TextAlign.js", "sap/ui/core/ValueState.js", "sap/ui/core/mvc/Controller.js", "sap/ui/core/mvc/View.js", "sap/ui/core/mvc/XMLView.js", "sap/ui/core/routing/HashChanger.js", "sap/ui/core/routing/History.js", "sap/ui/core/util/reflection/BaseTreeModifier.js", "sap/ui/core/util/reflection/JsControlTreeModifier.js", "sap/ui/core/util/reflection/XmlTreeModifier.js", "sap/ui/events/KeyCodes.js", "sap/ui/layout/Grid.js", "sap/ui/layout/HorizontalLayout.js", "sap/ui/model/Context.js", "sap/ui/model/Filter.js", "sap/ui/model/PropertyBinding.js", "sap/ui/model/json/JSONModel.js", "sap/ui/thirdparty/URI.js", "sap/ui/thirdparty/hasher.js", "sap/ui/thirdparty/jquery.js", "sap/ui/util/Storage.js", "ui5loader-autoconfig.js"],
+      "includes" : ["sap/ui/fl/Cache.js", "sap/ui/fl/Change.js", "sap/ui/fl/ChangePersistence.js", "sap/ui/fl/ChangePersistenceFactory.js", "sap/ui/fl/ControlPersonalizationAPI.js", "sap/ui/fl/DefaultVariant.js", "sap/ui/fl/EventHistory.js", "sap/ui/fl/FakeLrepConnector.js", "sap/ui/fl/FakeLrepConnectorLocalStorage.js", "sap/ui/fl/FakeLrepConnectorSessionStorage.js", "sap/ui/fl/FakeLrepConnectorStorage.js", "sap/ui/fl/FakeLrepLocalStorage.js", "sap/ui/fl/FakeLrepSessionStorage.js", "sap/ui/fl/FakeLrepStorage.js", "sap/ui/fl/FlexController.js", "sap/ui/fl/FlexControllerFactory.js", "sap/ui/fl/LrepConnector.js", "sap/ui/fl/Persistence.js", "sap/ui/fl/Preprocessor.js", "sap/ui/fl/PreprocessorImpl.js", "sap/ui/fl/RegistrationDelegator.js", "sap/ui/fl/StandardVariant.js", "sap/ui/fl/Utils.js", "sap/ui/fl/Variant.js", "sap/ui/fl/XmlPreprocessorImpl.js", "sap/ui/fl/changeHandler/AddXML.js", "sap/ui/fl/changeHandler/Base.js", "sap/ui/fl/changeHandler/BaseRename.js", "sap/ui/fl/changeHandler/BaseTreeModifier.js", "sap/ui/fl/changeHandler/ChangeHandlerMediator.js", "sap/ui/fl/changeHandler/HideControl.js", "sap/ui/fl/changeHandler/JsControlTreeModifier.js", "sap/ui/fl/changeHandler/MoveControls.js", "sap/ui/fl/changeHandler/MoveElements.js", "sap/ui/fl/changeHandler/PropertyBindingChange.js", "sap/ui/fl/changeHandler/PropertyChange.js", "sap/ui/fl/changeHandler/StashControl.js", "sap/ui/fl/changeHandler/UnhideControl.js", "sap/ui/fl/changeHandler/UnstashControl.js", "sap/ui/fl/changeHandler/XmlTreeModifier.js", "sap/ui/fl/codeExt/CodeExtManager.js", "sap/ui/fl/context/BaseContextProvider.js", "sap/ui/fl/context/Context.js", "sap/ui/fl/context/ContextManager.js", "sap/ui/fl/context/DeviceContextProvider.js", "sap/ui/fl/context/SwitchContextProvider.js", "sap/ui/fl/core/EventDelegate.js", "sap/ui/fl/core/FlexVisualizer.js", "sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory.js", "sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory.js", "sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory.js", "sap/ui/fl/descriptorRelated/internal/Utils.js", "sap/ui/fl/fieldExt/Access.js", "sap/ui/fl/library.js", "sap/ui/fl/manifest.json", "sap/ui/fl/registry/ChangeHandlerRegistration.js", "sap/ui/fl/registry/ChangeRegistry.js", "sap/ui/fl/registry/ChangeRegistryItem.js", "sap/ui/fl/registry/ChangeTypeMetadata.js", "sap/ui/fl/registry/Settings.js", "sap/ui/fl/registry/SimpleChanges.js", "sap/ui/fl/transport/TransportDialog.js", "sap/ui/fl/transport/TransportSelection.js", "sap/ui/fl/transport/Transports.js", "sap/ui/fl/variants/VariantController.js", "sap/ui/fl/variants/VariantManagement.js", "sap/ui/fl/variants/VariantModel.js", "sap/ui/fl/variants/util/VariantUtil.js"]
+    },
+    {
+      "name" : "sap/ui/fl/library-preload.json",
+      "size" : 0,
+      "required" : ["sap/base/Log.js", "sap/base/security/encodeURLParameters.js", "sap/base/strings/capitalize.js", "sap/base/strings/formatMessage.js", "sap/base/util/LoaderExtensions.js", "sap/base/util/UriParameters.js", "sap/base/util/deepEqual.js", "sap/base/util/merge.js", "sap/base/util/uid.js", "sap/m/Bar.js", "sap/m/Button.js", "sap/m/ButtonType.js", "sap/m/CheckBox.js", "sap/m/Column.js", "sap/m/ColumnListItem.js", "sap/m/ComboBox.js", "sap/m/Dialog.js", "sap/m/DialogRenderer.js", "sap/m/Input.js", "sap/m/InputListItem.js", "sap/m/Label.js", "sap/m/List.js", "sap/m/MessageBox.js", "sap/m/MessageToast.js", "sap/m/ObjectIdentifier.js", "sap/m/OverflowToolbar.js", "sap/m/OverflowToolbarLayoutData.js", "sap/m/OverflowToolbarPriority.js", "sap/m/Page.js", "sap/m/PlacementType.js", "sap/m/PopinDisplay.js", "sap/m/RadioButton.js", "sap/m/ResponsivePopover.js", "sap/m/ScreenSize.js", "sap/m/SearchField.js", "sap/m/SelectList.js", "sap/m/Table.js", "sap/m/Text.js", "sap/m/Title.js", "sap/m/Toolbar.js", "sap/m/ToolbarSpacer.js", "sap/m/VBox.js", "sap/m/library-preload.json", "sap/ui/Device.js", "sap/ui/base/EventProvider.js", "sap/ui/base/ManagedObject.js", "sap/ui/base/Object.js", "sap/ui/core/BusyIndicator.js", "sap/ui/core/Component.js", "sap/ui/core/Control.js", "sap/ui/core/Element.js", "sap/ui/core/Icon.js", "sap/ui/core/InvisibleText.js", "sap/ui/core/ListItem.js", "sap/ui/core/TextAlign.js", "sap/ui/core/ValueState.js", "sap/ui/core/library-preload.json", "sap/ui/core/mvc/Controller.js", "sap/ui/core/mvc/View.js", "sap/ui/core/mvc/XMLView.js", "sap/ui/core/routing/HashChanger.js", "sap/ui/core/routing/History.js", "sap/ui/core/util/reflection/BaseTreeModifier.js", "sap/ui/core/util/reflection/JsControlTreeModifier.js", "sap/ui/core/util/reflection/XmlTreeModifier.js", "sap/ui/events/KeyCodes.js", "sap/ui/layout/Grid.js", "sap/ui/layout/HorizontalLayout.js", "sap/ui/model/Context.js", "sap/ui/model/Filter.js", "sap/ui/model/PropertyBinding.js", "sap/ui/model/json/JSONModel.js", "sap/ui/thirdparty/URI.js", "sap/ui/thirdparty/hasher.js", "sap/ui/thirdparty/jquery.js", "sap/ui/util/Storage.js", "ui5loader-autoconfig.js"],
+      "includes" : ["sap/ui/fl/Cache.js", "sap/ui/fl/Change.js", "sap/ui/fl/ChangePersistence.js", "sap/ui/fl/ChangePersistenceFactory.js", "sap/ui/fl/ControlPersonalizationAPI.js", "sap/ui/fl/DefaultVariant.js", "sap/ui/fl/EventHistory.js", "sap/ui/fl/FakeLrepConnector.js", "sap/ui/fl/FakeLrepConnectorLocalStorage.js", "sap/ui/fl/FakeLrepConnectorSessionStorage.js", "sap/ui/fl/FakeLrepConnectorStorage.js", "sap/ui/fl/FakeLrepLocalStorage.js", "sap/ui/fl/FakeLrepSessionStorage.js", "sap/ui/fl/FakeLrepStorage.js", "sap/ui/fl/FlexController.js", "sap/ui/fl/FlexControllerFactory.js", "sap/ui/fl/LrepConnector.js", "sap/ui/fl/Persistence.js", "sap/ui/fl/Preprocessor.js", "sap/ui/fl/PreprocessorImpl.js", "sap/ui/fl/RegistrationDelegator.js", "sap/ui/fl/StandardVariant.js", "sap/ui/fl/Utils.js", "sap/ui/fl/Variant.js", "sap/ui/fl/XmlPreprocessorImpl.js", "sap/ui/fl/changeHandler/AddXML.js", "sap/ui/fl/changeHandler/Base.js", "sap/ui/fl/changeHandler/BaseRename.js", "sap/ui/fl/changeHandler/BaseTreeModifier.js", "sap/ui/fl/changeHandler/ChangeHandlerMediator.js", "sap/ui/fl/changeHandler/HideControl.js", "sap/ui/fl/changeHandler/JsControlTreeModifier.js", "sap/ui/fl/changeHandler/MoveControls.js", "sap/ui/fl/changeHandler/MoveElements.js", "sap/ui/fl/changeHandler/PropertyBindingChange.js", "sap/ui/fl/changeHandler/PropertyChange.js", "sap/ui/fl/changeHandler/StashControl.js", "sap/ui/fl/changeHandler/UnhideControl.js", "sap/ui/fl/changeHandler/UnstashControl.js", "sap/ui/fl/changeHandler/XmlTreeModifier.js", "sap/ui/fl/codeExt/CodeExtManager.js", "sap/ui/fl/context/BaseContextProvider.js", "sap/ui/fl/context/Context.js", "sap/ui/fl/context/ContextManager.js", "sap/ui/fl/context/DeviceContextProvider.js", "sap/ui/fl/context/SwitchContextProvider.js", "sap/ui/fl/core/EventDelegate.js", "sap/ui/fl/core/FlexVisualizer.js", "sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory.js", "sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory.js", "sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory.js", "sap/ui/fl/descriptorRelated/internal/Utils.js", "sap/ui/fl/fieldExt/Access.js", "sap/ui/fl/library.js", "sap/ui/fl/manifest.json", "sap/ui/fl/registry/ChangeHandlerRegistration.js", "sap/ui/fl/registry/ChangeRegistry.js", "sap/ui/fl/registry/ChangeRegistryItem.js", "sap/ui/fl/registry/ChangeTypeMetadata.js", "sap/ui/fl/registry/Settings.js", "sap/ui/fl/registry/SimpleChanges.js", "sap/ui/fl/transport/TransportDialog.js", "sap/ui/fl/transport/TransportSelection.js", "sap/ui/fl/transport/Transports.js", "sap/ui/fl/variants/VariantController.js", "sap/ui/fl/variants/VariantManagement.js", "sap/ui/fl/variants/VariantModel.js", "sap/ui/fl/variants/util/VariantUtil.js"]
+    },
+    {
+      "name" : "sap/ui/fl/library-preload.support.js",
+      "size" : 3723,
+      "required" : ["sap/ui/core/Component.js", "sap/ui/dt/DesignTime.js", "sap/ui/fl/Utils.js", "sap/ui/support/library.js", "ui5loader-autoconfig.js"],
+      "includes" : ["sap/ui/fl/library.support.js"]
+    },
+    {
+      "name" : "sap/ui/fl/library.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 1236,
+      "compressedSize" : 762,
+      "required" : ["sap/ui/fl/RegistrationDelegator.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/library.support.js",
+      "description" : "Adds support rules of the <code>sap.ui.fl</code> library to the support infrastructure.",
+      "size" : 3641,
+      "compressedSize" : 2124,
+      "required" : ["sap/ui/core/Component.js", "sap/ui/dt/DesignTime.js", "sap/ui/fl/Utils.js", "sap/ui/support/library.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/manifest.json",
+      "size" : 951,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle.properties",
+      "size" : 5802,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_ar.properties",
+      "size" : 9310,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_bg.properties",
+      "size" : 11045,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_ca.properties",
+      "size" : 5990,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_cs.properties",
+      "size" : 6220,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_da.properties",
+      "size" : 5844,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_de.properties",
+      "size" : 6187,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_el.properties",
+      "size" : 11152,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_en.properties",
+      "size" : 5749,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_en_US_sappsd.properties",
+      "size" : 12134,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_en_US_saptrc.properties",
+      "size" : 6871,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_es.properties",
+      "size" : 6039,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_et.properties",
+      "size" : 5886,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_fi.properties",
+      "size" : 6206,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_fr.properties",
+      "size" : 6138,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_hi.properties",
+      "size" : 10385,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_hr.properties",
+      "size" : 5964,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_hu.properties",
+      "size" : 6444,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_it.properties",
+      "size" : 5917,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_iw.properties",
+      "size" : 8999,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_ja.properties",
+      "size" : 7609,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_kk.properties",
+      "size" : 10851,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_ko.properties",
+      "size" : 7248,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_lt.properties",
+      "size" : 6248,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_lv.properties",
+      "size" : 6304,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_ms.properties",
+      "size" : 5803,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_nl.properties",
+      "size" : 5898,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_no.properties",
+      "size" : 5852,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_pl.properties",
+      "size" : 6353,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_pt.properties",
+      "size" : 6148,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_ro.properties",
+      "size" : 6171,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_ru.properties",
+      "size" : 10468,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_sh.properties",
+      "size" : 5889,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_sk.properties",
+      "size" : 6375,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_sl.properties",
+      "size" : 5906,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_sv.properties",
+      "size" : 5904,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_th.properties",
+      "size" : 10548,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_tr.properties",
+      "size" : 6332,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_uk.properties",
+      "size" : 10526,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_vi.properties",
+      "size" : 7535,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_zh_CN.properties",
+      "size" : 6513,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/messagebundle_zh_TW.properties",
+      "size" : 6504,
+      "required" : [],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/registry/ChangeHandlerRegistration.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 1633,
+      "compressedSize" : 1036,
+      "required" : ["sap/ui/fl/registry/ChangeRegistry.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/registry/ChangeRegistry.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 20394,
+      "compressedSize" : 7742,
+      "required" : ["sap/ui/fl/Utils.js", "sap/ui/fl/changeHandler/AddXML.js", "sap/ui/fl/changeHandler/HideControl.js", "sap/ui/fl/changeHandler/MoveControls.js", "sap/ui/fl/changeHandler/MoveElements.js", "sap/ui/fl/changeHandler/PropertyBindingChange.js", "sap/ui/fl/changeHandler/PropertyChange.js", "sap/ui/fl/changeHandler/StashControl.js", "sap/ui/fl/changeHandler/UnhideControl.js", "sap/ui/fl/changeHandler/UnstashControl.js", "sap/ui/fl/registry/ChangeRegistryItem.js", "sap/ui/fl/registry/ChangeTypeMetadata.js", "sap/ui/fl/registry/Settings.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/registry/ChangeRegistryItem.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 2933,
+      "compressedSize" : 1177,
+      "required" : ["sap/ui/fl/Utils.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/registry/ChangeTypeMetadata.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 3943,
+      "compressedSize" : 1278,
+      "required" : ["sap/ui/fl/Utils.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/registry/Settings.js",
+      "description" : "global Error",
+      "size" : 11335,
+      "compressedSize" : 4276,
+      "required" : ["sap/base/util/UriParameters.js", "sap/ui/base/EventProvider.js", "sap/ui/fl/Cache.js", "sap/ui/fl/LrepConnector.js", "sap/ui/fl/Utils.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/registry/SimpleChanges.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 1950,
+      "compressedSize" : 1074,
+      "required" : ["sap/ui/fl/changeHandler/HideControl.js", "sap/ui/fl/changeHandler/MoveControls.js", "sap/ui/fl/changeHandler/MoveElements.js", "sap/ui/fl/changeHandler/PropertyBindingChange.js", "sap/ui/fl/changeHandler/PropertyChange.js", "sap/ui/fl/changeHandler/StashControl.js", "sap/ui/fl/changeHandler/UnhideControl.js", "sap/ui/fl/changeHandler/UnstashControl.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/support/Flexibility.js",
+      "description" : "Provides class sap.ui.fl.support.Flexibility",
+      "size" : 14834,
+      "compressedSize" : 7204,
+      "required" : ["sap/ui/core/support/Plugin.js", "sap/ui/core/support/Support.js", "sap/ui/core/util/reflection/JsControlTreeModifier.js", "sap/ui/fl/ChangePersistenceFactory.js", "sap/ui/fl/FlexController.js", "sap/ui/fl/Utils.js", "sap/ui/fl/support/apps/uiFlexibilityDiagnostics/helper/Extractor.js", "sap/ui/model/json/JSONModel.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/contentbrowser/Component.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 2011,
+      "compressedSize" : 1276,
+      "required" : ["sap/ui/core/UIComponent.js", "ui5loader-autoconfig.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/contentbrowser/controller/ContentDetails.controller.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 7262,
+      "compressedSize" : 3124,
+      "required" : ["sap/m/Button.js", "sap/m/Dialog.js", "sap/m/Text.js", "sap/ui/core/mvc/Controller.js", "sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector.js", "sap/ui/fl/support/apps/contentbrowser/utils/DataUtils.js", "ui5loader-autoconfig.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/contentbrowser/controller/ContentDetailsEdit.controller.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 5482,
+      "compressedSize" : 2178,
+      "required" : ["sap/ui/core/mvc/Controller.js", "sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector.js", "sap/ui/fl/support/apps/contentbrowser/utils/DataUtils.js", "ui5loader-autoconfig.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/contentbrowser/controller/LayerContentMaster.controller.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 6638,
+      "compressedSize" : 2853,
+      "required" : ["sap/ui/core/UIComponent.js", "sap/ui/core/mvc/Controller.js", "sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector.js", "sap/ui/fl/support/apps/contentbrowser/utils/DataUtils.js", "sap/ui/model/Filter.js", "sap/ui/model/FilterOperator.js", "ui5loader-autoconfig.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/contentbrowser/controller/Layers.controller.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 1432,
+      "compressedSize" : 739,
+      "required" : ["sap/ui/core/mvc/Controller.js", "sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils.js", "ui5loader-autoconfig.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/contentbrowser/i18n/i18n.properties",
+      "size" : 1120,
+      "required" : [],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 10447,
+      "compressedSize" : 2889,
+      "required" : ["sap/ui/fl/Utils.js", "sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/contentbrowser/manifest.json",
+      "size" : 2850,
+      "required" : [],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/contentbrowser/utils/DataUtils.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 4439,
+      "compressedSize" : 1412,
+      "required" : ["sap/m/GroupHeaderListItem.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 2417,
+      "compressedSize" : 1097,
+      "required" : ["sap/m/MessagePopover.js", "sap/m/MessagePopoverItem.js", "ui5loader-autoconfig.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/contentbrowser/view/ContentDetails.view.xml",
+      "size" : 1552,
+      "required" : ["sap/m/Button.js", "sap/m/DisplayListItem.js", "sap/m/IconTabBar.js", "sap/m/IconTabFilter.js", "sap/m/List.js", "sap/m/Page.js", "sap/m/Text.js", "sap/m/Toolbar.js", "sap/m/ToolbarSpacer.js", "sap/ui/core/mvc/XMLView.js", "sap/ui/fl/support/apps/contentbrowser/controller/ContentDetails.controller.js", "sap/ui/layout/form/SimpleForm.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/contentbrowser/view/ContentDetailsEdit.view.xml",
+      "size" : 841,
+      "required" : ["sap/m/Button.js", "sap/m/Page.js", "sap/m/TextArea.js", "sap/m/Toolbar.js", "sap/m/ToolbarSpacer.js", "sap/ui/core/mvc/XMLView.js", "sap/ui/fl/support/apps/contentbrowser/controller/ContentDetailsEdit.controller.js", "sap/ui/layout/form/SimpleForm.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/contentbrowser/view/EmptyDetails.view.xml",
+      "size" : 151,
+      "required" : ["sap/m/Page.js", "sap/ui/core/mvc/XMLView.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/contentbrowser/view/LayerContentMaster.view.xml",
+      "size" : 1221,
+      "required" : ["sap/m/Button.js", "sap/m/List.js", "sap/m/Page.js", "sap/m/SearchField.js", "sap/m/StandardListItem.js", "sap/m/Toolbar.js", "sap/ui/core/mvc/XMLView.js", "sap/ui/fl/support/apps/contentbrowser/controller/LayerContentMaster.controller.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/contentbrowser/view/Layers.view.xml",
+      "size" : 707,
+      "required" : ["sap/m/Button.js", "sap/m/List.js", "sap/m/Page.js", "sap/m/StandardListItem.js", "sap/m/Toolbar.js", "sap/ui/core/mvc/XMLView.js", "sap/ui/fl/support/apps/contentbrowser/controller/Layers.controller.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/contentbrowser/view/MainView.view.xml",
+      "size" : 197,
+      "required" : ["sap/m/SplitApp.js", "sap/ui/core/mvc/XMLView.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/uiFlexibilityDiagnostics/Component.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 411,
+      "compressedSize" : 363,
+      "required" : ["sap/ui/core/UIComponent.js", "ui5loader-autoconfig.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/uiFlexibilityDiagnostics/controller/Root.controller.js",
+      "description" : "global FileReader",
+      "size" : 5982,
+      "compressedSize" : 3262,
+      "required" : ["sap/ui/core/mvc/Controller.js", "sap/ui/model/json/JSONModel.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/uiFlexibilityDiagnostics/helper/Extractor.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 5558,
+      "compressedSize" : 2858,
+      "required" : ["sap/m/MessageBox.js", "sap/ui/core/util/File.js", "sap/ui/core/util/reflection/JsControlTreeModifier.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/uiFlexibilityDiagnostics/manifest.json",
+      "size" : 844,
+      "required" : [],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/apps/uiFlexibilityDiagnostics/view/Root.view.xml",
+      "size" : 2334,
+      "required" : ["sap/m/App.js", "sap/m/FlexBox.js", "sap/m/FlexItemData.js", "sap/m/Page.js", "sap/m/Toolbar.js", "sap/m/ToolbarSpacer.js", "sap/ui/core/mvc/XMLView.js", "sap/ui/fl/support/apps/uiFlexibilityDiagnostics/controller/Root.controller.js", "sap/ui/unified/FileUploader.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/diagnostics/Flexibility.controller.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 1115,
+      "compressedSize" : 694,
+      "required" : ["sap/ui/core/mvc/Controller.js", "sap/ui/fl/support/Flexibility.js", "sap/ui/fl/support/apps/uiFlexibilityDiagnostics/helper/Extractor.js", "sap/ui/model/Filter.js", "sap/ui/model/FilterOperator.js", "ui5loader-autoconfig.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/support/diagnostics/Flexibility.view.xml",
+      "size" : 1469,
+      "required" : ["sap/m/Button.js", "sap/m/Column.js", "sap/m/ColumnListItem.js", "sap/m/Link.js", "sap/m/ObjectIdentifier.js", "sap/m/Table.js", "sap/m/Text.js", "sap/ui/core/HTML.js", "sap/ui/core/mvc/XMLView.js", "sap/ui/fl/support/diagnostics/Flexibility.controller.js", "sap/ui/layout/VerticalLayout.js"],
+      "includes" : [],
+      "excludeFromAllInOne" : true
+    },
+    {
+      "name" : "sap/ui/fl/transport/TransportDialog.js",
+      "description" : "Provides control sap.ui.fl.transport.TransportDialog.",
+      "size" : 14488,
+      "compressedSize" : 6454,
+      "required" : ["sap/m/Button.js", "sap/m/ComboBox.js", "sap/m/Dialog.js", "sap/m/DialogRenderer.js", "sap/m/Input.js", "sap/m/InputListItem.js", "sap/m/Label.js", "sap/m/List.js", "sap/m/MessageToast.js", "sap/ui/core/ListItem.js", "sap/ui/fl/transport/Transports.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/transport/TransportSelection.js",
+      "description" : "UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 15341,
+      "compressedSize" : 3658,
+      "required" : ["sap/ui/fl/Utils.js", "sap/ui/fl/registry/Settings.js", "sap/ui/fl/transport/TransportDialog.js", "sap/ui/fl/transport/Transports.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/transport/Transports.js",
+      "description" : "global Promise",
+      "size" : 4628,
+      "compressedSize" : 1534,
+      "required" : ["sap/ui/fl/LrepConnector.js", "sap/ui/fl/Utils.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/variants/VariantController.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 21959,
+      "compressedSize" : 9048,
+      "required" : ["sap/ui/base/ManagedObject.js", "sap/ui/core/Component.js", "sap/ui/core/util/reflection/JsControlTreeModifier.js", "sap/ui/fl/Cache.js", "sap/ui/fl/Change.js", "sap/ui/fl/Utils.js", "sap/ui/fl/Variant.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/variants/VariantManagement.js",
+      "description" : "Provides control sap.ui.fl.variants.VariantManagement.",
+      "size" : 47651,
+      "compressedSize" : 29379,
+      "required" : ["sap/m/Bar.js", "sap/m/Button.js", "sap/m/ButtonType.js", "sap/m/CheckBox.js", "sap/m/Column.js", "sap/m/ColumnListItem.js", "sap/m/Dialog.js", "sap/m/Input.js", "sap/m/Label.js", "sap/m/ObjectIdentifier.js", "sap/m/OverflowToolbar.js", "sap/m/OverflowToolbarLayoutData.js", "sap/m/OverflowToolbarPriority.js", "sap/m/Page.js", "sap/m/PlacementType.js", "sap/m/PopinDisplay.js", "sap/m/RadioButton.js", "sap/m/ResponsivePopover.js", "sap/m/ScreenSize.js", "sap/m/SearchField.js", "sap/m/SelectList.js", "sap/m/Table.js", "sap/m/Text.js", "sap/m/Title.js", "sap/m/Toolbar.js", "sap/m/ToolbarSpacer.js", "sap/m/VBox.js", "sap/ui/Device.js", "sap/ui/core/Control.js", "sap/ui/core/Icon.js", "sap/ui/core/InvisibleText.js", "sap/ui/core/TextAlign.js", "sap/ui/core/ValueState.js", "sap/ui/core/util/reflection/JsControlTreeModifier.js", "sap/ui/events/KeyCodes.js", "sap/ui/fl/Utils.js", "sap/ui/layout/Grid.js", "sap/ui/layout/HorizontalLayout.js", "sap/ui/model/Context.js", "sap/ui/model/Filter.js", "sap/ui/model/PropertyBinding.js", "sap/ui/model/json/JSONModel.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/variants/VariantModel.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 34529,
+      "compressedSize" : 16060,
+      "required" : ["sap/base/util/merge.js", "sap/ui/core/BusyIndicator.js", "sap/ui/core/util/reflection/JsControlTreeModifier.js", "sap/ui/fl/Change.js", "sap/ui/fl/Utils.js", "sap/ui/fl/changeHandler/Base.js", "sap/ui/fl/variants/util/VariantUtil.js", "sap/ui/model/json/JSONModel.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/fl/variants/util/VariantUtil.js",
+      "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2018 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
+      "size" : 9157,
+      "compressedSize" : 4366,
+      "required" : ["sap/base/Log.js", "sap/base/util/deepEqual.js", "sap/ui/core/Component.js", "sap/ui/core/routing/HashChanger.js", "sap/ui/core/routing/History.js", "sap/ui/fl/Utils.js", "sap/ui/thirdparty/jquery.js", "ui5loader-autoconfig.js"],
+      "includes" : []
+    }
+  ]
+}

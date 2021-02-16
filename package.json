@@ -1,7 +1,7 @@
 {
     "name": "ui5-testrecorder",
     "description": "A point-and-click adventure for your UI5 tests",
-    "version": "0.6.1",
+    "version": "0.6.2",
     "license": "Apache-2.0",
     "repository": {
         "type": "git",
