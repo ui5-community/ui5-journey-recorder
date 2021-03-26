@@ -2316,7 +2316,11 @@ var _wnd = window;
 
                                         if (aCol && aCol.length && aCol.length > x) {
                                             oReturn.tableColId = this.getUi5Id(aCol[x]);
-                                            oReturn.tableColDescr = aCol[x].getLabel ? aCol[x].getLabel().getText() : "";
+                                            if ( aCol[x].getLabel && aCol[x].getLabel() && aCol[x].getLabel.getText ) {
+                                                oReturn.tableColDescr = aCol[x].getLabel.getText();
+                                            } else {
+                                                oReturn.tableColDescr = "";
+                                            }
                                         }
                                         break;
                                     }
