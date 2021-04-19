@@ -2584,6 +2584,15 @@ var _wnd = window;
                     return null;
                 }
 
+                if ( oPrt instanceof sap.m.SegmentedButton ) {
+                    var oButtonItem = oPrt.getItems().find(function (oBtnItm) {
+                        return oBtnItm.oButton.getId() === oItem.getId();
+                    });
+                    if(oButtonItem) {
+                        return oButtonItem;
+                    }
+                }
+
                 if (oPrt && oPrt._getItemByListItem) {
                     var oCtrl = oPrt._getItemByListItem(oItem);
                     if (oCtrl) {
