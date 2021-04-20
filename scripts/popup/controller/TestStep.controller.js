@@ -419,6 +419,18 @@ sap.ui.define([
             this._remove(aContext);
         },
 
+        onFindEmptyAttribute: function (oEvent) {
+            this._add("/element/attributeFilter", {
+                attributeType: "OWN",
+                criteriaType: 'MTA',
+                subCriteriaType: 'ELM'
+            });
+            Promise.all([
+                this._updatePreview(),
+                this._validateSelectedItemNumber()
+            ]);
+        },
+
         /**
          *
          */
@@ -883,7 +895,9 @@ sap.ui.define([
             if (oPropAction) {
                 var sPrefDomChildWith = "";
                 for (var i = 0; i < oPropAction.length; i++) {
-                    if (oPropAction[i].preferred === true && oItem.children.find(e => { return e.domChildWith === "" || e.domChildWith === oPropAction[i].domChildWith; })) {
+                    if (oPropAction[i].preferred === true && oItem.children.find(e => {
+                            return e.domChildWith === "" || e.domChildWith === oPropAction[i].domChildWith;
+                        })) {
                         sPrefDomChildWith = oPropAction[i].domChildWith;
                         break;
                     }
@@ -1073,8 +1087,8 @@ sap.ui.define([
 
             //check if the current criteraType value is valid - if yes, keep it, otherwise reset it..
             if (oAttribute.criteriaTypes.filter(function (e) {
-                return e.criteriaKey === oAttribute.criteriaType;
-            }).length === 0) {
+                    return e.criteriaKey === oAttribute.criteriaType;
+                }).length === 0) {
                 oAttribute.criteriaType = oAttribute.criteriaTypes[0].criteriaKey;
             }
 
@@ -1097,8 +1111,8 @@ sap.ui.define([
             oAttribute.subCriteriaTypes = aSubCriteriaSettings;
             if (oAttribute.subCriteriaTypes.length > 0) {
                 if (oAttribute.subCriteriaTypes.filter(function (e) {
-                    return e.subCriteriaType === oAttribute.subCriteriaType;
-                }).length === 0) {
+                        return e.subCriteriaType === oAttribute.subCriteriaType;
+                    }).length === 0) {
                     oAttribute.subCriteriaType = oAttribute.subCriteriaTypes[0].subCriteriaType;
                 }
             } else {
@@ -1547,26 +1561,26 @@ sap.ui.define([
         _save: function () {
             return new Promise(function (resolve, reject) {
                 this._checkAndDisplay().then(function () {
-                    var oCurrentElement = this._oModel.getProperty("/element");
-                    this._adjustBeforeSaving(oCurrentElement).then(function (oElementFinal) {
+                        var oCurrentElement = this._oModel.getProperty("/element");
+                        this._adjustBeforeSaving(oCurrentElement).then(function (oElementFinal) {
 
-                        var aElements = RecordController.getInstance().getTestElements();
-                        if (RecordController.getInstance().isReplaying()) {
-                            aElements[this._sElementId] = oElementFinal;
-                        } else {
-                            aElements.push(oElementFinal);
-                        }
-                        RecordController.getInstance().setTestElements(aElements);
+                            var aElements = RecordController.getInstance().getTestElements();
+                            if (RecordController.getInstance().isReplaying()) {
+                                aElements[this._sElementId] = oElementFinal;
+                            } else {
+                                aElements.push(oElementFinal);
+                            }
+                            RecordController.getInstance().setTestElements(aElements);
 
-                        // execute test step now, but only if an action needs to be performed.
-                        // all other types do not need results (asserts and support assistant).
-                        if (oElementFinal.property.type === "ACT") {
-                            RecordController.getInstance().executeTestStep(oElementFinal).then(resolve);
-                        } else {
-                            resolve();
-                        }
-                    }.bind(this));
-                }.bind(this))
+                            // execute test step now, but only if an action needs to be performed.
+                            // all other types do not need results (asserts and support assistant).
+                            if (oElementFinal.property.type === "ACT") {
+                                RecordController.getInstance().executeTestStep(oElementFinal).then(resolve);
+                            } else {
+                                resolve();
+                            }
+                        }.bind(this));
+                    }.bind(this))
                     .catch(function () {
                         reject();
                     });
@@ -1666,8 +1680,8 @@ sap.ui.define([
                 //check if sIdChild is part of our current "domChildWith"
                 // eslint-disable-next-line no-loop-func
                 if (aRows.filter(function (e) {
-                    return e.domChildWith === sIdChild;
-                }).length === 0) {
+                        return e.domChildWith === sIdChild;
+                    }).length === 0) {
                     aRows.push({
                         text: aSubObjects[i].isInput === true ? "In Input-Field" : sIdChild,
                         domChildWith: sIdChild,
@@ -1692,8 +1706,8 @@ sap.ui.define([
 
             //check if the current value is fine..
             if (aRows.filter(function (e) {
-                return e.domChildWith === sDomChildWith;
-            }).length === 0) {
+                    return e.domChildWith === sDomChildWith;
+                }).length === 0) {
                 sDomChildWith = aRows.length >= 0 ? aRows[0].domChildWith : "";
                 this._oModel.setProperty("/element/property/domChildWith", sDomChildWith);
             }
