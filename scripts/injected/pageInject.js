@@ -2770,7 +2770,7 @@ var _wnd = window;
                         return false;
                     }
                     var sText = oItem.getTooltip();
-                    if(_cachedMessageBundleTexts[sText] !== oSelector.metadata.textBundle ) {
+                    if(_cachedMessageBundleTexts[sText] !== oSelector.metadata.tooltipBundle ) {
                         return false;
                     }
                 }
