@@ -135,6 +135,19 @@ sap.ui.define([
                         break;
                 }
             }
+
+            if ( oSelAttr.metadata.positionInAggregation ) {
+                sStr += ".positionInAggregation(" + oSelAttr.metadata.positionInAggregation + ")";
+            }
+            if ( oSelAttr.metadata.parentAggregation ) {
+                sStr += ".parentAggregation('" + oSelAttr.metadata.parentAggregation + "')";
+            }
+            if ( oSelAttr.metadata.textBundle ) {
+                sStr += ".textBundle('" + oSelAttr.metadata.textBundle + "')";
+            }
+            if ( oSelAttr.metadata.tooltipBundle ) {
+                sStr += ".textBundle('" + oSelAttr.metadata.tooltipBundle + "')";
+            }
         }
 
         if (typeof oSelAttr === "string") {
