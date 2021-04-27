@@ -1,4 +1,3 @@
-
 var _wnd = window;
 
 (function () {
@@ -823,6 +822,7 @@ var _wnd = window;
         };
     }
 
+    var _cachedMessageBundleTexts = {};
     var _cachedSupportAssistantRules = []; // list of support-assistant rules being cached
     function _runSupportAssistant(oComponent) {
 
@@ -848,9 +848,9 @@ var _wnd = window;
                     // run support assistant with the given set of rules (or no rules at all if none have been cached yet)
                     // TODO this function is deprecated for UI5 >= 1.60. "Please use sap/ui/support/RuleAnalyzer instead."
                     _wnd.jQuery.sap.support.analyze({
-                        type: "components",
-                        components: [sComponent]
-                    }, appliedSupportAssistantRules.length > 0 ? appliedSupportAssistantRules : undefined)
+                            type: "components",
+                            components: [sComponent]
+                        }, appliedSupportAssistantRules.length > 0 ? appliedSupportAssistantRules : undefined)
                         // post-process results
                         .then(function () {
                             var aIssues = _wnd.jQuery.sap.support.getLastAnalysisHistory();
@@ -950,15 +950,15 @@ var _wnd = window;
         _wnd.sap.ui.require(["sap/m/MessageBox"], function (MessageBox) {
             MessageBox.error(
                 "The connection to the UI5 test recorder has been lost. Do you want to reload this page to reset it?", {
-                icon: MessageBox.Icon.QUESTION,
-                title: "Reload page?",
-                actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-                onClose: function (sAction) {
-                    if (sAction === MessageBox.Action.YES) {
-                        location.reload();
+                    icon: MessageBox.Icon.QUESTION,
+                    title: "Reload page?",
+                    actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                    onClose: function (sAction) {
+                        if (sAction === MessageBox.Action.YES) {
+                            location.reload();
+                        }
                     }
                 }
-            }
             );
         });
     }
@@ -1214,7 +1214,8 @@ var _wnd = window;
          * on parents) and removes unserializable content.
          */
         initializeTestItem() {
-
+            UI5ControlHelper.getAllMessageBundleTexts();
+            
             // enrich with element information
             var oItem = TestItem._getElementInformation(this._oControl, this._oDOMNode);
 
@@ -1272,6 +1273,7 @@ var _wnd = window;
          * @param {*} oSelector
          */
         static findItemsBySelector(oSelector) {
+            getAllMessageBundleTexts();
 
             var aInformation = UI5ControlHelper.findControlsBySelector(oSelector);
 
@@ -1471,6 +1473,7 @@ var _wnd = window;
 
                 // get metadata:
                 // 1) basic information and structure
+                const aggr = UI5ControlHelper.getPositionInAggregation(oItem);
                 oReturn.metadata = {
                     elementName: oItem.getMetadata().getElementName(),
                     componentName: UI5ControlHelper.getOwnerComponent(oItem),
@@ -1478,7 +1481,11 @@ var _wnd = window;
                     componentTitle: "",
                     componentDescription: "",
                     componentDataSource: {},
-                    lumiraType: oItem.zenType ? oItem.zenType : ""
+                    lumiraType: oItem.zenType ? oItem.zenType : "",
+                    textBundle: "",
+                    tooltipBundle: "",
+                    positionInAggregation: aggr.position,
+                    parentAggregation: aggr.aggregation
                 };
 
                 // 2) enhance component information
@@ -1605,10 +1612,12 @@ var _wnd = window;
                 if (oItem.mBindingInfos) {
                     oReturn.binding = {};
                 }
+
                 // 1) all bindings
                 for (var sBinding in oItem.mBindingInfos) {
                     oReturn.binding[sBinding] = UI5ControlHelper.getBindingInformation(oItem, sBinding);
                 }
+
                 // 2) special binding information for "sap.m.Label"
                 if (oReturn.metadata.elementName === "sap.m.Label" && !oReturn.binding.text) {
                     // TODO binding from parent: this needs testing!
@@ -1670,6 +1679,19 @@ var _wnd = window;
                     }
                 }
 
+                if (oReturn.property["text"]) {
+                    //specifically for text bindings, check if we are bound against sap_m resource bundle..
+                    if (_cachedMessageBundleTexts[oReturn.property["text"]]) {
+                        oReturn.metadata.textBundle = _cachedMessageBundleTexts[oReturn.property["text"]];
+                    }
+                }
+                if (oReturn.property["tooltip"]) {
+                    //specifically for text bindings, check if we are bound against sap_m resource bundle..
+                    if (_cachedMessageBundleTexts[oReturn.property["tooltip"]]) {
+                        oReturn.metadata.tooltipBundle = _cachedMessageBundleTexts[oReturn.property["tooltip"]];
+                    }
+                }
+
                 // get lengths of aggregation
                 var aAggregations = oItem.getMetadata().getAllAggregations();
                 if (aAggregations) {
@@ -1677,7 +1699,9 @@ var _wnd = window;
                 }
                 oReturn.aggregationNames = [];
                 for (var sAggregation in aAggregations) {
-                    oReturn.aggregationNames.push({ name: sAggregation });
+                    oReturn.aggregationNames.push({
+                        name: sAggregation
+                    });
                     // if there are not multiple items aggregated, this is not interesting
                     if (!aAggregations[sAggregation].multiple) {
                         continue;
@@ -1725,8 +1749,7 @@ var _wnd = window;
             }
 
             // construct raw return value
-            var oReturn = {
-            };
+            var oReturn = {};
 
             // if there is no control given, return empty information object
             if (!oControl) {
@@ -2014,6 +2037,28 @@ var _wnd = window;
             return oElements;
         }
 
+
+        static getAllMessageBundleTexts() {
+            if(!_wnd.$.isEmptyObject(_cachedMessageBundleTexts)) {
+                return;
+            }
+
+            var oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+            if (!oResBundle) {
+                return {};
+            }
+            var aPropertyFiles = oResBundle.aPropertyFiles;
+            for (var i = 0; i < aPropertyFiles.length; i++) {
+                for (var sProperty in aPropertyFiles[i].mProperties) {
+                    if(sProperty.startsWith("MSGBOX") === true) {
+                        _cachedMessageBundleTexts[aPropertyFiles[i].mProperties[sProperty]] = sProperty;
+                    } else if (!_cachedMessageBundleTexts[aPropertyFiles[i].mProperties[sProperty]]) {
+                        _cachedMessageBundleTexts[aPropertyFiles[i].mProperties[sProperty]] = sProperty;
+                    }
+                }
+            }
+        }
+
         /**
          *
          * @param {object} oSelector
@@ -2132,6 +2177,80 @@ var _wnd = window;
             }
         }
 
+
+        static getChildrenRec(oItemOrig, aChildren, aReturn) {
+            if (!aChildren || !aChildren.length) {
+                return;
+            }
+            for (var i = 0; i < aChildren.length; i++) {
+                var oCtrl = _wnd.$(aChildren[i]).control();
+                if (!oCtrl || !oCtrl.length || oCtrl[0].getId() === oItemOrig.getId()) {
+                    UI5ControlHelper.getChildrenRec(oItemOrig, aChildren[i].children, aReturn);
+                    continue;
+                }
+                if (!aReturn.find(function (e) {
+                        return e.id === oCtrl[0].getId();
+                    })) {
+                    aReturn.push({
+                        id: oCtrl[0].getId()
+                    });
+                }
+            }
+        }
+
+        static getChildren = function (oItem) {
+            if (!oItem || !oItem.getDomRef || !oItem.getDomRef()) {
+                return [];
+            }
+
+            var aChildren = _wnd.document.getElementById(oItem.getDomRef().id).children;
+
+            var aItems = [];
+            UI5ControlHelper.getChildrenRec(oItem, aChildren, aItems);
+            return aItems;
+        };
+
+        static getPositionInParent = function (oItem) {
+            if (!oItem || !oItem.getDomRef || !oItem.getDomRef()) {
+                return [];
+            }
+
+            var aParentChildren = UI5ControlHelper.getChildren(oItem.getParent());
+            var iIndex = aParentChildren.findIndex(function (e) {
+                return e.id === oItem.getId()
+            });
+
+            return iIndex;
+        };
+        
+        static getPositionInAggregation = function (oItem) {
+            if (!oItem || !oItem.getParent()) {
+                return [];
+            }
+            
+            var oParent = oItem.getParent();
+            var aAggregations = oParent.getMetadata().getAllAggregations();
+            for (var sAggregation in aAggregations) {
+                var aAggregationData = oParent["get" + sAggregation.charAt(0).toUpperCase() + sAggregation.substr(1)]();
+                if(!aAggregationData) {
+                    continue;
+                }
+                for ( var j=0;j<aAggregationData.length;j++) {
+                    if( aAggregationData[j] && aAggregationData[j].getId && aAggregationData[j].getId() === oItem.getId()) {
+                        return {
+                            position: j + 1,
+                            aggregation: sAggregation
+                        };
+                    }
+                }
+            }
+
+            return {
+                position: 0,
+                aggregation: ""
+            };
+        };
+
         /**
          * Returns all children of the given DOM node within the same UI5 control.
          *
@@ -2172,7 +2291,8 @@ var _wnd = window;
                 }
 
                 var aElements = UI5ControlHelper.getRegisteredElements(oSelector);
-
+                UI5ControlHelper.getAllMessageBundleTexts();
+                
                 // TODO can we reuse UI5ControlHelper.getLabelForItem._getAllLabels here?
                 //search for identifier of every single object..
                 for (var sElement in aElements) {
@@ -2316,7 +2436,7 @@ var _wnd = window;
 
                                         if (aCol && aCol.length && aCol.length > x) {
                                             oReturn.tableColId = this.getUi5Id(aCol[x]);
-                                            if ( aCol[x].getLabel && aCol[x].getLabel() && aCol[x].getLabel().getText ) {
+                                            if (aCol[x].getLabel && aCol[x].getLabel() && aCol[x].getLabel().getText) {
                                                 oReturn.tableColDescr = aCol[x].getLabel().getText();
                                             } else {
                                                 oReturn.tableColDescr = "";
@@ -2584,11 +2704,11 @@ var _wnd = window;
                     return null;
                 }
 
-                if ( oPrt instanceof sap.m.SegmentedButton ) {
+                if (oPrt instanceof sap.m.SegmentedButton) {
                     var oButtonItem = oPrt.getItems().find(function (oBtnItm) {
                         return oBtnItm.oButton.getId() === oItem.getId();
                     });
-                    if(oButtonItem) {
+                    if (oButtonItem) {
                         return oButtonItem;
                     }
                 }
@@ -2623,6 +2743,36 @@ var _wnd = window;
                 }
                 if (oSelector.metadata.componentName && oSelector.metadata.componentName !== UI5ControlHelper.getOwnerComponent(oItem)) {
                     return false;
+                }
+
+                if ( typeof oSelector.metadata.positionInAggregation !== "undefined" || typeof oSelector.metadata.parentAggregation !== "undefined" ) {
+                    var posInAgg = UI5ControlHelper.getPositionInAggregation(oItem);
+                    if ( typeof oSelector.metadata.positionInAggregation !== "undefined" && posInAgg.position !== oSelector.metadata.positionInAggregation ) {
+                        return false;
+                    }
+                    if ( typeof oSelector.metadata.parentAggregation !== "undefined" && posInAgg.aggregation !== oSelector.metadata.parentAggregation ) {
+                        return false;
+                    }
+                }
+
+                if ( typeof oSelector.metadata.textBundle !== "undefined" ) {
+                    if( !oItem.getText ) {
+                        return false;
+                    }
+                    var sText = oItem.getText();
+                    if(_cachedMessageBundleTexts[sText] !== oSelector.metadata.textBundle ) {
+                        return false;
+                    }
+                }
+                
+                if ( typeof oSelector.metadata.tooltipBundle !== "undefined" ) {
+                    if( !oItem.getTooltip ) {
+                        return false;
+                    }
+                    var sText = oItem.getTooltip();
+                    if(_cachedMessageBundleTexts[sText] !== oSelector.metadata.textBundle ) {
+                        return false;
+                    }
                 }
             }
 
@@ -2720,6 +2870,7 @@ var _wnd = window;
                     return false;
                 }
             }
+
             if (oSelector.binding) {
                 for (var sBinding in oSelector.binding) {
                     var aBndgInfoParts = UI5ControlHelper.getBindingInformation(oItem, sBinding);
@@ -2995,17 +3146,17 @@ var _wnd = window;
         },
         "sap.m.SearchField": {
             defaultAction: [{
-                domChildWith: "-search",
-                action: "PRS"
-            },
-            {
-                domChildWith: "-reset",
-                action: "PRS"
-            },
-            {
-                domChildWith: "",
-                action: "TYP"
-            }
+                    domChildWith: "-search",
+                    action: "PRS"
+                },
+                {
+                    domChildWith: "-reset",
+                    action: "PRS"
+                },
+                {
+                    domChildWith: "",
+                    action: "TYP"
+                }
             ]
         }
     };
@@ -3267,8 +3418,7 @@ var _wnd = window;
         var waited = 0;
         var intvervalID = setInterval(function () {
             waited = waited + 100;
-            if (waited % 500 === 0) {
-            }
+            if (waited % 500 === 0) {}
             var oCheckData = checkPageForUI5();
             if (oCheckData.status === "success") {
                 clearInterval(intvervalID);

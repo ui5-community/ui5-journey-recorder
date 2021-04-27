@@ -191,7 +191,103 @@ sap.ui.define([
                                     type: "lumiraType"
                                 };
                             }
-                        }];
+                        }, {
+                            subCriteriaType: "TXTL",
+                            subCriteriaText: "Text-Bundle",
+                            value: function (oItem) {
+                                return oItem.metadata.textBundle;
+                            },
+                            code: function (sValue) {
+                                return {
+                                    metadata: {
+                                        textBundle: sValue
+                                    }
+                                };
+                            },
+                            getUi5Spec: function (oAdjust, oItem, iValue) {
+                                //not possible..
+                            },
+                            assert: function () {
+                                return "metadata.textBundle";
+                            },
+                            assertField: function (sValue) {
+                                return {
+                                    type: "textBundle"
+                                };
+                            }
+                        },{
+                            subCriteriaType: "TOOLB",
+                            subCriteriaText: "Tooltip-Bundle",
+                            value: function (oItem) {
+                                return oItem.metadata.tooltipBundle;
+                            },
+                            code: function (sValue) {
+                                return {
+                                    metadata: {
+                                        tooltipBundle: sValue
+                                    }
+                                };
+                            },
+                            getUi5Spec: function (oAdjust, oItem, iValue) {
+                                //not possible..
+                            },
+                            assert: function () {
+                                return "metadata.tooltipBundle";
+                            },
+                            assertField: function (sValue) {
+                                return {
+                                    type: "tooltipBundle"
+                                };
+                            }
+                        },{
+                            subCriteriaType: "POSP",
+                            subCriteriaText: "Position in Aggregation",
+                            value: function (oItem) {
+                                return oItem.metadata.positionInAggregation;
+                            },
+                            code: function (sValue) {
+                                return {
+                                    metadata: {
+                                        positionInAggregation: sValue
+                                    }
+                                };
+                            },
+                            getUi5Spec: function (oAdjust, oItem, iValue) {
+                                //not possible..
+                            },
+                            assert: function () {
+                                return "metadata.positionInAggregation";
+                            },
+                            assertField: function (sValue) {
+                                return {
+                                    type: "positionInAggregation"
+                                };
+                            }
+                        },{
+                            subCriteriaType: "POSPAGG",
+                            subCriteriaText: "Parent-Aggregation",
+                            value: function (oItem) {
+                                return oItem.metadata.parentAggregation;
+                            },
+                            code: function (sValue) {
+                                return {
+                                    metadata: {
+                                        parentAggregation: sValue
+                                    }
+                                };
+                            },
+                            getUi5Spec: function (oAdjust, oItem, iValue) {
+                                //not possible..
+                            },
+                            assert: function () {
+                                return "metadata.parentAggregation";
+                            },
+                            assertField: function (sValue) {
+                                return {
+                                    type: "parentAggregation"
+                                };
+                            }
+                        } ];
                     }
                 },
 
