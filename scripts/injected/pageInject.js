@@ -2704,7 +2704,7 @@ var _wnd = window;
                     return null;
                 }
 
-                if (oPrt instanceof sap.m.SegmentedButton) {
+                if (oPrt instanceof _wnd.sap.m.SegmentedButton) {
                     var oButtonItem = oPrt.getItems().find(function (oBtnItm) {
                         return oBtnItm.oButton.getId() === oItem.getId();
                     });
