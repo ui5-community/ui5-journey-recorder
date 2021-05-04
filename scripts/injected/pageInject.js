@@ -3305,8 +3305,8 @@ var _wnd = window;
         _bPageLocked = true;
 
         //do NOT close eventually active popovers now!!
-        _fnFocusEvent = sap.ui.core.Popup.prototype.onFocusEvent;
-        sap.ui.core.Popup.prototype.onFocusEvent = function () {
+        _fnFocusEvent = _wnd.sap.ui.core.Popup.prototype.onFocusEvent;
+        _wnd.sap.ui.core.Popup.prototype.onFocusEvent = function () {
             return;
         };
 
@@ -3322,7 +3322,7 @@ var _wnd = window;
         if (_oPageLockBusyDialog) {
             _oPageLockBusyDialog.close();
         }
-        sap.ui.core.Popup.prototype.onFocusEvent = _fnFocusEvent;
+        _wnd.sap.ui.core.Popup.prototype.onFocusEvent = _fnFocusEvent;
     }
 
     /**
