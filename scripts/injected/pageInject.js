@@ -2043,7 +2043,7 @@ var _wnd = window;
                 return;
             }
 
-            var oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+            var oResBundle = _wnd.sap.ui.getCore().getLibraryResourceBundle("sap.m");
             if (!oResBundle) {
                 return {};
             }
