@@ -1574,11 +1574,11 @@ var _wnd = window;
                     if (!bAnyBinding) {
                         //search up the binding context hierarchy (first=direct element bindings, than bindings coming directly from parent, than via propagated views/elements)
                         let bndgCtx = {};
-                        if (!$.isEmptyObject(oItem.mElementBindingContexts)) {
+                        if (!_wnd.$.isEmptyObject(oItem.mElementBindingContexts)) {
                             bndgCtx = oItem.mElementBindingContexts;
-                        } else if (!$.isEmptyObject(oItem.oBindingContexts)) {
+                        } else if (!_wnd.$.isEmptyObject(oItem.oBindingContexts)) {
                             bndgCtx = oItem.oBindingContexts;
-                        } else if (!$.isEmptyObject(oItem.oPropagatedProperties.oBindingContexts)) {
+                        } else if (!_wnd.$.isEmptyObject(oItem.oPropagatedProperties.oBindingContexts)) {
                             bndgCtx = oItem.oPropagatedProperties.oBindingContexts;
                         }
                         if (bndgCtx) {
