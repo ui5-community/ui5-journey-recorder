@@ -1273,7 +1273,7 @@ var _wnd = window;
          * @param {*} oSelector
          */
         static findItemsBySelector(oSelector) {
-            getAllMessageBundleTexts();
+            UI5ControlHelper.getAllMessageBundleTexts();
 
             var aInformation = UI5ControlHelper.findControlsBySelector(oSelector);
 
