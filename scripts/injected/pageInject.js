@@ -1215,7 +1215,7 @@ var _wnd = window;
          */
         initializeTestItem() {
             UI5ControlHelper.getAllMessageBundleTexts();
-            
+
             // enrich with element information
             var oItem = TestItem._getElementInformation(this._oControl, this._oDOMNode);
 
@@ -1677,6 +1677,22 @@ var _wnd = window;
                     } else {
                         oReturn.property[sProperty] = oItem.mProperties[sProperty];
                     }
+
+                    //do never have any deep deep properties (avoid recursion)
+                    if (typeof oReturn.property[sProperty] === "object") {
+                        const valBefore = oReturn.property[sProperty];
+                        oReturn.property[sProperty] = {};
+                        Object.keys(valBefore).forEach((s) => {
+                            const sVal = valBefore[s];
+                            if (typeof sVal === "object") {
+                                oReturn.property[sProperty][s] = "[object]";
+                            } else if (Array.isArray(sVal)) {
+                                oReturn.property[sProperty][s] = "[array]";
+                            } else {
+                                oReturn.property[sProperty][s] = sVal;
+                            }
+                        });
+                    }
                 }
 
                 if (oReturn.property["text"]) {
@@ -2039,7 +2055,7 @@ var _wnd = window;
 
 
         static getAllMessageBundleTexts() {
-            if(!_wnd.$.isEmptyObject(_cachedMessageBundleTexts)) {
+            if (!_wnd.$.isEmptyObject(_cachedMessageBundleTexts)) {
                 return;
             }
 
@@ -2050,7 +2066,7 @@ var _wnd = window;
             var aPropertyFiles = oResBundle.aPropertyFiles;
             for (var i = 0; i < aPropertyFiles.length; i++) {
                 for (var sProperty in aPropertyFiles[i].mProperties) {
-                    if(sProperty.startsWith("MSGBOX") === true) {
+                    if (sProperty.startsWith("MSGBOX") === true) {
                         _cachedMessageBundleTexts[aPropertyFiles[i].mProperties[sProperty]] = sProperty;
                     } else if (!_cachedMessageBundleTexts[aPropertyFiles[i].mProperties[sProperty]]) {
                         _cachedMessageBundleTexts[aPropertyFiles[i].mProperties[sProperty]] = sProperty;
@@ -2222,21 +2238,21 @@ var _wnd = window;
 
             return iIndex;
         };
-        
+
         static getPositionInAggregation = function (oItem) {
             if (!oItem || !oItem.getParent()) {
                 return [];
             }
-            
+
             var oParent = oItem.getParent();
             var aAggregations = oParent.getMetadata().getAllAggregations();
             for (var sAggregation in aAggregations) {
                 var aAggregationData = oParent["get" + sAggregation.charAt(0).toUpperCase() + sAggregation.substr(1)]();
-                if(!aAggregationData) {
+                if (!aAggregationData) {
                     continue;
                 }
-                for ( var j=0;j<aAggregationData.length;j++) {
-                    if( aAggregationData[j] && aAggregationData[j].getId && aAggregationData[j].getId() === oItem.getId()) {
+                for (var j = 0; j < aAggregationData.length; j++) {
+                    if (aAggregationData[j] && aAggregationData[j].getId && aAggregationData[j].getId() === oItem.getId()) {
                         return {
                             position: j + 1,
                             aggregation: sAggregation
@@ -2292,7 +2308,7 @@ var _wnd = window;
 
                 var aElements = UI5ControlHelper.getRegisteredElements(oSelector);
                 UI5ControlHelper.getAllMessageBundleTexts();
-                
+
                 // TODO can we reuse UI5ControlHelper.getLabelForItem._getAllLabels here?
                 //search for identifier of every single object..
                 for (var sElement in aElements) {
@@ -2745,32 +2761,32 @@ var _wnd = window;
                     return false;
                 }
 
-                if ( typeof oSelector.metadata.positionInAggregation !== "undefined" || typeof oSelector.metadata.parentAggregation !== "undefined" ) {
+                if (typeof oSelector.metadata.positionInAggregation !== "undefined" || typeof oSelector.metadata.parentAggregation !== "undefined") {
                     var posInAgg = UI5ControlHelper.getPositionInAggregation(oItem);
-                    if ( typeof oSelector.metadata.positionInAggregation !== "undefined" && posInAgg.position !== oSelector.metadata.positionInAggregation ) {
+                    if (typeof oSelector.metadata.positionInAggregation !== "undefined" && posInAgg.position !== oSelector.metadata.positionInAggregation) {
                         return false;
                     }
-                    if ( typeof oSelector.metadata.parentAggregation !== "undefined" && posInAgg.aggregation !== oSelector.metadata.parentAggregation ) {
+                    if (typeof oSelector.metadata.parentAggregation !== "undefined" && posInAgg.aggregation !== oSelector.metadata.parentAggregation) {
                         return false;
                     }
                 }
 
-                if ( typeof oSelector.metadata.textBundle !== "undefined" ) {
-                    if( !oItem.getText ) {
+                if (typeof oSelector.metadata.textBundle !== "undefined") {
+                    if (!oItem.getText) {
                         return false;
                     }
                     var sText = oItem.getText();
-                    if(_cachedMessageBundleTexts[sText] !== oSelector.metadata.textBundle ) {
+                    if (_cachedMessageBundleTexts[sText] !== oSelector.metadata.textBundle) {
                         return false;
                     }
                 }
-                
-                if ( typeof oSelector.metadata.tooltipBundle !== "undefined" ) {
-                    if( !oItem.getTooltip ) {
+
+                if (typeof oSelector.metadata.tooltipBundle !== "undefined") {
+                    if (!oItem.getTooltip) {
                         return false;
                     }
                     var sText = oItem.getTooltip();
-                    if(_cachedMessageBundleTexts[sText] !== oSelector.metadata.tooltipBundle ) {
+                    if (_cachedMessageBundleTexts[sText] !== oSelector.metadata.tooltipBundle) {
                         return false;
                     }
                 }
