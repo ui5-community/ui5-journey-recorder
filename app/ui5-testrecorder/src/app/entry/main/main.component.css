@@ -1,0 +1,67 @@
+.tab-list {
+  list-style: none;
+  margin: 1em;
+  padding-left: 0;
+}
+
+.list-item {
+  margin: 0.2rem;
+  border: 1px solid lightgray;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.list-item:hover, .list-item:focus {
+  box-shadow: inset 0 0 6px 2px darkgrey;
+}
+
+.list-item:active {
+  background-color: #a0144170;
+  box-shadow: inset 0 0 6px 2px #828080;
+}
+
+.item-header {
+  display: flex;
+  flex-direction: row;
+  height: 2rem;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: rgb(0 0 0 / 12%);
+  border-radius: 15px;
+}
+
+.item-header > * {
+  margin-right: 1em;
+}
+
+img.item-icon {
+  border: 1px solid lightgray;
+  border-radius: 50%;
+  overflow: hidden;
+  max-height: 2rem;
+  min-width: 2rem;
+  box-shadow: 0 0 1px 1px lightgrey;
+}
+
+hr.item-header-bottom {
+  width: 90%;
+  background-color: lightgray;
+  border: none;
+  height: 1px;
+}
+
+.item-desc {
+  display: flex;
+  flex-direction: row;
+}
+
+.item-desc > * {
+  margin-right: 2em;
+}
+
+.item-desc > span {
+  max-width: 70%;
+  overflow: hidden;
+  line-break: anywhere;
+  max-height: 1rem;
+}

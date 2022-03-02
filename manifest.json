@@ -1,39 +1,53 @@
 {
-    "name": "UI5 Test Recorder",
+    "manifest_version": 3,
+    "name": "UI5 Testrecorder",
     "short_name": "UI5 Test Rec.",
     "description": "A point-and-click adventure for your UI5 tests",
-    "version": "0.6.0",
-    "manifest_version": 2,
-    "homepage_url": "https://github.com/msg-systems/ui5-testrecorder",
-    "content_security_policy": "script-src 'self' 'unsafe-eval' 'sha256-8Mp2/jkojZWl2xhw6+1lp6xEFaLrnyVxpgGcjuYMKRY=' 'sha256-BM8H9hptGGtVA+992JDuvvUrSAiAMOLPGWGiB70GENk=' 'sha256-Jpaf32FjMKHIAM5gkfYL1qpCBBGpWcKKjS2A66bWCk4=' 'sha256-TK+TTfBbieZ5rYQdFrsU8HNGwnTqBTooAU9v/lJp39Q=' 'sha256-zPKms+/h3oggO9pCLf+1CkxzIIOYNGips087mj1KYv8=' 'sha256-8RfS6hNqDEekagd3sDtTD2fBlhJVAvNagaDDmspNjyk=' 'sha256-inqT2qJb1+B9z/Y5pHA/IbOB6OQr/raMK/kKZoP3NOw=' 'sha256-inqT2qJb1+B9z/Y5pHA/IbOB6OQr/raMK/kKZoP3NOw='; object-src 'self'",
+    "version": "0.0.1",
     "background": {
-        "persistence": false,
-        "scripts": [
-            "/scripts/background/main.js"
-        ]
-    },
-    "web_accessible_resources": [
-        "/scripts/injected/*.js",
-        "/scripts/injected/*.xml",
-        "/scripts/injected/*.css"
-    ],
-    "browser_action": {
-        "default_title": "UI5 Test Recorder",
-        "default_icon": "images/icon.png"
-    },
-    "icons": {
-        "16": "images/icon.png",
-        "48": "images/icon.png",
-        "128": "images/icon.png"
+        "service_worker": "/scripts/starter.js"
     },
     "optional_permissions": [
-        "tabs",
-        "https://*/*",
-        "http://*/*"
+        "tabs"
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "/scripts/page_inject.js",
+                "/scripts/communication_inject.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ],
+            "use_dynamic_url": true
+        }
+    ],
+    "host_permissions": [
+        "https://*/",
+        "http://*/"
     ],
     "permissions": [
-        "activeTab",
-        "contextMenus",
-        "storage"
-    ]
+        "storage",
+        "scripting",
+        "activeTab"
+    ],
+    "action": {},
+    "icons": {
+        "16": "/images/16.png",
+        "32": "/images/32.png",
+        "48": "/images/48.png",
+        "64": "/images/64.png",
+        "80": "/images/80.png",
+        "96": "/images/96.png",
+        "128": "/images/128.png"
+    },
+    "options_page": "/ui/options.html",
+    "commands": {
+        "_execute_action": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+U",
+                "mac": "Command+Shift+U"
+            }
+        }
+    }
 }

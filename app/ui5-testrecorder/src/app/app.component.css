@@ -1,0 +1,43 @@
+header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 4rem;
+  background: rgba(128, 128, 128, 0.296);
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+header > .header-title {
+  display: flex;
+  height: 100%;
+  flex-direction: row;
+  align-items: center;
+}
+
+header> .header-title > img {
+  height: 3em;
+}
+
+header > .header-title > * {
+  margin-right: 0.3rem;
+}
+
+header > .header-buttons {
+  margin-left: auto;
+}
+
+main {
+  height: calc(100vh - 5.5rem);
+  overflow-y: auto;
+}
+
+footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  background: rgba(128, 128, 128, 0.296);
+  height: 1.5rem;
+}

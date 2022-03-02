@@ -1,8 +1,0 @@
-<core:FragmentDefinition 
-    xmlns="sap.m" 
-    xmlns:core="sap.ui.core">
-    <BusyDialog title="Waiting for Root Component" 
-                text="Waiting until root component of application is available" 
-                showCancelButton="true" 
-                cancelButtonText="Stop waiting"/>
-</core:FragmentDefinition>
