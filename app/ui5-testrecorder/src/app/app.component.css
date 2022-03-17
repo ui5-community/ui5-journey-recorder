@@ -32,12 +32,3 @@ main {
   height: calc(100vh - 5.5rem);
   overflow-y: auto;
 }
-
-footer {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  background: rgba(128, 128, 128, 0.296);
-  height: 1.5rem;
-}

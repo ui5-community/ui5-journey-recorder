@@ -1,25 +1,34 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MainComponent } from './main/main.component';
+import { FormsModule } from '@angular/forms';
 
-//#region prime-ng
-import { TableModule } from 'primeng/table';
+import { MainComponent } from './main/main.component';
+import { ObjectPageComponent } from './object/object_page.component';
 import { EntryRoutingModule } from './entry-routing.module';
 import { ServicesModule } from '../services/services.module';
+import { ButtonModule } from 'primeng/button';
+
+//#region prime-ng
 //#endregion
 
 
 
 @NgModule({
   declarations: [
-    MainComponent
+    MainComponent,
+    ObjectPageComponent
   ],
   imports: [
     CommonModule,
     EntryRoutingModule,
     ServicesModule,
     //#region prime-ng
-    TableModule
+    ButtonModule,
+    FormsModule
+    //#endregion
+  ],
+  providers: [
+    //#region prime-ng
     //#endregion
   ]
 })

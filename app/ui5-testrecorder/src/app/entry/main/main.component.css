@@ -9,10 +9,18 @@
   border: 1px solid lightgray;
   border-radius: 10px;
   padding: 1rem;
+  position: relative;
 }
 
-.list-item:hover, .list-item:focus {
+.list-item:hover,
+.list-item:focus,
+.list-item:focus-within,
+.list-item:focus-visible {
   box-shadow: inset 0 0 6px 2px darkgrey;
+}
+
+.list-item:focus-visible {
+  outline: none;
 }
 
 .list-item:active {
@@ -64,4 +72,61 @@ hr.item-header-bottom {
   overflow: hidden;
   line-break: anywhere;
   max-height: 1rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  min-height: 2rem;
+  border-bottom: 1px solid darkgray;
+}
+
+.header .list-search {
+  margin-left: auto;
+  display: flex;
+  transform: translate(-2%);
+  border: 1px solid lightgray;
+  border-radius: 10px;
+  min-width: 25rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  padding-left: 0.3rem;
+}
+
+.header .list-search i {
+  width: 2.5rem;
+  height: 100%;
+  border-radius: 10px;
+  right: 0;
+  top: 0.5rem;
+  border-left: 1px solid lightgray;
+}
+
+.header .list-search i:hover {
+  background: rgba(128, 128, 128, 0.583);
+}
+.header .list-search i:active {
+  box-shadow: inset 0 0 4px 3px #808080cf;
+}
+
+.header .list-search i.pi-search::before {
+  position: absolute;
+  left: 0.8rem;
+  top: 0.2rem;
+}
+
+.header .list-search:focus-visible {
+  border: 2px solid lightgrey;
+  box-shadow: 0 0 1px 0 lightgray;
+}
+
+.header .list-search input {
+  margin-top: auto;
+  margin-bottom: auto;
+  border: none;
+  width: 90%;
+}
+
+.header .list-search input:focus-visible {
+  outline: none;
 }

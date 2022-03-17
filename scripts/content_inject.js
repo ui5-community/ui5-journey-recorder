@@ -63,7 +63,7 @@
         });
     }
 
-    /* injectJS(); */
+    injectJS();
     commJS();
     setup_ws_end();
     setup_backend_proxy();

@@ -1,0 +1,12 @@
+<header class="object-header">
+  <button type="button" pButton label="Back" icon="pi pi-chevron-left" class="p-button-raised p-button-text"
+    (click)="this.navBack()"></button>
+  <h3>{{this.tab?.title}}</h3>
+</header>
+<main>
+  <ul>
+    <li *ngFor="let step of this.steps">
+      <span>step.type</span>
+    </li>
+  </ul>
+</main>

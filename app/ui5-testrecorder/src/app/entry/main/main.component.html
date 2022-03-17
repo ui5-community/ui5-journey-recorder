@@ -1,34 +1,13 @@
-<!-- <p-table [columns]="this.columns" [value]="this.elements" selectionMode="single" [(selection)]="selected_row"
-  (onRowSelect)="this.start_recording(selected_row)" responsiveLayout="stack" styleClass="p-datatable-sm">
-  <ng-template pTemplate="caption">
-    <button pButton type="button" label="Refresh" icon="pi pi-refresh" class="p-button-rounded p-button-outlined p-button-text"
-      (click)="this.refresh_table()"></button>
-  </ng-template>
-  <ng-template pTemplate="header" let-columns>
-    <tr>
-      <th *ngFor="let col of columns">
-        {{col.header}}
-      </th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-page let-columns="columns">
-    <tr [pSelectableRow]="page">
-      <td *ngFor="let col of columns" [ngSwitch]="col.field">
-        <img *ngSwitchCase="'icon'" [src]="page[col.field]"/>
-        <span *ngSwitchDefault class="p-column-title">{{col.header}}</span>{{page[col.field]}}
-      </td>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="emptymessage" let-columns>
-    <tr>
-      <td [attr.colspan]="columns.length">
-        No records found
-      </td>
-    </tr>
-  </ng-template>
-</p-table> -->
+<div class="header">
+  <span class="p-input-icon-right list-search">
+    <i class="pi pi-search"></i>
+    <input id="search-input" tabindex="0" type="search" placeholder="Search" (change)="this.searchChange($event)"
+      (search)="this.onSearch($event)" />
+  </span>
+</div>
 <ul class="tab-list">
-  <li *ngFor="let tab of this.elements" class="list-item" tabindex="0">
+  <li *ngFor="let tab of this.elements" class="list-item" tabindex="1" (click)="this.connect_to_page(tab)"
+    (keydown)="this.checkKeyPress($event, tab)">
     <div class="item-header">
       <img [src]="tab.icon" alt="fav_icon" class="item-icon" />
       <span class="item-title">{{tab.title}}</span>

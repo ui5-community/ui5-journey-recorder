@@ -20,6 +20,9 @@
     "lib": [
       "es2020",
       "dom"
+    ],
+    "types": [
+      "chrome"
     ]
   },
   "angularCompilerOptions": {
