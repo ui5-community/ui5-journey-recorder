@@ -1,25 +1,27 @@
 import { Component, OnInit } from '@angular/core';
-import { ChromeExtensionService, Page } from 'src/app/services/chromeExtensionService/chrome_extension_service';
+import {
+  ChromeExtensionService,
+  Page,
+} from 'src/app/services/chromeExtensionService/chrome_extension_service';
 //#region prime-ng
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppFooterService } from 'src/app/components/app-footer/app-footer.service';
 //#endregion
 
-
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
-  styleUrls: ['./main.component.css']
+  styleUrls: ['./main.component.css'],
 })
 export class MainComponent implements OnInit {
   raw_elements: Page[] = [];
   elements: Page[] = [];
   columns: any[] = [
-    { field: "icon", header: "" },
+    { field: 'icon', header: '' },
     //{ field: "id", header: "Tab ID" },
-    { field: "title", header: "Page Title" },
-    { field: "path", header: "Page Url" }
+    { field: 'title', header: 'Page Title' },
+    { field: 'path', header: 'Page Url' },
   ];
 
   selected_row: Page | undefined;
@@ -31,7 +33,7 @@ export class MainComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private appFooterService: AppFooterService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.chr_ext_srv.get_all_tabs().then((tabs: Page[]) => {
@@ -44,20 +46,33 @@ export class MainComponent implements OnInit {
     this.appFooterService.connecting();
     if (page) {
       this.confirmationService.confirm({
-        icon: "pi pi-sign-in",
-        header: "Connect to Page",
-        message: "Connect to the page and inject analytic scripts?",
+        icon: 'pi pi-sign-in',
+        header: 'Connect to Page',
+        message: 'Connect to the page and inject analytic scripts?',
         accept: () => {
-          this.chr_ext_srv.inject_scripts(page).then(() => {
-            this.chr_ext_srv.focus_page(page).then(() => {
-              this.messageService.add({ severity: 'success', summary: 'Injection', detail: 'Connection established!' });
-              this.appFooterService.connected();
-              this.router.navigate(['objectPage', page.id], { relativeTo: this.activatedRoute });
+          this.chr_ext_srv
+            .inject_scripts(page)
+            .then(() => {
+              this.chr_ext_srv.focus_page(page).then(() => {
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Injection',
+                  detail: 'Connection established!',
+                });
+                this.appFooterService.connected();
+                this.router.navigate(['scenario/recording', page.id], {
+                  relativeTo: this.activatedRoute,
+                });
+              });
             })
-          }).catch(() => {
-            this.messageService.add({ severity: 'error', summary: 'Injection', detail: 'Connection could not established!' })
-          });
-        }
+            .catch(() => {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Injection',
+                detail: 'Connection could not established!',
+              });
+            });
+        },
       });
     }
   }
@@ -75,23 +90,23 @@ export class MainComponent implements OnInit {
   }
 
   searchChange(event: { [key: string]: any }) {
-    const searchString = event["target"].value;
+    const searchString = event['target'].value;
     this.filterEntries(searchString);
   }
 
   onSearch(event: any) {
-    const searchString = event["target"].value;
+    const searchString = event['target'].value;
     this.filterEntries(searchString);
   }
 
   private filterEntries(search: string) {
     if (!search) {
-      this.elements = this.raw_elements.map(el => el);
+      this.elements = this.raw_elements.map((el) => el);
     }
-    const parts = search.split(" ");
+    const parts = search.split(' ');
     let intermediateResult = this.raw_elements;
     for (let part of parts) {
-      intermediateResult = this.raw_elements.filter(el => {
+      intermediateResult = this.raw_elements.filter((el) => {
         return el.path.includes(part) || el.title.includes(part);
       });
     }

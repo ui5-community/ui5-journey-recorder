@@ -59,9 +59,9 @@ var setupClickListener = () => {
     let event = e || window.event;
     let el = event.target || event.srcElement;
     let ui5El = _getUI5Element(el);
-    event.preventDefault();
+    /* event.preventDefault();
     event.stopPropagation();
-    event.stopImmediatePropagation();
+    event.stopImmediatePropagation(); */
     console.dir(`Onclick > ${ui5El}`);
     eventsLogged.push({
       type: 'clicked',
@@ -78,10 +78,7 @@ var setupClickListener = () => {
       },
       location: window.location.href
     })
-    if (ui5El && ui5El.firePress) {
-      //forward the element after collecting the data
-      ui5El.firePress(e);
-    } else {
+    if (ui5El && ui5El.focus) {
       ui5El.focus();
       for (let child of ui5El.getDomRef().querySelectorAll('input, select, textarea')) {
         child.onkeydown = (e) => {
@@ -94,6 +91,8 @@ var setupClickListener = () => {
 
           ws_api.send_record_step({
             type: 'keypress',
+            key: e.key,
+            keyCode: e.keyCode,
             control: {
               id: ui5El.sId,
               classes: ui5El.aCustomStyleClasses,

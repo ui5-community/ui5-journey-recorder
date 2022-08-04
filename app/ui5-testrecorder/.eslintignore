@@ -1,0 +1,8 @@
+src\models
+*.js
+/node_modules
+/server/node_modules
+package-lock.json
+/client/node_modules
+/src/app/shared/services/API.service.ts
+/src/graphql

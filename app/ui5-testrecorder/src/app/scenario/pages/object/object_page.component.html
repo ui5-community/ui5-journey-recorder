@@ -1,0 +1,8 @@
+<header class="object-header">
+  <button type="button" pButton label="Back" icon="pi pi-chevron-left" class="p-button-raised p-button-text"
+    (click)="this.navBack()"></button>
+  <h3>{{this.tab?.title}}</h3>
+</header>
+<main>
+  <app-simple-list [data]="this.scenarioSteps"></app-simple-list>
+</main>

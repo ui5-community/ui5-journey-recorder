@@ -8,9 +8,6 @@
   "background": {
     "service_worker": "/assets/scripts/starter.js"
   },
-  "optional_permissions": [
-    "tabs"
-  ],
   "web_accessible_resources": [
     {
       "resources": [
@@ -31,6 +28,9 @@
     "storage",
     "scripting",
     "activeTab"
+  ],
+  "optional_permissions": [
+    "tabs"
   ],
   "action": {},
   "icons": {

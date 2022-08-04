@@ -1,0 +1,105 @@
+.simple-list {
+  margin: 0.5rem 1rem;
+  padding: 0;
+}
+
+.simple-list>ul {
+  padding-inline-start: 0;
+}
+
+.list-item {
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  padding: 0.2rem 0 0.2rem 1rem;
+  margin-bottom: 0.3rem;
+  box-shadow: inset 0 -1px 2px 0px lightgrey, 0 1px 2px 0px lightgrey;
+}
+
+.list-item>.action-block {
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: green;
+  display: none;
+}
+
+.list-item>.action-block>i:hover {
+  color: limegreen;
+}
+
+.list-item>.container {
+  height: 3rem;
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 6rem);
+  position: relative;
+  padding: 0.2rem;
+}
+
+.list-item>.container:hover {
+  background-color: rgba(211, 211, 211, 0.381);
+  cursor: pointer;
+}
+
+.list-item>.container:active {
+  background-color: rgba(211, 211, 211, 0.381);
+  cursor: pointer;
+  box-shadow: 0 0 2px 4px rgba(211, 211, 211, 0.381);
+}
+
+.list-item:focus>.container {
+  background-color: rgba(211, 211, 211, 0.381);
+  cursor: pointer;
+}
+
+.list-item>.container>.action-header {
+  height: 1.5rem;
+  display: flex;
+  flex-direction: row;
+}
+
+.list-item>.container>.action-header>img {
+  height: 1rem;
+  width: 1rem;
+}
+
+.list-item>.container>.action-header>h4 {
+  margin: 0 0 0 0.2rem;
+}
+
+.list-item>.container>.control-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 1rem;
+}
+
+.list-item>.container>.control-info::after {
+  content: '';
+  background: white;
+  width: 1rem;
+  height: 1.3rem;
+  position: absolute;
+  right: 0;
+  box-shadow: -8px 0px 5px 0px white;
+  z-index: 2;
+}
+
+.list-item>.container:hover>.control-info::after {
+  background: rgb(211 211 211 / 7%);
+  box-shadow: -8px 0 5px 0 rgb(211 211 211 / 7%);
+}
+
+.list-item>.container>.control-info>span {
+  word-break: break-all;
+  color: gray;
+  font-size: smaller;
+}
+
+.header {
+  background-color: lightgray;
+  min-height: 3rem;
+}

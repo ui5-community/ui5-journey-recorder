@@ -1,0 +1,25 @@
+{
+  "version": 3,
+  "file": "C:\\Users\\martena\\Entwicklung\\UI5\\ui5-testrecorder\\app\\ui5-testrecorder\\dist\\ui5-testrecorder\\assets\\scripts\\starter.js",
+  "sources": [
+    "0"
+  ],
+  "names": [
+    "let",
+    "color",
+    "chrome",
+    "action",
+    "onClicked",
+    "addListener",
+    "windows",
+    "create",
+    "url",
+    "runtime",
+    "getURL",
+    "type",
+    "focused",
+    "commands",
+    "onCommand"
+  ],
+  "mappings": "AAAAA,IAAIC,MAAQ,UAOZC,OAAOC,OAAOC,UAAUC,YAAY,KAOlCH,OAAOI,QAAQC,OAAO,CACpBC,IAAKN,OAAOO,QAAQC,OAAO,iBAC3BC,KAAM,QACNC,SAAS,GACR,SAOLV,OAAOW,SAASC,UAAUT,YAAY"
+}

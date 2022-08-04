@@ -1,0 +1,21 @@
+<div class="simple-list">
+  <div class="header">
+
+  </div>
+  <ul>
+    <li *ngFor="let date of this.data" class="list-item">
+      <div class="action-block">
+        <i class="pi pi-caret-right" style="font-size: 2rem;"></i>
+      </div>
+      <div class="container" (click)="this.editViewStep(date)">
+        <div class="action-header">
+          <img [title]="date.actionType" [src]="(date.actionType | actionImage)" />
+          <h4>{{date.controlId}}</h4>
+        </div>
+        <div class="control-info">
+          <span>{{date.actionLoc}}</span>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

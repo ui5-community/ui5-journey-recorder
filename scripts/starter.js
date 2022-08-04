@@ -13,7 +13,8 @@ chrome.action.onClicked.addListener((/* tab */) => {/*
     }); */
 
     chrome.windows.create({
-        url: chrome.runtime.getURL('/ui/popup.html'),
+        //url: chrome.runtime.getURL('/ui/popup.html'),
+        url: chrome.runtime.getURL('/app/ui5-testrecorder/dist/ui5-testrecorder/index.html'),
         type: 'popup',
         focused: true
     }, (fnWindow) => {

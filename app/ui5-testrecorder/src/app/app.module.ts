@@ -12,13 +12,11 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { AppFooter } from './components/app-footer/app-footer.component';
 import { AppFooterService } from './components/app-footer/app-footer.service';
+import { MainComponent } from './pages/main/main.component';
 //#endregion
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    AppFooter
-  ],
+  declarations: [AppComponent, AppFooter, MainComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -26,14 +24,10 @@ import { AppFooterService } from './components/app-footer/app-footer.service';
     //#region prime-ng
     ButtonModule,
     ConfirmDialogModule,
-    ToastModule
+    ToastModule,
     //#endregion
   ],
-  providers: [
-    ConfirmationService,
-    MessageService,
-    AppFooterService
-  ],
-  bootstrap: [AppComponent]
+  providers: [ConfirmationService, MessageService, AppFooterService],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
