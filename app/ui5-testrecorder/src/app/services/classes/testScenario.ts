@@ -1,3 +1,6 @@
+import { Input } from '@angular/core';
+import { parse } from 'uuid';
+
 export enum StepType {
   Click = 'clicked',
   Input = 'input',
@@ -35,28 +38,44 @@ export class TestScenario implements Stringify {
     this.pages.push(p);
   }
 
-  get id(): string {
+  public get id(): string {
     return this.scenario_id;
   }
 
-  get testPages(): Page[] {
+  public get testPages(): Page[] {
     return this.pages;
   }
 
-  get creationDate(): number {
+  public get creationDate(): number {
     return this.created;
   }
 
-  set lastEdit(le: number) {
+  public set latestEdit(le: number) {
     this.edited = le;
   }
 
-  get latestEdit(): number {
+  public get latestEdit(): number {
     return this.edited;
+  }
+
+  public get startUrl(): string {
+    return this.pages.length === 0 ? '' : this.pages[0].location;
   }
 
   toString(): string {
     return JSON.stringify(this);
+  }
+
+  public static fromJSON(json: string): TestScenario {
+    const parsedObj = JSON.parse(json);
+    const testScen = new TestScenario(parsedObj.scenario_id, parsedObj.created);
+    testScen.latestEdit = parsedObj.edited;
+    if (parsedObj.pages) {
+      parsedObj.pages.forEach((p: any) => {
+        testScen.addPage(Page.fromJSON(JSON.stringify(p)));
+      });
+    }
+    return testScen;
   }
 }
 
@@ -82,6 +101,51 @@ export class Page implements Stringify {
 
   public addStep(s: Step) {
     this.page_steps.push(s);
+  }
+
+  public static fromJSON(json: string): Page {
+    const parsedObj = JSON.parse(json);
+    const page = new Page();
+    page.location = parsedObj.page_location;
+    if (parsedObj.page_steps) {
+      parsedObj.page_steps.forEach((s: any) => {
+        page.addStep(Page.stepFromJSON(JSON.stringify(s)));
+      });
+    }
+    return page;
+  }
+
+  private static stepFromJSON(json: string): Step {
+    const parsedObj = JSON.parse(json);
+    switch (parsedObj.action_type) {
+      case StepType.Click:
+        const cs = new ClickStep();
+        cs.controlId = parsedObj.control_id;
+        cs.styleClasses = parsedObj.style_classes;
+        cs.actionLoc = parsedObj.action_location;
+        return cs;
+      case StepType.Input:
+        const is = new InputStep();
+        is.controlId = parsedObj.control_id;
+        is.styleClasses = parsedObj.style_classes;
+        is.actionLoc = parsedObj.action_location;
+        if (parsedObj.keys) {
+          parsedObj.keys.forEach((k: any) => {
+            is.addStep(Page.stepFromJSON(JSON.stringify(k)) as KeyPressStep);
+          });
+        }
+        return is;
+      case StepType.KeyPress:
+        const kps = new KeyPressStep();
+        kps.controlId = parsedObj.control_id;
+        kps.styleClasses = parsedObj.style_classes;
+        kps.actionLoc = parsedObj.action_location;
+        kps.key = parsedObj.key_char;
+        kps.keyCode = parsedObj.key_code;
+        return kps;
+      default:
+        return new UnknownStep();
+    }
   }
 }
 

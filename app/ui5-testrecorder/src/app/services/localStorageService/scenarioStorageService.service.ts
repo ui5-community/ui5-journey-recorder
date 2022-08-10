@@ -38,7 +38,7 @@ export class ScenarioStorageService {
           .get(ids)
           .then((data: { [key: string]: string }) => {
             if (data) {
-              return Object.values(data).map((d) => JSON.parse(d));
+              return Object.values(data).map((d) => TestScenario.fromJSON(d));
             } else {
               return [];
             }

@@ -27,11 +27,12 @@
       <ul class="tab-list">
         <li *ngFor="let scen of this.scenarios" class="list-item" (click)="this.openExisting(scen)">
           <div class="item-header">
-            {{scen}}
+            {{scen.id}}
           </div>
           <hr class="item-header-bottom">
           <div class="item-desc">
             <label>URL:</label>
+            <span>{{scen.startUrl}}</span>
           </div>
         </li>
       </ul>
