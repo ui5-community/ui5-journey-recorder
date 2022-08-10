@@ -5,17 +5,36 @@
       (search)="this.onSearch($event)" />
   </span>
 </div>
-<ul class="tab-list">
-  <li *ngFor="let tab of this.elements" class="list-item" tabindex="1" (click)="this.connect_to_page(tab)"
-    (keydown)="this.checkKeyPress($event, tab)">
-    <div class="item-header">
-      <img [src]="tab.icon" alt="fav_icon" class="item-icon" />
-      <span class="item-title">{{tab.title}}</span>
-    </div>
-    <hr class="item-header-bottom">
-    <div class="item-desc">
-      <label>URL:</label>
-      <span>{{tab.path}}</span>
-    </div>
-  </li>
-</ul>
+<p-tabView (onChange)="handleChange($event)">
+  <p-tabPanel header="Tabs">
+    <ul class="tab-list">
+      <li *ngFor="let tab of this.elements" class="list-item" tabindex="1" (click)="this.connect_to_page(tab)"
+        (keydown)="this.checkKeyPress($event, tab)">
+        <div class="item-header">
+          <img [src]="tab.icon" alt="fav_icon" class="item-icon" />
+          <span class="item-title">{{tab.title}}</span>
+        </div>
+        <hr class="item-header-bottom">
+        <div class="item-desc">
+          <label>URL:</label>
+          <span>{{tab.path}}</span>
+        </div>
+      </li>
+    </ul>
+  </p-tabPanel>
+  <p-tabPanel header="Scenarios">
+    <ng-template pTemplate="content">
+      <ul class="tab-list">
+        <li *ngFor="let scen of this.scenarios" class="list-item" (click)="this.openExisting(scen)">
+          <div class="item-header">
+            {{scen}}
+          </div>
+          <hr class="item-header-bottom">
+          <div class="item-desc">
+            <label>URL:</label>
+          </div>
+        </li>
+      </ul>
+    </ng-template>
+  </p-tabPanel>
+</p-tabView>

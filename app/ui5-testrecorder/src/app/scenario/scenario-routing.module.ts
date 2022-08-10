@@ -5,7 +5,7 @@ import { RecordingPageComponent } from './pages/recording/recording_page.compone
 
 const routes: Routes = [
   {
-    path: 'recording/:tabId',
+    path: 'recording',
     component: RecordingPageComponent,
   },
   { path: 'scenarioView/:scenarioId', component: ObjectPageComponent },

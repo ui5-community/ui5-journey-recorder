@@ -7,6 +7,8 @@ import {
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppFooterService } from 'src/app/components/app-footer/app-footer.service';
+import { TestScenario } from 'src/app/services/classes/testScenario';
+import { ScenarioService } from 'src/app/services/scenarioService/scenario.service';
 //#endregion
 
 @Component({
@@ -17,6 +19,7 @@ import { AppFooterService } from 'src/app/components/app-footer/app-footer.servi
 export class MainComponent implements OnInit {
   raw_elements: Page[] = [];
   elements: Page[] = [];
+  scenarios: TestScenario[] = [];
   columns: any[] = [
     { field: 'icon', header: '' },
     //{ field: "id", header: "Tab ID" },
@@ -32,13 +35,14 @@ export class MainComponent implements OnInit {
     private messageService: MessageService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private appFooterService: AppFooterService
+    private appFooterService: AppFooterService,
+    public scenarioService: ScenarioService
   ) {}
 
   ngOnInit(): void {
-    this.chr_ext_srv.get_all_tabs().then((tabs: Page[]) => {
+    ChromeExtensionService.get_all_tabs().then((tabs: Page[]) => {
       this.raw_elements = tabs;
-      this.filterEntries("");
+      this.filterEntries('');
     });
   }
 
@@ -50,8 +54,9 @@ export class MainComponent implements OnInit {
         header: 'Connect to Page',
         message: 'Connect to the page and inject analytic scripts?',
         accept: () => {
+          this.chr_ext_srv.setCurrentPage(page);
           this.chr_ext_srv
-            .inject_scripts(page)
+            .connectToCurrentPage()
             .then(() => {
               this.chr_ext_srv.focus_page(page).then(() => {
                 this.messageService.add({
@@ -60,7 +65,7 @@ export class MainComponent implements OnInit {
                   detail: 'Connection established!',
                 });
                 this.appFooterService.connected();
-                this.router.navigate(['scenario/recording', page.id], {
+                this.router.navigate(['scenario/recording'], {
                   relativeTo: this.activatedRoute,
                 });
               });
@@ -78,7 +83,7 @@ export class MainComponent implements OnInit {
   }
 
   refresh_table() {
-    this.chr_ext_srv.get_all_tabs().then((tabs: Page[]) => {
+    ChromeExtensionService.get_all_tabs().then((tabs: Page[]) => {
       this.elements = tabs;
     });
   }
@@ -111,5 +116,19 @@ export class MainComponent implements OnInit {
       });
     }
     this.elements = intermediateResult;
+  }
+
+  openExisting(scenario: TestScenario): void {
+    this.router.navigate(['scenario/scenarioView', scenario.id]);
+  }
+
+  handleChange(e: { originalEvent: any; index: number }) {
+    if (e.index === 1) {
+      this.scenarioService
+        .getAllScenarios()
+        .then((scenarios: TestScenario[]) => {
+          this.scenarios = scenarios;
+        });
+    }
   }
 }

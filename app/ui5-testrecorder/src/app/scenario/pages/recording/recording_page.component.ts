@@ -13,7 +13,6 @@ import { RecordStopDialogComponent } from '../../dialogs/RecordStopDialog/Record
   styleUrls: ['./recording_page.component.css'],
 })
 export class RecordingPageComponent implements OnInit {
-  private page_id: number = 0;
   tab: chrome.tabs.Tab | undefined;
   recordingObs: Observable<any>;
   steps: any[] = [];
@@ -32,16 +31,15 @@ export class RecordingPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.incommingRoute.params.subscribe((params: Params) => {
-      this.page_id = params['tabId'];
       this.chr_ext_srv
-        .getTabInfoById(this.page_id)
+        .getTabInfoForCurrentConnection()
         .then((tab: chrome.tabs.Tab) => {
           this.tab = tab;
           this.recordingObs.subscribe(this.onRecordStep.bind(this));
           this.openStopDialog();
         })
         .catch(() => {
-          this.chr_ext_srv.disconnect(this.page_id);
+          this.chr_ext_srv.disconnect();
           this.router.navigate(['']);
         });
     });

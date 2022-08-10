@@ -7,7 +7,6 @@ import { FormsModule } from '@angular/forms';
 import { ObjectPageComponent } from './pages/object/object_page.component';
 import { RecordStopDialogComponent } from './dialogs/RecordStopDialog/RecordStopDialog.component';
 import { ScenarioRoutingModule } from './scenario-routing.module';
-import { ServicesModule } from '../services/services.module';
 //#endregion
 //#region prime-ng
 import { ButtonModule } from 'primeng/button';
@@ -30,7 +29,6 @@ import { RecordingPageComponent } from './pages/recording/recording_page.compone
   imports: [
     CommonModule,
     ScenarioRoutingModule,
-    ServicesModule,
     FormsModule,
     //#region prime-ng
     ButtonModule,

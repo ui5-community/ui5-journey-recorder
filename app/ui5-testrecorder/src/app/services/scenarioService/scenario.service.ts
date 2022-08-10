@@ -11,11 +11,20 @@ import {
   TestScenario,
   UnknownStep,
 } from '../classes/testScenario';
+import { ScenarioStorageService } from '../localStorageService/scenarioStorageService.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ScenarioService {
+  constructor(private local_storage_service: ScenarioStorageService) {}
+
+  private cachedScenarios: TestScenario[] = [];
+
+  public getAllScenarios(): Promise<TestScenario[]> {
+    return this.local_storage_service.getAll();
+  }
+
   public createScenarioFromRecording(recording: any[]): TestScenario {
     const stepTree = this.transformToAst(
       this.reduceSteps(this.transformEventsToSteps(recording))
@@ -23,7 +32,21 @@ export class ScenarioService {
     const pages = this.createPages(stepTree);
     const ts = new TestScenario(this.createUUID(), Date.now());
     pages.forEach((p) => ts.addPage(p));
+    this.cachedScenarios.push(ts);
     return ts;
+  }
+
+  public getScenario(id: string): Promise<TestScenario> {
+    const s = this.cachedScenarios.find((cs) => cs.id === id);
+    if (s) {
+      return Promise.resolve(s);
+    } else {
+      return Promise.reject();
+    }
+  }
+
+  public saveScenario(scenario: TestScenario): Promise<void> {
+    return this.local_storage_service.save(scenario);
   }
 
   private transformEventsToSteps(events: any): Step[] {

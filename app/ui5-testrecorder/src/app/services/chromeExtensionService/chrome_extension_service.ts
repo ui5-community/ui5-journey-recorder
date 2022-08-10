@@ -18,9 +18,11 @@ export class ChromeExtensionService {
   private internal_port: chrome.runtime.Port | null = null;
   private bInjectAttempted: boolean = false;
 
+  private currentPage: Page | undefined;
+
   constructor(private messageService: MessageService) {}
 
-  public get_all_tabs(only_ui5: boolean = false): Promise<Page[]> {
+  public static get_all_tabs(only_ui5: boolean = false): Promise<Page[]> {
     return new Promise((resolve, _) => {
       chrome.tabs.query({ currentWindow: false }, (tabs: chrome.tabs.Tab[]) => {
         resolve(
@@ -41,7 +43,19 @@ export class ChromeExtensionService {
     });
   }
 
-  public getTabInfoById(page_id: number): Promise<chrome.tabs.Tab> {
+  public setCurrentPage(page: Page) {
+    this.currentPage = page;
+  }
+
+  public getTabInfoForCurrentConnection(): Promise<chrome.tabs.Tab> {
+    if (!this.currentPage) {
+      return Promise.reject();
+    } else {
+      return this.getTabInfoById(this.currentPage.id);
+    }
+  }
+
+  private getTabInfoById(page_id: number): Promise<chrome.tabs.Tab> {
     return new Promise((resolve, _) => {
       chrome.tabs.get(parseInt('' + page_id, 10), (tab: chrome.tabs.Tab) => {
         resolve(tab);
@@ -49,7 +63,7 @@ export class ChromeExtensionService {
     });
   }
 
-  public inject_scripts(page: Page): Promise<void> {
+  public connectToCurrentPage(): Promise<void> {
     return new Promise((resolve, reject) => {
       const inject_after_reload = (
         iTabId: number,
@@ -58,7 +72,7 @@ export class ChromeExtensionService {
       ) => {
         if (
           !this.bInjectAttempted &&
-          page.id === iTabId &&
+          this.currentPage?.id === iTabId &&
           oChangeInfo.status === 'complete'
         ) {
           this.bInjectAttempted = true;
@@ -95,17 +109,27 @@ export class ChromeExtensionService {
           return;
         }
       });
-
-      this.requestPermission({ id: page.id, url: page.path })
-        .then(() => {
-          chrome.tabs.onUpdated.addListener(inject_after_reload);
-          chrome.tabs.reload(page.id, {
-            bypassCache: false,
-          });
+      if (this.currentPage) {
+        this.requestPermission({
+          id: this.currentPage.id,
+          url: this.currentPage.path,
         })
-        .catch(() => {
-          reject();
-        });
+          .then(() => {
+            chrome.tabs.onUpdated.addListener(inject_after_reload);
+            if (this.currentPage) {
+              chrome.tabs.reload(this.currentPage.id, {
+                bypassCache: false,
+              });
+            } else {
+              reject();
+            }
+          })
+          .catch(() => {
+            reject();
+          });
+      } else {
+        reject();
+      }
     });
   }
 
@@ -127,10 +151,14 @@ export class ChromeExtensionService {
     return this._recordingSource.asObservable();
   }
 
-  public disconnect(page_id: number): Promise<void> {
-    return chrome.tabs.reload(page_id, {
-      bypassCache: false,
-    });
+  public disconnect(): Promise<void> {
+    if (this.currentPage) {
+      return chrome.tabs.reload(this.currentPage.id, {
+        bypassCache: false,
+      });
+    } else {
+      return Promise.reject();
+    }
   }
 
   private onDisconnectListener(): void {

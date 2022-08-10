@@ -6,3 +6,7 @@
 <main>
   <app-simple-list [data]="this.scenarioSteps"></app-simple-list>
 </main>
+<footer>
+  <button type="button" pButton label="Save" icon="pi pi-save" class="p-button-raised p-button-text"
+    (click)="this.saveCurrentScenario()"></button>
+</footer>
