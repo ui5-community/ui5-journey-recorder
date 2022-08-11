@@ -6,6 +6,14 @@ export class ScenarioStorageService {
     this._path = 'scenarios';
   }
 
+  public getById(id: string): Promise<TestScenario> {
+    return chrome.storage.local
+      .get(id)
+      .then((data: { [key: string]: string }) => {
+        return TestScenario.fromJSON(data[Object.keys(data)[0]]);
+      });
+  }
+
   public save(entity: TestScenario): Promise<void> {
     return this.getIdList()
       .then((ids: string[]) => {

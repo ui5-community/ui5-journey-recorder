@@ -41,7 +41,10 @@ export class ScenarioService {
     if (s) {
       return Promise.resolve(s);
     } else {
-      return Promise.reject();
+      return this.local_storage_service.getById(id).then((scen:TestScenario) => {
+        this.cachedScenarios.push(scen);
+        return scen;
+      });
     }
   }
 
