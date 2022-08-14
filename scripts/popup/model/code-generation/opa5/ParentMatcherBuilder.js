@@ -19,57 +19,72 @@ sap.ui.define([
          * @returns {string}
          */
         generate: function() {
-            var aLines = [];
-            aLines.push('sap.ui.define([\n');
-            aLines.push(Array(2).join('\t') + '"sap/ui/test/matchers/Matcher",\n');
-            aLines.push(Array(2).join('\t') + '"sap/ui/test/matchers/PropertyStrictEquals"\n');
-            aLines.push('], function (Matcher, PropertyStrictEquals) {\n');
-            aLines.push(Array(2).join('\t') + '"use strict";\n\n');
-            aLines.push(Array(2).join('\t') + 'return Matcher.extend("' + this.__namespace + '\.<testPath>\.' + 'customMatcher.ParentMatcher", {\n');
-            aLines.push(Array(3).join('\t') + 'metadata: {\n');
-            aLines.push(Array(4).join('\t') + 'publicMethods: ["isMatching"],\n');
-            aLines.push(Array(4).join('\t') + 'properties: {\n');
-            aLines.push(Array(5).join('\t') + 'parentLevelAbove: {type: "int"},\n');
-            aLines.push(Array(5).join('\t') + 'parentId: {type: "object"},\n');
-            aLines.push(Array(5).join('\t') + 'parentClass: {type: "string"},\n');
-            aLines.push(Array(5).join('\t') + 'parentAttributes: {type: "array"}\n');
-            aLines.push(Array(4).join('\t') + '}\n');
-            aLines.push(Array(3).join('\t') + '},\n\n');
-            aLines.push(Array(3).join('\t') + 'isMatching: function (oControl) {\n');
-            aLines.push(Array(4).join('\t') + 'var iLevelAbove = this.getParentLevelAbove();\n');
-            aLines.push(Array(4).join('\t') + 'if (!iLevelAbove) {\n');
-            aLines.push(Array(5).join('\t') + 'this._oLogger.error("No parent level given for Control \'" + oControl + "\'");\n');
-            aLines.push(Array(5).join('\t') + 'return false;\n');
-            aLines.push(Array(4).join('\t') + '}\n');
-            aLines.push(Array(4).join('\t') + 'var oParent = oControl.getParent();\n');
-            aLines.push(Array(4).join('\t') + 'for (var i = 1; i < iLevelAbove && oParent; i++) {\n');
-            aLines.push(Array(5).join('\t') + 'oParent = oParent.getParent();\n');
-            aLines.push(Array(4).join('\t') + '}\n');
-            aLines.push(Array(4).join('\t') + '//check if parent exists\n');
-            aLines.push(Array(4).join('\t') + 'if (!oParent) {\n');
-            aLines.push(Array(5).join('\t') + 'return false;\n');
-            aLines.push(Array(4).join('\t') + '}\n');
-            aLines.push(Array(4).join('\t') + 'if (this.getParentClass() && oParent.getMetadata().getName() !== this.getParentClass()) {\n');
-            aLines.push(Array(5).join('\t') + 'return false;\n');
-            aLines.push(Array(4).join('\t') + '}\n');
-            aLines.push(Array(4).join('\t') + 'if (this.getParentId() && !this.getParentId().test(oParent.getId())) {\n');
-            aLines.push(Array(5).join('\t') + '//oParent.getMetadata().getId() !== this.getParentId()) {\n');
-            aLines.push(Array(5).join('\t') + 'return false;\n');
-            aLines.push(Array(4).join('\t') + '}\n\n');
-            aLines.push(Array(4).join('\t') + 'var oParentAttributes = this.getParentAttributes();\n');
-            aLines.push(Array(4).join('\t') + 'for (var index in oParentAttributes) {\n');
-            aLines.push(Array(5).join('\t') + 'var key = Object.keys(oParentAttributes[index])[0];\n');
-            aLines.push(Array(5).join('\t') + 'var value = oParentAttributes[index][key];\n');
-            aLines.push(Array(5).join('\t') + 'var oMatcher = new PropertyStrictEquals({name: key, value: value});\n');
-            aLines.push(Array(5).join('\t') + 'if (!oMatcher.isMatching(oParent)) {\n');
-            aLines.push(Array(6).join('\t') + 'return false;\n');
-            aLines.push(Array(5).join('\t') + '}\n');
-            aLines.push(Array(4).join('\t') + '}\n');
-            aLines.push(Array(4).join('\t') + 'return true;\n');
-            aLines.push(Array(3).join('\t') + '}\n');
-            aLines.push(Array(2).join('\t') + '});\n');
-            aLines.push('});');
-            return aLines.reduce((a,b) => a + b, '');
+            var sDefinition = '\
+                sap.ui.define([ \n\
+                    "sap/ui/test/matchers/Matcher", \n\
+                    "sap/ui/test/matchers/PropertyStrictEquals" \n\
+                ], function (Matcher, PropertyStrictEquals) { \n\
+                    "use strict"; \n\
+                    \n\
+                    return Matcher.extend("' + this.__namespace + '.<testPath>.customMatcher.ParentMatcher", { \n\
+                        metadata: { \n\
+                            publicMethods: ["isMatching"], \n\
+                            properties: { \n\
+                                parentLevelAbove: {type: "int"}, \n\
+                                parentId: {type: "object"}, \n\
+                                parentClass: {type: "string"}, \n\
+                                parentAttributes: {type: "array"} \n\
+                            } \n\
+                        }, \n\
+                        \n\
+                        isMatching: function (oControl) { \n\
+                            var iLevelAbove = this.getParentLevelAbove(); \n\
+                            if (!iLevelAbove) { \n\
+                                this._oLogger.error("No parent level given for control \'" + oControl + "\'"); \n\
+                                return false; \n\
+                            } \n\
+                            \n\
+                            var oParent = oControl.getParent(); \n\
+                            for (var i = 1; i < iLevelAbove && oParent; i++) { \n\
+                                oParent = oParent.getParent(); \n\
+                            } \n\
+                            //check if parent exists \n\
+                            if (!oParent) { \n\
+                                return false; \n\
+                            } \n\
+                            if (this.getParentClass() && oParent.getMetadata().getName() !== this.getParentClass()) { \n\
+                                return false; \n\
+                            } \n\
+                            if (this.getParentId() && !this.getParentId().test(oParent.getId())) { \n\
+                                //oParent.getMetadata().getId() !== this.getParentId()) { \n\
+                                return false; \n\
+                            } \n\
+                            \n\
+                            var oParentAttributes = this.getParentAttributes(); \n\
+                            for (var index in oParentAttributes) { \n\
+                                var key = Object.keys(oParentAttributes[index])[0]; \n\
+                                var value = oParentAttributes[index][key]; \n\
+                                var oMatcher = new PropertyStrictEquals({name: key, value: value}); \n\
+                                \n\
+                                if (!oMatcher.isMatching(oParent)) { \n\
+                                    return false; \n\
+                                } \n\
+                            } \n\
+                            \n\
+                            return true; \n\
+                        } \n\
+                    }); \n\
+                });';
+
+            // remove leading whitespace for code editor
+            var iLengthWhitespace = sDefinition.match(/^([ \t]+)/g)[0].length;
+            var oLeadingWhitespaceRegex = new RegExp("^[ \\t]{" + iLengthWhitespace + "}", "gm");
+            sDefinition = sDefinition.replace(oLeadingWhitespaceRegex, "");
+
+            // remove trailing whitespace for code editor
+            sDefinition = sDefinition.replace(/([ ]+)$/gm, "");
+
+            return sDefinition;
         }
     });
 
