@@ -48,3 +48,8 @@
     margin-right: 1rem;
     margin-left: auto;
 }
+
+.sapFDynamicPageContent.testrecorder,
+.sapFDynamicPageContentFitContainer.testrecorder {
+    padding: 0;
+}
