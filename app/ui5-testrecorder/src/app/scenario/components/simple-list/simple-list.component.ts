@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Step } from 'src/app/services/classes/testScenario';
 
 @Component({
@@ -8,6 +8,11 @@ import { Step } from 'src/app/services/classes/testScenario';
 })
 export class SimpleListComponent implements OnInit {
   private _data: any[] | undefined;
+  @Output()
+  public play: EventEmitter<any> = new EventEmitter();
+
+  @Input()
+  public replay: boolean = false;
 
   @Input()
   set data(d: any[]) {
@@ -22,5 +27,9 @@ export class SimpleListComponent implements OnInit {
 
   editViewStep(s: Step): void {
     console.log('Item for edit', s);
+  }
+
+  actionClicked(date: any) {
+    this.play.emit(date);
   }
 }

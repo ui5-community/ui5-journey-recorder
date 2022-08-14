@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import {
   ChromeExtensionService,
   Page,
@@ -17,6 +17,9 @@ import { ScenarioService } from 'src/app/services/scenarioService/scenario.servi
   styleUrls: ['./main.component.css'],
 })
 export class MainComponent implements OnInit {
+  @Input()
+  public replay: boolean = false;
+
   raw_elements: Page[] = [];
   elements: Page[] = [];
   scenarios: TestScenario[] = [];

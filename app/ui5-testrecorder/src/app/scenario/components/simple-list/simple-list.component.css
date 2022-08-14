@@ -23,7 +23,6 @@
   align-items: center;
   justify-content: center;
   color: green;
-  display: none;
 }
 
 .list-item>.action-block>i:hover {

@@ -11,6 +11,7 @@ import { ScenarioService } from './services/scenarioService/scenario.service';
 import { ScenarioStorageService } from './services/localStorageService/scenarioStorageService.service';
 
 //#region prime-ng
+import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
@@ -26,6 +27,7 @@ import { TabViewModule } from 'primeng/tabview';
     BrowserAnimationsModule,
     AppRoutingModule,
     //#region prime-ng
+    InputTextModule,
     ButtonModule,
     ConfirmDialogModule,
     ToastModule,

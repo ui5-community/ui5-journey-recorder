@@ -11,6 +11,7 @@ import {
   TestScenario,
 } from 'src/app/services/classes/testScenario';
 import { ScenarioService } from 'src/app/services/scenarioService/scenario.service';
+import { ReplayService } from 'src/app/services/replayService/replay.service';
 
 @Component({
   selector: 'app-object-page',
@@ -26,6 +27,8 @@ export class ObjectPageComponent implements OnInit {
   scenario: TestScenario | undefined;
   scenarioSteps: Step[] = [];
 
+  replay: boolean = false;
+
   private scenario_id: string = '';
 
   constructor(
@@ -35,7 +38,8 @@ export class ObjectPageComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private router: Router,
     private dialogService: DialogService,
-    private scenarioService: ScenarioService
+    private scenarioService: ScenarioService,
+    private replayService: ReplayService
   ) {
     this.recordingObs = this.chr_ext_srv.register_recording_websocket();
   }
@@ -64,6 +68,23 @@ export class ObjectPageComponent implements OnInit {
   saveCurrentScenario(): void {
     if (this.scenario) {
       this.scenarioService.saveScenario(this.scenario);
+    }
+  }
+
+  replayMode() {
+    if (this.scenario) {
+      this.replayService.startReplay(this.scenario.startUrl).then(() => {
+        this.replay = !this.replay;
+      });
+    }
+  }
+
+  performAction(date: Step) {
+    if (date) {
+      this.replayService
+        .performAction(date)
+        .then(() => {})
+        .catch();
     }
   }
 }

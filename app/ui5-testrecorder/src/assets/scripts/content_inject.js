@@ -28,50 +28,24 @@
     document.head.appendChild(script);
   }
 
-  function setup_ws_end() {
+  function setup_port_passthrough() {
     port = chrome.runtime.connect({ name: "ui5_tr" });
     port.onMessage.addListener((msg) => {
-      console.log(msg);
+      window.postMessage({
+        origin: EXT_ID,
+        ...msg
+      })
     });
 
+    const page_id = EXT_ID + '_ui5_tr_handler';
     window.addEventListener("message", (event) => {
-      if (event.origin === page_origin && event.data.origin === 'ui5_com_ws') {
+      if (event.data.origin === page_id && event.origin === page_origin) {
         port.postMessage({ data: event.data.message })
       }
     })
   }
 
-  var callback_map = {};
-
-  function setup_backend_proxy() {
-    chrome.runtime.onMessage.addListener((req, origin, res) => {
-      const time = new Date().getTime();
-      console.log(`Content-Endpoint -> origin: ${origin}, req: ${req}`);
-      const request_id = origin.id + '_' + time;
-      window.postMessage({
-        message_id: request_id,
-        origin: EXT_ID, //"ui5_tr_content",
-        url: req.message
-      }, [(response) => { res(response) }]);
-      callback_map[request_id] = (response) => { res(response) }
-      return true;
-    });
-
-    const page_id = EXT_ID + '_ui5_com_handler';
-
-    window.addEventListener("message", (event) => {
-      if (event.data.origin === page_id && event.origin === page_origin) {
-        const id = event.data.message_id;
-        const callback = callback_map[id];
-        if (callback) {
-          callback(event.data.response);
-        }
-      }
-    });
-  }
-
   injectJS();
   commJS();
-  setup_ws_end();
-  setup_backend_proxy();
+  setup_port_passthrough();
 }());

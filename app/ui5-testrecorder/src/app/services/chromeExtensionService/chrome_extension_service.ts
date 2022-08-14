@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Observable, Subject } from 'rxjs';
+import { Step } from '../classes/testScenario';
 
 export interface Page {
   title: string;
@@ -8,6 +9,11 @@ export interface Page {
   id: number;
   icon: string;
 }
+
+export type Synchronizer = {
+  success: (value: any) => void;
+  error: (error: any) => void;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +25,9 @@ export class ChromeExtensionService {
   private bInjectAttempted: boolean = false;
 
   private currentPage: Page | undefined;
+
+  private _message_id: number = 0;
+  private _message_map: { [key: number]: Synchronizer } = {};
 
   constructor(private messageService: MessageService) {}
 
@@ -53,14 +62,6 @@ export class ChromeExtensionService {
     } else {
       return this.getTabInfoById(this.currentPage.id);
     }
-  }
-
-  private getTabInfoById(page_id: number): Promise<chrome.tabs.Tab> {
-    return new Promise((resolve, _) => {
-      chrome.tabs.get(parseInt('' + page_id, 10), (tab: chrome.tabs.Tab) => {
-        resolve(tab);
-      });
-    });
   }
 
   public connectToCurrentPage(): Promise<void> {
@@ -103,6 +104,9 @@ export class ChromeExtensionService {
           );
           this.internal_port.onMessage.addListener(
             this.onMessageListener.bind(this)
+          );
+          chrome.runtime.onMessage.addListener(
+            this.onInstantMessage.bind(this)
           );
           resolve();
         } else {
@@ -152,13 +156,43 @@ export class ChromeExtensionService {
   }
 
   public disconnect(): Promise<void> {
-    if (this.currentPage) {
+    if (this.internal_port && this.currentPage) {
+      this.internal_port.disconnect();
       return chrome.tabs.reload(this.currentPage.id, {
         bypassCache: false,
       });
     } else {
       return Promise.reject();
     }
+  }
+
+  public createTabByUrl(url: string): Promise<chrome.tabs.Tab> {
+    return chrome.tabs.create({ url: url, active: true });
+  }
+
+  public performAction(action: Step): Promise<any> {
+    return this.perform_post({ url: '/controls/action', body: action });
+  }
+
+  private perform_post(msg: { url: string, body: any }): Promise<any> {
+    return this.syncMessage({method: 'POST', ...msg});
+  }
+
+  private syncMessage(msg: any): Promise<any> {
+    msg.message_id = ++this._message_id;
+    return new Promise((resolve, reject) => {
+      const syncObject: Synchronizer = { success: resolve, error: reject };
+      this._message_map[msg.message_id] = syncObject;
+      this.sendMessage(msg);
+    });
+  }
+
+  private getTabInfoById(page_id: number): Promise<chrome.tabs.Tab> {
+    return new Promise((resolve, _) => {
+      chrome.tabs.get(parseInt('' + page_id, 10), (tab: chrome.tabs.Tab) => {
+        resolve(tab);
+      });
+    });
   }
 
   private onDisconnectListener(): void {
@@ -171,12 +205,23 @@ export class ChromeExtensionService {
   }
 
   private onMessageListener(message: any, port: chrome.runtime.Port) {
-    switch (message?.data?.instantType) {
-      case 'record-token':
-        this._recordingSource.next(message?.data?.content);
-        break;
+    if (
+      message &&
+      message.message_id &&
+      this._message_map[message.message_id]
+    ) {
+      if (message.code >= 200 && message.code <= 299) {
+        this._message_map[message.message_id].success(message.data);
+      } else {
+        this._message_map[message.message_id].error(message.data);
+      }
+    } else {
+      switch (message?.data?.instantType) {
+        case 'record-token':
+          this._recordingSource.next(message?.data?.content);
+          break;
+      }
     }
-    console.log(message);
   }
 
   private requestPermission(oPermissionInfo: {
@@ -211,5 +256,21 @@ export class ChromeExtensionService {
         }
       );
     });
+  }
+
+  private sendMessage(oInfo: any) {
+    this.internal_port?.postMessage(oInfo);
+  }
+
+  private onInstantMessage(msg: any): void {
+    if (msg && msg.message_id && this._message_map[msg.message_id]) {
+      if (msg.code >= 200 && msg.code <= 299) {
+        this._message_map[msg.message_id].success(msg.data);
+      } else {
+        this._message_map[msg.message_id].error(msg.data);
+      }
+    } else {
+      console.log(msg);
+    }
   }
 }

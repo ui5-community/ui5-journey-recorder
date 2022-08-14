@@ -156,9 +156,9 @@ class API {
       res({ status: 400, error: `Bad Request no url provided!` });
       return;
     }
-    const url_obj = new URL(url);
+    const url_obj = new URL(`http://${API.own_id}/${url}`);
 
-    const handler = this._post_expr.find(r => decodeURIComponent(url_obj.pathname).test(r.regex));
+    const handler = this._post_expr.find(r => r.regex.test(decodeURIComponent(url_obj.pathname)));
     if (!handler) {
       res({ status: 404, error: `The requested ressource does not exist!` });
       return;
@@ -179,6 +179,7 @@ class API {
     }
 
     req.url = url;
+    req.body = oEventData.body;
 
     this._post_routes[handler.id](req, res);
   }
@@ -190,8 +191,11 @@ com_api.get('/controls', (req, res) => {
   res({ status: 200, message: "JAY!" });
 });
 
+com_api.post('/controls/action', (req, res) => {
+  debugger;
+});
+
 const ext_id = document.getElementById('UI5TR-communication-js').getAttribute('data-id');
-//document.getElementById('UI5TR-communication-js').src.replace('chrome-extension://', '').replace('/scripts/communication_inject.js', '')
 
 com_api.listen(ext_id);
 

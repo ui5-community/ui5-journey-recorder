@@ -1,12 +1,17 @@
 <div class="header">
-  <span class="p-input-icon-right list-search">
-    <i class="pi pi-search"></i>
-    <input id="search-input" tabindex="0" type="search" placeholder="Search" (change)="this.searchChange($event)"
-      (search)="this.onSearch($event)" />
-  </span>
 </div>
 <p-tabView (onChange)="handleChange($event)">
   <p-tabPanel header="Tabs">
+    <div class="list-header">
+      <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input type="text" pInputText placeholder="Search" (change)="this.searchChange($event)" />
+      </span>
+      <div>
+        <button type="button" pButton pRipple icon="pi pi-refresh" class="p-button-rounded p-button-text"
+          (click)="this.refresh_table()"></button>
+      </div>
+    </div>
     <ul class="tab-list">
       <li *ngFor="let tab of this.elements" class="list-item" tabindex="1" (click)="this.connect_to_page(tab)"
         (keydown)="this.checkKeyPress($event, tab)">

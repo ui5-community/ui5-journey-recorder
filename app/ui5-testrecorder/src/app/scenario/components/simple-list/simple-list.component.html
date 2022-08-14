@@ -4,8 +4,8 @@
   </div>
   <ul>
     <li *ngFor="let date of this.data" class="list-item">
-      <div class="action-block">
-        <i class="pi pi-caret-right" style="font-size: 2rem;"></i>
+      <div class="action-block" *ngIf="this.replay">
+        <i class="pi pi-play" style="font-size: 2rem;" (click)="this.actionClicked(date)"></i>
       </div>
       <div class="container" (click)="this.editViewStep(date)">
         <div class="action-header">
