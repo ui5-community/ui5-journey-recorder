@@ -1,17 +1,52 @@
 <header class="object-header">
-  <button type="button" pButton label="Back" icon="pi pi-chevron-left" class="p-button-raised p-button-text"
-    (click)="this.navBack()"></button>
-  <h3>{{this.tab?.title}}</h3>
+  <button type="button" pButton label="Export" icon="pi pi-download" class="p-button-text" style="margin-left: auto;"
+    (click)="this.export()"></button>
 </header>
 <main>
-  <app-simple-list [replay]="this.replay" [data]="this.scenarioSteps" (play)="this.performAction($event)">
+  <p-panel header="Scenario properties">
+    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+      <div style="display: flex; flex-direction: column;">
+        <div class="form-group">
+          <label for="scenName">Scenario Name: </label>
+          <input type="text" class="form-control" id="scenName" [value]="this.scenario?.name" name="scenName" required>
+        </div>
+
+        <div class="form-group">
+          <label for="page">Page: </label>
+          <input type="text" class="form-control" id="page" [value]="this.scenario?.startUrl" name="page" disabled>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column;">
+        <div class="form-group">
+          <label for="created">Created: </label>
+          <input type="text" class="form-control" id="created" [value]="this.scenario?.creationDate | date:'medium'"
+            name="created" disabled>
+        </div>
+
+        <div class="form-group">
+          <label for="edited">Lastest edited: </label>
+          <input type="text" class="form-control" id="edited" [value]="this.scenario?.latestEdit | date:'medium'"
+            name="edited" disabled>
+        </div>
+      </div>
+    </div>
+  </p-panel>
+  <!--TODO(@Adrian): create edit/view toggle with connect/disconnect-->
+  <app-simple-list [replay]=" this.replay" [data]="this.scenarioSteps" (select)="this.editViewStep($event)"
+    (action)="this.performAction($event)">
   </app-simple-list>
 </main>
 <footer>
+  <button *ngIf=" (this.app_footer_service.loadingIndicatorSource| async) === 'disconnected'" type="button" pButton
+    label="Connect" icon="pi pi-stop" class="p-button-raised p-button-text" (click)="this.connectToPage()"></button>
   <button *ngIf="this.replay" type="button" pButton label="Stop" icon="pi pi-stop" class="p-button-raised p-button-text"
+    (click)="this.stopReplay()"></button>
+  <button
+    *ngIf="!this.replay && this.scenario && (this.app_footer_service.loadingIndicatorSource| async) === 'disconnected'"
+    type="button" pButton label="Replay" icon="pi pi-replay" class="p-button-raised p-button-text"
     (click)="this.replayMode()"></button>
-  <button *ngIf="!this.replay && this.scenario" type="button" pButton label="Replay" icon="pi pi-replay"
-    class="p-button-raised p-button-text" (click)="this.replayMode()"></button>
-  <button *ngIf="!this.replay && this.scenario" type="button" pButton label="Save" icon="pi pi-save"
-    class="p-button-raised p-button-text" (click)="this.saveCurrentScenario()"></button>
+  <button
+    *ngIf="!this.replay && this.scenario && (this.app_footer_service.loadingIndicatorSource| async) === 'disconnected'"
+    type="button" pButton label="Save" icon="pi pi-save" class="p-button-raised p-button-text"
+    (click)="this.saveCurrentScenario()"></button>
 </footer>

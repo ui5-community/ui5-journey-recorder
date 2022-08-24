@@ -16,6 +16,8 @@ import { TreeModule } from 'primeng/tree';
 import { SimpleListComponent } from './components/simple-list/simple-list.component';
 import { ActionImagePipe } from './pipes/actionImage.pipe';
 import { RecordingPageComponent } from './pages/recording/recording_page.component';
+import { StepPageComponent } from './pages/step/step_page.component';
+import { ScenarioComponent } from './scenario.component';
 //#endregion
 
 @NgModule({
@@ -23,7 +25,9 @@ import { RecordingPageComponent } from './pages/recording/recording_page.compone
     ObjectPageComponent,
     RecordingPageComponent,
     RecordStopDialogComponent,
+    ScenarioComponent,
     SimpleListComponent,
+    StepPageComponent,
     ActionImagePipe,
   ],
   imports: [

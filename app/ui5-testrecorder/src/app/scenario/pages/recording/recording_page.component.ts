@@ -23,7 +23,6 @@ export class RecordingPageComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private dialogService: DialogService,
     private router: Router,
-    private activatedRoute: ActivatedRoute,
     private scenarioService: ScenarioService
   ) {
     this.recordingObs = this.chr_ext_srv.register_recording_websocket();

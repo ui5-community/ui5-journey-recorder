@@ -1,19 +1,19 @@
-import { Injectable } from "@angular/core";
-import { Subject } from "rxjs";
+import { ApplicationRef, Injectable } from '@angular/core';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 export enum LoadStatus {
-  LOADING = "loading",
-  DISCONNECTED = "disconnected",
-  CONNECTED = "connected"
+  LOADING = 'loading',
+  DISCONNECTED = 'disconnected',
+  CONNECTED = 'connected',
 }
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root',
 })
 export class AppFooterService {
-  private loadingIndicatorSource = new Subject<LoadStatus>();
-
-  loadingChange$ = this.loadingIndicatorSource.asObservable();
+  public loadingIndicatorSource = new BehaviorSubject<LoadStatus>(
+    LoadStatus.DISCONNECTED
+  );
 
   public connected() {
     this.loadingIndicatorSource.next(LoadStatus.CONNECTED);

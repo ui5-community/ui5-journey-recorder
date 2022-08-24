@@ -1,15 +1,17 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Step } from 'src/app/services/classes/testScenario';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Step } from 'src/app/classes/testScenario';
 
 @Component({
   selector: 'app-simple-list',
   templateUrl: './simple-list.component.html',
   styleUrls: ['./simple-list.component.css'],
 })
-export class SimpleListComponent implements OnInit {
+export class SimpleListComponent {
   private _data: any[] | undefined;
   @Output()
-  public play: EventEmitter<any> = new EventEmitter();
+  public action: EventEmitter<Step> = new EventEmitter();
+  @Output()
+  public select: EventEmitter<Step> = new EventEmitter();
 
   @Input()
   public replay: boolean = false;
@@ -21,15 +23,5 @@ export class SimpleListComponent implements OnInit {
 
   get data(): any[] {
     return this._data || [];
-  }
-
-  ngOnInit(): void {}
-
-  editViewStep(s: Step): void {
-    console.log('Item for edit', s);
-  }
-
-  actionClicked(date: any) {
-    this.play.emit(date);
   }
 }

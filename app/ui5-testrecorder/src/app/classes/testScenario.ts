@@ -26,12 +26,14 @@ export class TestScenario implements Stringify {
   private created: number;
   private edited: number;
   private pages: Page[];
+  private scenario_name: string;
 
   constructor(id: string, timestamp?: number) {
     this.created = timestamp || -1;
     this.edited = timestamp || -1;
     this.pages = [];
     this.scenario_id = id;
+    this.scenario_name = '';
   }
 
   public addPage(p: Page) {
@@ -62,6 +64,14 @@ export class TestScenario implements Stringify {
     return this.pages.length === 0 ? '' : this.pages[0].location;
   }
 
+  public get name(): string {
+    return this.scenario_name;
+  }
+
+  public set name(n: string) {
+    this.scenario_name = n;
+  }
+
   toString(): string {
     return JSON.stringify(this);
   }
@@ -70,6 +80,8 @@ export class TestScenario implements Stringify {
     const parsedObj = JSON.parse(json);
     const testScen = new TestScenario(parsedObj.scenario_id, parsedObj.created);
     testScen.latestEdit = parsedObj.edited;
+    testScen.name = parsedObj.scenario_name;
+
     if (parsedObj.pages) {
       parsedObj.pages.forEach((p: any) => {
         testScen.addPage(Page.fromJSON(JSON.stringify(p)));
@@ -121,12 +133,14 @@ export class Page implements Stringify {
       case StepType.Click:
         const cs = new ClickStep();
         cs.controlId = parsedObj.control_id;
+        cs.controlType = parsedObj.control_type;
         cs.styleClasses = parsedObj.style_classes;
         cs.actionLoc = parsedObj.action_location;
         return cs;
       case StepType.Input:
         const is = new InputStep();
         is.controlId = parsedObj.control_id;
+        is.controlType = parsedObj.control_type;
         is.styleClasses = parsedObj.style_classes;
         is.actionLoc = parsedObj.action_location;
         if (parsedObj.keys) {
@@ -138,6 +152,7 @@ export class Page implements Stringify {
       case StepType.KeyPress:
         const kps = new KeyPressStep();
         kps.controlId = parsedObj.control_id;
+        kps.controlType = parsedObj.control_type;
         kps.styleClasses = parsedObj.style_classes;
         kps.actionLoc = parsedObj.action_location;
         kps.key = parsedObj.key_char;
@@ -151,6 +166,7 @@ export class Page implements Stringify {
 
 export abstract class Step implements Stringify, Equals {
   private action_type: StepType;
+  private control_type: string;
   private control_id: string;
   private style_classes: string[];
   private action_location: string;
@@ -160,6 +176,7 @@ export abstract class Step implements Stringify, Equals {
     this.control_id = '';
     this.style_classes = [];
     this.action_location = '';
+    this.control_type = '';
   }
 
   toString(): string {
@@ -203,6 +220,14 @@ export abstract class Step implements Stringify, Equals {
 
   get actionLoc(): string {
     return this.action_location;
+  }
+
+  set controlType(type: string) {
+    this.control_type = type;
+  }
+
+  get controlType(): string {
+    return this.control_type;
   }
 }
 

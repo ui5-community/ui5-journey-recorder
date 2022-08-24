@@ -7,8 +7,9 @@ import {
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppFooterService } from 'src/app/components/app-footer/app-footer.service';
-import { TestScenario } from 'src/app/services/classes/testScenario';
+import { TestScenario } from 'src/app/classes/testScenario';
 import { ScenarioService } from 'src/app/services/scenarioService/scenario.service';
+import { AppHeaderService } from 'src/app/components/app-header/app-header.service';
 //#endregion
 
 @Component({
@@ -38,11 +39,12 @@ export class MainComponent implements OnInit {
     private messageService: MessageService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private appFooterService: AppFooterService,
+    private appHeaderService: AppHeaderService,
     public scenarioService: ScenarioService
   ) {}
 
   ngOnInit(): void {
+    this.appHeaderService.hideBack();
     ChromeExtensionService.get_all_tabs().then((tabs: Page[]) => {
       this.raw_elements = tabs;
       this.filterEntries('');
@@ -50,7 +52,6 @@ export class MainComponent implements OnInit {
   }
 
   connect_to_page(page: Page | undefined) {
-    this.appFooterService.connecting();
     if (page) {
       this.confirmationService.confirm({
         icon: 'pi pi-sign-in',
@@ -62,12 +63,6 @@ export class MainComponent implements OnInit {
             .connectToCurrentPage()
             .then(() => {
               this.chr_ext_srv.focus_page(page).then(() => {
-                this.messageService.add({
-                  severity: 'success',
-                  summary: 'Injection',
-                  detail: 'Connection established!',
-                });
-                this.appFooterService.connected();
                 this.router.navigate(['scenario/recording'], {
                   relativeTo: this.activatedRoute,
                 });
@@ -122,7 +117,7 @@ export class MainComponent implements OnInit {
   }
 
   openExisting(scenario: TestScenario): void {
-    this.router.navigate(['scenario/scenarioView', scenario.id]);
+    this.router.navigate(['scenario/scenarioDetail', scenario.id]);
   }
 
   handleChange(e: { originalEvent: any; index: number }) {
@@ -132,6 +127,57 @@ export class MainComponent implements OnInit {
         .then((scenarios: TestScenario[]) => {
           this.scenarios = scenarios;
         });
+    }
+  }
+
+  importScenario() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.addEventListener('change', ($event: Event) => {
+      const files = ($event.currentTarget as HTMLInputElement).files;
+      const reader = new FileReader();
+      reader.onload = (input) => {
+        const content = input.target?.result as string;
+        if (content) {
+          this.importFinished(JSON.parse(content));
+        }
+      };
+      if (files) {
+        reader.readAsText(files[0]);
+      }
+    });
+    input.click();
+  }
+
+  private async importFinished(content: { [key: string]: any }): Promise<void> {
+    const scen_id = content['scenario_id'];
+    const scen = await this.scenarioService.getScenario(scen_id);
+    if (scen) {
+      this.confirmationService.confirm({
+        icon: 'pi pi-exclamation-triangle',
+        header: 'Scenario already exists!',
+        message: 'A scenario with the same id already exists, override?',
+        accept: async () => {
+          await this.scenarioService.saveScenario(
+            TestScenario.fromJSON(JSON.stringify(content))
+          );
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Import',
+            detail: 'Scenario imported',
+          });
+        },
+      });
+    } else {
+      await this.scenarioService.saveScenario(
+        TestScenario.fromJSON(JSON.stringify(content))
+      );
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Import',
+        detail: 'Scenario imported',
+      });
     }
   }
 }

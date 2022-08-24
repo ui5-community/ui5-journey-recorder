@@ -98,3 +98,11 @@ hr.item-header-bottom {
   margin-bottom: 0.2rem;
   padding-left: 0.3rem;
 }
+
+.table-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid gray;
+}

@@ -29,10 +29,13 @@
   </p-tabPanel>
   <p-tabPanel header="Scenarios">
     <ng-template pTemplate="content">
+      <div class="table-header">
+        <i class="pi pi-upload" style="font-size: 1rem;" (click)="this.importScenario()"></i>
+      </div>
       <ul class="tab-list">
         <li *ngFor="let scen of this.scenarios" class="list-item" (click)="this.openExisting(scen)">
           <div class="item-header">
-            {{scen.id}}
+            {{scen.name}}
           </div>
           <hr class="item-header-bottom">
           <div class="item-desc">

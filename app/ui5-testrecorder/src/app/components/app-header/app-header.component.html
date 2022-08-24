@@ -1,0 +1,15 @@
+<header>
+  <div class="front-container">
+    <div *ngIf="this.appHeaderService.showBackButton$ | async" class="action-container">
+      <i class="pi pi-chevron-left" style="font-size: 2rem; " (click)="this.navBack()"></i>
+    </div>
+    <div *ngIf="this.title || this.icon || this.titleContentTemplate" class="header-title">
+      <img *ngIf="this.icon && !this.titleContentTemplate" [src]="this.icon" alt="icon" />
+      <h3 *ngIf="this.title && !this.titleContentTemplate" [innerHTML]="this.title"></h3>
+      <ng-container *ngTemplateOutlet="this.titleContentTemplate"></ng-container>
+    </div>
+  </div>
+  <div *ngIf="this.actionButtonsTemplate" class="action-buttons">
+    <ng-container *ngTemplateOutlet="this.actionButtonsTemplate"></ng-container>
+  </div>
+</header>

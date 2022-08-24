@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { AppFooterService } from 'src/app/components/app-footer/app-footer.service';
 import { ChromeExtensionService } from '../chromeExtensionService/chrome_extension_service';
-import { Step } from '../classes/testScenario';
+import { RequestBuilder, RequestMethod } from '../../classes/requestBuilder';
+import { Step } from '../../classes/testScenario';
 
 @Injectable({ providedIn: 'root' })
 export class ReplayService {
@@ -24,19 +25,20 @@ export class ReplayService {
         };
         this.chr_ext_srv.setCurrentPage(p);
         return this.chr_ext_srv.focus_page(p).then(() => {
-          return this.chr_ext_srv.connectToCurrentPage().then(() => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Injection',
-              detail: 'Connection established!',
-            });
-            this.appFooterService.connected();
-          });
+          return this.chr_ext_srv.connectToCurrentPage();
         });
       });
   }
 
+  public stopReplay(): Promise<void> {
+    return this.chr_ext_srv.disconnect();
+  }
+
   public performAction(step: Step): Promise<void> {
-    return this.chr_ext_srv.performAction(step);
+    const rb = new RequestBuilder();
+    rb.setMethod(RequestMethod.POST);
+    rb.setUrl('/controls/action');
+    rb.setBody(step);
+    return this.chr_ext_srv.sendSyncMessage(rb.build());
   }
 }

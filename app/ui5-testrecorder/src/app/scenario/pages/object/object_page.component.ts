@@ -5,13 +5,11 @@ import { ChromeExtensionService } from 'src/app/services/chromeExtensionService/
 import { Observable } from 'rxjs';
 import { DialogService } from 'primeng/dynamicdialog';
 import { RecordStopDialogComponent } from '../../dialogs/RecordStopDialog/RecordStopDialog.component';
-import {
-  Page,
-  Step,
-  TestScenario,
-} from 'src/app/services/classes/testScenario';
+import { Page, Step, TestScenario } from 'src/app/classes/testScenario';
 import { ScenarioService } from 'src/app/services/scenarioService/scenario.service';
 import { ReplayService } from 'src/app/services/replayService/replay.service';
+import { AppFooterService } from 'src/app/components/app-footer/app-footer.service';
+import { AppHeaderService } from 'src/app/components/app-header/app-header.service';
 
 @Component({
   selector: 'app-object-page',
@@ -35,16 +33,18 @@ export class ObjectPageComponent implements OnInit {
     private location: Location,
     private incommingRoute: ActivatedRoute,
     private chr_ext_srv: ChromeExtensionService,
-    private cd: ChangeDetectorRef,
     private router: Router,
-    private dialogService: DialogService,
+    private active_route: ActivatedRoute,
     private scenarioService: ScenarioService,
-    private replayService: ReplayService
+    private replayService: ReplayService,
+    public app_footer_service: AppFooterService,
+    private app_header_service: AppHeaderService
   ) {
     this.recordingObs = this.chr_ext_srv.register_recording_websocket();
   }
 
   ngOnInit(): void {
+    this.app_header_service.showBack();
     this.incommingRoute.params.subscribe((params: Params) => {
       this.scenario_id = params['scenarioId'];
       this.scenarioService
@@ -61,8 +61,7 @@ export class ObjectPageComponent implements OnInit {
   }
 
   navBack(): void {
-    this.chr_ext_srv.disconnect();
-    this.router.navigate(['']);
+    this.location.back();
   }
 
   saveCurrentScenario(): void {
@@ -79,6 +78,26 @@ export class ObjectPageComponent implements OnInit {
     }
   }
 
+  stopReplay() {
+    if (this.scenario) {
+      this.replayService.stopReplay().then(() => {
+        this.replay = !this.replay;
+      });
+    }
+  }
+
+  connectToPage() {
+    if (this.scenario) {
+      this.replayService.startReplay(this.scenario?.startUrl);
+    }
+  }
+
+  editViewStep(s: Step) {
+    this.router.navigate(['step', encodeURIComponent(s.controlId)], {
+      relativeTo: this.active_route,
+    });
+  }
+
   performAction(date: Step) {
     if (date) {
       this.replayService
@@ -86,5 +105,26 @@ export class ObjectPageComponent implements OnInit {
         .then(() => {})
         .catch();
     }
+  }
+
+  export() {
+    const link = document.createElement('a');
+    const blob = new Blob([this.scenario?.toString() || ''], {
+      type: 'octet/stream',
+    });
+    const name =
+      this.replaceUnsupportedFileSigns(this.scenario?.id || 'blub', '_') +
+      '.json';
+
+    link.setAttribute('href', window.URL.createObjectURL(blob));
+    link.setAttribute('download', name);
+    link.click();
+  }
+
+  private replaceUnsupportedFileSigns(
+    text: string,
+    replacement_sign: string
+  ): string {
+    return text.replace(/[\s\/\\\:\*\?\"\<\>\|\-]+/gm, replacement_sign);
   }
 }

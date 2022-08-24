@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { ApplicationRef, ChangeDetectorRef, Injectable } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Observable, Subject } from 'rxjs';
-import { Step } from '../classes/testScenario';
+import { AppFooterService } from 'src/app/components/app-footer/app-footer.service';
+import { Request } from '../../classes/requestBuilder';
 
 export interface Page {
   title: string;
@@ -23,13 +24,17 @@ export class ChromeExtensionService {
 
   private internal_port: chrome.runtime.Port | null = null;
   private bInjectAttempted: boolean = false;
+  private _interval_id: number = 0;
 
   private currentPage: Page | undefined;
 
   private _message_id: number = 0;
   private _message_map: { [key: number]: Synchronizer } = {};
 
-  constructor(private messageService: MessageService) {}
+  constructor(
+    private messageService: MessageService,
+    private appFooterService: AppFooterService
+  ) {}
 
   public static get_all_tabs(only_ui5: boolean = false): Promise<Page[]> {
     return new Promise((resolve, _) => {
@@ -52,7 +57,7 @@ export class ChromeExtensionService {
     });
   }
 
-  public setCurrentPage(page: Page) {
+  public setCurrentPage(page?: Page) {
     this.currentPage = page;
   }
 
@@ -60,11 +65,15 @@ export class ChromeExtensionService {
     if (!this.currentPage) {
       return Promise.reject();
     } else {
-      return this.getTabInfoById(this.currentPage.id);
+      return this._getTabInfoById(this.currentPage.id);
     }
   }
 
   public connectToCurrentPage(): Promise<void> {
+    if (this.internal_port !== null) {
+      return Promise.reject();
+    }
+    this.appFooterService.connecting();
     return new Promise((resolve, reject) => {
       const inject_after_reload = (
         iTabId: number,
@@ -89,6 +98,17 @@ export class ChromeExtensionService {
             },
             () => {
               chrome.tabs.onUpdated.removeListener(inject_after_reload);
+
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Injection',
+                detail: 'Connection established!',
+              });
+              this.appFooterService.connected();
+              this._interval_id = setInterval(
+                this._checkConnection.bind(this),
+                450
+              );
               resolve();
             }
           );
@@ -100,21 +120,22 @@ export class ChromeExtensionService {
         if (port && port.name === 'ui5_tr') {
           this.internal_port = port;
           this.internal_port.onDisconnect.addListener(
-            this.onDisconnectListener.bind(this)
+            this._onDisconnectListener.bind(this)
           );
           this.internal_port.onMessage.addListener(
-            this.onMessageListener.bind(this)
+            this._onMessageListener.bind(this)
           );
           chrome.runtime.onMessage.addListener(
-            this.onInstantMessage.bind(this)
+            this._onInstantMessage.bind(this)
           );
+
           resolve();
         } else {
           return;
         }
       });
       if (this.currentPage) {
-        this.requestPermission({
+        this._requestPermission({
           id: this.currentPage.id,
           url: this.currentPage.path,
         })
@@ -137,6 +158,30 @@ export class ChromeExtensionService {
     });
   }
 
+  public isConnectedToPage(): boolean {
+    if (!this.currentPage) {
+      return false;
+    }
+    if (this.internal_port === null) {
+      return false;
+    }
+    return true;
+  }
+
+  private async _checkConnection(): Promise<void> {
+    try {
+      if (this.internal_port === null) {
+        return;
+      }
+      if (!this.currentPage?.id) {
+        return;
+      }
+      await chrome.tabs.get(this.currentPage.id);
+    } catch (error) {
+      this._resetConnection();
+    }
+  }
+
   public focus_page(page: Page): Promise<void> {
     return new Promise((resolve, reject) => {
       chrome.tabs.update(page.id, { active: true }, (tab) => {
@@ -157,7 +202,7 @@ export class ChromeExtensionService {
 
   public disconnect(): Promise<void> {
     if (this.internal_port && this.currentPage) {
-      this.internal_port.disconnect();
+      this._resetConnection();
       return chrome.tabs.reload(this.currentPage.id, {
         bypassCache: false,
       });
@@ -170,24 +215,16 @@ export class ChromeExtensionService {
     return chrome.tabs.create({ url: url, active: true });
   }
 
-  public performAction(action: Step): Promise<any> {
-    return this.perform_post({ url: '/controls/action', body: action });
-  }
-
-  private perform_post(msg: { url: string, body: any }): Promise<any> {
-    return this.syncMessage({method: 'POST', ...msg});
-  }
-
-  private syncMessage(msg: any): Promise<any> {
+  public sendSyncMessage(msg: Request): Promise<any> {
     msg.message_id = ++this._message_id;
     return new Promise((resolve, reject) => {
       const syncObject: Synchronizer = { success: resolve, error: reject };
-      this._message_map[msg.message_id] = syncObject;
-      this.sendMessage(msg);
+      this._message_map[this._message_id] = syncObject;
+      this._sendMessage(msg);
     });
   }
 
-  private getTabInfoById(page_id: number): Promise<chrome.tabs.Tab> {
+  private _getTabInfoById(page_id: number): Promise<chrome.tabs.Tab> {
     return new Promise((resolve, _) => {
       chrome.tabs.get(parseInt('' + page_id, 10), (tab: chrome.tabs.Tab) => {
         resolve(tab);
@@ -195,8 +232,8 @@ export class ChromeExtensionService {
     });
   }
 
-  private onDisconnectListener(): void {
-    this.internal_port = null;
+  private _onDisconnectListener(): void {
+    this._resetConnection();
     this.messageService.add({
       severity: 'error',
       summary: 'Connection',
@@ -204,16 +241,30 @@ export class ChromeExtensionService {
     });
   }
 
-  private onMessageListener(message: any, port: chrome.runtime.Port) {
+  private _resetConnection(): void {
+    if (this.internal_port !== null) {
+      this.internal_port.disconnect();
+      this.internal_port = null;
+      this.bInjectAttempted = false;
+      clearInterval(this._interval_id);
+      this._interval_id = 0;
+      this.appFooterService.disconnected();
+    }
+  }
+
+  private _onMessageListener(message: any, port: chrome.runtime.Port) {
     if (
       message &&
-      message.message_id &&
-      this._message_map[message.message_id]
+      message.data &&
+      message.data.message_id &&
+      this._message_map[message.data.message_id]
     ) {
-      if (message.code >= 200 && message.code <= 299) {
-        this._message_map[message.message_id].success(message.data);
+      const { success, error } = this._message_map[message.data.message_id];
+      delete message.data.message_id;
+      if (message.data.status >= 200 && message.data.status <= 299) {
+        success(message.data);
       } else {
-        this._message_map[message.message_id].error(message.data);
+        error(message.data);
       }
     } else {
       switch (message?.data?.instantType) {
@@ -224,7 +275,7 @@ export class ChromeExtensionService {
     }
   }
 
-  private requestPermission(oPermissionInfo: {
+  private _requestPermission(oPermissionInfo: {
     id?: number;
     url: string;
   }): Promise<void> {
@@ -258,11 +309,11 @@ export class ChromeExtensionService {
     });
   }
 
-  private sendMessage(oInfo: any) {
+  private _sendMessage(oInfo: any) {
     this.internal_port?.postMessage(oInfo);
   }
 
-  private onInstantMessage(msg: any): void {
+  private _onInstantMessage(msg: any): void {
     if (msg && msg.message_id && this._message_map[msg.message_id]) {
       if (msg.code >= 200 && msg.code <= 299) {
         this._message_map[msg.message_id].success(msg.data);

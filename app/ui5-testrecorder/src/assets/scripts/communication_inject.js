@@ -32,7 +32,7 @@ class WS {
 }
 
 class API {
-  static own_id = "ui5_com_handler";
+  static own_id = "ui5_tr_handler";
   static key_ident = `(\\(\\S+\\))?`;
   static nav_prop = `(\\/\\S+)?`;
 
@@ -96,7 +96,7 @@ class API {
 
   _provideResponseCallback(event_id, answer_origin) {
     return (oResponseData) => {
-      window.postMessage({ message_id: event_id, origin: answer_origin, response: oResponseData });
+      window.postMessage({ origin: answer_origin, response: { message_id: event_id, ...oResponseData } });
     };
   }
 
@@ -123,9 +123,9 @@ class API {
       res({ status: 400, error: `Bad Request no url provided!` });
       return;
     }
-    const url_obj = new URL(url);
+    const url_obj = new URL(`http://${API.own_id}/${url}`);
 
-    const handler = this._getter_expr.find(r => decodeURIComponent(url_obj.pathname).test(r.regex));
+    const handler = this._getter_expr.find(r => r.regex.test(decodeURIComponent(url_obj.pathname)));
     if (!handler) {
       res({ status: 404, error: `The requested ressource does not exist!` });
       return;
@@ -142,7 +142,6 @@ class API {
     req.searchParams = {};
     for (var spkey of url_obj.searchParams.keys()) {
       req.searchParams[spkey] = url_obj.searchParams.get(spkey);
-      return;
     }
 
     req.url = url;
@@ -175,7 +174,6 @@ class API {
     req.searchParams = {};
     for (var spkey of url_obj.searchParams.keys()) {
       req.searchParams[spkey] = url_obj.searchParams.get(spkey);
-      return;
     }
 
     req.url = url;
@@ -191,8 +189,12 @@ com_api.get('/controls', (req, res) => {
   res({ status: 200, message: "JAY!" });
 });
 
+com_api.get('/controls/(:id)', (req, res) => {
+  res({ status: 200, message: 'Hello World!' });
+});
+
 com_api.post('/controls/action', (req, res) => {
-  debugger;
+  executeAction({ step: req.body });
 });
 
 const ext_id = document.getElementById('UI5TR-communication-js').getAttribute('data-id');

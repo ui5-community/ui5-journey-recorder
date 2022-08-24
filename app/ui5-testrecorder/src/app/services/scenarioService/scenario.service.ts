@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 
 import { v4 as uuidV4 } from 'uuid';
+import { ChromeExtensionService } from '../chromeExtensionService/chrome_extension_service';
+import { RequestBuilder, RequestMethod } from '../../classes/requestBuilder';
 
 import {
   ClickStep,
@@ -10,14 +12,17 @@ import {
   Step,
   TestScenario,
   UnknownStep,
-} from '../classes/testScenario';
+} from '../../classes/testScenario';
 import { ScenarioStorageService } from '../localStorageService/scenarioStorageService.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ScenarioService {
-  constructor(private local_storage_service: ScenarioStorageService) {}
+  constructor(
+    private local_storage_service: ScenarioStorageService,
+    private chr_ext_srv: ChromeExtensionService
+  ) {}
 
   private cachedScenarios: TestScenario[] = [];
 
@@ -41,15 +46,45 @@ export class ScenarioService {
     if (s) {
       return Promise.resolve(s);
     } else {
-      return this.local_storage_service.getById(id).then((scen:TestScenario) => {
-        this.cachedScenarios.push(scen);
-        return scen;
-      });
+      return this.local_storage_service
+        .getById(id)
+        .then((scen: TestScenario) => {
+          this.cachedScenarios.push(scen);
+          return scen;
+        });
     }
   }
 
   public saveScenario(scenario: TestScenario): Promise<void> {
     return this.local_storage_service.save(scenario);
+  }
+
+  public getAttributeFromControl(
+    controlID: string,
+    attributes: string[]
+  ): Promise<{ [key: string]: any }> {
+    const rb = new RequestBuilder();
+    rb.setUrl('/controls/(:id)');
+    rb.setMethod(RequestMethod.GET);
+    rb.addPathParam('id', controlID);
+    rb.addSearchParam('attributes', '(' + attributes.join(' and ') + ')');
+    return this.chr_ext_srv.sendSyncMessage(rb.build());
+  }
+
+  public async getStep(scenario_id: string, control_id: string): Promise<Step> {
+    let scen = this.cachedScenarios.find((s) => s.id === scenario_id);
+    if (!scen) {
+      scen = await this.local_storage_service.getById(scenario_id);
+      this.cachedScenarios.push(scen);
+    }
+    const step = scen.testPages
+      .map((tp) => tp.steps)
+      .reduce((a, b) => [...a, ...b], [])
+      .find((s: Step) => s.controlId === control_id);
+    if (!step) {
+      return Promise.reject();
+    }
+    return step;
   }
 
   private transformEventsToSteps(events: any): Step[] {
@@ -67,6 +102,7 @@ export class ScenarioService {
       }
 
       res.controlId = a.control.id;
+      res.controlType = a.control.type;
       res.styleClasses = a.control.classes;
       res.actionLoc = a.location;
       return res;

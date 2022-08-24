@@ -1,4 +1,4 @@
-import { TestScenario } from '../classes/testScenario';
+import { TestScenario } from '../../classes/testScenario';
 
 export class ScenarioStorageService {
   private _path: string;
@@ -19,7 +19,7 @@ export class ScenarioStorageService {
       .then((ids: string[]) => {
         if (
           !ids.find((id) => {
-            id === entity.id;
+            return id === entity.id;
           })
         ) {
           //create scenario

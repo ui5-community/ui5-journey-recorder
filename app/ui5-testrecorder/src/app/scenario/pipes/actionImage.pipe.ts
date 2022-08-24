@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Step, StepType } from '../../services/classes/testScenario';
+import { Step, StepType } from '../../classes/testScenario';
 
 @Pipe({
   name: 'actionImage',
