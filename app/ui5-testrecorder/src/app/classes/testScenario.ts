@@ -136,6 +136,7 @@ export class Page implements Stringify {
         cs.controlType = parsedObj.control_type;
         cs.styleClasses = parsedObj.style_classes;
         cs.actionLoc = parsedObj.action_location;
+        cs.controlAttributes = parsedObj.control_attributes;
         return cs;
       case StepType.Input:
         const is = new InputStep();
@@ -143,6 +144,7 @@ export class Page implements Stringify {
         is.controlType = parsedObj.control_type;
         is.styleClasses = parsedObj.style_classes;
         is.actionLoc = parsedObj.action_location;
+        is.controlAttributes = parsedObj.control_attributes;
         if (parsedObj.keys) {
           parsedObj.keys.forEach((k: any) => {
             is.addStep(Page.stepFromJSON(JSON.stringify(k)) as KeyPressStep);
@@ -157,6 +159,7 @@ export class Page implements Stringify {
         kps.actionLoc = parsedObj.action_location;
         kps.key = parsedObj.key_char;
         kps.keyCode = parsedObj.key_code;
+        kps.controlAttributes = parsedObj.control_attributes;
         return kps;
       default:
         return new UnknownStep();
@@ -166,10 +169,12 @@ export class Page implements Stringify {
 
 export abstract class Step implements Stringify, Equals {
   private action_type: StepType;
-  private control_type: string;
-  private control_id: string;
-  private style_classes: string[];
   private action_location: string;
+
+  private control_id: string;
+  private control_type: string;
+  private style_classes: string[];
+  private control_attributes: { [key: string]: any };
 
   constructor(type: StepType) {
     this.action_type = type;
@@ -177,6 +182,7 @@ export abstract class Step implements Stringify, Equals {
     this.style_classes = [];
     this.action_location = '';
     this.control_type = '';
+    this.control_attributes = {};
   }
 
   toString(): string {
@@ -228,6 +234,14 @@ export abstract class Step implements Stringify, Equals {
 
   get controlType(): string {
     return this.control_type;
+  }
+
+  set controlAttributes(attributes: { [key: string]: any }) {
+    this.control_attributes = attributes;
+  }
+
+  get controlAttributes(): { [key: string]: any } {
+    return this.control_attributes;
   }
 }
 

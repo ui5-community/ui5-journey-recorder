@@ -18,6 +18,12 @@
   position: relative;
 }
 
+
+.list-item.action-item {
+  display: flex;
+  flex-direction: row;
+}
+
 .list-item:hover,
 .list-item:focus,
 .list-item:focus-within,
@@ -34,12 +40,22 @@
   box-shadow: inset 0 0 6px 2px #828080;
 }
 
+li.list-item>div.main-container {
+  width: 95%;
+}
+
+li.list-item>div.action-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
 .item-header {
   display: flex;
   flex-direction: row;
   height: 2rem;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   background-color: rgb(0 0 0 / 12%);
   border-radius: 15px;
 }

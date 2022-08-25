@@ -10,6 +10,7 @@ import { ScenarioService } from 'src/app/services/scenarioService/scenario.servi
 import { ReplayService } from 'src/app/services/replayService/replay.service';
 import { AppFooterService } from 'src/app/components/app-footer/app-footer.service';
 import { AppHeaderService } from 'src/app/components/app-header/app-header.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-object-page',
@@ -22,7 +23,7 @@ export class ObjectPageComponent implements OnInit {
   recordingObs: Observable<any>;
 
   steps: any[] = [];
-  scenario: TestScenario | undefined;
+  scenario: TestScenario = new TestScenario('0');
   scenarioSteps: Step[] = [];
 
   replay: boolean = false;
@@ -38,23 +39,29 @@ export class ObjectPageComponent implements OnInit {
     private scenarioService: ScenarioService,
     private replayService: ReplayService,
     public app_footer_service: AppFooterService,
-    private app_header_service: AppHeaderService
+    private app_header_service: AppHeaderService,
+    private messageService: MessageService
   ) {
     this.recordingObs = this.chr_ext_srv.register_recording_websocket();
   }
 
   ngOnInit(): void {
     this.app_header_service.showBack();
+    this.app_header_service.setCustomBackUrl('');
     this.incommingRoute.params.subscribe((params: Params) => {
       this.scenario_id = params['scenarioId'];
       this.scenarioService
         .getScenario(this.scenario_id)
-        .then((scen: TestScenario) => {
-          this.scenario = scen;
-          this.scenarioSteps = scen.testPages.reduce(
-            (a, b) => [...a, ...b.steps],
-            [] as Step[]
-          );
+        .then((scen: TestScenario | undefined) => {
+          if (!scen) {
+            this.navBack();
+          } else {
+            this.scenario = scen;
+            this.scenarioSteps = scen.testPages.reduce(
+              (a, b) => [...a, ...b.steps],
+              [] as Step[]
+            );
+          }
         })
         .catch(() => this.navBack.bind(this));
     });
@@ -66,7 +73,13 @@ export class ObjectPageComponent implements OnInit {
 
   saveCurrentScenario(): void {
     if (this.scenario) {
-      this.scenarioService.saveScenario(this.scenario);
+      this.scenarioService.saveScenario(this.scenario).then(() => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Save',
+          detail: 'Current scenario saved!',
+        });
+      });
     }
   }
 
@@ -84,6 +97,10 @@ export class ObjectPageComponent implements OnInit {
         this.replay = !this.replay;
       });
     }
+  }
+
+  disconnect() {
+    this.replayService.stopReplay();
   }
 
   connectToPage() {

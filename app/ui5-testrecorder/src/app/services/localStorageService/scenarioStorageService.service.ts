@@ -10,6 +10,9 @@ export class ScenarioStorageService {
     return chrome.storage.local
       .get(id)
       .then((data: { [key: string]: string }) => {
+        if (Object.keys(data).length === 0) {
+          throw Error();
+        }
         return TestScenario.fromJSON(data[Object.keys(data)[0]]);
       });
   }
@@ -57,6 +60,14 @@ export class ScenarioStorageService {
       });
   }
 
+  public async removeScenario(entity: TestScenario): Promise<void> {
+    const scenarioId = entity.id;
+    let ids = await this.getIdList();
+    ids = ids.filter((id) => id !== scenarioId);
+    await this.removeEntity(scenarioId);
+    return this.storeIdList(ids);
+  }
+
   private getIdList(): Promise<string[]> {
     return chrome.storage.local
       .get([this._path])
@@ -80,5 +91,9 @@ export class ScenarioStorageService {
     const storage: { [key: string]: string } = {};
     storage[entity.id] = entity.toString();
     return chrome.storage.local.set(storage);
+  }
+
+  private removeEntity(entityId: string): Promise<void> {
+    return chrome.storage.local.remove(entityId);
   }
 }

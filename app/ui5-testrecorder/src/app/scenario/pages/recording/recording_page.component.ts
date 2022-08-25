@@ -66,6 +66,6 @@ export class RecordingPageComponent implements OnInit {
       this.steps
     );
 
-    this.router.navigate(['scenario/scenarioView', id]);
+    this.router.navigate(['scenario/scenarioDetail', id]);
   }
 }

@@ -41,7 +41,7 @@ export class ScenarioService {
     return ts;
   }
 
-  public getScenario(id: string): Promise<TestScenario> {
+  public getScenario(id: string): Promise<TestScenario | undefined> {
     const s = this.cachedScenarios.find((cs) => cs.id === id);
     if (s) {
       return Promise.resolve(s);
@@ -51,12 +51,29 @@ export class ScenarioService {
         .then((scen: TestScenario) => {
           this.cachedScenarios.push(scen);
           return scen;
+        })
+        .catch(() => {
+          return undefined;
         });
     }
   }
 
   public saveScenario(scenario: TestScenario): Promise<void> {
-    return this.local_storage_service.save(scenario);
+    scenario.latestEdit = Date.now();
+    return this.local_storage_service.save(scenario).then(() => {
+      this.cachedScenarios = this.cachedScenarios.filter(
+        (ts) => ts.id !== scenario.id
+      );
+      this.cachedScenarios.push(scenario);
+    });
+  }
+
+  public deleteScenario(scenario: TestScenario): Promise<void> {
+    return this.local_storage_service.removeScenario(scenario).then(() => {
+      this.cachedScenarios = this.cachedScenarios.filter(
+        (ts) => ts.id !== scenario.id
+      );
+    });
   }
 
   public getAttributeFromControl(
@@ -103,6 +120,7 @@ export class ScenarioService {
 
       res.controlId = a.control.id;
       res.controlType = a.control.type;
+      res.controlAttributes = a.control.properties;
       res.styleClasses = a.control.classes;
       res.actionLoc = a.location;
       return res;

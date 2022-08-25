@@ -3,19 +3,18 @@ import {
   Component,
   ContentChildren,
   Input,
+  OnInit,
   QueryList,
   TemplateRef,
 } from '@angular/core';
-import { Location } from '@angular/common';
 import { AppTemplateDirective } from 'src/app/directives/app-template.directive';
 import { AppHeaderService } from './app-header.service';
-
 @Component({
   selector: 'app-header',
   templateUrl: './app-header.component.html',
   styleUrls: ['./app-header.component.css'],
 })
-export class AppHeaderComponent implements AfterContentInit {
+export class AppHeaderComponent implements OnInit, AfterContentInit {
   actionButtonsTemplate: TemplateRef<any> | null = null;
   titleContentTemplate: TemplateRef<any> | null = null;
 
@@ -26,9 +25,11 @@ export class AppHeaderComponent implements AfterContentInit {
   templates?: QueryList<AppTemplateDirective>;
 
   constructor(
-    public appHeaderService: AppHeaderService,
-    private _location: Location
+    public appHeaderService: AppHeaderService
   ) {}
+
+  ngOnInit() {
+  }
 
   ngAfterContentInit() {
     this.templates?.forEach((item) => {
@@ -37,13 +38,13 @@ export class AppHeaderComponent implements AfterContentInit {
           this.actionButtonsTemplate = item.template;
           break;
         case 'titleContent':
-          this.actionButtonsTemplate = item.template;
+          this.titleContentTemplate = item.template;
           break;
       }
     });
   }
 
   navBack() {
-    this._location.back();
+    this.appHeaderService.navigateBackwards();
   }
 }

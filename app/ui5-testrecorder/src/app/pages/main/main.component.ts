@@ -102,6 +102,18 @@ export class MainComponent implements OnInit {
     this.filterEntries(searchString);
   }
 
+  removeScenario(scen: TestScenario) {
+    this.scenarioService.deleteScenario(scen).then(() => {
+      this.messageService.clear();
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Remove',
+        detail: 'Scenario deleted!',
+      });
+      this.loadScenarios();
+    });
+  }
+
   private filterEntries(search: string) {
     if (!search) {
       this.elements = this.raw_elements.map((el) => el);
@@ -122,11 +134,7 @@ export class MainComponent implements OnInit {
 
   handleChange(e: { originalEvent: any; index: number }) {
     if (e.index === 1) {
-      this.scenarioService
-        .getAllScenarios()
-        .then((scenarios: TestScenario[]) => {
-          this.scenarios = scenarios;
-        });
+      this.loadScenarios();
     }
   }
 
@@ -150,6 +158,15 @@ export class MainComponent implements OnInit {
     input.click();
   }
 
+  private loadScenarios(): void {
+    this.scenarioService.getAllScenarios().then((scenarios: TestScenario[]) => {
+      this.scenarios = scenarios?.sort(
+        (sc1: TestScenario, sc2: TestScenario) =>
+          sc2.latestEdit - sc1.latestEdit
+      );
+    });
+  }
+
   private async importFinished(content: { [key: string]: any }): Promise<void> {
     const scen_id = content['scenario_id'];
     const scen = await this.scenarioService.getScenario(scen_id);
@@ -167,6 +184,7 @@ export class MainComponent implements OnInit {
             summary: 'Import',
             detail: 'Scenario imported',
           });
+          this.loadScenarios();
         },
       });
     } else {
@@ -178,6 +196,7 @@ export class MainComponent implements OnInit {
         summary: 'Import',
         detail: 'Scenario imported',
       });
+      this.loadScenarios();
     }
   }
 }

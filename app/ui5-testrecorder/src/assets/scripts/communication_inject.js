@@ -19,11 +19,14 @@ Object.defineProperty(Example, 'constant1', {
 Example.constant1; // 33
 Example.constant1 = 15; // TypeError */ //define constants on a class;
 class WS {
-  static own_id = "ui5_com_ws";
+  static own_id = "ui5_tr_handler";
+  constructor(sExt_id) {
+    this.ext_id = sExt_id;
+  }
 
   send_record_step(step) {
     window.postMessage({
-      origin: WS.own_id, message: {
+      origin: `${this.ext_id}_${WS.own_id}`, message: {
         instantType: 'record-token',
         content: step
       }
@@ -101,7 +104,7 @@ class API {
   }
 
   _handleEvent(oEvent, sExt_id) {
-    const answer_origin = sExt_id + '_' + API.own_id;
+    const answer_origin = `${sExt_id}_${API.own_id}`;
     const event_id = oEvent?.data?.message_id;
     const req_type = oEvent?.data?.method;
 
@@ -201,7 +204,7 @@ const ext_id = document.getElementById('UI5TR-communication-js').getAttribute('d
 
 com_api.listen(ext_id);
 
-const ws_api = new WS();
+const ws_api = new WS(ext_id);
 
 //API to design
 //https://dmitripavlutin.com/parse-url-javascript/

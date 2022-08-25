@@ -44,15 +44,22 @@ const setupHoverSelectEffect = () => {
 }
 
 const setupClickListener = () => {
-  document.onmousedown = (e) => {
+  /* document.onmousedown = (e) => {
     let event = e || window.event;
     let el = event.target || event.srcElement;
-    //let ui5El = _getUI5Element(el);
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-    //console.dir(`OnMouseDown > ${ui5El}`);
-  }
+    let ui5El = _getUI5Element(el);
+    ws_api.send_record_step({
+      type: 'clicked',
+      control: {
+        id: ui5El.sId,
+        type: ui5El.getMetadata().getElementName(),
+        classes: ui5El.aCustomStyleClasses,
+        properties: _getUI5ElementProperties(ui5El)
+      },
+      location: window.location.href
+    })
+    return false;
+  } */
 
   document.onclick = (e) => {
     let event = e || window.event;
@@ -68,7 +75,7 @@ const setupClickListener = () => {
         id: ui5El.sId,
         type: ui5El.getMetadata().getElementName(),
         classes: ui5El.aCustomStyleClasses,
-        domRef: ui5El.getDomRef().outerHTML,
+        /* domRef: ui5El.getDomRef().outerHTML, */
         properties: _getUI5ElementProperties(ui5El)
       },
       location: window.location.href
@@ -151,270 +158,73 @@ const _getUI5ElementProperties = (el) => {
     .filter(m => m.startsWith("get"))
     // create the properties object by collect and execute all getter
     .reduce((a, b) => {
-      a[lowerCaseFirstLetter(b.replace('get', ''))] = el[0][b]();
+      const key = lowerCaseFirstLetter(b.replace('get', ''));
+      const value = el[b]();
+      if (typeof value !== 'object') {
+        a[key] = value;
+      } else {
+        try {
+          JSON.stringify(value);
+          a[key] = value;
+        } catch (e) { }
+      }
       return a;
     }, {})
 }
 
 const executeAction = (oEvent) => {
   const oItem = oEvent.step;
-  var oDOMNodeCandidates = getDomForControl(oItem);
-  // check preconditions for action and retrieve DOM node
-  var oCheckResult = __checkActionPreconditions(oDOMNodeCandidates, true);
+  let elements = _getUI5Elements();
+  // filter by control_type
+  elements = Object.values(elements).filter(el => el.getMetadata().getElementName() === oItem.control_type);
+  // filter by control_attributes
+  elements = elements.filter(el => {
+    return Object.entries(oItem.control_attributes)
+      // create getter function names and expected values from control_attributes
+      .map(attributeEntry => ({ key: 'get' + upperCaseFirstLetter(attributeEntry[0]), value: attributeEntry[1] }))
+      // create list of expection-results
+      .map(executeMatcher => el[executeMatcher.key]() === executeMatcher.value)
+      // check if all selected attributes really match
+      .reduce((a, b) => a && b, true)
+  });
 
-  // prepare temporary variables for processing and returning
-  var aEvents = [];
-  var aResolutions = [];
-  // retrieve DOM node
-  var oDOMNode = oCheckResult.domNode;
-  delete oCheckResult.domNode;
-
-  // check result of action check
-  switch (oCheckResult.result) {
-    case "error":
-      return oCheckResult;
-
-    case "warning":
-      aResolutions.push(oCheckResult);
-      break;
-  }
-
-  function testEvent(oDOMNode, sListener, oEvent) {
-
-    return new Promise(function (resolve, reject) {
-
-      function handleIssuedEvent(oEventCaught) {
-        if (oEventCaught.ui5tr === "UI5TR" && oEvent === oEventCaught) {
-          resolve({
-            result: "success"
-          });
-        }
-      }
-
-      oEvent.ui5tr = "UI5TR";
-      oDOMNode.addEventListener(sListener, handleIssuedEvent);
-      oDOMNode.dispatchEvent(oEvent);
-
-      if (iTimeout != 0) {
-        // resolve the promise with an error message after 5 seconds
-        setTimeout(function () {
-          resolve({
-            result: "error",
-            message: {
-              type: "Error",
-              title: "Timeout during replay",
-              subtitle: "Your action could not be executed within " + iTimeout + " seconds",
-              description: "The current action could not be executed within " + iTimeout + " seconds. This is done for convenience to avoid potential deadlocks during replay."
-            }
-          });
-        }.bind(this), iTimeout * 1000);
-      }
-    });
-  }
-
-  // identify control for current DOM node so special cases for specific controls can be handled
-  var oControl = getControlFromDom(oDOMNode);
-
-  // reveal DOM node by using CSS classes and add fade-out effect
-  /* revealDOMNode(oDOMNode);
-  setTimeout(function () {
-    revealDOMNode(null);
-  }, 500); */
-
-  // for mouse-press events
-  if (oItem.property.actKey === "PRS") {
-
-    aEvents.push(new Promise(function (resolve, reject) {
-      var Press = null;
-      try {
-        Press = window.sap.ui.requireSync("sap/ui/test/actions/Press");
-      } catch (err) {
-
-      }
-      if (Press) {
-        var oPressAction = new Press();
-        oPressAction.executeOn(oControl);
-        resolve({
-          result: "success"
-        });
-      } else {
-        //fallback for old versions..
-        var event = new MouseEvent('mousedown', {
-          view: _wnd.window,
-          bubbles: true,
-          cancelable: true
-        });
-        event.originalEvent = event; //self refer
-        oDOMNode.dispatchEvent(event);
-
-        var event = new MouseEvent('mouseup', {
-          view: _wnd.window,
-          bubbles: true,
-          cancelable: true
-        });
-        event.originalEvent = event; //self refer
-        oDOMNode.dispatchEvent(event);
-
-        var event = new MouseEvent('click', {
-          view: _wnd.window,
-          bubbles: true,
-          cancelable: true
-        });
-        event.originalEvent = event; //self refer
-        oDOMNode.dispatchEvent(event);
-        resolve({
-          result: "success"
-        });
-      }
-    }));
-
-  } else
-    // for typing events
-    if (oItem.property.actKey === "TYP") {
-
-      var sText = oItem.property.selectActInsert;
-      var bClearTextFirst = oItem.property.actionSettings.replaceText;
-      var bPressEnterKey = oItem.property.actionSettings.enter;
-      var bKeepFocus = !oItem.property.actionSettings.blur;
-      var bEnterPressed = false;
-
-      var oEnterTextActionPromise = new Promise(function (resolve, reject) {
-        var EnterText = null;
-        try {
-          EnterText = window.sap.ui.requireSync("sap/ui/test/actions/EnterText");
-        } catch (err) {
-
-        }
-        if (EnterText) {
-          var oEnterTextAction = new EnterText();
-
-          oEnterTextAction.setText(sText);
-          oEnterTextAction.setClearTextFirst(bClearTextFirst);
-          oEnterTextAction.setKeepFocus(bKeepFocus);
-
-          // for UI5 >= 1.76, we can press the Enter key using the action
-          if (oEnterTextAction.setPressEnterKey) {
-            oEnterTextAction.setPressEnterKey(bPressEnterKey);
-            bEnterPressed = true;
-          }
-
-          oEnterTextAction.executeOn(oControl);
-
-          resolve({
-            result: "success"
-          });
-        } else {
-          oDOMNode.focus();
-          if (sText.length > 0 && oItem.property.actionSettings.replaceText === false) {
-            oDOMNode.val(oDom.val() + sText);
-          } else {
-            oDOMNode.val(sText);
-          }
-
-          var event = new KeyboardEvent('input', {
-            view: window,
-            data: '',
-            bubbles: true,
-            cancelable: true
-          });
-          event.originalEvent = event;
-          oDOMNode.dispatchEvent(event);
-          resolve({
-            result: "success"
-          });
-        }
-      });
-
-      // chain Promise to execute press on Enter key:
-      // we need to ensure that Enter is pressed *after* the text is entered,
-      // so we chain the enter after the already existing promise
-      var oEnterKeyPressActionPromise = new Promise(function (resolve) {
-
-        oEnterTextActionPromise.then(function (oResult) {
-          // return that result if...
-          // (1) the typing action above has not worked or
-          // (2) if Enter is *not* to be pressed
-          if (oResult.result !== "success" || !bPressEnterKey) {
-            resolve(oResult);
-            return;
-          }
-
-          // instead execute the press of the Enter key,
-          // but only if it has not been already pressed
-          if (!bEnterPressed) {
-            // create KeyBoardEvent to simulate Enter
-            var event = new KeyboardEvent('keydown', {
-              view: window,
-              data: '',
-              charCode: 0,
-              code: "Enter",
-              key: "Enter",
-              keyCode: 13,
-              which: 13,
-              bubbles: true,
-              cancelable: true
-            });
-            event.originalEvent = event;
-
-            // dispatch event and resolve appropriately
-            var oEventPromise = testEvent(oDOMNode, "keydown", event);
-            oEventPromise.then(function (oEventPromiseResult) {
-              resolve(oEventPromiseResult);
-            });
-          }
-        });
-
-      });
-
-      // add Promise as an event to be gathered later
-      aEvents.push(oEnterKeyPressActionPromise);
-
+  if (elements.length === 1) {
+    switch (oItem.action_type) {
+      case "clicked":
+        _executeClick(elements[0]);
+        break;
     }
+  } else {
+    console.log('Elements length: ', elements.length);
+  }
 
-  return new Promise(function (resolve) {
+}
 
-    // gather results:
-    Promise.all(aEvents).then(function (aPromiseResolutions) {
+const _executeClick = (el) => {
+  const mouseDownEvent = new MouseEvent('mousedown', {
+    view: window,
+    bubbles: true,
+    cancelable: true
+  });
+  mouseDownEvent.originalEvent = mouseDownEvent; //self refer
 
-      // 1) add resolutions to global set of results (e.g., upfront warnings)
-      aResolutions = aResolutions.concat(aPromiseResolutions);
+  var mouseUpEvent = new MouseEvent('mouseup', {
+    view: window,
+    bubbles: true,
+    cancelable: true
+  });
+  mouseUpEvent.originalEvent = mouseUpEvent; //self refer
 
-      // 2) construct overall result value:
-      // 2.1) collect results
-      var aResults = aResolutions.map(function (oResult) {
-        return oResult.result;
-      });
-      // 2.2) check for warnings and errors
-      var bWarningIssued = false;
-      var bErrorIssued = false;
-      aResults.forEach(function (sResult) {
-        if (sResult === "error") {
-          bErrorIssued = true;
-        } else if (sResult === "warning") {
-          bWarningIssued = true;
-        }
-      });
-      // 2.3) compute result value
-      var sResult = bErrorIssued ? "error" : bWarningIssued ? "warning" : "success";
+  var clickEvent = new MouseEvent('click', {
+    view: window,
+    bubbles: true,
+    cancelable: true
+  });
+  clickEvent.originalEvent = clickEvent;
 
-      // 3) gather messages:
-      // 3.1) collect messages
-      var aMessages = aResolutions.map(function (oResult) {
-        return oResult.message;
-      });
-      // 3.2) remove duplicate and empty messages
-      aMessages = aMessages.filter(function (sMessage, pos) {
-        return !!sMessage && aMessages.indexOf(sMessage) === pos;
-      });
-
-      resolve({
-        result: sResult,
-        messages: aMessages,
-        type: "ACT"
-      });
-    }.bind(this));
-
-  }.bind(this));
+  el.getDomRef().dispatchEvent(mouseDownEvent);
+  el.getDomRef().dispatchEvent(mouseUpEvent);
+  el.getDomRef().dispatchEvent(clickEvent);
 }
 
 const getDomForControl = (oControlData) => {
@@ -502,5 +312,8 @@ const __checkActionPreconditions = (aDOMNodes, bReturnSelectedNode = false) => {
 
 const lowerCaseFirstLetter = ([first, ...rest], locale = navigator.language) =>
   first === undefined ? '' : first.toLocaleLowerCase(locale) + rest.join('')
+
+const upperCaseFirstLetter = ([first, ...rest], locale = navigator.language) =>
+  first === undefined ? '' : first.toLocaleUpperCase(locale) + rest.join('')
 
 setupAll();
