@@ -92,15 +92,35 @@ export class TestScenario implements Stringify {
 }
 
 export class Page implements Stringify {
+  private page_id: string = '';
   private page_location: string = '';
   private page_steps: Step[] = [];
+  private view_information: {
+    absoluteViewName: string;
+    relativeViewName: string;
+  } = {
+    absoluteViewName: '',
+    relativeViewName: '',
+  };
+
+  constructor(id: string) {
+    this.page_id = id;
+  }
 
   toString(): string {
     return JSON.stringify(this);
   }
 
+  get id(): string {
+    return this.page_id;
+  }
+
   set location(loc: string) {
     this.page_location = loc;
+  }
+
+  set view(v: { absoluteViewName: string; relativeViewName: string }) {
+    this.view_information = v;
   }
 
   get location(): string {
@@ -111,14 +131,20 @@ export class Page implements Stringify {
     return this.page_steps;
   }
 
+  get view(): { absoluteViewName: string; relativeViewName: string } {
+    return this.view_information;
+  }
+
   public addStep(s: Step) {
     this.page_steps.push(s);
   }
 
   public static fromJSON(json: string): Page {
     const parsedObj = JSON.parse(json);
-    const page = new Page();
+    const page = new Page(parsedObj.page_id);
     page.location = parsedObj.page_location;
+    page.view = parsedObj.view_information;
+
     if (parsedObj.page_steps) {
       parsedObj.page_steps.forEach((s: any) => {
         page.addStep(Page.stepFromJSON(JSON.stringify(s)));

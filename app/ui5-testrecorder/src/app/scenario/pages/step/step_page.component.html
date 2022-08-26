@@ -5,25 +5,41 @@
           </button>
           <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu> -->
   </ng-template>
-  <div class="form-group">
-    <label for="controlID">Control ID</label>
-    <input type="text" class="form-control" id="controlID" [value]="currentStep?.controlId" name="controlID" disabled>
-  </div>
+  <div>
+    <div class="form-group">
+      <label for="controlID">Control ID</label>
+      <input type="text" class="form-control" id="controlID" [value]="currentStep?.controlId" name="controlID" disabled>
+    </div>
 
-  <div class="form-group">
-    <label for="controlType">Control Type</label>
-    <input type="text" class="form-control" id="controlType" [value]="currentStep?.controlType" name="controlType"
-      disabled>
-  </div>
+    <div class="form-group">
+      <label for="controlType">Control Type</label>
+      <input type="text" class="form-control" id="controlType" [value]="currentStep?.controlType" name="controlType"
+        disabled>
+    </div>
 
-  <div class="form-group">
-    <label for="location">Location URL</label>
-    <input type="text" class="form-control" id="location" [value]="currentStep?.actionLoc" name="location" disabled>
-  </div>
+    <div class="form-group">
+      <label for="location">Location URL</label>
+      <input type="text" class="form-control" id="location" [value]="currentStep?.actionLoc" name="location" disabled>
+    </div>
 
-  <div class="form-group">
-    <label for="classes">Control Classes (CSS)</label>
-    <input type="text" class="form-control" id="classes" [value]="currentStep?.styleClasses?.join(',')" name="classes"
-      disabled>
-  </div>
+    <div class="form-group">
+      <label for="classes">Control Classes (CSS)</label>
+      <input type="text" class="form-control" id="classes" [value]="currentStep?.styleClasses?.join(',')" name="classes"
+        disabled>
+    </div>
+  </div><!--
+  <div>
+    <div class="form-group">
+      <label for="classes">Page-Name</label>
+      <input type="text" class="form-control" id="classes"
+        [value]="this.scenario_service.getPageForStep(currentStep)?.view?.relativeViewName" name="classes" disabled>
+    </div>
+  </div> -->
+</p-panel>
+<p-panel header="Code Preview" [toggleable]="true">
+  <ng-template pTemplate="icons">
+    <button pButton class="p-panel-header-icon p-link" icon="pi pi-code" (click)="this.generateStepCode()">
+    </button>
+  </ng-template>
+  <pre *ngIf="this.codeData?.value"><code [innerText]="this.codeData.value"></code></pre>
 </p-panel>

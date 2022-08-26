@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Step } from 'src/app/classes/testScenario';
 import { AppHeaderService } from 'src/app/components/app-header/app-header.service';
+import {
+  CodeService,
+  CodeStyles,
+} from 'src/app/services/codeService/codeService.service';
 import { ScenarioService } from 'src/app/services/scenarioService/scenario.service';
 
 @Component({
@@ -13,6 +17,12 @@ export class StepPageComponent implements OnInit {
   private scenario_id: string | undefined;
   private control_id: string | undefined;
   currentStep: Step | undefined;
+
+  codeData = {
+    language: 'javascript',
+    value: '',
+  };
+
   constructor(
     private active_route: ActivatedRoute,
     private scenario_service: ScenarioService,
@@ -28,5 +38,13 @@ export class StepPageComponent implements OnInit {
         this.control_id || ''
       );
     });
+  }
+
+  generateStepCode() {
+    if (this.currentStep) {
+      this.codeData.value = CodeService.generateStepCode(this.currentStep, {
+        language: CodeStyles.OPA5,
+      });
+    }
   }
 }

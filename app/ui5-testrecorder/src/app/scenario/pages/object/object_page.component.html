@@ -1,8 +1,8 @@
 <header class="object-header">
   <button type="button" pButton label="Export" title="Export" icon="pi pi-download" class="p-button-text"
-    style="margin-left: auto;" (click)="this.export()"></button>
+    style="margin-left: auto;" (click)="this.export()" [disabled]="this.scenario.name === ''"></button>
   <button *ngIf="this.scenario" type="button" pButton label="Save" title="Save" icon="pi pi-save" class="p-button-text"
-    (click)="this.saveCurrentScenario()"></button>
+    (click)="this.saveCurrentScenario()" [disabled]="this.scenario.name === ''"></button>
 </header>
 <main>
   <p-panel header="Scenario properties">

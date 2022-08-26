@@ -76,7 +76,8 @@ const setupClickListener = () => {
         type: ui5El.getMetadata().getElementName(),
         classes: ui5El.aCustomStyleClasses,
         /* domRef: ui5El.getDomRef().outerHTML, */
-        properties: _getUI5ElementProperties(ui5El)
+        properties: _getUI5ElementProperties(ui5El),
+        view: _getViewProperties(ui5El)
       },
       location: window.location.href
     })
@@ -93,7 +94,8 @@ const setupClickListener = () => {
               type: ui5El.getMetadata().getElementName(),
               classes: ui5El.aCustomStyleClasses,
               domRef: ui5El.getDomRef().outerHTML,
-              properties: _getUI5ElementProperties(ui5El)
+              properties: _getUI5ElementProperties(ui5El),
+              view: _getViewProperties(ui5El)
             },
             location: window.location.href
           });
@@ -310,10 +312,25 @@ const __checkActionPreconditions = (aDOMNodes, bReturnSelectedNode = false) => {
   return oResult;
 }
 
-const lowerCaseFirstLetter = ([first, ...rest], locale = navigator.language) =>
-  first === undefined ? '' : first.toLocaleLowerCase(locale) + rest.join('')
+const _getViewProperties = (ui5El) => {
+  let curEl = ui5El;
+  debugger;
+  while (!curEl.getViewName) {
+    curEl = curEl.getParent();
+  }
 
-const upperCaseFirstLetter = ([first, ...rest], locale = navigator.language) =>
-  first === undefined ? '' : first.toLocaleUpperCase(locale) + rest.join('')
+  return {
+    absoluteViewName: curEl.getViewName(),
+    relativeViewName: curEl.getViewName().split(".").pop()
+  };
+}
+
+const lowerCaseFirstLetter = ([first, ...rest], locale = navigator.language) => {
+  return first === undefined ? '' : first.toLocaleLowerCase(locale) + rest.join('');
+}
+
+const upperCaseFirstLetter = ([first, ...rest], locale = navigator.language) => {
+  return first === undefined ? '' : first.toLocaleUpperCase(locale) + rest.join('');
+}
 
 setupAll();

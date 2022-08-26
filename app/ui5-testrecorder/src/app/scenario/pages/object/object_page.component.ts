@@ -130,7 +130,7 @@ export class ObjectPageComponent implements OnInit {
       type: 'octet/stream',
     });
     const name =
-      this.replaceUnsupportedFileSigns(this.scenario?.id || 'blub', '_') +
+      this.replaceUnsupportedFileSigns(this.scenario?.name || 'blub', '_') +
       '.json';
 
     link.setAttribute('href', window.URL.createObjectURL(blob));

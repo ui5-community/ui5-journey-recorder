@@ -28,7 +28,7 @@ import { ScenarioComponent } from './scenario.component';
     ScenarioComponent,
     SimpleListComponent,
     StepPageComponent,
-    ActionImagePipe,
+    ActionImagePipe
   ],
   imports: [
     CommonModule,

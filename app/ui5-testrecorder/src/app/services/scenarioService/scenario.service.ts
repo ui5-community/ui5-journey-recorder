@@ -15,6 +15,10 @@ import {
 } from '../../classes/testScenario';
 import { ScenarioStorageService } from '../localStorageService/scenarioStorageService.service';
 
+type IntermediateStep = Step & {
+  view?: { absoluteViewName: string; relativeViewName: string };
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -31,11 +35,11 @@ export class ScenarioService {
   }
 
   public createScenarioFromRecording(recording: any[]): TestScenario {
+    const ts = new TestScenario(this.createUUID(), Date.now());
     const stepTree = this.transformToAst(
       this.reduceSteps(this.transformEventsToSteps(recording))
     );
     const pages = this.createPages(stepTree);
-    const ts = new TestScenario(this.createUUID(), Date.now());
     pages.forEach((p) => ts.addPage(p));
     this.cachedScenarios.push(ts);
     return ts;
@@ -104,15 +108,15 @@ export class ScenarioService {
     return step;
   }
 
-  private transformEventsToSteps(events: any): Step[] {
-    return events.map((a: any) => {
-      let res: Step;
+  private transformEventsToSteps(events: any): IntermediateStep[] {
+    return events.map((a: any, i: number) => {
+      let res: IntermediateStep;
       switch (a.type) {
         case 'clicked':
           res = new ClickStep();
           break;
         case 'keypress':
-          res = new KeyPressStep(a.key, a.keyCode);
+          res = new KeyPressStep();
           break;
         default:
           res = new UnknownStep();
@@ -123,31 +127,35 @@ export class ScenarioService {
       res.controlAttributes = a.control.properties;
       res.styleClasses = a.control.classes;
       res.actionLoc = a.location;
+      res.view = a.control.view;
       return res;
     });
   }
 
-  private reduceSteps(steps: Step[]): Step[][] {
-    return steps.reduce((a: Step[][], b: Step): any[] => {
-      const el = a.pop();
-      if (!el) {
-        a.push([b]);
-      } else {
-        if (el[0].equalsTo(b)) {
-          el.push(b);
-          a.push(el);
-        } else {
-          a.push(el);
+  private reduceSteps(steps: IntermediateStep[]): IntermediateStep[][] {
+    return steps.reduce(
+      (a: IntermediateStep[][], b: IntermediateStep): any[] => {
+        const el = a.pop();
+        if (!el) {
           a.push([b]);
+        } else {
+          if (el[0].equalsTo(b)) {
+            el.push(b);
+            a.push(el);
+          } else {
+            a.push(el);
+            a.push([b]);
+          }
         }
-      }
-      return a;
-    }, []);
+        return a;
+      },
+      []
+    );
   }
 
-  private transformToAst(steps: Step[][]): Step[] {
+  private transformToAst(steps: IntermediateStep[][]): IntermediateStep[] {
     return steps.map((el) => {
-      let res: Step = new UnknownStep();
+      let res: IntermediateStep = new UnknownStep();
       if (el.length === 1) {
         res = el[0];
       } else {
@@ -159,9 +167,9 @@ export class ScenarioService {
     });
   }
 
-  private transformToTypings(parts: Step[]): Step {
+  private transformToTypings(parts: IntermediateStep[]): IntermediateStep {
     const inputStep = new InputStep();
-    return parts.reduce((a: InputStep, b: Step) => {
+    return parts.reduce((a: InputStep, b: IntermediateStep) => {
       if (b instanceof KeyPressStep) {
         a.addStep(b);
       } else if (b instanceof ClickStep) {
@@ -172,24 +180,29 @@ export class ScenarioService {
     }, inputStep);
   }
 
-  private createPages(stepTree: Step[]): Page[] {
+  private createPages(stepTree: IntermediateStep[]): Page[] {
     const pages: Page[] = [];
 
     stepTree.forEach((s) => {
       const lastPage = pages.pop();
       if (!lastPage) {
-        const p = new Page();
+        const p = new Page('' + pages.length);
         p.location = s.actionLoc;
+        p.view = s.view || { absoluteViewName: '', relativeViewName: '' };
+        delete s.view;
         p.addStep(s);
         pages.push(p);
       } else {
         if (lastPage.location === s.actionLoc) {
+          delete s.view;
           lastPage.addStep(s);
           pages.push(lastPage);
         } else {
           pages.push(lastPage);
-          const p = new Page();
+          const p = new Page('' + pages.length);
           p.location = s.actionLoc;
+          p.view = s.view || { absoluteViewName: '', relativeViewName: '' };
+          delete s.view;
           p.addStep(s);
           pages.push(p);
         }
