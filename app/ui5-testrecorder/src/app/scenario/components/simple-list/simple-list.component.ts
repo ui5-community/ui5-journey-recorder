@@ -4,7 +4,7 @@ import { Step } from 'src/app/classes/testScenario';
 @Component({
   selector: 'app-simple-list',
   templateUrl: './simple-list.component.html',
-  styleUrls: ['./simple-list.component.css'],
+  styleUrls: ['./simple-list.component.scss'],
 })
 export class SimpleListComponent {
   private _data: any[] | undefined;

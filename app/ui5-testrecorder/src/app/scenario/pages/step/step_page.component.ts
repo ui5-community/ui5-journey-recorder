@@ -8,7 +8,7 @@ import { CodeService, CodeStyles } from '../../codeService/codeService.service';
 @Component({
   selector: 'app-step-page',
   templateUrl: './step_page.component.html',
-  styleUrls: ['./step_page.component.css'],
+  styleUrls: ['./step_page.component.scss'],
 })
 export class StepPageComponent implements OnInit {
   private scenario_id: string | undefined;

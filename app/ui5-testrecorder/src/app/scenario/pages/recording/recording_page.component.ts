@@ -10,7 +10,7 @@ import { RecordStopDialogComponent } from '../../dialogs/RecordStopDialog/Record
 @Component({
   selector: 'app-recording-page',
   templateUrl: './recording_page.component.html',
-  styleUrls: ['./recording_page.component.css'],
+  styleUrls: ['./recording_page.component.scss'],
 })
 export class RecordingPageComponent implements OnInit {
   tab: chrome.tabs.Tab | undefined;

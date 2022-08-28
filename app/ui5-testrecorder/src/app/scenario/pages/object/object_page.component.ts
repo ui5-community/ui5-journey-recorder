@@ -15,7 +15,7 @@ import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-object-page',
   templateUrl: './object_page.component.html',
-  styleUrls: ['./object_page.component.css'],
+  styleUrls: ['./object_page.component.scss'],
 })
 export class ObjectPageComponent implements OnInit {
   navigatedPage: string = 'Test';
