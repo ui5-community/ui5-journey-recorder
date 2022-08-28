@@ -5,7 +5,7 @@ import { Step, StepType } from '../../classes/testScenario';
   name: 'actionImage',
 })
 export class ActionImagePipe implements PipeTransform {
-  transform(type: StepType): string {
+  transform(type?: StepType): string {
     switch (type) {
       case StepType.Click:
         return 'assets/icons/mouse-click-icon.svg';

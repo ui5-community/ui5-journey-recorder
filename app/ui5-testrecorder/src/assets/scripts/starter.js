@@ -16,8 +16,8 @@ chrome.action.onClicked.addListener((/* tab */) => {/*
     url: chrome.runtime.getURL('../index.html'),
     type: 'popup',
     focused: true
-  }, (fnWindow) => {
-    console.log(`loaded extension with id: ${fnWindow.id}`);
+  }, (fnWindow) => {/*
+    console.log(`loaded extension with id: ${fnWindow.id}`); */
   });
 
 });

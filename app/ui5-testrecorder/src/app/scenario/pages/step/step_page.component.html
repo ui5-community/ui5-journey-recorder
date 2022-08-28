@@ -1,40 +1,36 @@
 <p-panel header="Control Selectors" [toggleable]="true">
-  <ng-template pTemplate="icons">
-    <!-- <button pButton class="p-panel-header-icon p-link" (click)="menu.toggle($event)">
-              <span class="pi pi-cog"></span>
-          </button>
-          <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu> -->
+  <ng-template pTemplate="header">
+    <img [title]="currentStep?.actionType" [src]="(currentStep?.actionType | actionImage)"
+      style="height: 1rem; margin-right: 1em;" />
   </ng-template>
-  <div>
+  <div class="form-container">
     <div class="form-group">
-      <label for="controlID">Control ID</label>
-      <input type="text" class="form-control" id="controlID" [value]="currentStep?.controlId" name="controlID" disabled>
+      <div class="form-item">
+        <label for="controlID" class="form-label">Control ID</label>
+        <input pInputText class="form-control" id="controlID" type="text" aria-describedby="control-id"
+          [value]="currentStep?.controlId" name="controlID" disabled="true">
+      </div>
+
+      <div class="form-item">
+        <label for="controlType">Control Type</label>
+        <input pInputText type="text" class="form-control" id="controlType" [value]="currentStep?.controlType"
+          name="controlType" disabled>
+      </div>
     </div>
 
     <div class="form-group">
-      <label for="controlType">Control Type</label>
-      <input type="text" class="form-control" id="controlType" [value]="currentStep?.controlType" name="controlType"
-        disabled>
-    </div>
+      <div class="form-item">
+        <label for="location">Location URL</label>
+        <input type="text" class="form-control" id="location" [value]="currentStep?.actionLoc" name="location" disabled>
+      </div>
 
-    <div class="form-group">
-      <label for="location">Location URL</label>
-      <input type="text" class="form-control" id="location" [value]="currentStep?.actionLoc" name="location" disabled>
+      <div class="form-item">
+        <label for="classes">Control Classes (CSS)</label>
+        <input type="text" class="form-control" id="classes" [value]="currentStep?.styleClasses?.join(',')"
+          name="classes" disabled>
+      </div>
     </div>
-
-    <div class="form-group">
-      <label for="classes">Control Classes (CSS)</label>
-      <input type="text" class="form-control" id="classes" [value]="currentStep?.styleClasses?.join(',')" name="classes"
-        disabled>
-    </div>
-  </div><!--
-  <div>
-    <div class="form-group">
-      <label for="classes">Page-Name</label>
-      <input type="text" class="form-control" id="classes"
-        [value]="this.scenario_service.getPageForStep(currentStep)?.view?.relativeViewName" name="classes" disabled>
-    </div>
-  </div> -->
+  </div>
 </p-panel>
 <p-panel header="Code Preview" [toggleable]="true">
   <ng-template pTemplate="icons">

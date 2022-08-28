@@ -28,7 +28,6 @@ import { AppHeaderService } from './components/app-header/app-header.service';
 import { ChromeExtensionService } from './services/chromeExtensionService/chrome_extension_service';
 import { ScenarioService } from './services/scenarioService/scenario.service';
 import { ScenarioStorageService } from './services/localStorageService/scenarioStorageService.service';
-import { CodeService } from './services/codeService/codeService.service';
 //#endregion
 
 //#region pages
@@ -61,7 +60,6 @@ import { AppTemplateDirective } from './directives/app-template.directive';
   ],
   providers: [
     ConfirmationService,
-    CodeService,
     MessageService,
     AppFooterService,
     AppHeaderService,

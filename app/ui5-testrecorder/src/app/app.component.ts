@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter, map, Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 export let browserRefresh = false;
 
@@ -12,18 +10,22 @@ export let browserRefresh = false;
 })
 export class AppComponent implements OnInit {
   title = 'ui5-testrecorder';
-  curRoute$?: Observable<NavigationEnd>;
 
-  constructor(private _location: Location, private router: Router) {}
+  constructor(private router: Router) {}
 
   ngOnInit() {
-    this.curRoute$ = this.router.events.pipe(
-      filter((e) => e instanceof NavigationEnd),
-      map((e) => e as NavigationEnd)
-    );
-  }
+    const fKey = (event: any) => {
+      const e = event || window.event;
+      if (e.keyCode === 116) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        window.location.href = '../index.html';
+      }
+    };
 
-  navBack() {
-    this._location.back();
+    document.onkeydown = fKey;
+    document.onkeypress = fKey;
+    document.onkeyup = fKey;
   }
 }

@@ -18,6 +18,7 @@ import { ActionImagePipe } from './pipes/actionImage.pipe';
 import { RecordingPageComponent } from './pages/recording/recording_page.component';
 import { StepPageComponent } from './pages/step/step_page.component';
 import { ScenarioComponent } from './scenario.component';
+import { CodeService } from './codeService/codeService.service';
 //#endregion
 
 @NgModule({
@@ -28,7 +29,7 @@ import { ScenarioComponent } from './scenario.component';
     ScenarioComponent,
     SimpleListComponent,
     StepPageComponent,
-    ActionImagePipe
+    ActionImagePipe,
   ],
   imports: [
     CommonModule,
@@ -42,6 +43,7 @@ import { ScenarioComponent } from './scenario.component';
     //#endregion
   ],
   providers: [
+    CodeService,
     //#region prime-ng
     DialogService,
     //#endregion

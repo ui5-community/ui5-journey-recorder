@@ -2,29 +2,37 @@
 :root {
   --primary-color: #a01441 !important;
 }
+
 body {
   height: 100vh;
   width: 100vw;
   margin: 0;
   padding: 0;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans,
-    sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol,
-    Noto Color Emoji;
+  font-family: -apple-system, BlinkMacSystemFont,
+    Segoe UI, Roboto, Helvetica, Arial, sans-serif,
+    Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
 }
 
-.navigate {
-  position: relative;
+.form-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1em;
 }
 
-.navigate::after {
-  content: "\003E";
-  position: absolute;
-  right: 0;
-  height: 3rem;
-  font-size: 3rem;
-  bottom: 0.5rem;
-  line-height: 4rem;
-  font-family: monospace;
-  color: darkgray;
+.form-item>input[type="text"] {
+  background: transparent;
+  border-color: darkgray;
+  border-radius: 5px;
+  padding: 4px;
+  border-style: solid;
+  border-width: 1px;
+  cursor: not-allowed;
+}
+
+.form-item>input[type="text"]:disabled {
+  background: #00000008;
+}
+
+.form-item > label.form-label {
+  margin-bottom: 0.3em;
 }
