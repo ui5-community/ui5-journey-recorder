@@ -1,0 +1,13 @@
+{
+  "name": "UI5 Testrecorder",
+  "tsconfig": "./tsconfig.doc.json",
+  "output": "documentation",
+  "customLogo": "src/assets/icons/icon.svg",
+  "includes": "doc_assets",
+  "silent": true,
+  "hideGenerator": false,
+  "disablePrivate": false,
+  "disableSourceCode":false,
+  "disableTemplateTab": false,
+  "disableStyleTab":false
+}

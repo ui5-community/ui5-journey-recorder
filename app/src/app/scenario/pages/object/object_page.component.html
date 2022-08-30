@@ -1,0 +1,96 @@
+<mat-toolbar>
+  <h2>Scenario</h2>
+  <span class="spacer"></span>
+  <h3 [innerText]="this.scenario.name"></h3>
+  <span class="spacer"></span>
+  <div>
+    <button type="button" matSuffix mat-button aria-label="Export" (click)="this.export()"
+      [disabled]="this.scenario.name === ''" color="primary" matTooltip="Export the scenario">
+      <mat-icon>download</mat-icon>
+      <span>Export</span>
+    </button>
+    <button type="button" matSuffix mat-icon-button aria-label="Save" (click)="this.saveCurrentScenario()"
+      [disabled]="this.scenario.name === ''" color="primary" matTooltip="Save the current setup">
+      <mat-icon>save</mat-icon>
+      <span>Save</span>
+    </button>
+  </div>
+</mat-toolbar>
+<div class="section">
+  <h4>Header Details</h4>
+  <p>
+    <mat-form-field appearance="standard" style="width: 50%;">
+      <mat-label>Scenario Name</mat-label>
+      <input matInput [(ngModel)]="this.scenario.name" required="true" title="scenario">
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field appearance="standard" style="width: 100%;">
+      <mat-label>Site-UrL</mat-label>
+      <input matInput [value]="this.scenario.startUrl" disabled="true" title="site-url">
+    </mat-form-field>
+  </p>
+
+  <div matLine
+    style="display: flex; justify-content: space-between; font-size: 0.7rem; border-top: 1px solid darkgray;">
+    <div>
+      <label>Created:&nbsp;&nbsp;</label>
+      <span [innerText]="this.scenario.creationDate | date:'medium'"></span>
+    </div>
+    <div>
+      <label>Latest Edit:&nbsp;&nbsp;</label>
+      <span [innerText]="this.scenario.latestEdit | date:'medium'"></span>
+    </div>
+  </div>
+</div>
+<div class="section">
+  <div class="list-header">
+    <h4>Steps</h4>
+    <div>
+      <button *ngIf=" (this.app_footer_service.loadingIndicatorSource| async) === 'disconnected'" type="button"
+        (click)="this.connectToPage()" mat-button color="primary">
+        <mat-icon>link</mat-icon>
+        <span>Connect</span>
+      </button>
+      <button *ngIf=" this.replay && (this.app_footer_service.loadingIndicatorSource| async) !== 'disconnected'"
+        type="button" (click)="this.stopReplay()" mat-button color="primary">
+        <mat-icon>stop</mat-icon>
+        <span>Stop</span>
+      </button>
+      <button *ngIf="!this.replay && (this.app_footer_service.loadingIndicatorSource| async) !== 'disconnected'"
+        type="button" (click)="this.disconnect()" mat-button color="primary">
+        <mat-icon>stop</mat-icon>
+        <span>Stop</span>
+      </button>
+      <button
+        *ngIf="!this.replay && this.scenario && (this.app_footer_service.loadingIndicatorSource| async) === 'disconnected'"
+        type="button" (click)="this.replayMode()" mat-button color="primary">
+        <mat-icon>replay</mat-icon>
+        <span>Replay</span>
+      </button>
+    </div>
+  </div>
+
+  <mat-selection-list role="list" [multiple]="false">
+    <mat-list-option *ngFor="let step of this.scenarioSteps" role="listitem">
+      <div matLine class="list-content-with-action-left">
+        <div class="action-block" *ngIf="this.replay">
+          <button type="button" matSuffix mat-icon-button aria-label="Play" (click)="this.performAction(step)"
+            [disabled]="this.scenario.name === ''" matTooltip="Replay the Step" matTooltipPosition="above"
+            style="color: green;">
+            <mat-icon>play_arrow</mat-icon>
+          </button>
+          <!-- <i class="pi pi-play" style="font-size: 2rem;" (click)="this.performAction(step)"></i> -->
+        </div>
+        <div (click)="this.editViewStep(step)">
+          <div matLine>
+            <mat-icon style="font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48">{{(step.actionType |
+              actionImage)}}</mat-icon>
+            <span>&nbsp; &nbsp; {{step.controlId}}</span>
+          </div>
+          <span matLine>{{step.actionLoc}}</span>
+        </div>
+      </div>
+    </mat-list-option>
+  </mat-selection-list>
+</div>

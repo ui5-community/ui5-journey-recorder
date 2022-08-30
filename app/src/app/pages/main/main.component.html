@@ -1,0 +1,80 @@
+<mat-tab-group mat-align-tabs="center" (selectedIndexChange)="this.handleChange($event)">
+  <mat-tab label="Tabs">
+    <div class="list-header">
+      <mat-form-field class="header-search" appearance="fill">
+        <mat-label>Search</mat-label>
+        <input #searchInputTabs matInput type="text" (ngModelChange)="this.searchChange($event)"
+          [(ngModel)]="this.searchValueTabs" placeholder="Search tabs by URL or Tab-Title" />
+        <button *ngIf="searchInputTabs.value" matSuffix mat-icon-button aria-label="Clear"
+          (click)="searchInputTabs.value=''" color="primary">
+          <mat-icon>
+            close</mat-icon>
+        </button>
+      </mat-form-field>
+      <button mat-icon-button color="primary" aria-label="reload tabs" (click)="this.refresh_table()">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+    <mat-selection-list role="list" [multiple]="false">
+      <mat-list-option *ngFor="let tab of this.elements" (click)="this.connect_to_page(tab)"
+        (keydown)="this.checkKeyPress($event, tab)" role="listitem">
+        <img matListAvatar [src]="tab.icon" alt="fav_icon" />
+        <span matline class="one-line-text no-wrap">{{tab.title}}</span>
+        <div matLine>
+          <label>URL:&nbsp;&nbsp;</label>
+          <span class="one-line-text no-wrap">{{tab.path}}</span>
+        </div>
+      </mat-list-option>
+    </mat-selection-list>
+  </mat-tab>
+  <mat-tab label="Scenarios">
+    <ng-template matTabContent>
+      <div class="list-header">
+        <mat-form-field class="header-search" appearance="fill">
+          <mat-label>Search</mat-label>
+          <input #searchInputScenario matInput type="text" (ngModelChange)="this.searchChange($event)"
+            [(ngModel)]="this.searchValueScenarios" placeholder="Search tabs by URL or Tab-Title" />
+          <button *ngIf="searchInputScenario.value" matSuffix mat-icon-button aria-label="Clear"
+            (click)="searchInputScenario.value=''" color="primary">
+            <mat-icon>
+              close</mat-icon>
+          </button>
+        </mat-form-field>
+        <button mat-icon-button color="primary" aria-label="reload tabs" (click)="this.importScenario()">
+          <mat-icon>file_upload</mat-icon>
+        </button>
+      </div>
+
+      <mat-selection-list role="list" [multiple]="false">
+        <mat-list-option *ngFor="let scen of this.scenarios" role="listitem">
+          <div matLine class="list-content-with-action">
+            <div (click)="this.openExisting(scen)">
+              <span matLine>{{scen.name}}</span>
+              <div matLine>
+                <label>URL:&nbsp;&nbsp;</label>
+                <span>{{scen.startUrl}}</span>
+              </div>
+              <div matLine
+                style="display: flex; justify-content: space-between; font-size: 0.7rem; border-top: 1px solid darkgray;">
+                <div>
+                  <label>Created:&nbsp;&nbsp;</label>
+                  <span [innerText]="scen.creationDate | date:'medium'"></span>
+                </div>
+                <div>
+                  <label>Latest Edit:&nbsp;&nbsp;</label>
+                  <span [innerText]="scen.latestEdit | date:'medium'"></span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <button matSuffix mat-icon-button aria-label="Delete" color="primary" (click)="this.removeScenario(scen)">
+                <mat-icon>
+                  delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </mat-list-option>
+      </mat-selection-list>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

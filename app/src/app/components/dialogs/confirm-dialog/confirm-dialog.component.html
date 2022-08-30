@@ -1,0 +1,10 @@
+<div class="flex horizontal center-cross title" [class.error]="this.severity === 'error'"
+  [class.warning]="this.severity === 'warning'">
+  <mat-icon class="distance-right-1" *ngIf="this.icon">{{this.icon}}</mat-icon>
+  <h1 class="no-margin" mat-dialog-title>{{this.title}}</h1>
+</div>
+<div mat-dialog-content>{{this.description}}</div>
+<div mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>No</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial color="primary">Yes</button>
+</div>

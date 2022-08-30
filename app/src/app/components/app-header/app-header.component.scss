@@ -1,0 +1,24 @@
+.front-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.action-container {
+  color: #868282;
+}
+
+.header-title {
+  display: flex;
+  height: 100%;
+  flex-direction: row;
+  align-items: center;
+}
+
+.header-title > img {
+  height: 3em;
+}
+
+.header-title > * {
+  margin-right: 0.3rem;
+}
