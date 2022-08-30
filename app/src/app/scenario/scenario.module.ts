@@ -15,6 +15,7 @@ import { RecordStopDialogComponent } from './dialogs/RecordStopDialog/RecordStop
 import { RecordingPageComponent } from './pages/recording/recording_page.component';
 import { StepPageComponent } from './pages/step/step_page.component';
 import { ObjectPageComponent } from './pages/object/object_page.component';
+import { CodePageComponent } from './pages/code-page/code-page.component';
 //#endregion
 
 //#region pipes/services
@@ -31,6 +32,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTabsModule } from '@angular/material/tabs';
+import {MatSelectModule} from '@angular/material/select';
 //#endregion material
 
 @NgModule({
@@ -41,6 +44,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     ScenarioComponent,
     StepPageComponent,
     ActionImagePipe,
+    CodePageComponent,
   ],
   imports: [
     CommonModule,
@@ -55,6 +59,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatToolbarModule,
     MatTooltipModule,
     MatExpansionModule,
+    MatTabsModule,
+    MatSelectModule,
     //#endregion matieral
   ],
   providers: [CodeService],

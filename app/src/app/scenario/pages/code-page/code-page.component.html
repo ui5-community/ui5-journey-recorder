@@ -1,0 +1,24 @@
+<mat-toolbar>
+  <h2>Scenario Code:&nbsp;</h2>
+  <h3 [innerText]="this.scenario.name" style="font-style: italic; font-weight: normal;"></h3>
+  <span class="spacer"></span>
+  <div>
+    <label>Code-Style:&nbsp;</label>
+    <mat-form-field>
+      <mat-select [(value)]="selected">
+        <mat-option *ngFor="let style of this.codeStyles" [value]="style">{{style}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</mat-toolbar>
+<mat-tab-group *ngIf="this.codePages.length > 0; else emptyPages">
+  <mat-tab *ngFor="let page of this.codePages" [label]="page.title">
+    <ng-template matTabContent>
+      <pre><code>{{page.code}}</code></pre>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>
+
+<ng-template #emptyPages>
+  <p>Not able to generate Code!</p>
+</ng-template>

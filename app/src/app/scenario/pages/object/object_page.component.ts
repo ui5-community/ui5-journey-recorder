@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ChromeExtensionService } from 'src/app/services/chromeExtensionService/chrome_extension_service';
 import { Observable } from 'rxjs';
@@ -30,7 +29,6 @@ export class ObjectPageComponent implements OnInit {
   private scenario_id: string = '';
 
   constructor(
-    private location: Location,
     private incommingRoute: ActivatedRoute,
     private chr_ext_srv: ChromeExtensionService,
     private router: Router,
@@ -67,7 +65,7 @@ export class ObjectPageComponent implements OnInit {
   }
 
   navBack(): void {
-    this.location.back();
+    this.router.navigate(['']);
   }
 
   saveCurrentScenario(): void {
@@ -135,6 +133,12 @@ export class ObjectPageComponent implements OnInit {
     link.setAttribute('href', window.URL.createObjectURL(blob));
     link.setAttribute('download', name);
     link.click();
+  }
+
+  showCodePage(): void {
+    this.router.navigate(['code'], {
+      relativeTo: this.active_route,
+    });
   }
 
   private replaceUnsupportedFileSigns(

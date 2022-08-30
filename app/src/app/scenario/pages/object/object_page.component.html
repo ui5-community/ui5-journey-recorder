@@ -4,6 +4,11 @@
   <h3 [innerText]="this.scenario.name"></h3>
   <span class="spacer"></span>
   <div>
+    <button type="button" matSuffix mat-button aria-label="Export" (click)="this.showCodePage()"
+      [disabled]="this.scenario.name === ''" color="primary" matTooltip="Show code">
+      <mat-icon>article</mat-icon>
+      <span>Code</span>
+    </button>
     <button type="button" matSuffix mat-button aria-label="Export" (click)="this.export()"
       [disabled]="this.scenario.name === ''" color="primary" matTooltip="Export the scenario">
       <mat-icon>download</mat-icon>

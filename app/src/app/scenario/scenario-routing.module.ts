@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { CodePageComponent } from './pages/code-page/code-page.component';
 import { ObjectPageComponent } from './pages/object/object_page.component';
 import { RecordingPageComponent } from './pages/recording/recording_page.component';
 import { StepPageComponent } from './pages/step/step_page.component';
@@ -21,6 +22,10 @@ const routes: Routes = [
           {
             path: 'step/:controlId',
             component: StepPageComponent,
+          },
+          {
+            path: 'code',
+            component: CodePageComponent,
           },
         ],
       },
