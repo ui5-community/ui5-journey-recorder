@@ -26,7 +26,7 @@ export abstract class PageBuilder {
   _customMatchers: { [key: string]: boolean };
 
   constructor(namespace: string, viewName: string, baseClass: string) {
-    this._namespace = namespace ? namespace : 'template';
+    this._namespace = namespace ? namespace : '<namespace>';
     this._viewName = viewName ? viewName : 'view1';
     this._baseClass = baseClass ? baseClass : 'Common';
     this._dependencies = [
@@ -96,11 +96,15 @@ export abstract class PageBuilder {
     };
   }
 
-  //#region getter
-  get namespace(): string {
+  //#region getter/setter
+  public set namespace(namespace: string) {
+    this._namespace = namespace;
+  }
+
+  public get namespace(): string {
     return this._namespace;
   }
-  //#endregion getter
+  //#endregion getter/setter
 
   /**
    *  Generic settings method for the adder

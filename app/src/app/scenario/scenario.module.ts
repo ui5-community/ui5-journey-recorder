@@ -33,7 +33,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTabsModule } from '@angular/material/tabs';
-import {MatSelectModule} from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 //#endregion material
 
 @NgModule({
@@ -61,6 +63,8 @@ import {MatSelectModule} from '@angular/material/select';
     MatExpansionModule,
     MatTabsModule,
     MatSelectModule,
+    MatTableModule,
+    MatCheckboxModule,
     //#endregion matieral
   ],
   providers: [CodeService],

@@ -5,7 +5,10 @@ import { Observable } from 'rxjs';
 import { Step, TestScenario } from 'src/app/classes/testScenario';
 import { ScenarioService } from 'src/app/services/scenarioService/scenario.service';
 import { ReplayService } from 'src/app/services/replayService/replay.service';
-import { AppFooterService } from 'src/app/components/app-footer/app-footer.service';
+import {
+  AppFooterService,
+  LoadStatus,
+} from 'src/app/components/app-footer/app-footer.service';
 import { AppHeaderService } from 'src/app/components/app-header/app-header.service';
 import { MessageService } from 'src/app/services/messageService/message.service';
 import { SnackSeverity } from 'src/app/components/dialogs/snack-dialog/snack-dialog.component';
@@ -82,8 +85,15 @@ export class ObjectPageComponent implements OnInit {
 
   replayMode() {
     if (this.scenario) {
+      this.app_footer_service.loadingIndicatorSource.subscribe(
+        (status: LoadStatus) => {
+          if (status === LoadStatus.DISCONNECTED) {
+            this.replay = false;
+          }
+        }
+      );
       this.replayService.startReplay(this.scenario.startUrl).then(() => {
-        this.replay = !this.replay;
+        this.replay = true;
       });
     }
   }
@@ -91,7 +101,7 @@ export class ObjectPageComponent implements OnInit {
   stopReplay() {
     if (this.scenario) {
       this.replayService.stopReplay().then(() => {
-        this.replay = !this.replay;
+        this.replay = false;
       });
     }
   }

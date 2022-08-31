@@ -40,4 +40,17 @@ export class CodeService {
         return '';
     }
   }
+
+  public static generatePagedStepCode(
+    testStep: Step,
+    options?: CodeOptions
+  ): string {
+    const lang = options?.style || CodeStyles.UNDEFINDED;
+    switch (lang) {
+      case CodeStyles.OPA5:
+        return new OPA5CodeStrategy().generatePagedStepCode(testStep);
+      default:
+        return '';
+    }
+  }
 }

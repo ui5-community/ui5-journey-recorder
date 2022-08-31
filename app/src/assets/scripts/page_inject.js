@@ -181,14 +181,20 @@ const executeAction = (oEvent) => {
   elements = Object.values(elements).filter(el => el.getMetadata().getElementName() === oItem.control_type);
   // filter by control_attributes
   elements = elements.filter(el => {
-    return Object.entries(oItem.control_attributes)
+    return Object.values(oItem.control_attributes)
+      // only take the attributes which should be used for identification
+      .filter(att => att.use)
       // create getter function names and expected values from control_attributes
-      .map(attributeEntry => ({ key: 'get' + upperCaseFirstLetter(attributeEntry[0]), value: attributeEntry[1] }))
+      .map(attribute => ({ key: 'get' + upperCaseFirstLetter(attribute.name), value: attribute.value }))
       // create list of expection-results
       .map(executeMatcher => el[executeMatcher.key]() === executeMatcher.value)
       // check if all selected attributes really match
-      .reduce((a, b) => a && b, true)
+      .reduce((a, b) => a && b, true);
   });
+
+  if (elements.length > 1 && !oItem.control_id.startsWith('__')) {
+    elements = elements.filter(el => el.getId() === oItem.control_id);
+  }
 
   if (elements.length === 1) {
     switch (oItem.action_type) {
@@ -314,7 +320,6 @@ const __checkActionPreconditions = (aDOMNodes, bReturnSelectedNode = false) => {
 
 const _getViewProperties = (ui5El) => {
   let curEl = ui5El;
-  debugger;
   while (!curEl.getViewName) {
     curEl = curEl.getParent();
   }

@@ -7,39 +7,33 @@ import {
 } from 'src/app/classes/testScenario';
 import CodeStrategy from '../StrategyInterface';
 import CommonPageBuilder from './CommonPageBuilder';
+import OPA5SingleStepStrategy from './OPA5SingleStepStrategy';
+import ViewPageBuilder from './ViewPageBuilder';
 
 export default class OPA5CodeStrategy implements CodeStrategy {
   private _pages: { [key: string]: any } = {};
-  private _code: {
-    title?: string;
-    code?: string;
-    codeName?: string;
-    type: string;
-    order: number;
-    content: string[];
-    constants: string[];
-  } = {
-    type: 'CODE',
-    order: 1,
-    content: [],
-    constants: [],
-  };
-  private _customMatcher: { [key: string]: any } = {};
-  private _commonPage: CommonPageBuilder | undefined;
-  private _namespace: string = 'template';
 
   public generateTestCode(scenario: TestScenario): any[] {
-    let codes: any[] = [];
-    this._commonPage = new CommonPageBuilder('', '', '');
+    const codes: any[] = [];
+    const jurney: { [key: string]: any } = {
+      title: '',
+      content: [],
+    };
+
+    this._pages['Common'] = new CommonPageBuilder('', '', '');
+
+    scenario.testPages.forEach((p: Page) => {
+      this._pages[p.view.relativeViewName] = new ViewPageBuilder(p);
+    });
 
     //(2) execute script
-    this._code.title = scenario.name.replace(/\s/gm, '_');
+    jurney['title'] = scenario.name.replace(/\s/gm, '_');
 
-    this._setupHeader();
+    this._setupHeader(jurney);
 
-    this._createConstants(scenario.testPages);
+    /* this._createConstants(scenario.testPages); */
 
-    this._code.content.push(
+    jurney['content'].push(
       new StringBuilder()
         .addNewLine()
         .addTab()
@@ -50,56 +44,56 @@ export default class OPA5CodeStrategy implements CodeStrategy {
         .toString()
     );
 
-    this._createAppStartStep(scenario);
+    this._createAppStartStep(jurney, scenario);
 
-    this._createTestSteps(scenario);
+    jurney['content'].push(this._createTestSteps(scenario));
 
-    this._createAppCloseStep();
+    this._createAppCloseStep(jurney);
 
-    this._code.content.push('});');
+    jurney['content'].push('});');
 
-    this._code.code = this._code.content.reduce((a, b) => a + b, '');
+    jurney['code'] = jurney['content'].reduce(
+      (a: string, b: string) => `${a}${b}`,
+      ''
+    );
 
-    codes.push(this._code);
-
-    var order = 1;
-    var namespace = [
-      ...new Set(Object.values(this._pages).map((el) => el.getNamespace())),
-    ].filter((nsp) => nsp !== '<template>')[0];
-    namespace = namespace ? namespace : '<template>';
-    Object.keys(this._pages).forEach((key: string) => {
-      if (this._pages[key].getNamespace() === '<template>') {
-        this._pages[key].setNamespace(namespace);
-      }
-      order = order++;
+    codes.push(jurney);
+    const posNamespace = Object.values(this._pages)
+      .map((p) => p.namespace)
+      .filter((n) => n !== '<namespace>')[0];
+    if (posNamespace) {
+      this._pages['Common'].namespace = posNamespace;
+    }
+    Object.entries(this._pages).forEach((entry: [string, any]) => {
       var oCode = {
-        title: `${key}Page`,
-        type: 'CODE',
-        order: order,
-        code: this._pages[key].generate(),
+        title: `${entry[0]}-Page`,
+        code: entry[1].generate(),
       };
       codes.push(oCode);
-    });
-
-    Object.keys(this._customMatcher).forEach((key: string) => {
-      order = order++;
-      var oCode = {
-        title: `${this._capitalize(key)}Matcher`,
-        type: 'CODE',
-        order: order,
-        code: this._customMatcher[key].generate(),
-      };
-      codes.push(oCode);
-    });
-
-    codes.push({
-      title: 'Common',
-      type: 'CODE',
-      order: order++,
-      code: this._commonPage.generate(),
     });
 
     return codes;
+  }
+
+  public generateStepCode(step: Step): string {
+    switch (step.actionType) {
+      case StepType.Click:
+        return OPA5SingleStepStrategy.generateSinglePressStep(step);
+      default:
+        return 'Unknown StepType';
+    }
+  }
+
+  public generatePagedStepCode(
+    step: Step,
+    viewName: string = '<view_name>'
+  ): string {
+    switch (step.actionType) {
+      case StepType.Click:
+        return this._createClickStep(step, viewName);
+      default:
+        return '';
+    }
   }
 
   private _capitalize(text: string) {
@@ -109,7 +103,7 @@ export default class OPA5CodeStrategy implements CodeStrategy {
     return text.charAt(0).toUpperCase() + text.slice(1);
   }
 
-  private _createAppCloseStep() {
+  private _createAppCloseStep(jurney: { [key: string]: any }) {
     var oCloseStep = new StringBuilder();
     oCloseStep
       .addNewLine()
@@ -119,23 +113,31 @@ export default class OPA5CodeStrategy implements CodeStrategy {
       .addTab()
       .add('});')
       .addNewLine();
-    this._code.content.push(oCloseStep.toString());
+    jurney['content'].push(oCloseStep.toString());
   }
 
   private _createTestSteps(scenario: TestScenario) {
-    //@TODO
-    /* var oSteps = new StringBuilder();
-    //from here starts the real testing
-    for (var step in aTestSteps) {
-        var stepCode = this.createTestStep(oCodeSettings, aTestSteps[step]);
+    const pages = scenario.testPages;
+    const steps = new StringBuilder();
+    pages.forEach((page: Page) => {
+      page.steps.forEach((step: Step) => {
+        const stepCode = this.generatePagedStepCode(
+          step,
+          page.view.relativeViewName
+        );
         if (stepCode) {
-            oSteps.add(stepCode);
+          steps.add(stepCode);
+          steps.addNewLine();
         }
-    }
-    this.__code.content.push(oSteps.toString()); */
+      });
+    });
+    return steps.toString();
   }
 
-  private _createAppStartStep(scenario: TestScenario) {
+  private _createAppStartStep(
+    jurney: { [key: string]: any },
+    scenario: TestScenario
+  ) {
     var startStep = new StringBuilder();
     startStep
       .addTab()
@@ -156,7 +158,7 @@ export default class OPA5CodeStrategy implements CodeStrategy {
       .add('"});')
       .addNewLine(2);
 
-    this._code.content.push(startStep.toString());
+    jurney['content'].push(startStep.toString());
   }
 
   private _createConstants(testPages: Page[]) {
@@ -190,47 +192,33 @@ export default class OPA5CodeStrategy implements CodeStrategy {
     } */
   }
 
-  private _setupHeader() {
+  private _setupHeader(jurney: { [key: string]: any }) {
     var oCode = new StringBuilder('sap.ui.define([');
     oCode.addNewLine().addTab().add('"sap/ui/test/Opa5",');
     oCode.addNewLine().addTab().add('"sap/ui/test/opaQunit"');
     oCode.addNewLine().add('], function (Opa5, opaTest) {');
     oCode.addNewLine().addTab().add('"use strict";');
     oCode.addNewLine();
-    this._code.content.push(oCode.toString());
+    jurney['content'].push(oCode.toString());
   }
 
-  public generateStepCode(step: Step): string {
-    switch (step.actionType) {
-      case StepType.Click:
-        return this._createClickStep(step);
-      default:
-        return '';
-    }
-  }
-
-  private _createClickStep(step: Step) {
-    var viewName = 'Detached';
+  private _createClickStep(step: Step, viewName: string = '<view_name>') {
     var sb = new StringBuilder();
-    sb.addTab(2).add('When.on').add(viewName).add('.clickOn({');
+    sb.addTab(2).add('When.on').add(viewName).add('.pressOn({');
 
     if (!step.controlId.startsWith('__')) {
       sb.add(`id: {value: "${step.controlId}",isRegex: true}`);
-      /* this.__pages[viewName].addPressAction({
+      this._pages[viewName]?.addPressAction({
         press: true,
-      }); */
-      /* if (this.__commonPage) {
-        this.__commonPage.addPressAction({
-          press: true,
-        });
-      } */
+      });
+      this._pages['Common']?.addPressAction({
+        press: true,
+      });
     } else {
       var oUsedMatchers = this._createObjectMatcherInfos(step, sb);
       oUsedMatchers['press'] = true;
-      /* this.__pages[viewName].addPressAction(oUsedMatchers);
-      if (this.__commonPage) {
-        this.__commonPage.addPressAction(oUsedMatchers);
-      } */
+      this._pages[viewName]?.addPressAction(oUsedMatchers);
+      this._pages['Common']?.addPressAction(oUsedMatchers);
     }
 
     sb.add('});');
@@ -242,8 +230,8 @@ export default class OPA5CodeStrategy implements CodeStrategy {
     sb: StringBuilder
   ): { [key: string]: any } {
     var objectMatcher: { [key: string]: any } = {};
-    Object.entries(step.controlAttributes)
-      .map((e) => ({ key: e[0], value: e[1] }))
+    step.controlAttributes
+      .filter((att) => att.use)
       .forEach((e) => {
         this._createAttributeValue(e, objectMatcher);
       });
@@ -287,7 +275,7 @@ export default class OPA5CodeStrategy implements CodeStrategy {
   }
 
   private _createAttributeValue(
-    e: { key: string; value: any },
+    e: { name: string; value: any; use: boolean },
     objectMatcher: { [key: string]: any }
   ): void {
     var value = e.value;
@@ -301,9 +289,9 @@ export default class OPA5CodeStrategy implements CodeStrategy {
     }
 
     if (objectMatcher['ATTR']) {
-      objectMatcher['ATTR'].push('{' + e.key + ': ' + value + '}');
+      objectMatcher['ATTR'].push('{' + e.name + ': ' + value + '}');
     } else {
-      objectMatcher['ATTR'] = ['{' + e.key + ': ' + value + '}'];
+      objectMatcher['ATTR'] = ['{' + e.name + ': ' + value + '}'];
     }
   }
 

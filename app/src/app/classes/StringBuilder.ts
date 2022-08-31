@@ -19,12 +19,18 @@ export default class StringBuilder {
     return this;
   }
 
-  public remove(times?: number) {
+  public addBuilder(builder: StringBuilder): this {
+    this._parts = [...this._parts, ...builder.getTokensCopy()];
+    return this;
+  }
+
+  public remove(times?: number): this {
     if (times) {
-      this._parts.splice(0, this._parts.length - times);
+      this._parts = this._parts.splice(0, this._parts.length - times);
     } else {
       this._parts.pop();
     }
+    return this;
   }
 
   /**
@@ -51,7 +57,7 @@ export default class StringBuilder {
   /**
    * Add one ore more tabs depending on user purpose
    */
-  addTab(times?: number): this {
+  public addTab(times?: number): this {
     if (times) {
       this._parts.push(Array(times + 1).join('\t'));
     } else {
@@ -63,7 +69,7 @@ export default class StringBuilder {
   /**
    * Add one ore more new line on user purpose
    */
-  addNewLine(times?: number): this {
+  public addNewLine(times?: number): this {
     if (times) {
       this._parts.push(Array(times + 1).join('\n'));
     } else {
@@ -81,7 +87,11 @@ export default class StringBuilder {
    *
    * @returns {com.ui5.testing.util.StringBuilder} self reference for chaining
    */
-  replace(target: string | RegExp, replacement: string, index?: number): this {
+  public replace(
+    target: string | RegExp,
+    replacement: string,
+    index?: number
+  ): this {
     const repl = replacement ? replacement : '';
     index = index ? index : this._parts.length - 1;
     if (index < 0) {
@@ -98,8 +108,12 @@ export default class StringBuilder {
    *
    * @returns the number of text tokens
    */
-  getNumberOfTextToken(): number {
+  public getNumberOfTextToken(): number {
     return this._parts.length;
+  }
+
+  public getTokensCopy(): string[] {
+    return [...this._parts];
   }
 
   /**
@@ -107,7 +121,7 @@ export default class StringBuilder {
    *
    * @returns  the final string
    */
-  toString(): string {
+  public toString(): string {
     return this._parts.join('');
   }
   //#endregion

@@ -1,6 +1,3 @@
-import { Input } from '@angular/core';
-import { parse } from 'uuid';
-
 export enum StepType {
   Click = 'clicked',
   Input = 'input',
@@ -162,6 +159,7 @@ export class Page implements Stringify {
         cs.controlType = parsedObj.control_type;
         cs.styleClasses = parsedObj.style_classes;
         cs.actionLoc = parsedObj.action_location;
+        cs.useControlId = parsedObj.use_control_id;
         cs.controlAttributes = parsedObj.control_attributes;
         return cs;
       case StepType.Input:
@@ -170,6 +168,7 @@ export class Page implements Stringify {
         is.controlType = parsedObj.control_type;
         is.styleClasses = parsedObj.style_classes;
         is.actionLoc = parsedObj.action_location;
+        is.useControlId = parsedObj.use_control_id;
         is.controlAttributes = parsedObj.control_attributes;
         if (parsedObj.keys) {
           parsedObj.keys.forEach((k: any) => {
@@ -183,6 +182,7 @@ export class Page implements Stringify {
         kps.controlType = parsedObj.control_type;
         kps.styleClasses = parsedObj.style_classes;
         kps.actionLoc = parsedObj.action_location;
+        kps.useControlId = parsedObj.use_control_id;
         kps.key = parsedObj.key_char;
         kps.keyCode = parsedObj.key_code;
         kps.controlAttributes = parsedObj.control_attributes;
@@ -198,9 +198,10 @@ export abstract class Step implements Stringify, Equals {
   private action_location: string;
 
   private control_id: string;
+  private use_control_id: boolean;
   private control_type: string;
   private style_classes: string[];
-  private control_attributes: { [key: string]: any };
+  private control_attributes: { name: string; value: any; use: boolean }[];
 
   constructor(type: StepType) {
     this.action_type = type;
@@ -208,7 +209,8 @@ export abstract class Step implements Stringify, Equals {
     this.style_classes = [];
     this.action_location = '';
     this.control_type = '';
-    this.control_attributes = {};
+    this.control_attributes = [];
+    this.use_control_id = false;
   }
 
   toString(): string {
@@ -226,12 +228,22 @@ export abstract class Step implements Stringify, Equals {
     this.style_classes.push(cls);
   }
 
+  public get useControlId(): boolean {
+    return this.use_control_id;
+  }
+  public set useControlId(value: boolean) {
+    this.use_control_id = value;
+  }
+
   get actionType(): StepType {
     return this.action_type;
   }
 
   set controlId(id: string) {
     this.control_id = id;
+    if (!id.startsWith('__')) {
+      this.useControlId = true;
+    }
   }
 
   get controlId(): string {
@@ -262,11 +274,13 @@ export abstract class Step implements Stringify, Equals {
     return this.control_type;
   }
 
-  set controlAttributes(attributes: { [key: string]: any }) {
+  set controlAttributes(
+    attributes: { name: string; value: any; use: boolean }[]
+  ) {
     this.control_attributes = attributes;
   }
 
-  get controlAttributes(): { [key: string]: any } {
+  get controlAttributes(): { name: string; value: any; use: boolean }[] {
     return this.control_attributes;
   }
 }

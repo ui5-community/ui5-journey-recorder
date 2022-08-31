@@ -123,8 +123,11 @@ export class ScenarioService {
       }
 
       res.controlId = a.control.id;
+      res.useControlId = res.controlId.startsWith('__') ? false : true;
       res.controlType = a.control.type;
-      res.controlAttributes = a.control.properties;
+      res.controlAttributes = Object.entries(a.control.properties).map(
+        (entry) => ({ name: entry[0], value: entry[1], use: false })
+      );
       res.styleClasses = a.control.classes;
       res.actionLoc = a.location;
       res.view = a.control.view;

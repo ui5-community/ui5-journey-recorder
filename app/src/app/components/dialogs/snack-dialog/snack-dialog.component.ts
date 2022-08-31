@@ -32,7 +32,7 @@ export class SnackDialogComponent {
       detail?: string;
       icon?: string;
     },
-    private ref: MatSnackBarRef<SnackDialogComponent>
+    public ref: MatSnackBarRef<SnackDialogComponent>
   ) {
     this.title = data.title;
     this.description = data?.detail ? data.detail : '';

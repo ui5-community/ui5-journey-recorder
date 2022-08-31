@@ -47,13 +47,15 @@ export default class CommonPageBuilder extends PageBuilder {
 
   public generate(): string {
     var oCode = new StringBuilder('sap.ui.define([').addNewLine();
-    oCode.add(this.__generateDependencies());
+    oCode.addBuilder(this._generateDependencies());
     oCode.addTab().add('"use strict";').addNewLine(2);
-    oCode.add(this._addWrapParametersFunction());
+    oCode.addBuilder(this._addWrapParametersFunction());
 
     oCode
       .addTab()
-      .add('return Opa5.extend("' + this._namespace + '.<testPath>.Common", {')
+      .add(
+        'return Opa5.extend("' + this._namespace + '.<testPath>.CommonPage", {'
+      )
       .addNewLine();
     oCode
       .addTab(2)
@@ -73,32 +75,17 @@ export default class CommonPageBuilder extends PageBuilder {
     oCode.addTab(4).add('},').addNewLine();
     oCode.addTab(4).add('hash: oParameters.hash').addNewLine();
     oCode.addTab(3).add('});').addNewLine();
-    oCode.addTab(2).add('},').addNewLine();
+    oCode.addTab(2).add('},').addNewLine(2);
     oCode.addTab(2).add('iTeardownTheApp: function() {').addNewLine();
     oCode.addTab(3).add('this.iTeardownMyUIComponent();').addNewLine();
     oCode.addTab(2).add('}');
 
-    oCode.add(this._generateActionFunctions());
-    oCode.add(this._generateAssertionFunctions());
-
-    if (this._bindMatcher) {
-      oCode.add(',').addNewLine();
-      oCode.add(this._addBindingMatcherFunction());
-    }
-
-    if (this._i18nMatcher) {
-      oCode.add(',').addNewLine();
-      oCode.add(this._addI18NMatcherFunction());
-    }
+    oCode.addBuilder(this._generateActionFunctions());
+    oCode.addBuilder(this._generateAssertionFunctions());
 
     if (this._attMatcher) {
-      oCode.add(',').addNewLine();
-      oCode.add(this._addAttributeMatcherFunction());
-    }
-
-    if (this._parentMatcher) {
-      oCode.add(',').addNewLine();
-      oCode.add(this._addI18NMatcherFunction());
+      oCode.add(',').addNewLine(2);
+      oCode.addBuilder(this._addAttributeMatcherFunction());
     }
 
     oCode.addNewLine();
@@ -181,7 +168,7 @@ export default class CommonPageBuilder extends PageBuilder {
     return oFunctCode.toString();
   }
 
-  private _addAttributeMatcherFunction(): string {
+  private _addAttributeMatcherFunction(): StringBuilder {
     var oFunctCode = new StringBuilder();
     oFunctCode
       .addTab(2)
@@ -202,12 +189,12 @@ export default class CommonPageBuilder extends PageBuilder {
     oFunctCode.addTab(4).add('}));').addNewLine();
     oFunctCode.addTab(3).add('});').addNewLine();
     oFunctCode.addTab(2).add('}');
-    return oFunctCode.toString();
+    return oFunctCode;
   }
   //#endregion
 
   //#region general
-  private __generateDependencies(): string {
+  private _generateDependencies(): StringBuilder {
     var oDependencies = new StringBuilder();
 
     oDependencies.addTab().add('"sap/ui/test/Opa5",').addNewLine();
@@ -300,10 +287,10 @@ export default class CommonPageBuilder extends PageBuilder {
     }
 
     oDependencies.add('){').addNewLine();
-    return oDependencies.toString();
+    return oDependencies;
   }
 
-  private _addWrapParametersFunction(): string {
+  private _addWrapParametersFunction(): StringBuilder {
     var oFunctCode = new StringBuilder();
     oFunctCode
       .addTab()
@@ -318,23 +305,23 @@ export default class CommonPageBuilder extends PageBuilder {
     oFunctCode.addTab(3).add('}').addNewLine();
     oFunctCode.addTab(2).add('};').addNewLine();
     oFunctCode.addTab().add('}').addNewLine(2);
-    return oFunctCode.toString();
+    return oFunctCode;
   }
   //#endregion
 
   //#region actions
-  private _generateActionFunctions(): string {
+  private _generateActionFunctions(): StringBuilder {
     var oActions = new StringBuilder();
     if (this._actions['press'].render) {
-      oActions.add(',').addNewLine();
+      oActions.add(',').addNewLine(2);
       oActions.add(this.__generatePressFunction());
     }
 
     if (this._actions['enterText'].render) {
-      oActions.add(',').addNewLine();
+      oActions.add(',').addNewLine(2);
       oActions.add(this.__generateEnterTextFunction());
     }
-    return oActions.toString();
+    return oActions;
   }
 
   private __generateEnterTextFunction(): string {
@@ -542,7 +529,7 @@ export default class CommonPageBuilder extends PageBuilder {
   //#endregion actions
 
   //#region assertions
-  private _generateAssertionFunctions(): string {
+  private _generateAssertionFunctions(): StringBuilder {
     var oAssertFunctions = new StringBuilder();
     if (this._assertions['exists'].render) {
       oAssertFunctions.add(',').addNewLine();
@@ -564,7 +551,7 @@ export default class CommonPageBuilder extends PageBuilder {
       oAssertFunctions.add(',').addNewLine();
       oAssertFunctions.add(this._renderCountAggFunction());
     }
-    return oAssertFunctions.toString();
+    return oAssertFunctions;
   }
 
   private _renderExistsFunction(): string {
