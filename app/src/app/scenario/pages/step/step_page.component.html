@@ -3,36 +3,38 @@
     <h4>Step</h4>
   </mat-toolbar-row>
 </mat-toolbar>
+
 <mat-expansion-panel togglePosition="before" expanded="true">
   <mat-expansion-panel-header>
     <mat-panel-title class="panel-title">
-      <mat-icon>{{currentStep?.actionType | actionImage}}</mat-icon>
+      <mat-icon>{{currentStep.actionType | actionImage}}</mat-icon>
       <span>Control Selectors</span>
     </mat-panel-title>
   </mat-expansion-panel-header>
 
   <div class="flex horizontal space-between">
     <div style="width: 45%;">
-      <input type="checkbox" [value]="currentStep?.useControlId" (change)="this.useControlId($event)" />
+      <mat-checkbox style="margin-right: 0.5rem;" [checked]="this.currentStep.useControlId"
+        (change)="this.useIdChanged($event.checked)" color="primary"></mat-checkbox>
       <mat-form-field appearance="standard" style="width: 90%;">
         <mat-label>Control ID</mat-label>
-        <input matInput [value]="currentStep?.controlId" title="controlID">
+        <input matInput [value]="currentStep.controlId" title="controlID">
       </mat-form-field>
     </div>
     <mat-form-field appearance="standard" style="width: 45%;">
       <mat-label>Control Type</mat-label>
-      <input matInput [value]="currentStep?.controlType" disabled="true" title="control-type">
+      <input matInput [value]="currentStep.controlType" disabled="true" title="control-type">
     </mat-form-field>
   </div>
 
   <div class="flex vertical space-even">
     <mat-form-field appearance="standard" style="width: 80%;">
       <mat-label>Control Location</mat-label>
-      <input matInput [value]="currentStep?.actionLoc" title="control-location">
+      <input matInput [value]="currentStep.actionLoc" title="control-location">
     </mat-form-field>
     <mat-form-field appearance="standard" style="width: 80%;">
       <mat-label>Control Classes</mat-label>
-      <input matInput [value]="currentStep?.styleClasses?.join(',')" disabled="true" title="control-classes">
+      <input matInput [value]="currentStep.styleClasses.join(',')" disabled="true" title="control-classes">
     </mat-form-field>
   </div>
 </mat-expansion-panel>

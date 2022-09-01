@@ -22,7 +22,7 @@ export class StepPageComponent implements OnInit {
   private control_id: string | undefined;
 
   pagedCode = false;
-  currentStep: Step | undefined;
+  currentStep!: Step;
   attributesTableData: Attribute[] = [];
   displayedColumns: string[] = ['name', 'value', 'use'];
 
@@ -38,15 +38,23 @@ export class StepPageComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     this.app_header_service.showBack();
-    this.active_route.params.subscribe(async (parameters: Params) => {
+    this.active_route.params.subscribe((parameters: Params) => {
       this.scenario_id = parameters['scenarioId'];
       this.control_id = parameters['controlId'];
-      this.currentStep = await this.scenario_service.getStep(
-        this.scenario_id || '',
-        this.control_id || ''
-      );
-      this.attributesTableData = this.currentStep.controlAttributes;
+      this.scenario_service
+        .getStep(this.scenario_id || '', this.control_id || '')
+        .then((step: Step) => {
+          this.currentStep = step;
+          this.attributesTableData = this.currentStep.controlAttributes;
+        })
+        .catch(() => {
+          this.app_header_service.navigateBackwards();
+        });
     });
+  }
+
+  useIdChanged(val: boolean) {
+    this.currentStep.useControlId = val;
   }
 
   generateStepCode() {
