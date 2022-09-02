@@ -130,6 +130,10 @@ const _getUI5Elements = () => {
   }
 }
 
+const getElementsForId = (id) => {
+  return Object.values(_getUI5Elements()).filter(el => el.getId() === id);
+}
+
 const _getUI5Element = (el) => {
   let UIElements = _getUI5Elements();
   var ui5El = UIElements[el.id];

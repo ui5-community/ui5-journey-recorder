@@ -85,11 +85,59 @@ export class ScenarioService {
     attributes: string[]
   ): Promise<{ [key: string]: any }> {
     const rb = new RequestBuilder();
-    rb.setUrl('/controls/(:id)');
+    rb.setUrl('/controls(:id)');
     rb.setMethod(RequestMethod.GET);
     rb.addPathParam('id', controlID);
     rb.addSearchParam('attributes', '(' + attributes.join(' and ') + ')');
     return this.chr_ext_srv.sendSyncMessage(rb.build());
+  }
+
+  public validateStepUniqueness(step: Step): Promise<any> {
+    const rb = new RequestBuilder();
+    rb.setMethod(RequestMethod.GET);
+    if (step.useControlId) {
+      rb.setUrl('/controls(:id)');
+      rb.addPathParam('id', `'${step.controlId}'`);
+    } else {
+      rb.setUrl('/controls');
+    }
+
+    step.controlAttributes
+      .filter((att) => att.use)
+      .forEach((att) =>
+        rb.addSearchParam(att.name, encodeURIComponent(att.value))
+      );
+
+    rb.addSearchParam('length', '');
+
+    if (this.chr_ext_srv.isConnectedToPage()) {
+      return this.chr_ext_srv
+        .sendSyncMessage(rb.build())
+        .then((result: any) => {
+          return { data: result.message };
+        });
+    } else {
+      return this.chr_ext_srv
+        .createTabByUrl(step.actionLoc)
+        .then((tab: chrome.tabs.Tab) => {
+          const p = {
+            title: tab.title || '',
+            path: tab.url || tab.pendingUrl || '',
+            id: tab.id || 0,
+            icon: tab.favIconUrl || '',
+          };
+          this.chr_ext_srv.setCurrentPage(p);
+          return this.chr_ext_srv.focus_page(p).then(() => {
+            return this.chr_ext_srv.connectToCurrentPage().then(() => {
+              return this.chr_ext_srv
+                .sendSyncMessage(rb.build())
+                .then((result: any) => {
+                  return { data: result.message };
+                });
+            });
+          });
+        });
+    }
   }
 
   public async getStep(scenario_id: string, control_id: string): Promise<Step> {

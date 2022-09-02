@@ -63,7 +63,11 @@ export class RequestBuilder {
         url +
         Object.keys(this._searchParams)
           .map((k: string) => {
-            return `${k}=${this._searchParams[k]}`;
+            if (this._searchParams[k].trim() !== '') {
+              return `${k}=${this._searchParams[k]}`;
+            } else {
+              return `${k}`;
+            }
           })
           .join('&');
     }
