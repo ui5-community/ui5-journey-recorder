@@ -206,19 +206,24 @@ export default class OPA5CodeStrategy implements CodeStrategy {
     var sb = new StringBuilder();
     sb.addTab(2).add('When.on').add(viewName).add('.pressOn({');
 
-    if (!step.controlId.startsWith('__')) {
-      sb.add(`id: {value: "${step.controlId}",isRegex: true}`);
-      this._pages[viewName]?.addPressAction({
-        press: true,
-      });
-      this._pages['Common']?.addPressAction({
-        press: true,
-      });
-    } else {
-      var oUsedMatchers = this._createObjectMatcherInfos(step, sb);
-      oUsedMatchers['press'] = true;
-      this._pages[viewName]?.addPressAction(oUsedMatchers);
-      this._pages['Common']?.addPressAction(oUsedMatchers);
+    var usedMatchers: { [key: string]: any } = {};
+    if (step.useControlId) {
+      sb.add(`id: {value: "${step.controlId}",isRegex: true}`).add(',');
+      usedMatchers['press'] = true;
+    }
+
+    const elementMatcher = this._createObjectMatcherInfos(step, sb);
+    if (Object.keys(elementMatcher).length === 0) {
+      sb.remove();
+    }
+    usedMatchers = {
+      ...usedMatchers,
+      ...elementMatcher,
+    };
+
+    if (step.useControlId || Object.keys(elementMatcher).length > 0) {
+      this._pages[viewName]?.addPressAction(usedMatchers);
+      this._pages['Common']?.addPressAction(usedMatchers);
     }
 
     sb.add('});');
@@ -241,7 +246,7 @@ export default class OPA5CodeStrategy implements CodeStrategy {
         sb.add(objectMatcher[k]).add(', ');
       }
     }
-    sb.replace(/,\s*$/, '');
+    /* sb.replace(/,\s*$/, ''); */
 
     var oReturn: { [key: string]: any } = {};
     if (objectMatcher['ATTR']) {
