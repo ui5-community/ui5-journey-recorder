@@ -1,6 +1,17 @@
 <mat-toolbar>
   <mat-toolbar-row>
     <h4>Step</h4>
+    <div style="margin-left: auto;">
+      <button mat-button [matMenuTriggerFor]="typeselector">Change type</button>
+      <mat-menu #typeselector="matMenu">
+        <ng-template matMenuContent>
+          <button *ngFor="let type of steps" mat-menu-item (click)="this.setType(type.step)">
+            <mat-icon>{{type.step | actionImage}}</mat-icon>
+            <span>{{type.text}}</span>
+          </button>
+        </ng-template>
+      </mat-menu>
+    </div>
   </mat-toolbar-row>
 </mat-toolbar>
 

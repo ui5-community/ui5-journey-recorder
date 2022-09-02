@@ -239,6 +239,10 @@ export abstract class Step implements Stringify, Equals {
     return this.action_type;
   }
 
+  set actionType(type: StepType) {
+    this.action_type = type;
+  }
+
   set controlId(id: string) {
     this.control_id = id;
     if (!id.startsWith('__')) {

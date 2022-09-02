@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Params } from '@angular/router';
-import { Step } from 'src/app/classes/testScenario';
+import { Step, StepType, UnknownStep } from 'src/app/classes/testScenario';
 import { AppHeaderService } from 'src/app/components/app-header/app-header.service';
 import { ScenarioService } from 'src/app/services/scenarioService/scenario.service';
 import { CodeService, CodeStyles } from '../../codeService/codeService.service';
@@ -22,9 +22,15 @@ export class StepPageComponent implements OnInit {
   private control_id: string | undefined;
 
   pagedCode = false;
-  currentStep!: Step;
+  currentStep: Step = new UnknownStep();
   attributesTableData: Attribute[] = [];
   displayedColumns: string[] = ['name', 'value', 'use'];
+
+  steps = [
+    { text: 'Click', step: StepType.Click },
+    { text: 'Input', step: StepType.Input },
+    { text: 'KeyPress', step: StepType.KeyPress },
+  ];
 
   codeData = {
     language: 'javascript',
@@ -51,6 +57,10 @@ export class StepPageComponent implements OnInit {
           this.app_header_service.navigateBackwards();
         });
     });
+  }
+
+  setType(type: StepType): void {
+    this.currentStep.actionType = type;
   }
 
   useIdChanged(val: boolean) {

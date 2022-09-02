@@ -36,6 +36,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatMenuModule} from '@angular/material/menu';
 //#endregion material
 
 @NgModule({
@@ -65,6 +66,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatSelectModule,
     MatTableModule,
     MatCheckboxModule,
+    MatMenuModule,
     //#endregion matieral
   ],
   providers: [CodeService],

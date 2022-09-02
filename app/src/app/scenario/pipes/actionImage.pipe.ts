@@ -10,8 +10,9 @@ export class ActionImagePipe implements PipeTransform {
       case StepType.Click:
         return 'mouse';
       case StepType.KeyPress:
-      case StepType.Input:
         return 'keyboard';
+      case StepType.Input:
+        return 'text_fields';
       default:
         return 'question_mark';
     }
