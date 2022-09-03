@@ -134,6 +134,23 @@ const getElementsForId = (id) => {
   return Object.values(_getUI5Elements()).filter(el => el.getId() === id);
 }
 
+const getElementsByAttributes = (controlType, attributes) => {
+  let elements = _getUI5Elements();
+  // filter by control_type
+  elements = Object.values(elements).filter(el => el.getMetadata().getElementName() === controlType);
+  // filter by control_attributes
+  elements = elements.filter(el => {
+    return attributes
+      // create getter function names and expected values from control_attributes
+      .map(attribute => ({ key: 'get' + upperCaseFirstLetter(attribute.name), value: attribute.value }))
+      // create list of expection-results
+      .map(executeMatcher => el[executeMatcher.key]() === executeMatcher.value)
+      // check if all selected attributes really match
+      .reduce((a, b) => a && b, true);
+  });
+  return elements;
+}
+
 const _getUI5Element = (el) => {
   let UIElements = _getUI5Elements();
   var ui5El = UIElements[el.id];
@@ -181,6 +198,10 @@ const _getUI5ElementProperties = (el) => {
 const executeAction = (oEvent) => {
   const oItem = oEvent.step;
   let elements = _getUI5Elements();
+  elements = getElementsByAttributes(oItem.control_type, Object.values(oItem.control_attributes)
+    // only take the attributes which should be used for identification
+    .filter(att => att.use));
+  /*
   // filter by control_type
   elements = Object.values(elements).filter(el => el.getMetadata().getElementName() === oItem.control_type);
   // filter by control_attributes
@@ -194,7 +215,7 @@ const executeAction = (oEvent) => {
       .map(executeMatcher => el[executeMatcher.key]() === executeMatcher.value)
       // check if all selected attributes really match
       .reduce((a, b) => a && b, true);
-  });
+  }); */
 
   if (elements.length > 1 && !oItem.control_id.startsWith('__')) {
     elements = elements.filter(el => el.getId() === oItem.control_id);

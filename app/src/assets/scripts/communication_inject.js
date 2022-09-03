@@ -177,7 +177,7 @@ class API {
 
     req.searchParams = {};
     for (var spkey of url_obj.searchParams.keys()) {
-      req.searchParams[spkey] = decodeURIComponent(url_obj.searchParams.get(spkey));
+      req.searchParams[spkey] = url_obj.searchParams.get(spkey);
     }
 
     req.url = url;
@@ -237,11 +237,18 @@ class API {
 const com_api = new API(location.href.origin + '/page');
 
 com_api.get('/controls', (req, res) => {
+  if (req.searchParams.count === '') {
+    const controlType = req.searchParams.control_type;
+    const attributes = decodeURIComponent(req.searchParams.attributes);
+
+    let elements = getElementsByAttributes(controlType, JSON.parse(attributes));
+    res({ status: 200, message: elements.length });
+  }
   res({ status: 200, message: "JAY!" });
 });
 
 com_api.get("/controls(<id>)", (req, res) => {
-  if (req.searchParams.length === '') {
+  if (req.searchParams.count === '') {
     let elements = [];
     if (req.pathParams.id.indexOf("'") > -1) {
       elements = getElementsForId(req.pathParams.id.replaceAll("'", ''))

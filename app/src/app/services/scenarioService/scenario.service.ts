@@ -102,13 +102,16 @@ export class ScenarioService {
       rb.setUrl('/controls');
     }
 
-    step.controlAttributes
-      .filter((att) => att.use)
-      .forEach((att) =>
-        rb.addSearchParam(att.name, encodeURIComponent(att.value))
-      );
+    rb.addSearchParam(
+      'attributes',
+      JSON.stringify(step.controlAttributes.filter((att) => att.use))
+    );
 
-    rb.addSearchParam('length', '');
+    if (!step.useControlId) {
+      rb.addSearchParam('control_type', step.controlType);
+    }
+
+    rb.addSearchParam('count', '');
 
     if (this.chr_ext_srv.isConnectedToPage()) {
       return this.chr_ext_srv
