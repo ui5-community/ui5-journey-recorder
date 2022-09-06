@@ -13,6 +13,8 @@ export class ActionImagePipe implements PipeTransform {
         return 'keyboard';
       case StepType.Input:
         return 'text_fields';
+      case StepType.Validation:
+        return 'verified';
       default:
         return 'question_mark';
     }

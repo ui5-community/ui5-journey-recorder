@@ -44,31 +44,11 @@ const setupHoverSelectEffect = () => {
 }
 
 const setupClickListener = () => {
-  /* document.onmousedown = (e) => {
-    let event = e || window.event;
-    let el = event.target || event.srcElement;
-    let ui5El = _getUI5Element(el);
-    ws_api.send_record_step({
-      type: 'clicked',
-      control: {
-        id: ui5El.sId,
-        type: ui5El.getMetadata().getElementName(),
-        classes: ui5El.aCustomStyleClasses,
-        properties: _getUI5ElementProperties(ui5El)
-      },
-      location: window.location.href
-    })
-    return false;
-  } */
 
   document.onclick = (e) => {
     let event = e || window.event;
     let el = event.target || event.srcElement;
     let ui5El = _getUI5Element(el);
-    /* event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation(); */
-    /* console.dir(`Onclick > ${ui5El}`); */
     ws_api.send_record_step({
       type: 'clicked',
       control: {
@@ -77,7 +57,10 @@ const setupClickListener = () => {
         classes: ui5El.aCustomStyleClasses,
         /* domRef: ui5El.getDomRef().outerHTML, */
         properties: _getUI5ElementProperties(ui5El),
-        view: _getViewProperties(ui5El)
+        view: _getViewProperties(ui5El),
+        events: {
+          press: ui5El.getMetadata().getEvent('press') !== undefined
+        }
       },
       location: window.location.href
     })

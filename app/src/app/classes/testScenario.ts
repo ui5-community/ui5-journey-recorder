@@ -3,6 +3,7 @@ export enum StepType {
   Input = 'input',
   KeyPress = 'keypress',
   Unknown = 'unknown',
+  Validation = 'validate'
 }
 
 export type Key = {
@@ -292,6 +293,12 @@ export abstract class Step implements Stringify, Equals {
 export class ClickStep extends Step {
   constructor() {
     super(StepType.Click);
+  }
+}
+
+export class ValidationStep extends Step {
+  constructor() {
+    super(StepType.Validation);
   }
 }
 

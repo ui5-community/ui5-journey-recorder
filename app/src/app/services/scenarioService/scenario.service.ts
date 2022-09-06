@@ -164,7 +164,11 @@ export class ScenarioService {
       let res: IntermediateStep;
       switch (a.type) {
         case 'clicked':
-          res = new ClickStep();
+          if (a.events && a.events.press) {
+            res = new ClickStep();
+          } else {
+            res = new ValidationStep();
+          }
           break;
         case 'keypress':
           res = new KeyPressStep();
