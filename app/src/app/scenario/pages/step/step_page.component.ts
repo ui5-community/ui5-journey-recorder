@@ -32,6 +32,7 @@ export class StepPageComponent implements OnInit {
     { text: 'Click', step: StepType.Click },
     { text: 'Input', step: StepType.Input },
     { text: 'KeyPress', step: StepType.KeyPress },
+    { text: 'Validate', step: StepType.Validation },
   ];
 
   codeData = {

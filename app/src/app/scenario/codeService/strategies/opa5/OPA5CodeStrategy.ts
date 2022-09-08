@@ -333,7 +333,7 @@ export default class OPA5CodeStrategy implements CodeStrategy {
 
     if (step.useControlId || Object.keys(elementMatcher).length > 0) {
       this._pages[viewName]?.addValidationStep(usedMatchers);
-      this._pages['Common']?.addValidaton(usedMatchers);
+      this._pages['Common']?.addValidationStep(usedMatchers);
     }
 
     validate.add('});');
