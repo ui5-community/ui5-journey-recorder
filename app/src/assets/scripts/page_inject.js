@@ -44,31 +44,11 @@ const setupHoverSelectEffect = () => {
 }
 
 const setupClickListener = () => {
-  /* document.onmousedown = (e) => {
-    let event = e || window.event;
-    let el = event.target || event.srcElement;
-    let ui5El = _getUI5Element(el);
-    ws_api.send_record_step({
-      type: 'clicked',
-      control: {
-        id: ui5El.sId,
-        type: ui5El.getMetadata().getElementName(),
-        classes: ui5El.aCustomStyleClasses,
-        properties: _getUI5ElementProperties(ui5El)
-      },
-      location: window.location.href
-    })
-    return false;
-  } */
 
   document.onclick = (e) => {
     let event = e || window.event;
     let el = event.target || event.srcElement;
     let ui5El = _getUI5Element(el);
-    /* event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation(); */
-    /* console.dir(`Onclick > ${ui5El}`); */
     ws_api.send_record_step({
       type: 'clicked',
       control: {
@@ -77,7 +57,10 @@ const setupClickListener = () => {
         classes: ui5El.aCustomStyleClasses,
         /* domRef: ui5El.getDomRef().outerHTML, */
         properties: _getUI5ElementProperties(ui5El),
-        view: _getViewProperties(ui5El)
+        view: _getViewProperties(ui5El),
+        events: {
+          press: ui5El.getMetadata().getEvent('press') !== undefined
+        }
       },
       location: window.location.href
     })
@@ -130,6 +113,27 @@ const _getUI5Elements = () => {
   }
 }
 
+const getElementsForId = (id) => {
+  return Object.values(_getUI5Elements()).filter(el => el.getId() === id);
+}
+
+const getElementsByAttributes = (controlType, attributes) => {
+  let elements = _getUI5Elements();
+  // filter by control_type
+  elements = Object.values(elements).filter(el => el.getMetadata().getElementName() === controlType);
+  // filter by control_attributes
+  elements = elements.filter(el => {
+    return attributes
+      // create getter function names and expected values from control_attributes
+      .map(attribute => ({ key: 'get' + upperCaseFirstLetter(attribute.name), value: attribute.value }))
+      // create list of expection-results
+      .map(executeMatcher => el[executeMatcher.key]() === executeMatcher.value)
+      // check if all selected attributes really match
+      .reduce((a, b) => a && b, true);
+  });
+  return elements;
+}
+
 const _getUI5Element = (el) => {
   let UIElements = _getUI5Elements();
   var ui5El = UIElements[el.id];
@@ -177,6 +181,10 @@ const _getUI5ElementProperties = (el) => {
 const executeAction = (oEvent) => {
   const oItem = oEvent.step;
   let elements = _getUI5Elements();
+  elements = getElementsByAttributes(oItem.control_type, Object.values(oItem.control_attributes)
+    // only take the attributes which should be used for identification
+    .filter(att => att.use));
+  /*
   // filter by control_type
   elements = Object.values(elements).filter(el => el.getMetadata().getElementName() === oItem.control_type);
   // filter by control_attributes
@@ -190,7 +198,7 @@ const executeAction = (oEvent) => {
       .map(executeMatcher => el[executeMatcher.key]() === executeMatcher.value)
       // check if all selected attributes really match
       .reduce((a, b) => a && b, true);
-  });
+  }); */
 
   if (elements.length > 1 && !oItem.control_id.startsWith('__')) {
     elements = elements.filter(el => el.getId() === oItem.control_id);
@@ -320,8 +328,16 @@ const __checkActionPreconditions = (aDOMNodes, bReturnSelectedNode = false) => {
 
 const _getViewProperties = (ui5El) => {
   let curEl = ui5El;
-  while (!curEl.getViewName) {
+  while (curEl && !curEl.getViewName) {
     curEl = curEl.getParent();
+  }
+  if (!curEl) {
+    //assume we have ui5 element and can go upwards by substracting the last part of the id to get the information
+    const newId = ui5El.getId().substring(0, ui5El.getId().lastIndexOf('-'));
+    curEl = _getUI5Elements()[newId];
+    while (curEl && !curEl.getViewName) {
+      curEl = curEl.getParent();
+    }
   }
 
   return {

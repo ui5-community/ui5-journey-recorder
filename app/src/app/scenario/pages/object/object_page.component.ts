@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ChromeExtensionService } from 'src/app/services/chromeExtensionService/chrome_extension_service';
 import { Observable } from 'rxjs';
@@ -18,7 +18,7 @@ import { SnackSeverity } from 'src/app/components/dialogs/snack-dialog/snack-dia
   templateUrl: './object_page.component.html',
   styleUrls: ['./object_page.component.scss'],
 })
-export class ObjectPageComponent implements OnInit {
+export class ObjectPageComponent implements OnInit, OnDestroy {
   navigatedPage: string = 'Test';
   tab: chrome.tabs.Tab | undefined;
   recordingObs: Observable<any>;
@@ -65,6 +65,10 @@ export class ObjectPageComponent implements OnInit {
         })
         .catch(() => this.navBack.bind(this));
     });
+  }
+
+  ngOnDestroy(): void {
+    this.chr_ext_srv.disconnect();
   }
 
   navBack(): void {

@@ -153,7 +153,7 @@ export abstract class PageBuilder {
     return this._adder('enterText', options);
   }
 
-  public addExistsCheck(options: AdderOptions): this {
+  public addValidationStep(options: AdderOptions): this {
     return this._adder('exists', options);
   }
 

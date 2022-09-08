@@ -3,6 +3,7 @@ export enum StepType {
   Input = 'input',
   KeyPress = 'keypress',
   Unknown = 'unknown',
+  Validation = 'validate'
 }
 
 export type Key = {
@@ -153,6 +154,15 @@ export class Page implements Stringify {
   private static stepFromJSON(json: string): Step {
     const parsedObj = JSON.parse(json);
     switch (parsedObj.action_type) {
+      case StepType.Validation:
+        const val = new ValidationStep();
+        val.controlId = parsedObj.control_id;
+        val.controlType = parsedObj.control_type;
+        val.styleClasses = parsedObj.style_classes;
+        val.actionLoc = parsedObj.action_location;
+        val.useControlId = parsedObj.use_control_id;
+        val.controlAttributes = parsedObj.control_attributes;
+        return val;
       case StepType.Click:
         const cs = new ClickStep();
         cs.controlId = parsedObj.control_id;
@@ -231,12 +241,17 @@ export abstract class Step implements Stringify, Equals {
   public get useControlId(): boolean {
     return this.use_control_id;
   }
+
   public set useControlId(value: boolean) {
     this.use_control_id = value;
   }
 
   get actionType(): StepType {
     return this.action_type;
+  }
+
+  set actionType(type: StepType) {
+    this.action_type = type;
   }
 
   set controlId(id: string) {
@@ -288,6 +303,12 @@ export abstract class Step implements Stringify, Equals {
 export class ClickStep extends Step {
   constructor() {
     super(StepType.Click);
+  }
+}
+
+export class ValidationStep extends Step {
+  constructor() {
+    super(StepType.Validation);
   }
 }
 

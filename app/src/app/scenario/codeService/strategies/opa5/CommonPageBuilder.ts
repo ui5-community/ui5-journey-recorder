@@ -558,7 +558,7 @@ export default class CommonPageBuilder extends PageBuilder {
     var oExists = new StringBuilder();
     oExists
       .addTab(2)
-      .add('exists: function(oMatchProperties, oOptions) {')
+      .add('thereShouldBe: function(oMatchProperties, oOptions) {')
       .addNewLine();
     oExists.addTab(3).add('var checkObject = {};').addNewLine();
     oExists

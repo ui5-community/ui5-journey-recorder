@@ -1,43 +1,64 @@
 <mat-toolbar>
   <mat-toolbar-row>
     <h4>Step</h4>
+    <span class="spacer"></span>
+
+    <button type="button" matSuffix mat-button aria-label="Validate" color="primary"
+      matTooltip="Validate the uniqueness of the selected attributes" (click)="this.checkUniqueness()">
+      <mat-icon>checklist</mat-icon>
+      <span>Validate</span>
+    </button>
   </mat-toolbar-row>
 </mat-toolbar>
+
 <mat-expansion-panel togglePosition="before" expanded="true">
   <mat-expansion-panel-header>
     <mat-panel-title class="panel-title">
-      <mat-icon>{{currentStep?.actionType | actionImage}}</mat-icon>
-      <span>Control Selectors</span>
+      <mat-icon>{{currentStep.actionType | actionImage}}</mat-icon>
+      <span>Control Informations</span>
     </mat-panel-title>
   </mat-expansion-panel-header>
 
   <div class="flex horizontal space-between">
     <div style="width: 45%;">
-      <input type="checkbox" [value]="currentStep?.useControlId" (change)="this.useControlId($event)" />
+      <mat-checkbox style="margin-right: 0.5rem;" [checked]="this.currentStep.useControlId"
+        (change)="this.useIdChanged($event.checked)" color="primary"
+        matTooltip="Check to use the id for control identification"></mat-checkbox>
       <mat-form-field appearance="standard" style="width: 90%;">
         <mat-label>Control ID</mat-label>
-        <input matInput [value]="currentStep?.controlId" title="controlID">
+        <input matInput [value]="currentStep.controlId" title="controlID">
       </mat-form-field>
     </div>
     <mat-form-field appearance="standard" style="width: 45%;">
       <mat-label>Control Type</mat-label>
-      <input matInput [value]="currentStep?.controlType" disabled="true" title="control-type">
+      <input matInput [value]="currentStep.controlType" disabled="true" title="control-type">
     </mat-form-field>
   </div>
+  <!--
 
   <div class="flex vertical space-even">
     <mat-form-field appearance="standard" style="width: 80%;">
-      <mat-label>Control Location</mat-label>
-      <input matInput [value]="currentStep?.actionLoc" title="control-location">
-    </mat-form-field>
-    <mat-form-field appearance="standard" style="width: 80%;">
       <mat-label>Control Classes</mat-label>
-      <input matInput [value]="currentStep?.styleClasses?.join(',')" disabled="true" title="control-classes">
+      <input matInput [value]="currentStep.styleClasses.join(',')" disabled="true" title="control-classes">
     </mat-form-field>
-  </div>
+  </div> -->
+
+  <mat-action-row>
+    <div>
+      <button mat-button [matMenuTriggerFor]="typeselector">Change step type</button>
+      <mat-menu #typeselector="matMenu">
+        <ng-template matMenuContent>
+          <button *ngFor="let type of steps" mat-menu-item (click)="this.setType(type.step)">
+            <mat-icon>{{type.step | actionImage}}</mat-icon>
+            <span>{{type.text}}</span>
+          </button>
+        </ng-template>
+      </mat-menu>
+    </div>
+  </mat-action-row>
 </mat-expansion-panel>
 
-<mat-expansion-panel togglePosition="before" expanded="true">
+<mat-expansion-panel togglePosition="before" expanded="false">
   <mat-expansion-panel-header>
     <mat-panel-title class="panel-title">
       <span>Control Attributes</span>

@@ -96,6 +96,9 @@ export default class ViewPageBuilder extends PageBuilder {
   private _generateAssertions(): StringBuilder {
     const assertions = new StringBuilder();
     assertions.addTab(3).add('assertions: {').addNewLine();
+    if (this._assertions['exists']?.render) {
+      assertions.addBuilder(this._generateValidateFunction());
+    }
     //@TODO: extend to get all the assertions
     assertions.addTab(3).add('}');
     return assertions;
@@ -124,6 +127,35 @@ export default class ViewPageBuilder extends PageBuilder {
       .addTab(6)
       .add(
         `errorMessage: "Won't be able to click the control at the view '${this._viewName}' with requirements: " + JSON.stringify(oActionProperties)`
+      )
+      .addNewLine();
+    click.addTab(5).add('});').addNewLine();
+    click.addTab(4).add('}').addNewLine();
+    return click;
+  }
+
+  private _generateValidateFunction(): StringBuilder {
+    var click = new StringBuilder();
+    click
+      .addTab(4)
+      .add('thereShouldBe: function(oAssertionProperties) {')
+      .addNewLine();
+    click
+      .addTab(5)
+      .add('return this.thereShouldBe(oAssertionProperties, {')
+      .addNewLine();
+    click.addTab(6).add('success: function() {').addNewLine();
+    click
+      .addTab(7)
+      .add(
+        `Opa5.assert.ok(true, "Found the control at view ${this._viewName}");`
+      )
+      .addNewLine();
+    click.addTab(6).add('},').addNewLine();
+    click
+      .addTab(6)
+      .add(
+        `errorMessage: "Won't be able to find the control at the view '${this._viewName}' with requirements: " + JSON.stringify(oAssertionProperties)`
       )
       .addNewLine();
     click.addTab(5).add('});').addNewLine();

@@ -61,11 +61,50 @@ class API {
    * @param {function(req,res)=>void} callback function handling calls to the route
    */
   get(sRoute, callback) {
-    const prefix = this._root + sRoute;
-    const regexp = new RegExp(`(${prefix})${API.key_ident}${API.nav_prop}`, 'gm');
     const map_id = this._getter_expr.length;
-    this._getter_expr.push({ regex: regexp, id: map_id });
+    const { route, pars } = this._prepareRoute(sRoute);
+
+    const prefix = this._root + route;
+    const regexp = new RegExp(`((${prefix})((\\?\\S+)$)?)$`, 'gm');
+
+    this._getter_expr.push({ regex: regexp, id: map_id, paramList: pars });
     this._getter_routes[map_id] = callback;
+  }
+
+  _prepareRoute(sRoute) {
+    const pathParamIdentifier = /\<([a-zA-Z0-9])+\>/gm;
+    const pathParams = [];
+    const matches = sRoute.match(pathParamIdentifier);
+    let enclosingEnd = '';
+    let enclosingFront = '';
+    if (matches) {
+      matches.forEach((par, i) => {
+        const paramName = par.replace('<', '').replace('>', '');
+        sRoute = sRoute.replace(par, '%*');
+        const front = sRoute.indexOf('%');
+        const end = sRoute.indexOf('*');
+        const len = sRoute.length;
+        if (end - 1 === len) {
+          sRoute += "$";
+        } else {
+          enclosingEnd = sRoute[end + 1];
+          sRoute = sRoute.substring(0, end + 1) + '\\' + sRoute.substring(end + 1);
+        }
+        if (front === 0) {
+          sRoute = '^' + sRoute;
+        } else {
+          enclosingFront = sRoute[front - 1];
+          sRoute = sRoute.substring(0, front - 1) + '\\' + sRoute.substring(front - 1)
+        }
+
+        pathParams.push({ index: i, name: paramName, encFront: enclosingFront, encEnd: enclosingEnd });
+
+        sRoute = sRoute.replaceAll('%*', "([a-zA-Z0-9'-])+");
+      });
+      return { route: sRoute, pars: pathParams };
+    } else {
+      return { route: sRoute, pars: pathParams };
+    }
   }
 
   /**
@@ -134,13 +173,7 @@ class API {
       return;
     }
     const req = {}
-    var parts = [decodeURIComponent(url.pathname).matchAll(handler.regex)][0];
-    const key = parts[2];
-    const navigation = parts[3];
-
-    req.pathParam = {};
-    req.pathParam['key'] = key;
-    req.pathParam['navigation'] = navigation;
+    req.pathParams = this._retrievePathParameters(url, handler);
 
     req.searchParams = {};
     for (var spkey of url_obj.searchParams.keys()) {
@@ -150,6 +183,21 @@ class API {
     req.url = url;
 
     this._getter_routes[handler.id](req, res);
+  }
+
+  _retrievePathParameters(sUrl, handler) {
+    const paramMap = {};
+    handler.paramList.forEach(param => {
+      const parRegex = new RegExp('\\' + param.encFront + "([a-zA-Z0-9'-])+" + "\\" + param.encEnd);
+      const res = sUrl.match(parRegex);
+      if (res) {
+        paramMap[param.name] = res[0].replace(param.encFront, '').replace(param.encEnd, '');
+      } else {
+        paramMap[param.name] = undefined;
+      }
+      sUrl = sUrl.replace(parRegex, '[done]');
+    })
+    return paramMap;
   }
 
   _handlePost(oEventData, res) {
@@ -189,10 +237,26 @@ class API {
 const com_api = new API(location.href.origin + '/page');
 
 com_api.get('/controls', (req, res) => {
+  if (req.searchParams.count === '') {
+    const controlType = req.searchParams.control_type;
+    const attributes = decodeURIComponent(req.searchParams.attributes);
+
+    let elements = getElementsByAttributes(controlType, JSON.parse(attributes));
+    res({ status: 200, message: elements.length });
+  }
   res({ status: 200, message: "JAY!" });
 });
 
-com_api.get('/controls/(:id)', (req, res) => {
+com_api.get("/controls(<id>)", (req, res) => {
+  if (req.searchParams.count === '') {
+    let elements = [];
+    if (req.pathParams.id.indexOf("'") > -1) {
+      elements = getElementsForId(req.pathParams.id.replaceAll("'", ''))
+    } else {
+      elements = getElementsForId(req.pathParams.id);
+    }
+    res({ status: 200, message: elements.length });
+  }
   res({ status: 200, message: 'Hello World!' });
 });
 

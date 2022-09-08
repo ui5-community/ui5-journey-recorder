@@ -3,12 +3,13 @@ footer {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  height: 1.5rem;
+  height: 2rem;
+  position: absolute;
+  bottom: 0;
 
   .connection-indicator {
     width: 2rem;
     height: 2rem;
-    padding: 0.3rem 0.2rem;
     border-top-right-radius: 1rem;
 
     &.loading {
@@ -20,6 +21,10 @@ footer {
     &.disconnected,
     .null {
       background-color: rgb(211, 4, 4);
+    }
+
+    mat-icon {
+      margin: 0.2rem;
     }
   }
 

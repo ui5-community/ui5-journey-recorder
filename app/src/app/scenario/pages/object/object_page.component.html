@@ -3,7 +3,7 @@
   <span class="spacer"></span>
   <h3 [innerText]="this.scenario.name"></h3>
   <span class="spacer"></span>
-  <div>
+  <div style="margin-right: 1rem;">
     <button type="button" matSuffix mat-button aria-label="Export" (click)="this.showCodePage()"
       [disabled]="this.scenario.name === ''" color="primary" matTooltip="Show code">
       <mat-icon>generating_tokens</mat-icon>
