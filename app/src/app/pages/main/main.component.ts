@@ -32,6 +32,7 @@ export class MainComponent implements OnInit {
   searchValueScenarios: string = '';
 
   private tabIndex: number = 0;
+  private timerIndex: number = 0;
 
   constructor(
     private chr_ext_srv: ChromeExtensionService,
@@ -45,6 +46,10 @@ export class MainComponent implements OnInit {
   ngOnInit(): void {
     this.appHeaderService.hideBack();
     this.loadTabs();
+    this.timerIndex = setInterval(
+      this.loadTabs.bind(this),
+      3000 //refresh every 3sec
+    );
   }
 
   connect_to_page(page: Page | undefined) {

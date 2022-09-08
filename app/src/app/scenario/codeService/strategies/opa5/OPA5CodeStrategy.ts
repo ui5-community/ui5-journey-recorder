@@ -79,6 +79,8 @@ export default class OPA5CodeStrategy implements CodeStrategy {
     switch (step.actionType) {
       case StepType.Click:
         return OPA5SingleStepStrategy.generateSinglePressStep(step);
+      /* case StepType.Validation:
+        return OPA5SingleStepStrategy.generateSingleValidateStep(step); */
       default:
         return 'Unknown StepType';
     }
@@ -91,6 +93,8 @@ export default class OPA5CodeStrategy implements CodeStrategy {
     switch (step.actionType) {
       case StepType.Click:
         return this._createClickStep(step, viewName);
+      case StepType.Validation:
+        return this._createValidateStep(step, viewName);
       default:
         return '';
     }
@@ -202,7 +206,10 @@ export default class OPA5CodeStrategy implements CodeStrategy {
     jurney['content'].push(oCode.toString());
   }
 
-  private _createClickStep(step: Step, viewName: string = '<view_name>') {
+  private _createClickStep(
+    step: Step,
+    viewName: string = '<view_name>'
+  ): string {
     var sb = new StringBuilder();
     sb.addTab(2).add('When.on').add(viewName).add('.pressOn({');
 
@@ -302,5 +309,34 @@ export default class OPA5CodeStrategy implements CodeStrategy {
 
   private _sanatize(s: string): string {
     return `"${s}"`.trim();
+  }
+
+  private _createValidateStep(
+    step: Step,
+    viewName: string = '<view_name>'
+  ): string {
+    const validate = new StringBuilder();
+    validate.addTab(2).add('Then.on').add(viewName).add('.thereShouldBe({');
+    var usedMatchers: { [key: string]: any } = {};
+    if (step.useControlId) {
+      validate.add(`id: {value: "${step.controlId}",isRegex: true}`).add(',');
+    }
+
+    const elementMatcher = this._createObjectMatcherInfos(step, validate);
+    if (Object.keys(elementMatcher).length === 0) {
+      validate.remove();
+    }
+    usedMatchers = {
+      ...usedMatchers,
+      ...elementMatcher,
+    };
+
+    if (step.useControlId || Object.keys(elementMatcher).length > 0) {
+      this._pages[viewName]?.addValidationStep(usedMatchers);
+      this._pages['Common']?.addValidaton(usedMatchers);
+    }
+
+    validate.add('});');
+    return validate.toString();
   }
 }

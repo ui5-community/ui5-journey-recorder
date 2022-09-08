@@ -328,8 +328,16 @@ const __checkActionPreconditions = (aDOMNodes, bReturnSelectedNode = false) => {
 
 const _getViewProperties = (ui5El) => {
   let curEl = ui5El;
-  while (!curEl.getViewName) {
+  while (curEl && !curEl.getViewName) {
     curEl = curEl.getParent();
+  }
+  if (!curEl) {
+    //assume we have ui5 element and can go upwards by substracting the last part of the id to get the information
+    const newId = ui5El.getId().substring(0, ui5El.getId().lastIndexOf('-'));
+    curEl = _getUI5Elements()[newId];
+    while (curEl && !curEl.getViewName) {
+      curEl = curEl.getParent();
+    }
   }
 
   return {

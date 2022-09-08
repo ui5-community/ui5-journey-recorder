@@ -12,6 +12,7 @@ import {
   Step,
   TestScenario,
   UnknownStep,
+  ValidationStep,
 } from '../../classes/testScenario';
 import { ScenarioStorageService } from '../localStorageService/scenarioStorageService.service';
 
@@ -164,7 +165,7 @@ export class ScenarioService {
       let res: IntermediateStep;
       switch (a.type) {
         case 'clicked':
-          if (a.events && a.events.press) {
+          if (a.control && a.control.events && a.control.events.press) {
             res = new ClickStep();
           } else {
             res = new ValidationStep();
