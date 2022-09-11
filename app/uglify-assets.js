@@ -2,14 +2,14 @@ const UglifyJS = require("uglify-js");
 const fs = require("fs");
 const path = require("path");
 
-const asset_script_path = "dist/ui5-testrecorder/assets/scripts/";
+const asset_script_path = "dist/assets/scripts/";
 const map_path = "source_maps";
 
 const options = {
   compress: {
     drop_console: true
   },
-  /* sourceMap: {}, */
+  sourceMap: {},
   nameCache: {}
 };
 
@@ -35,8 +35,8 @@ let size_before = 0;
 let size_after = 0;
 
 ["starter.js", "page_inject.js", "content_inject.js", "communication_inject.js"].forEach(script_name => {
-  /* options.sourceMap.filename = path.join(__dirname, asset_script_path, script_name);
-  options.sourceMap.url = path.join(__dirname, map_path, `${script_name}.map`); */
+  options.sourceMap.filename = path.join(__dirname, asset_script_path, script_name);
+  options.sourceMap.url = path.join(__dirname, map_path, `${script_name}.map`);
 
   const content = fs.readFileSync(options.sourceMap.filename, 'utf-8');
   var result = UglifyJS.minify(content, options);
