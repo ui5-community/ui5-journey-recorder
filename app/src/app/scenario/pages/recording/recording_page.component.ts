@@ -1,7 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Observable } from 'rxjs';
 
 import { ChromeExtensionService } from 'src/app/services/chromeExtensionService/chrome_extension_service';
 import { ScenarioService } from 'src/app/services/scenarioService/scenario.service';
@@ -14,19 +13,14 @@ import { RecordStopDialogComponent } from '../../dialogs/RecordStopDialog/Record
 })
 export class RecordingPageComponent implements OnInit {
   tab: chrome.tabs.Tab | undefined;
-  recordingObs: Observable<any>;
-  steps: any[] = [];
 
   constructor(
     private incommingRoute: ActivatedRoute,
     private chr_ext_srv: ChromeExtensionService,
-    private cd: ChangeDetectorRef,
     private dialog: MatDialog,
     private router: Router,
     private scenarioService: ScenarioService
-  ) {
-    this.recordingObs = this.chr_ext_srv.register_recording_websocket();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.incommingRoute.params.subscribe((params: Params) => {
@@ -34,7 +28,6 @@ export class RecordingPageComponent implements OnInit {
         .getTabInfoForCurrentConnection()
         .then((tab: chrome.tabs.Tab) => {
           this.tab = tab;
-          this.recordingObs.subscribe(this.onRecordStep.bind(this));
           this.openStopDialog();
         })
         .catch(() => {
@@ -44,25 +37,20 @@ export class RecordingPageComponent implements OnInit {
     });
   }
 
-  private onRecordStep(step: any): void {
-    this.steps.push(step);
-    this.cd.detectChanges();
-  }
-
   private openStopDialog(): void {
     const ref = this.dialog.open(RecordStopDialogComponent, {
       disableClose: true,
       panelClass: 'stopDialog',
     });
 
-    ref.afterClosed().subscribe((_) => {
-      this.postRecordActions();
+    ref.afterClosed().subscribe((steps) => {
+      this.postRecordActions(steps);
     });
   }
 
-  private async postRecordActions(): Promise<void> {
+  private async postRecordActions(events: Event[]): Promise<void> {
     const { id } = await this.scenarioService.createScenarioFromRecording(
-      this.steps
+      events
     );
 
     this.router.navigate(['scenario/scenarioDetail', id]);

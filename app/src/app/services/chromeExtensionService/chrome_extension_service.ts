@@ -70,7 +70,7 @@ export class ChromeExtensionService {
     }
   }
 
-  public connectToCurrentPage(): Promise<void> {
+  public connectToCurrentPage(withReload: boolean = false): Promise<void> {
     if (this.internal_port !== null) {
       return Promise.reject();
     }
@@ -116,7 +116,7 @@ export class ChromeExtensionService {
         }, 2500);
       };
 
-      chrome.runtime.onConnect.addListener((port) => {
+      const setupPort = (port: chrome.runtime.Port) => {
         //ignore if a connection is already active
         if (port && port.name === 'ui5_tr') {
           this.internal_port = port;
@@ -129,25 +129,54 @@ export class ChromeExtensionService {
           chrome.runtime.onMessage.addListener(
             this._onInstantMessage.bind(this)
           );
-
+          chrome.runtime.onConnect.removeListener(setupPort);
           resolve();
         } else {
           return;
         }
-      });
+      };
+
+      chrome.runtime.onConnect.addListener(setupPort);
+
       if (this.currentPage) {
         this._requestPermission({
           id: this.currentPage.id,
           url: this.currentPage.path,
         })
           .then(() => {
-            chrome.tabs.onUpdated.addListener(inject_after_reload);
-            if (this.currentPage) {
-              chrome.tabs.reload(this.currentPage.id, {
-                bypassCache: false,
-              });
+            if (withReload) {
+              chrome.tabs.onUpdated.addListener(inject_after_reload);
+              if (this.currentPage) {
+                chrome.tabs.reload(this.currentPage.id, {
+                  bypassCache: false,
+                });
+              } else {
+                reject();
+              }
             } else {
-              reject();
+              if (this.currentPage) {
+                chrome.scripting.executeScript(
+                  {
+                    target: { tabId: this.currentPage.id },
+                    files: ['/assets/scripts/content_inject.js'],
+                  },
+                  () => {
+                    this.messageService.show({
+                      severity: SnackSeverity.SUCCESS,
+                      title: 'Injection',
+                      detail: 'Connection established!',
+                    });
+                    this.appFooterService.connected();
+                    this._interval_id = setInterval(
+                      this._checkConnection.bind(this),
+                      450
+                    );
+                    resolve();
+                  }
+                );
+              } else {
+                reject();
+              }
             }
           })
           .catch(() => {
@@ -244,6 +273,15 @@ export class ChromeExtensionService {
 
   private _resetConnection(): void {
     if (this.internal_port !== null) {
+      this.internal_port.onDisconnect.removeListener(
+        this._onDisconnectListener.bind(this)
+      );
+      this.internal_port.onMessage.removeListener(
+        this._onMessageListener.bind(this)
+      );
+      chrome.runtime.onMessage.removeListener(
+        this._onInstantMessage.bind(this)
+      );
       this.internal_port.disconnect();
       this.internal_port = null;
       this.bInjectAttempted = false;

@@ -15,7 +15,7 @@
     script.id = `${TAG_ID_PREFIX}-js`;
     script.src = chrome.runtime.getURL('/assets/scripts/page_inject.js');
     script.defer = "defer";
-    document.head.appendChild(script);
+    document.head.prepend(script);
   }
 
   function commJS() {
@@ -25,7 +25,7 @@
     script.src = chrome.runtime.getURL('/assets/scripts/communication_inject.js');
     script.setAttribute('data-id', EXT_ID);
     script.defer = "defer";
-    document.head.appendChild(script);
+    document.head.prepend(script);
   }
 
   function setup_port_passthrough() {
@@ -39,6 +39,7 @@
 
     const page_id = EXT_ID + '_ui5_tr_handler';
     window.addEventListener("message", (event) => {
+      debugger;
       if (event.data.origin === page_id && event.origin === page_origin) {
         port.postMessage({ data: event.data.message || event.data.response });
       }

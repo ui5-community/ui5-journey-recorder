@@ -33,7 +33,10 @@ export class MessageService {
     title: string;
     message: string;
     severity?: string;
-    accept?: () => void;
+    withConfOption?: boolean;
+    confText?: string;
+    defaultConfirmValue?: boolean;
+    accept?: (val: any) => void;
     dismiss?: () => void;
   }): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -43,12 +46,15 @@ export class MessageService {
         summary: params.title,
         detail: params.message,
         severity: params.severity || '',
+        withConfOption: params.withConfOption,
+        confText: params.confText,
+        defaultConfirmValue: params.defaultConfirmValue,
       },
     });
-    dialogRef.afterClosed().subscribe((choice: boolean) => {
-      if (choice) {
+    dialogRef.afterClosed().subscribe((confOption: any) => {
+      if (confOption) {
         if (params.accept) {
-          params.accept();
+          params.accept(confOption);
         }
       } else {
         if (params.dismiss) {

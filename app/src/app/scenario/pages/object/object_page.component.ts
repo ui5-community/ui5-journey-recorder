@@ -21,7 +21,6 @@ import { SnackSeverity } from 'src/app/components/dialogs/snack-dialog/snack-dia
 export class ObjectPageComponent implements OnInit, OnDestroy {
   navigatedPage: string = 'Test';
   tab: chrome.tabs.Tab | undefined;
-  recordingObs: Observable<any>;
 
   steps: any[] = [];
   scenario: TestScenario = new TestScenario('0');
@@ -41,9 +40,7 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
     public app_footer_service: AppFooterService,
     private app_header_service: AppHeaderService,
     private messageService: MessageService
-  ) {
-    this.recordingObs = this.chr_ext_srv.register_recording_websocket();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.app_header_service.showBack();

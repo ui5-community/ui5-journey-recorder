@@ -1,117 +1,209 @@
-var lastDetectedElement;
+(() => {
+  class RecorderInject {
+    #lastDetectedElement;
+    #documentReference;
+    #windowReference
 
-const setupAll = () => {
-  setupHoverSelectEffect();
-  setupClickListener();
-}
-
-const setupHoverSelectEffect = () => {
-  //append style class
-  let css = '.injectClass { box-shadow: 0 0 2px 2px red, inset 0 0 2px 2px red; }';
-  let head = document.head || document.getElementsByTagName('head')[0];
-  let style = document.createElement('style');
-
-  style.id = "UI5TR--css";
-  style.appendChild(document.createTextNode(css));
-
-  head.appendChild(style);
-
-  //append style adding and removement
-  document.onmouseover = e => {
-    var e = e || window.event;
-    var el = e.target || e.srcElement;
-    var ui5El = _getUI5Element(el);
-
-    if (ui5El && ui5El.addStyleClass) {
-      ui5El.addStyleClass('injectClass');
+    constructor(doc, win) {
+      this.#documentReference = doc;
+      this.#windowReference = win;
     }
 
-    if (lastDetectedElement && lastDetectedElement.removeStyleClass && ui5El && lastDetectedElement.getId() !== ui5El.getId()) {
-      lastDetectedElement.removeStyleClass('injectClass');
-    }
-    lastDetectedElement = ui5El;
-  }
+    //#region public access points
+    setupHoverSelectEffect() {//append style class
+      let css = '.injectClass { box-shadow: 0 0 2px 2px red, inset 0 0 2px 2px red; }';
+      let head = this.#documentReference.head || this.#documentReference.getElementsByTagName('head')[0];
+      let style = this.#documentReference.createElement('style');
 
-  document.onmouseout = function (e) {
-    var e = e || window.event;
-    var el = e.target || e.srcElement;
-    var ui5El = _getUI5Element(el);
+      style.id = "UI5TR--css";
+      style.appendChild(this.#documentReference.createTextNode(css));
 
-    if (ui5El && ui5El.removeStyleClass) {
-      ui5El.removeStyleClass('injectClass');
-    }
-  };
-}
+      head.prepend(style);
 
-const setupClickListener = () => {
+      //append style adding and removement
+      this.#documentReference.onmouseover = e => {
+        var e = e || this.#windowReference.event;
+        var el = e.target || e.srcElement;
+        var ui5El = this.#getUI5Element(el);
 
-  document.onclick = (e) => {
-    let event = e || window.event;
-    let el = event.target || event.srcElement;
-    let ui5El = _getUI5Element(el);
-    ws_api.send_record_step({
-      type: 'clicked',
-      control: {
-        id: ui5El.sId,
-        type: ui5El.getMetadata().getElementName(),
-        classes: ui5El.aCustomStyleClasses,
-        /* domRef: ui5El.getDomRef().outerHTML, */
-        properties: _getUI5ElementProperties(ui5El),
-        view: _getViewProperties(ui5El),
-        events: {
-          press: ui5El.getMetadata().getEvent('press') !== undefined
+        if (ui5El && ui5El.addStyleClass) {
+          ui5El.addStyleClass('injectClass');
         }
-      },
-      location: window.location.href
-    })
-    if (ui5El && ui5El.focus) {
-      ui5El.focus();
-      for (let child of ui5El.getDomRef().querySelectorAll('input, select, textarea')) {
-        child.onkeydown = (e) => {
-          ws_api.send_record_step({
-            type: 'keypress',
-            key: e.key,
-            keyCode: e.keyCode,
-            control: {
-              id: ui5El.sId,
-              type: ui5El.getMetadata().getElementName(),
-              classes: ui5El.aCustomStyleClasses,
-              domRef: ui5El.getDomRef().outerHTML,
-              properties: _getUI5ElementProperties(ui5El),
-              view: _getViewProperties(ui5El)
-            },
-            location: window.location.href
-          });
+
+        if (this.#lastDetectedElement && this.#lastDetectedElement.removeStyleClass && ui5El && this.#lastDetectedElement.getId() !== ui5El.getId()) {
+          this.#lastDetectedElement.removeStyleClass('injectClass');
+        }
+        this.#lastDetectedElement = ui5El;
+      }
+
+      this.#documentReference.onmouseout = e => {
+        var e = e || this.#windowReference.event;
+        var el = e.target || e.srcElement;
+        var ui5El = this.#getUI5Element(el);
+
+        if (ui5El && ui5El.removeStyleClass) {
+          ui5El.removeStyleClass('injectClass');
+        }
+      };
+    }
+
+    setupClickListener() {
+      this.#documentReference.onclick = (e) => {
+        let event = e || this.#windowReference.event;
+        let el = event.target || event.srcElement;
+        let ui5El = this.#getUI5Element(el);
+        ws_api.send_record_step({
+          type: 'clicked',
+          control: {
+            id: ui5El.sId,
+            type: ui5El.getMetadata().getElementName(),
+            classes: ui5El.aCustomStyleClasses,
+            properties: this.#getUI5ElementProperties(ui5El),
+            view: this.#getViewProperties(ui5El),
+            events: {
+              press: ui5El.getMetadata().getEvent('press') !== undefined
+            }
+          },
+          location: this.#windowReference.location.href
+        });
+
+        if (ui5El && ui5El.focus) {
+          ui5El.focus();
+          for (let child of ui5El.getDomRef().querySelectorAll('input, select, textarea')) {
+            child.onkeydown = (e) => {
+              ws_api.send_record_step({
+                type: 'keypress',
+                key: e.key,
+                keyCode: e.keyCode,
+                control: {
+                  id: ui5El.sId,
+                  type: ui5El.getMetadata().getElementName(),
+                  classes: ui5El.aCustomStyleClasses,
+                  domRef: ui5El.getDomRef().outerHTML,
+                  properties: this.#getUI5ElementProperties(ui5El),
+                  view: this.#getViewProperties(ui5El)
+                },
+                location: this.#windowReference.location.href
+              });
+            }
+          }
         }
       }
     }
+    //#endregion public access points
+
+    //#region private
+    #getUI5Element(el) {
+      let UIElements = this.#getUI5Elements();
+      var ui5El = UIElements[el.id];
+      if (!ui5El) {
+        let parent = el;
+        let found = false;
+        while (!found) {
+          if (parent && UIElements[parent.id] && UIElements[parent.id].addStyleClass) {
+            found = true;
+            ui5El = UIElements[parent.id];
+          }
+          parent = parent.parentNode;
+          if (!parent) {
+            break;
+          }
+        }
+        /* if (ui5El) {
+          console.log('UI5El found: ' + ui5El.getId());
+        } */
+      }
+      return ui5El
+    }
+
+    #getUI5Elements() {
+      //>= 1.67
+      if (sap.ui.core.Element && sap.ui.core.Element.registry) {
+        return this.#getElements_1_67_and_post();
+      } else {
+        return this.#getElements_pre_1_67();
+      }
+    }
+
+    #getElements_pre_1_67() {
+      let core;
+      const fakePlugin = {
+        startPlugin: realCore => core = realCore,
+        stopPlugin: _ => { }
+      };
+
+      sap.ui.getCore().registerPlugin(fakePlugin);
+      sap.ui.getCore().unregisterPlugin(fakePlugin);
+      return core.mElements;
+    }
+
+    #getElements_1_67_and_post() {
+      return sap.ui.core.Element.registry.all();
+    }
+
+    #getUI5ElementProperties(el) {
+      // retrieve the direct public available methods
+      return el.getMetadata()._aPublicMethods
+        // reduce them to the "getter" only
+        .filter(m => m.startsWith("get"))
+        // create the properties object by collect and execute all getter
+        .reduce((a, b) => {
+          const key = Utils.lowerCaseFirstLetter(b.replace('get', ''));
+          const value = el[b]();
+          if (typeof value !== 'object') {
+            a[key] = value;
+          } else {
+            try {
+              JSON.stringify(value);
+              a[key] = value;
+            } catch (e) { }
+          }
+          return a;
+        }, {})
+    }
+
+    #getViewProperties(ui5El) {
+      let curEl = ui5El;
+      while (curEl && !curEl.getViewName) {
+        curEl = curEl.getParent();
+      }
+      if (!curEl) {
+        //assume we have ui5 element and can go upwards by substracting the last part of the id to get the information
+        const newId = ui5El.getId().substring(0, ui5El.getId().lastIndexOf('-'));
+        curEl = this.#getUI5Elements()[newId];
+        while (curEl && !curEl.getViewName) {
+          curEl = curEl.getParent();
+        }
+      }
+
+      return {
+        absoluteViewName: curEl.getViewName(),
+        relativeViewName: curEl.getViewName().split(".").pop()
+      };
+    }
+
+    //#endregion
   }
-}
 
-const _getElements_pre_1_67 = () => {
-  let core;
-  const fakePlugin = {
-    startPlugin: realCore => core = realCore,
-    stopPlugin: _ => { }
-  };
-
-  sap.ui.getCore().registerPlugin(fakePlugin);
-  sap.ui.getCore().unregisterPlugin(fakePlugin);
-  return core.mElements;
-}
-
-const _getElements_1_67_and_post = () => {
-  return sap.ui.core.Element.registry.all();
-}
-
-const _getUI5Elements = () => {
-  //>= 1.67
-  if (sap.ui.core.Element && sap.ui.core.Element.registry) {
-    return _getElements_1_67_and_post();
-  } else {
-    return _getElements_pre_1_67();
+  class Utils {
+    static lowerCaseFirstLetter([first, ...rest], locale = navigator.language) {
+      return first === undefined ? '' : first.toLocaleLowerCase(locale) + rest.join('');
+    }
   }
-}
+
+  const recorderInstance = new RecorderInject(document, window);
+  recorderInstance.setupHoverSelectEffect();
+  recorderInstance.setupClickListener();
+
+  window.ui5TestRecorder = {
+    ...window.ui5TestRecorder,
+    ... {
+      recorder: recorderInstance,
+      utils: new Utils()
+    }
+  }
+})();
+
 
 const getElementsForId = (id) => {
   return Object.values(_getUI5Elements()).filter(el => el.getId() === id);
@@ -134,71 +226,12 @@ const getElementsByAttributes = (controlType, attributes) => {
   return elements;
 }
 
-const _getUI5Element = (el) => {
-  let UIElements = _getUI5Elements();
-  var ui5El = UIElements[el.id];
-  if (!ui5El) {
-    let parent = el;
-    let found = false;
-    while (!found) {
-      if (parent && UIElements[parent.id] && UIElements[parent.id].addStyleClass) {
-        found = true;
-        ui5El = UIElements[parent.id];
-      }
-      parent = parent.parentNode;
-      if (!parent) {
-        break;
-      }
-    }
-    /* if (ui5El) {
-      console.log('UI5El found: ' + ui5El.getId());
-    } */
-  }
-  return ui5El
-}
-
-const _getUI5ElementProperties = (el) => {
-  // retrieve the direct public available methods
-  return el.getMetadata()._aPublicMethods
-    // reduce them to the "getter" only
-    .filter(m => m.startsWith("get"))
-    // create the properties object by collect and execute all getter
-    .reduce((a, b) => {
-      const key = lowerCaseFirstLetter(b.replace('get', ''));
-      const value = el[b]();
-      if (typeof value !== 'object') {
-        a[key] = value;
-      } else {
-        try {
-          JSON.stringify(value);
-          a[key] = value;
-        } catch (e) { }
-      }
-      return a;
-    }, {})
-}
-
 const executeAction = (oEvent) => {
   const oItem = oEvent.step;
   let elements = _getUI5Elements();
   elements = getElementsByAttributes(oItem.control_type, Object.values(oItem.control_attributes)
     // only take the attributes which should be used for identification
     .filter(att => att.use));
-  /*
-  // filter by control_type
-  elements = Object.values(elements).filter(el => el.getMetadata().getElementName() === oItem.control_type);
-  // filter by control_attributes
-  elements = elements.filter(el => {
-    return Object.values(oItem.control_attributes)
-      // only take the attributes which should be used for identification
-      .filter(att => att.use)
-      // create getter function names and expected values from control_attributes
-      .map(attribute => ({ key: 'get' + upperCaseFirstLetter(attribute.name), value: attribute.value }))
-      // create list of expection-results
-      .map(executeMatcher => el[executeMatcher.key]() === executeMatcher.value)
-      // check if all selected attributes really match
-      .reduce((a, b) => a && b, true);
-  }); */
 
   if (elements.length > 1 && !oItem.control_id.startsWith('__')) {
     elements = elements.filter(el => el.getId() === oItem.control_id);
@@ -213,7 +246,6 @@ const executeAction = (oEvent) => {
   } else {
     console.log('Elements length: ', elements.length);
   }
-
 }
 
 const _executeClick = (el) => {
@@ -326,32 +358,6 @@ const __checkActionPreconditions = (aDOMNodes, bReturnSelectedNode = false) => {
   return oResult;
 }
 
-const _getViewProperties = (ui5El) => {
-  let curEl = ui5El;
-  while (curEl && !curEl.getViewName) {
-    curEl = curEl.getParent();
-  }
-  if (!curEl) {
-    //assume we have ui5 element and can go upwards by substracting the last part of the id to get the information
-    const newId = ui5El.getId().substring(0, ui5El.getId().lastIndexOf('-'));
-    curEl = _getUI5Elements()[newId];
-    while (curEl && !curEl.getViewName) {
-      curEl = curEl.getParent();
-    }
-  }
-
-  return {
-    absoluteViewName: curEl.getViewName(),
-    relativeViewName: curEl.getViewName().split(".").pop()
-  };
-}
-
-const lowerCaseFirstLetter = ([first, ...rest], locale = navigator.language) => {
-  return first === undefined ? '' : first.toLocaleLowerCase(locale) + rest.join('');
-}
-
 const upperCaseFirstLetter = ([first, ...rest], locale = navigator.language) => {
   return first === undefined ? '' : first.toLocaleUpperCase(locale) + rest.join('');
 }
-
-setupAll();
