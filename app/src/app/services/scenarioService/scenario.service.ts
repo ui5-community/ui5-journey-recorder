@@ -187,6 +187,7 @@ export class ScenarioService {
       res.styleClasses = a.control.classes;
       res.actionLoc = a.location;
       res.view = a.control.view;
+      res.recordReplaySelector = a.control.recordReplaySelector;
       return res;
     });
   }

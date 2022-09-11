@@ -3,7 +3,7 @@ export enum StepType {
   Input = 'input',
   KeyPress = 'keypress',
   Unknown = 'unknown',
-  Validation = 'validate'
+  Validation = 'validate',
 }
 
 export type Key = {
@@ -162,6 +162,7 @@ export class Page implements Stringify {
         val.actionLoc = parsedObj.action_location;
         val.useControlId = parsedObj.use_control_id;
         val.controlAttributes = parsedObj.control_attributes;
+        val.recordReplaySelector = parsedObj.record_replay_selector;
         return val;
       case StepType.Click:
         const cs = new ClickStep();
@@ -171,6 +172,7 @@ export class Page implements Stringify {
         cs.actionLoc = parsedObj.action_location;
         cs.useControlId = parsedObj.use_control_id;
         cs.controlAttributes = parsedObj.control_attributes;
+        cs.recordReplaySelector = parsedObj.record_replay_selector;
         return cs;
       case StepType.Input:
         const is = new InputStep();
@@ -180,6 +182,7 @@ export class Page implements Stringify {
         is.actionLoc = parsedObj.action_location;
         is.useControlId = parsedObj.use_control_id;
         is.controlAttributes = parsedObj.control_attributes;
+        is.recordReplaySelector = parsedObj.record_replay_selector;
         if (parsedObj.keys) {
           parsedObj.keys.forEach((k: any) => {
             is.addStep(Page.stepFromJSON(JSON.stringify(k)) as KeyPressStep);
@@ -196,6 +199,7 @@ export class Page implements Stringify {
         kps.key = parsedObj.key_char;
         kps.keyCode = parsedObj.key_code;
         kps.controlAttributes = parsedObj.control_attributes;
+        kps.recordReplaySelector = parsedObj.record_replay_selector;
         return kps;
       default:
         return new UnknownStep();
@@ -212,6 +216,7 @@ export abstract class Step implements Stringify, Equals {
   private control_type: string;
   private style_classes: string[];
   private control_attributes: { name: string; value: any; use: boolean }[];
+  private record_replay_selector: { [key: string]: any };
 
   constructor(type: StepType) {
     this.action_type = type;
@@ -221,6 +226,7 @@ export abstract class Step implements Stringify, Equals {
     this.control_type = '';
     this.control_attributes = [];
     this.use_control_id = false;
+    this.record_replay_selector = {};
   }
 
   toString(): string {
@@ -297,6 +303,14 @@ export abstract class Step implements Stringify, Equals {
 
   get controlAttributes(): { name: string; value: any; use: boolean }[] {
     return this.control_attributes;
+  }
+
+  set recordReplaySelector(selector: { [key: string]: any }) {
+    this.record_replay_selector = selector;
+  }
+
+  get recordReplaySelector(): { [key: string]: any } {
+    return this.record_replay_selector;
   }
 }
 

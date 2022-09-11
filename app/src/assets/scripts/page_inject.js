@@ -1,6 +1,7 @@
 (() => {
   class RecorderInject {
     #lastDetectedElement;
+    #rr = sap.ui.requireSync('sap/ui/test/RecordReplay');
 
     //#region public access points
     setupHoverSelectEffect() {//append style class
@@ -45,9 +46,10 @@
         let event = e || window.event;
         let el = event.target || event.srcElement;
         let ui5El = this.#getUI5Element(el);
+
         const webSocket = window?.ui5TestRecorder?.communication?.webSocket;
         if (webSocket) {
-          webSocket.send_record_step({
+          const message = {
             type: 'clicked',
             control: {
               id: ui5El.sId,
@@ -60,13 +62,17 @@
               }
             },
             location: window.location.href
-          });
+          }
+          this.#rr.findControlSelectorByDOMElement({ domElement: ui5El.getDomRef() }).then((c) => {
+            message.control.recordReplaySelector = c;
+            webSocket.send_record_step(message);
+          }).catch(err => { console.log(err.message) });
 
           if (ui5El && ui5El.focus) {
             ui5El.focus();
             for (let child of ui5El.getDomRef().querySelectorAll('input, select, textarea')) {
               child.onkeydown = (e) => {
-                webSocket.send_record_step({
+                const key_message = {
                   type: 'keypress',
                   key: e.key,
                   keyCode: e.keyCode,
@@ -79,7 +85,12 @@
                     view: this.#getViewProperties(ui5El)
                   },
                   location: window.location.href
-                });
+                }
+
+                this.#rr.findControlSelectorByDOMElement({ domElement: ui5El.getDomRef() }).then((c) => {
+                  key_message.control.recordReplaySelector = c;
+                  webSocket.send_record_step(key_message);
+                }).catch(err => { console.log(err.message) });
               }
             }
           }
@@ -137,11 +148,13 @@
     #getUI5Element(el) {
       let UIElements = this.#getUI5Elements();
       var ui5El = UIElements[el.id];
-      if (!ui5El) {
+      //check if we found an ui5 element and if this contains a parent.
+      //otherwise it is a nested property and not usable for testing
+      if (!ui5El || (ui5El && !ui5El.getParent())) {
         let parent = el;
         let found = false;
         while (!found) {
-          if (parent && UIElements[parent.id] && UIElements[parent.id].addStyleClass) {
+          if (parent && UIElements[parent.id] && UIElements[parent.id].getParent() && UIElements[parent.id].addStyleClass) {
             found = true;
             ui5El = UIElements[parent.id];
           }
