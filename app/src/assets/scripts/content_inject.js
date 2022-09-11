@@ -39,7 +39,6 @@
 
     const page_id = EXT_ID + '_ui5_tr_handler';
     window.addEventListener("message", (event) => {
-      debugger;
       if (event.data.origin === page_id && event.origin === page_origin) {
         port.postMessage({ data: event.data.message || event.data.response });
       }
