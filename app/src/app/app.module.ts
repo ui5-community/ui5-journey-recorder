@@ -16,6 +16,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 //#endregion material
 
 import { AppRoutingModule } from './app-routing.module';
@@ -73,6 +74,7 @@ import { SnackDialogComponent } from './components/dialogs/snack-dialog/snack-di
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatCheckboxModule,
     //#endregion
   ],
   providers: [

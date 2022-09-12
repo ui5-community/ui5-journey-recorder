@@ -41,6 +41,7 @@ export class ScenarioService {
       this.reduceSteps(this.transformEventsToSteps(recording))
     );
     const pages = this.createPages(stepTree);
+    pages.forEach((p) => p.steps.forEach((s) => s.applyPreSelection()));
     pages.forEach((p) => ts.addPage(p));
     this.cachedScenarios.push(ts);
     return ts;
@@ -187,6 +188,7 @@ export class ScenarioService {
       res.styleClasses = a.control.classes;
       res.actionLoc = a.location;
       res.view = a.control.view;
+      res.recordReplaySelector = a.control.recordReplaySelector;
       return res;
     });
   }

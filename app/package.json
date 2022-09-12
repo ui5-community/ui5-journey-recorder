@@ -12,7 +12,8 @@
     "doc": "npx compodoc",
     "doc:serve": "npx compodoc -s",
     "docu:coverage": "npx compodoc --unitTestCoverage reports/coverage/rokr-frontend/coverage-summary.json",
-    "uglify:assets": "node uglify-assets.js"
+    "uglify:assets": "node uglify-assets.js",
+    "postbuild": "node uglify-assets.js"
   },
   "private": true,
   "dependencies": {

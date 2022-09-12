@@ -58,10 +58,13 @@ export class MainComponent implements OnInit {
         icon: 'login',
         title: 'Connect to Page',
         message: 'Connect to the page and inject analytic scripts?',
-        accept: () => {
+        withConfOption: true,
+        confText: 'Reload Page',
+        defaultConfirmValue: true,
+        accept: (values) => {
           this.chr_ext_srv.setCurrentPage(page);
           this.chr_ext_srv
-            .connectToCurrentPage()
+            .connectToCurrentPage(values['confirmOption'])
             .then(() => {
               this.chr_ext_srv.focus_page(page).then(() => {
                 this.router.navigate(['scenario/recording'], {
