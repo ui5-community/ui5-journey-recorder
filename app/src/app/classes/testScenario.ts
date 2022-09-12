@@ -244,6 +244,23 @@ export abstract class Step implements Stringify, Equals {
     this.style_classes.push(cls);
   }
 
+  applyPreSelection() {
+    if (this.record_replay_selector['id']) {
+      this.use_control_id = true;
+      return;
+    }
+
+    if (this.record_replay_selector['properties']) {
+      const props = this.record_replay_selector['properties'];
+      Object.keys(props).forEach((k) => {
+        const p = this.control_attributes.find((att) => att.name === k);
+        if (p) {
+          p.use = true;
+        }
+      });
+    }
+  }
+
   public get useControlId(): boolean {
     return this.use_control_id;
   }

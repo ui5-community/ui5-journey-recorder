@@ -41,6 +41,7 @@ export class ScenarioService {
       this.reduceSteps(this.transformEventsToSteps(recording))
     );
     const pages = this.createPages(stepTree);
+    pages.forEach((p) => p.steps.forEach((s) => s.applyPreSelection()));
     pages.forEach((p) => ts.addPage(p));
     this.cachedScenarios.push(ts);
     return ts;
