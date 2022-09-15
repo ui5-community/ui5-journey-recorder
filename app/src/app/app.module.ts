@@ -45,6 +45,10 @@ import { MainComponent } from './pages/main/main.component';
 //#region directives
 import { AppTemplateDirective } from './directives/app-template.directive';
 import { SnackDialogComponent } from './components/dialogs/snack-dialog/snack-dialog.component';
+import { SettingsDialogComponent } from './components/dialogs/settings-dialog/settings-dialog.component';
+import { MatSelectModule } from '@angular/material/select';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { SettingsStorageService } from './services/localStorageService/settingsStorageService.service';
 //#endregion
 
 @NgModule({
@@ -57,6 +61,7 @@ import { SnackDialogComponent } from './components/dialogs/snack-dialog/snack-di
     SpinnerComponent,
     ConfirmDialogComponent,
     SnackDialogComponent,
+    SettingsDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -75,6 +80,8 @@ import { SnackDialogComponent } from './components/dialogs/snack-dialog/snack-di
     MatSnackBarModule,
     MatDialogModule,
     MatCheckboxModule,
+    MatSelectModule,
+    MatExpansionModule,
     //#endregion
   ],
   providers: [
@@ -84,7 +91,10 @@ import { SnackDialogComponent } from './components/dialogs/snack-dialog/snack-di
     MessageService,
     ScenarioService,
     ScenarioStorageService,
+    SettingsStorageService,
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private _: SettingsStorageService) {}
+}

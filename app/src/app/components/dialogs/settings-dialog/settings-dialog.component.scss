@@ -1,0 +1,13 @@
+.mat-dialog-content.settings-dialog-content {
+  padding: 1.5rem;
+
+  > .mat-expansion-panel {
+    box-shadow: none;
+
+    .mat-expansion-panel-header[aria-disabled="true"] {
+      .mat-expansion-panel-header-title {
+        color: rgba(0, 0, 0, 0.87);
+      }
+    }
+  }
+}

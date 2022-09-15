@@ -4,6 +4,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Step, StepType, UnknownStep } from 'src/app/classes/testScenario';
 import { AppHeaderService } from 'src/app/components/app-header/app-header.service';
 import { SnackSeverity } from 'src/app/components/dialogs/snack-dialog/snack-dialog.component';
+import { SettingsStorageService } from 'src/app/services/localStorageService/settingsStorageService.service';
 import { MessageService } from 'src/app/services/messageService/message.service';
 import { ScenarioService } from 'src/app/services/scenarioService/scenario.service';
 import { CodeService, CodeStyles } from '../../codeService/codeService.service';
@@ -39,12 +40,15 @@ export class StepPageComponent implements OnInit {
     language: 'javascript',
     value: '',
   };
+  selected: CodeStyles = CodeStyles.OPA5;
+  codeStyles: CodeStyles[] = [CodeStyles.OPA5, CodeStyles.WDI5];
 
   constructor(
     private active_route: ActivatedRoute,
     private scenario_service: ScenarioService,
     private app_header_service: AppHeaderService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private settingsService: SettingsStorageService
   ) {}
 
   ngOnInit(): void {
@@ -62,6 +66,8 @@ export class StepPageComponent implements OnInit {
           this.app_header_service.navigateBackwards();
         });
     });
+
+    this.selected = this.settingsService.codeStyle;
   }
 
   setType(type: StepType): void {
@@ -78,12 +84,12 @@ export class StepPageComponent implements OnInit {
         this.codeData.value = CodeService.generatePagedStepCode(
           this.currentStep,
           {
-            style: CodeStyles.OPA5,
+            style: this.selected,
           }
         );
       } else {
         this.codeData.value = CodeService.generateStepCode(this.currentStep, {
-          style: CodeStyles.OPA5,
+          style: this.selected,
         });
       }
     }

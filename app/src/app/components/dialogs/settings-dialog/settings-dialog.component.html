@@ -1,0 +1,21 @@
+<div class="flex horizontal center-cross title">
+  <mat-icon class="distance-right-1">settings</mat-icon>
+  <h1 style="margin: 0;" mat-dialog-title>Settings</h1>
+</div>
+<div mat-dialog-content class="settings-dialog-content">
+  <mat-expansion-panel hideToggle expanded="true" disabled="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>Code</mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-form-field appearance="fill">
+      <mat-label>Framework</mat-label>
+      <mat-select (selectionChange)="this.languageChanged($event)" [value]="this.settings?.codeStyle">
+        <mat-option *ngFor="let lang of this.codeLanguages" [value]="lang.value">{{lang.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-expansion-panel>
+</div>
+<div mat-dialog-actions [align]="'end'">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button cdkFocusInitial color="primary" (click)="this.close()">Save</button>
+</div>

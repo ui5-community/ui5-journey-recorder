@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Step, TestScenario } from 'src/app/classes/testScenario';
 import OPA5CodeStrategy from './strategies/opa5/OPA5CodeStrategy';
+import Wdi5CodeStrategy from './strategies/wdi5/Wdi5CodeStrategy';
+import Wdi5SingleStepStrategy from './strategies/wdi5/Wdi5SingleStepStrategy';
 
 export enum CodeStyles {
   OPA5 = 'OPA5',
+  WDI5 = 'Wdi5',
   UNDEFINDED = 'UNDEFINED',
 }
 
@@ -23,6 +26,8 @@ export class CodeService {
     switch (lang) {
       case CodeStyles.OPA5:
         return new OPA5CodeStrategy().generateTestCode(scenario);
+      case CodeStyles.WDI5:
+        return new Wdi5CodeStrategy().generateTestCode(scenario);
       default:
         return [];
     }
@@ -36,6 +41,8 @@ export class CodeService {
     switch (lang) {
       case CodeStyles.OPA5:
         return new OPA5CodeStrategy().generateStepCode(testStep);
+      case CodeStyles.WDI5:
+        return new Wdi5CodeStrategy().generateStepCode(testStep);
       default:
         return '';
     }
@@ -49,6 +56,8 @@ export class CodeService {
     switch (lang) {
       case CodeStyles.OPA5:
         return new OPA5CodeStrategy().generatePagedStepCode(testStep);
+      case CodeStyles.WDI5:
+        return new Wdi5CodeStrategy().generatePagedStepCode(testStep);
       default:
         return '';
     }
