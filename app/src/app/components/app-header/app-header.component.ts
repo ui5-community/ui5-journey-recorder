@@ -7,7 +7,9 @@ import {
   QueryList,
   TemplateRef,
 } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { AppTemplateDirective } from 'src/app/directives/app-template.directive';
+import { SettingsDialogComponent } from '../dialogs/settings-dialog/settings-dialog.component';
 import { AppHeaderService } from './app-header.service';
 @Component({
   selector: 'app-header',
@@ -25,11 +27,11 @@ export class AppHeaderComponent implements OnInit, AfterContentInit {
   templates?: QueryList<AppTemplateDirective>;
 
   constructor(
-    public appHeaderService: AppHeaderService
+    public appHeaderService: AppHeaderService,
+    private dialog: MatDialog
   ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   ngAfterContentInit() {
     this.templates?.forEach((item) => {
@@ -46,5 +48,12 @@ export class AppHeaderComponent implements OnInit, AfterContentInit {
 
   navBack() {
     this.appHeaderService.navigateBackwards();
+  }
+
+  openSettingsDialog() {
+    this.dialog.open(SettingsDialogComponent, {
+      disableClose: true,
+      closeOnNavigation: false,
+    });
   }
 }

@@ -5,8 +5,9 @@
   <div>
     <label>Code-Style:&nbsp;</label>
     <mat-form-field>
-      <mat-select [(value)]="selected">
-        <mat-option *ngFor="let style of this.codeStyles" [value]="style">{{style}}</mat-option>
+      <mat-select [(value)]="selected" (valueChange)="this.generate()">
+        <mat-option *ngFor="let style of this.codeStyles" [value]="style">
+          {{style}}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>

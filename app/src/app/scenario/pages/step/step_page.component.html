@@ -92,11 +92,15 @@
 
     <div class="list-header">
       <h4>Steps</h4>
-      <div>
-
-        <mat-checkbox class="example-margin" [(ngModel)]="this.pagedCode">
+      <div class="flex horizontal center-cross">
+        <mat-checkbox class="example-margin distance-right-05" [(ngModel)]="this.pagedCode"
+          (change)="this.generateStepCode()">
           Page attached
         </mat-checkbox>
+        <mat-select [(value)]="selected" class="distance-right-05" style="max-width: 5rem;"
+          (valueChange)="this.generateStepCode()">
+          <mat-option *ngFor="let style of this.codeStyles" [value]="style">{{style}}</mat-option>
+        </mat-select>
         <button type="button" (click)="this.generateStepCode()" mat-button color="primary">
           <mat-icon>generating_tokens</mat-icon>
           <span>Regenerate</span>
