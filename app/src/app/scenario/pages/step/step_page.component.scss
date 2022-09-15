@@ -8,16 +8,22 @@
   }
 }
 
-
 pre {
   background: #383838;
   color: white;
+  min-height: 3rem;
 }
-
 
 .list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid lightgray;
+}
+
+.copy-button {
+  color: white;
+  position: fixed;
+  right: 0;
+  margin: 1rem 1.5rem;
 }

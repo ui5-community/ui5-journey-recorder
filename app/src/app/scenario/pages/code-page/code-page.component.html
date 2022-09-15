@@ -10,11 +10,19 @@
           {{style}}</mat-option>
       </mat-select>
     </mat-form-field>
+    <button color="primary" mat-mini-fab aria-label="Download-All" style="margin-left: 0.5rem"
+      (click)="this.downloadAll()">
+      <mat-icon>download_for_offline</mat-icon>
+    </button>
   </div>
 </mat-toolbar>
-<mat-tab-group *ngIf="this.codePages.length > 0; else emptyPages">
+<mat-tab-group *ngIf="this.codePages.length > 0; else emptyPages" color="primary" backgroundColor="primary">
   <mat-tab *ngFor="let page of this.codePages" [label]="page.title">
     <ng-template matTabContent>
+      <button color="primary" mat-fab aria-label="Download-Page" class="float-button float-right"
+        (click)="this.downloadPage(page)">
+        <mat-icon>download</mat-icon>
+      </button>
       <pre><code>{{page.code}}</code></pre>
     </ng-template>
   </mat-tab>

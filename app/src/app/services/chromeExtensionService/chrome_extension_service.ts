@@ -109,7 +109,7 @@ export class ChromeExtensionService {
               this._interval_id = setInterval(
                 this._checkConnection.bind(this),
                 450
-              );
+              ) as unknown as number;
               resolve();
             }
           );
@@ -170,7 +170,7 @@ export class ChromeExtensionService {
                     this._interval_id = setInterval(
                       this._checkConnection.bind(this),
                       450
-                    );
+                    ) as unknown as number;
                     resolve();
                   }
                 );

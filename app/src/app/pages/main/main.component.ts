@@ -49,7 +49,7 @@ export class MainComponent implements OnInit {
     this.timerIndex = setInterval(
       this.loadTabs.bind(this),
       3000 //refresh every 3sec
-    );
+    ) as unknown as number;
   }
 
   connect_to_page(page: Page | undefined) {

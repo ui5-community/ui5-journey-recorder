@@ -1,5 +1,5 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { Component, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Step, StepType, UnknownStep } from 'src/app/classes/testScenario';
 import { AppHeaderService } from 'src/app/components/app-header/app-header.service';
@@ -48,7 +48,8 @@ export class StepPageComponent implements OnInit {
     private scenario_service: ScenarioService,
     private app_header_service: AppHeaderService,
     private messageService: MessageService,
-    private settingsService: SettingsStorageService
+    private settingsService: SettingsStorageService,
+    private clipboard: Clipboard
   ) {}
 
   ngOnInit(): void {
@@ -123,5 +124,13 @@ export class StepPageComponent implements OnInit {
           }
         });
     }
+  }
+
+  copyCode(code: string = '') {
+    this.clipboard.copy(code);
+    this.messageService.show({
+      severity: SnackSeverity.SUCCESS,
+      title: 'Copy Successfull',
+    });
   }
 }

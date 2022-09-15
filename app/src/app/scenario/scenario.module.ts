@@ -36,7 +36,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatMenuModule} from '@angular/material/menu';
+import { MatMenuModule } from '@angular/material/menu';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 //#endregion material
 
 @NgModule({
@@ -53,6 +54,7 @@ import { MatMenuModule} from '@angular/material/menu';
     CommonModule,
     ScenarioRoutingModule,
     FormsModule,
+    ClipboardModule,
     //#region material
     MatListModule,
     MatFormFieldModule,
