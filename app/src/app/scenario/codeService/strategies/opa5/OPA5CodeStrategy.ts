@@ -56,6 +56,7 @@ export default class OPA5CodeStrategy implements CodeStrategy {
       (a: string, b: string) => `${a}${b}`,
       ''
     );
+    jurney['type'] = 'journey';
 
     codes.push(jurney);
     const posNamespace = Object.values(this._pages)
@@ -68,6 +69,7 @@ export default class OPA5CodeStrategy implements CodeStrategy {
       var oCode = {
         title: `${entry[0]}-Page`,
         code: entry[1].generate(),
+        type: 'page',
       };
       codes.push(oCode);
     });

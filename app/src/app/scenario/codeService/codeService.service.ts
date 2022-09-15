@@ -21,7 +21,7 @@ export class CodeService {
   public static generateScenarioCode(
     scenario: TestScenario,
     options?: CodeOptions
-  ): { title: string; code: string }[] {
+  ): { title: string; code: string, type: 'journey' | 'page' }[] {
     const lang = options?.style || CodeStyles.UNDEFINDED;
     switch (lang) {
       case CodeStyles.OPA5:

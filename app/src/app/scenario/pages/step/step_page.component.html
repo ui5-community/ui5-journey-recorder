@@ -107,6 +107,9 @@
         </button>
       </div>
     </div>
+    <button (click)="copyCode(codeData.value)" mat-icon-button class="copy-button">
+      <mat-icon>content_copy</mat-icon>
+    </button>
     <pre *ngIf="this.codeData?.value"><code [innerText]="this.codeData.value"></code></pre>
   </ng-template>
 </mat-expansion-panel>
