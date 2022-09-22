@@ -4,21 +4,16 @@ import { v4 as uuidV4 } from 'uuid';
 import { ChromeExtensionService } from '../chromeExtensionService/chrome_extension_service';
 import { RequestBuilder, RequestMethod } from '../../classes/requestBuilder';
 
+import { Page, TestScenario } from '../../classes/testScenario';
+import { ScenarioStorageService } from '../localStorageService/scenarioStorageService.service';
 import {
   ClickStep,
   InputStep,
+  IntermediateStep,
   KeyPressStep,
-  Page,
   Step,
-  TestScenario,
   UnknownStep,
-  ValidationStep,
-} from '../../classes/testScenario';
-import { ScenarioStorageService } from '../localStorageService/scenarioStorageService.service';
-
-type IntermediateStep = Step & {
-  view?: { absoluteViewName: string; relativeViewName: string };
-};
+} from 'src/app/classes/Step';
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +33,11 @@ export class ScenarioService {
   public createScenarioFromRecording(recording: any[]): TestScenario {
     const ts = new TestScenario(this.createUUID(), Date.now());
     const stepTree = this.transformToAst(
-      this.reduceSteps(this.transformEventsToSteps(recording))
+      this.reduceSteps(
+        /* this.transformEventsToSteps( */ recording.map(
+          Step.recordEventToStep
+        ) /* ) */
+      )
     );
     const pages = this.createPages(stepTree);
     pages.forEach((p) => p.steps.forEach((s) => s.applyPreSelection()));
@@ -161,8 +160,8 @@ export class ScenarioService {
     return step;
   }
 
-  private transformEventsToSteps(events: any): IntermediateStep[] {
-    return events.map((a: any, i: number) => {
+  /* private transformEventsToSteps(events: any): IntermediateStep[] {
+    return events.map((a: any) => {
       let res: IntermediateStep;
       switch (a.type) {
         case 'clicked':
@@ -191,7 +190,7 @@ export class ScenarioService {
       res.recordReplaySelector = a.control.recordReplaySelector;
       return res;
     });
-  }
+  } */
 
   private reduceSteps(steps: IntermediateStep[]): IntermediateStep[][] {
     return steps.reduce(

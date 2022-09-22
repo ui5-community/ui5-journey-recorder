@@ -1,4 +1,5 @@
-import { Step, TestScenario } from 'src/app/classes/testScenario';
+import { Step } from 'src/app/classes/Step';
+import { TestScenario } from 'src/app/classes/testScenario';
 
 export default interface CodeStrategy {
   generateTestCode(scenario: TestScenario): any[];

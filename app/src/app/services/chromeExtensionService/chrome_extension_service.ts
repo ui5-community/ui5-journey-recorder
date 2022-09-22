@@ -237,7 +237,7 @@ export class ChromeExtensionService {
         bypassCache: false,
       });
     } else {
-      return Promise.reject();
+      return Promise.resolve();
     }
   }
 

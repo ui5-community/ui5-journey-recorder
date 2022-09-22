@@ -19,7 +19,9 @@ export class SettingsStorageService {
 
   private async initService(): Promise<void> {
     const values = await chrome.storage.local.get('settings');
-    this._settings = JSON.parse(values['settings']);
+    if (values['settings']) {
+      this._settings = JSON.parse(values['settings']);
+    }
   }
 
   public get settings(): AppSettings {

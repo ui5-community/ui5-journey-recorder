@@ -1,5 +1,5 @@
+import { Step } from 'src/app/classes/Step';
 import StringBuilder from 'src/app/classes/StringBuilder';
-import { Step } from 'src/app/classes/testScenario';
 
 export default class OPA5SingleStepStrategy {
   public static sanatize(s: any): string {
@@ -23,7 +23,9 @@ export default class OPA5SingleStepStrategy {
     click.addTab(1).add(`visible: true,`).addNewLine();
     if (
       step.controlId.startsWith('__') &&
-      step.controlAttributes.filter((att) => att.use).length !== 0
+      (step.controlAttributes.filter((att) => att.use).length !== 0 ||
+        step.controlBindings.filter((att) => att.use).length !== 0 ||
+        step.controlI18nTexts.filter((att) => att.use).length !== 0)
     ) {
       click.addTab(1).add('matchers: [').addNewLine();
       step.controlAttributes
@@ -35,6 +37,30 @@ export default class OPA5SingleStepStrategy {
               `new Properties({ ${att.name}: ${OPA5SingleStepStrategy.sanatize(
                 att.value
               )}})`
+            )
+            .add(',')
+            .addNewLine();
+        });
+      step.controlBindings
+        .filter((b) => b.use)
+        .forEach((b) => {
+          click
+            .addTab(2)
+            .add(
+              `new BindingPath({propertyPath: "${b.propertyPath}", path: "${b.modelPath}", model:`
+            )
+            .add(b.modelName ? `"${b.modelName}"` : `${b.modelName}`)
+            .add('})')
+            .add(',')
+            .addNewLine();
+        });
+      step.controlI18nTexts
+        .filter((b) => b.use)
+        .forEach((b) => {
+          click
+            .addTab(2)
+            .add(
+              `new I18NText({key: "${b.propertyPath}", propertyName: "${b.propertyName}"})`
             )
             .add(',')
             .addNewLine();

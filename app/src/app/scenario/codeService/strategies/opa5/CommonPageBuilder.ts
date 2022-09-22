@@ -87,6 +87,14 @@ export default class CommonPageBuilder extends PageBuilder {
       oCode.add(',').addNewLine(2);
       oCode.addBuilder(this._addAttributeMatcherFunction());
     }
+    if (this._i18nMatcher) {
+      oCode.add(',').addNewLine(2);
+      oCode.addBuilder(this._addI18NMatcherFunction());
+    }
+    if (this._bindMatcher) {
+      oCode.add(',').addNewLine(2);
+      oCode.addBuilder(this._addBindingMatcherFunction());
+    }
 
     oCode.addNewLine();
     oCode.addTab().add('});').addNewLine();
@@ -95,7 +103,7 @@ export default class CommonPageBuilder extends PageBuilder {
   }
 
   //#region matcher adding
-  private _addBindingMatcherFunction(): string {
+  private _addBindingMatcherFunction(): StringBuilder {
     var oFunctCode = new StringBuilder();
     oFunctCode
       .addTab(2)
@@ -127,10 +135,10 @@ export default class CommonPageBuilder extends PageBuilder {
       .addNewLine();
     oFunctCode.addTab(3).add('});').addNewLine();
     oFunctCode.addTab(2).add('}');
-    return oFunctCode.toString();
+    return oFunctCode;
   }
 
-  private _addI18NMatcherFunction(): string {
+  private _addI18NMatcherFunction(): StringBuilder {
     var oFunctCode = new StringBuilder();
     oFunctCode
       .addTab(2)
@@ -165,7 +173,7 @@ export default class CommonPageBuilder extends PageBuilder {
       .addNewLine();
     oFunctCode.addTab(3).add('});').addNewLine();
     oFunctCode.addTab(2).add('}');
-    return oFunctCode.toString();
+    return oFunctCode;
   }
 
   private _addAttributeMatcherFunction(): StringBuilder {

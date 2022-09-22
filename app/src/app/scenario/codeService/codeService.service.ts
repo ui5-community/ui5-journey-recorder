@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Step, TestScenario } from 'src/app/classes/testScenario';
+import { Step } from 'src/app/classes/Step';
+import { TestScenario } from 'src/app/classes/testScenario';
 import OPA5CodeStrategy from './strategies/opa5/OPA5CodeStrategy';
 import Wdi5CodeStrategy from './strategies/wdi5/Wdi5CodeStrategy';
 import Wdi5SingleStepStrategy from './strategies/wdi5/Wdi5SingleStepStrategy';
@@ -21,7 +22,7 @@ export class CodeService {
   public static generateScenarioCode(
     scenario: TestScenario,
     options?: CodeOptions
-  ): { title: string; code: string, type: 'journey' | 'page' }[] {
+  ): { title: string; code: string; type: 'journey' | 'page' }[] {
     const lang = options?.style || CodeStyles.UNDEFINDED;
     switch (lang) {
       case CodeStyles.OPA5:

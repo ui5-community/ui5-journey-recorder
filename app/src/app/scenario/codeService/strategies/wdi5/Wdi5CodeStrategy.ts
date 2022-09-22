@@ -1,4 +1,5 @@
-import { TestScenario, Step, StepType } from 'src/app/classes/testScenario';
+import { Step, StepType } from 'src/app/classes/Step';
+import { TestScenario } from 'src/app/classes/testScenario';
 import CodeStrategy from '../StrategyInterface';
 import Wdi5CodePageBuilder from './Wdi5PageBuilder';
 import Wdi5RootPageBuilder from './Wdi5RootPageBuilder';
