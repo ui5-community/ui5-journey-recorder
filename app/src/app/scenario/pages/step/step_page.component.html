@@ -61,25 +61,77 @@
 <mat-expansion-panel togglePosition="before" expanded="false">
   <mat-expansion-panel-header>
     <mat-panel-title class="panel-title">
-      <span>Control Attributes</span>
+      <span>Control</span>
     </mat-panel-title>
   </mat-expansion-panel-header>
-  <table mat-table [dataSource]="attributesTableData" style="width: 100%">
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Name</th>
-      <td mat-cell *matCellDef="let element">{{element.name}}</td>
-    </ng-container>
-    <ng-container matColumnDef="value">
-      <th mat-header-cell *matHeaderCellDef>Value</th>
-      <td mat-cell *matCellDef="let element">{{element.value}}</td>
-    </ng-container>
-    <ng-container matColumnDef="use">
-      <th mat-header-cell *matHeaderCellDef>Use</th>
-      <td mat-cell *matCellDef="let element"><input type="checkbox" [(ngModel)]="element.use" /></td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
+  <mat-tab-group>
+    <mat-tab label="Attributes" *ngIf="attributesTableData.length > 0">
+      <table mat-table [dataSource]="attributesTableData" style="width: 100%">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let element">{{element.name}}</td>
+        </ng-container>
+        <ng-container matColumnDef="value">
+          <th mat-header-cell *matHeaderCellDef>Value</th>
+          <td mat-cell *matCellDef="let element">{{element.value}}</td>
+        </ng-container>
+        <ng-container matColumnDef="use">
+          <th mat-header-cell *matHeaderCellDef>Use</th>
+          <td mat-cell *matCellDef="let element"><input type="checkbox" [(ngModel)]="element.use" /></td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </mat-tab>
+    <mat-tab label="Bindings" *ngIf="bindingsTableData.length > 0">
+      <table mat-table [dataSource]="bindingsTableData" style="width: 100%">
+        <ng-container matColumnDef="property">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let element">{{element.propertyName}}</td>
+        </ng-container>
+        <ng-container matColumnDef="value">
+          <th mat-header-cell *matHeaderCellDef>Value</th>
+          <td mat-cell *matCellDef="let element">{{element.bindingValue}}</td>
+        </ng-container>
+        <ng-container matColumnDef="model">
+          <th mat-header-cell *matHeaderCellDef>Value</th>
+          <td mat-cell *matCellDef="let element">{{element.modelName}}</td>
+        </ng-container>
+        <ng-container matColumnDef="bindingPath">
+          <th mat-header-cell *matHeaderCellDef>Value</th>
+          <td mat-cell *matCellDef="let element">{{element.modelPath}}/{{element.propertyPath}}</td>
+        </ng-container>
+        <ng-container matColumnDef="use">
+          <th mat-header-cell *matHeaderCellDef>Use</th>
+          <td mat-cell *matCellDef="let element"><input type="checkbox" [(ngModel)]="element.use" /></td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayColsBinding"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayColsBinding;"></tr>
+      </table>
+    </mat-tab>
+    <mat-tab label="I18n Texts" *ngIf="i18nTableData.length > 0">
+      <table mat-table [dataSource]="i18nTableData" style="width: 100%">
+        <ng-container matColumnDef="property">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let element">{{element.propertyName}}</td>
+        </ng-container>
+        <ng-container matColumnDef="value">
+          <th mat-header-cell *matHeaderCellDef>Value</th>
+          <td mat-cell *matCellDef="let element">{{element.bindingValue}}</td>
+        </ng-container>
+        <ng-container matColumnDef="bindingPath">
+          <th mat-header-cell *matHeaderCellDef>Value</th>
+          <td mat-cell *matCellDef="let element">{{element.propertyPath}}</td>
+        </ng-container>
+        <ng-container matColumnDef="use">
+          <th mat-header-cell *matHeaderCellDef>Use</th>
+          <td mat-cell *matCellDef="let element"><input type="checkbox" [(ngModel)]="element.use" /></td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayColsI18n"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayColsI18n;"></tr>
+      </table>
+    </mat-tab>
+  </mat-tab-group>
 </mat-expansion-panel>
 
 <mat-expansion-panel togglePosition="before" expanded="false" (opened)="this.generateStepCode()">

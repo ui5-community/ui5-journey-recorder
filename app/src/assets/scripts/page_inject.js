@@ -56,6 +56,7 @@
               type: ui5El.getMetadata().getElementName(),
               classes: ui5El.aCustomStyleClasses,
               properties: this.#getUI5ElementProperties(ui5El),
+              bindings: this.#getUI5ElementBindings(ui5El),
               view: this.#getViewProperties(ui5El),
               events: {
                 press: ui5El.getMetadata().getEvent('press') !== undefined
@@ -82,6 +83,7 @@
                     classes: ui5El.aCustomStyleClasses,
                     domRef: ui5El.getDomRef().outerHTML,
                     properties: this.#getUI5ElementProperties(ui5El),
+                    bindings: this.#getUI5ElementBindings(ui5El),
                     view: this.#getViewProperties(ui5El)
                   },
                   location: window.location.href
@@ -214,6 +216,39 @@
           }
           return a;
         }, {})
+    }
+
+    #getUI5ElementBindings(el) {
+      return Object.keys(el.mBindingInfos)
+        .map(k => {
+          let first = el.mBindingInfos[k].parts.map(b => {
+            const c = {};
+            c.key = k;
+            c.i18n = b.model === 'i18n';
+            c.propertyPath = b.path;
+            c.model = b.model;
+            return c;
+          });
+          if (first.length > 1) {
+            first = first.map(f => {
+              const binding = el.mBindingInfos[f.key].binding.aBindings.find(ab => ab.sPath === f.propertyPath);
+              if (binding) {
+                f.modelPath = binding.oContext?.sPath;
+                f.value = binding.oValue;
+              }
+              return f;
+            })
+          } else if (first.length === 1) {
+            const binding = el.mBindingInfos[first[0].key].binding;
+            if (binding) {
+              first[0].modelPath = binding.oContext?.sPath;
+              first[0].value = binding.oValue;
+            }
+          }
+
+          return first;
+        })
+        .reduce((b, a) => [...a, ...b], []);
     }
 
     #getViewProperties(ui5El) {

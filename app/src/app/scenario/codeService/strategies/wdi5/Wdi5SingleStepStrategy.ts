@@ -1,5 +1,5 @@
+import { Step } from 'src/app/classes/Step';
 import StringBuilder from 'src/app/classes/StringBuilder';
-import { Step } from 'src/app/classes/testScenario';
 
 export default class Wdi5SingleStepStrategy {
   public static generateSinglePressStep(step: Step): string {

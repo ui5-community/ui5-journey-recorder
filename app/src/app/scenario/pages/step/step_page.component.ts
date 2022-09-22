@@ -1,7 +1,7 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
-import { Step, StepType, UnknownStep } from 'src/app/classes/testScenario';
+import { Step, StepType, UnknownStep } from 'src/app/classes/Step';
 import { AppHeaderService } from 'src/app/components/app-header/app-header.service';
 import { SnackSeverity } from 'src/app/components/dialogs/snack-dialog/snack-dialog.component';
 import { SettingsStorageService } from 'src/app/services/localStorageService/settingsStorageService.service';
@@ -12,6 +12,22 @@ import { CodeService, CodeStyles } from '../../codeService/codeService.service';
 interface Attribute {
   name: string;
   value: string | number | boolean;
+  use: boolean;
+}
+
+interface Binding {
+  propertyName: string;
+  bindingValue: string | number | boolean;
+  modelPath: string;
+  propertyPath: string;
+  modelName: string;
+  use: boolean;
+}
+
+interface I18nText {
+  propertyName: string;
+  propertyPath: string;
+  bindingValue: any;
   use: boolean;
 }
 
@@ -27,7 +43,18 @@ export class StepPageComponent implements OnInit {
   pagedCode = false;
   currentStep: Step = new UnknownStep();
   attributesTableData: Attribute[] = [];
+  bindingsTableData: Binding[] = [];
+  i18nTableData: I18nText[] = [];
+
   displayedColumns: string[] = ['name', 'value', 'use'];
+  displayColsBinding: string[] = [
+    'property',
+    'value',
+    'model',
+    'bindingPath',
+    'use',
+  ];
+  displayColsI18n: string[] = ['property', 'value', 'bindingPath', 'use'];
 
   steps = [
     { text: 'Click', step: StepType.Click },
@@ -62,6 +89,8 @@ export class StepPageComponent implements OnInit {
         .then((step: Step) => {
           this.currentStep = step;
           this.attributesTableData = this.currentStep.controlAttributes;
+          this.bindingsTableData = this.currentStep.controlBindings;
+          this.i18nTableData = this.currentStep.controlI18nTexts;
         })
         .catch(() => {
           this.app_header_service.navigateBackwards();

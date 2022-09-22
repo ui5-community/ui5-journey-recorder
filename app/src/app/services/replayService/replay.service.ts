@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ChromeExtensionService } from '../chromeExtensionService/chrome_extension_service';
 import { RequestBuilder, RequestMethod } from '../../classes/requestBuilder';
-import { Step } from '../../classes/testScenario';
+import { Step } from 'src/app/classes/Step';
 
 @Injectable({ providedIn: 'root' })
 export class ReplayService {

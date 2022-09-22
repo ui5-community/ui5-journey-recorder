@@ -1,10 +1,7 @@
+import { match } from 'assert';
+import { Step, StepType } from 'src/app/classes/Step';
 import StringBuilder from 'src/app/classes/StringBuilder';
-import {
-  Page,
-  Step,
-  StepType,
-  TestScenario,
-} from 'src/app/classes/testScenario';
+import { Page, TestScenario } from 'src/app/classes/testScenario';
 import CodeStrategy from '../StrategyInterface';
 import CommonPageBuilder from './CommonPageBuilder';
 import OPA5SingleStepStrategy from './OPA5SingleStepStrategy';
@@ -243,55 +240,100 @@ export default class OPA5CodeStrategy implements CodeStrategy {
     step: Step,
     sb: StringBuilder
   ): { [key: string]: any } {
-    var objectMatcher: { [key: string]: any } = {};
-    step.controlAttributes
+    const matcherAttributes = step.controlAttributes
       .filter((att) => att.use)
-      .forEach((e) => {
-        this._createAttributeValue(e, objectMatcher);
-      });
-
-    for (var k in objectMatcher) {
-      if (k !== 'ATTR') {
-        sb.add(objectMatcher[k]).add(', ');
-      }
-    }
-    /* sb.replace(/,\s*$/, ''); */
+      .map(this._createAttributeValue.bind(this));
 
     var oReturn: { [key: string]: any } = {};
-    if (objectMatcher['ATTR']) {
-      objectMatcher['ATTR'] = [...new Set(objectMatcher['ATTR'])];
-      if (objectMatcher['ATTR'].length <= 2) {
-        sb.add('attributes: [')
-          .addMultiple(objectMatcher['ATTR'], ', ')
-          .add(']');
-      } else {
-        sb.addNewLine();
-        sb.addTab(3);
-        sb.add('attributes: [');
+    if (matcherAttributes.length <= 2 && matcherAttributes.length > 0) {
+      sb.add('attributes: [').addMultiple(matcherAttributes, ', ').add(']');
+    } else if (matcherAttributes.length > 0) {
+      sb.addNewLine();
+      sb.addTab(3);
+      sb.add('attributes: [');
+      sb.addNewLine();
+      sb.addTab(4);
+      matcherAttributes.forEach((p: string) => {
+        sb.add(p);
+        sb.add(',');
         sb.addNewLine();
         sb.addTab(4);
-        objectMatcher['ATTR'].forEach((p: string) => {
-          sb.add(p);
-          sb.add(',');
-          sb.addNewLine();
-          sb.addTab(4);
-        });
-        sb.remove();
-        sb.addTab(3);
-        sb.add(']');
-        sb.addNewLine();
-        sb.addTab(2);
-      }
-      oReturn['attribute'] = true;
+      });
+      sb.remove();
+      sb.addTab(3);
+      sb.add(']');
+      sb.addNewLine();
+      sb.addTab(2);
     }
-    sb.replace(/,\s*$/, '');
+
+    if (matcherAttributes.length > 0) {
+      oReturn['attribute'] = true;
+      sb.add(', ');
+    }
+
+    const bindingsAttributes = step.controlBindings
+      .filter((b) => b.use)
+      .map(this._createBindingValue.bind(this));
+    if (bindingsAttributes.length <= 2 && bindingsAttributes.length > 0) {
+      sb.add('bindings: [').addMultiple(bindingsAttributes, ', ').add(']');
+    } else if (bindingsAttributes.length > 0) {
+      sb.addNewLine();
+      sb.addTab(3);
+      sb.add('bindings: [');
+      sb.addNewLine();
+      sb.addTab(4);
+      bindingsAttributes.forEach((p: string) => {
+        sb.add(p);
+        sb.add(',');
+        sb.addNewLine();
+        sb.addTab(4);
+      });
+      sb.remove();
+      sb.addTab(3);
+      sb.add(']');
+      sb.addNewLine();
+      sb.addTab(2);
+    }
+    if (bindingsAttributes.length > 0) {
+      oReturn['bindings'] = true;
+      sb.add(', ');
+    }
+
+    const i18nTexts = step.controlI18nTexts
+      .filter((b) => b.use)
+      .map(this._createI18nValue.bind(this));
+    if (i18nTexts.length <= 2 && i18nTexts.length > 0) {
+      sb.add('i18n: [').addMultiple(i18nTexts, ', ').add(']');
+    } else if (i18nTexts.length > 0) {
+      sb.addNewLine();
+      sb.addTab(3);
+      sb.add('i18n: [');
+      sb.addNewLine();
+      sb.addTab(4);
+      i18nTexts.forEach((p: string) => {
+        sb.add(p);
+        sb.add(',');
+        sb.addNewLine();
+        sb.addTab(4);
+      });
+      sb.remove();
+      sb.addTab(3);
+      sb.add(']');
+      sb.addNewLine();
+      sb.addTab(2);
+    }
+    if (i18nTexts.length > 0) {
+      oReturn['i18n'] = true;
+    }
+
     return oReturn;
   }
 
-  private _createAttributeValue(
-    e: { name: string; value: any; use: boolean },
-    objectMatcher: { [key: string]: any }
-  ): void {
+  private _createAttributeValue(e: {
+    name: string;
+    value: any;
+    use: boolean;
+  }): string {
     var value = e.value;
 
     if (typeof value === 'boolean') {
@@ -302,11 +344,27 @@ export default class OPA5CodeStrategy implements CodeStrategy {
       value = this._sanatize(e.value);
     }
 
-    if (objectMatcher['ATTR']) {
-      objectMatcher['ATTR'].push('{' + e.name + ': ' + value + '}');
-    } else {
-      objectMatcher['ATTR'] = ['{' + e.name + ': ' + value + '}'];
-    }
+    return '{' + e.name + ': ' + value + '}';
+  }
+
+  private _createBindingValue(e: {
+    propertyName: string;
+    bindingValue: string | number | boolean;
+    modelPath: string;
+    propertyPath: string;
+    modelName: string;
+    use: boolean;
+  }): string {
+    return `{path: "${e.modelPath}", modelName: ${e.modelName}, propertyPath: "${e.propertyPath}}"`;
+  }
+
+  private _createI18nValue(e: {
+    propertyName: string;
+    propertyPath: string;
+    bindingValue: any;
+    use: boolean;
+  }): string {
+    return `{key: "${e.propertyPath}", propertyName: "${e.propertyName}"}`;
   }
 
   private _sanatize(s: string): string {

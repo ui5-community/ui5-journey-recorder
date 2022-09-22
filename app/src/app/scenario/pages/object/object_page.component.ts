@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ChromeExtensionService } from 'src/app/services/chromeExtensionService/chrome_extension_service';
 import { Observable } from 'rxjs';
-import { Step, TestScenario } from 'src/app/classes/testScenario';
+import { TestScenario } from 'src/app/classes/testScenario';
 import { ScenarioService } from 'src/app/services/scenarioService/scenario.service';
 import { ReplayService } from 'src/app/services/replayService/replay.service';
 import {
@@ -12,6 +12,7 @@ import {
 import { AppHeaderService } from 'src/app/components/app-header/app-header.service';
 import { MessageService } from 'src/app/services/messageService/message.service';
 import { SnackSeverity } from 'src/app/components/dialogs/snack-dialog/snack-dialog.component';
+import { Step } from 'src/app/classes/Step';
 
 @Component({
   selector: 'app-object-page',
@@ -65,7 +66,7 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.chr_ext_srv.disconnect();
+    this.chr_ext_srv.disconnect().catch(() => {});
   }
 
   navBack(): void {
