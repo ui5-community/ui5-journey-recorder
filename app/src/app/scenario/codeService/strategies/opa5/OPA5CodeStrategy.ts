@@ -295,7 +295,7 @@ export default class OPA5CodeStrategy implements CodeStrategy {
       sb.addTab(2);
     }
     if (bindingsAttributes.length > 0) {
-      oReturn['bindings'] = true;
+      oReturn['binding'] = true;
       sb.add(', ');
     }
 
