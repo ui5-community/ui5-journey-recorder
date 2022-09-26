@@ -10,6 +10,7 @@ import { ScenarioService } from 'src/app/services/scenarioService/scenario.servi
 import { AppHeaderService } from 'src/app/components/app-header/app-header.service';
 import { MessageService } from 'src/app/services/messageService/message.service';
 import { SnackSeverity } from 'src/app/components/dialogs/snack-dialog/snack-dialog.component';
+import { SettingsStorageService } from 'src/app/services/localStorageService/settingsStorageService.service';
 //#endregion
 
 @Component({
@@ -40,7 +41,8 @@ export class MainComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private appHeaderService: AppHeaderService,
-    public scenarioService: ScenarioService
+    public scenarioService: ScenarioService,
+    private settingsService: SettingsStorageService
   ) {}
 
   ngOnInit(): void {
@@ -60,7 +62,7 @@ export class MainComponent implements OnInit {
         message: 'Connect to the page and inject analytic scripts?',
         withConfOption: true,
         confText: 'Reload Page',
-        defaultConfirmValue: true,
+        defaultConfirmValue: this.settingsService.pageReload,
         accept: (values) => {
           this.chr_ext_srv.setCurrentPage(page);
           this.chr_ext_srv

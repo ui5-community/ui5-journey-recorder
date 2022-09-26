@@ -1,7 +1,10 @@
 import { Inject } from '@angular/core';
 import { CodeStyles } from 'src/app/scenario/codeService/codeService.service';
 
-export type AppSettings = { codeStyle: CodeStyles };
+export type AppSettings = {
+  codeStyle: CodeStyles;
+  reloadPageDefault: boolean;
+};
 
 @Inject({
   providedIn: 'root',
@@ -14,7 +17,7 @@ export class SettingsStorageService {
   }
 
   private setDefaults() {
-    this._settings = { codeStyle: CodeStyles.OPA5 };
+    this._settings = { codeStyle: CodeStyles.OPA5, reloadPageDefault: true };
   }
 
   private async initService(): Promise<void> {
@@ -34,6 +37,18 @@ export class SettingsStorageService {
 
   public set codeStyle(style: CodeStyles) {
     this._settings.codeStyle = style;
+
+    const storage: { [key: string]: string } = {};
+    storage['settings'] = JSON.stringify(this._settings);
+    chrome.storage.local.set(storage);
+  }
+
+  public get pageReload(): boolean {
+    return this._settings.reloadPageDefault;
+  }
+
+  public set pageReload(reload: boolean) {
+    this._settings.reloadPageDefault = reload;
 
     const storage: { [key: string]: string } = {};
     storage['settings'] = JSON.stringify(this._settings);
