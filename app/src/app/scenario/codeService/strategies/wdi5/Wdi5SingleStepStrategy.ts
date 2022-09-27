@@ -5,7 +5,7 @@ export default class Wdi5SingleStepStrategy {
   public static generateSinglePressStep(step: Step): string {
     const pressStep = new StringBuilder();
     pressStep.add(Wdi5SingleStepStrategy.generateSingleExistsStep(step));
-    pressStep.add('press();');
+    pressStep.add('.press();');
     return pressStep.toString();
   }
 

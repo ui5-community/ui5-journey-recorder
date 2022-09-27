@@ -5,6 +5,14 @@
 <div mat-dialog-content class="settings-dialog-content">
   <mat-expansion-panel hideToggle expanded="true" disabled="true">
     <mat-expansion-panel-header>
+      <mat-panel-title>General</mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-checkbox [checked]="this.settings?.reloadPageDefault" (change)="this.reloadChanged($event)">Page reload at
+      inject
+    </mat-checkbox>
+  </mat-expansion-panel>
+  <mat-expansion-panel hideToggle expanded="true" disabled="true">
+    <mat-expansion-panel-header>
       <mat-panel-title>Code</mat-panel-title>
     </mat-expansion-panel-header>
     <mat-form-field appearance="fill">

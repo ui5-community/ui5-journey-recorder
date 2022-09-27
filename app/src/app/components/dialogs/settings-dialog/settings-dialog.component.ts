@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { CodeStyles } from 'src/app/scenario/codeService/codeService.service';
@@ -38,8 +39,15 @@ export class SettingsDialogComponent implements OnInit {
 
   languageChanged(event: MatSelectChange): void {
     if (!this.settings) {
-      this.settings = { codeStyle: CodeStyles.OPA5 };
+      this.settings = { codeStyle: CodeStyles.OPA5, reloadPageDefault: true };
     }
     this.settings.codeStyle = event.value;
+  }
+
+  reloadChanged(event: MatCheckboxChange): void {
+    if (!this.settings) {
+      this.settings = { codeStyle: CodeStyles.OPA5, reloadPageDefault: true };
+    }
+    this.settings.reloadPageDefault = event.checked;
   }
 }

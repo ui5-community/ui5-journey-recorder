@@ -106,6 +106,7 @@ export abstract class Step implements Stringify, Equals<Step> {
     res.action_location = event.location;
     res.view = event.control.view;
     res.record_replay_selector = event.control.recordReplaySelector;
+    res.applyPreSelection();
     return res;
   }
 
@@ -189,12 +190,12 @@ export abstract class Step implements Stringify, Equals<Step> {
   }
 
   applyPreSelection() {
-    if (this.record_replay_selector['id']) {
+    if (this.recordReplaySelector['id']) {
       this.control.control_id.use = true;
       return;
     }
 
-    if (this.record_replay_selector['properties']) {
+    if (this.recordReplaySelector['properties']) {
       const props = this.record_replay_selector['properties'];
       Object.keys(props).forEach((k) => {
         const p = this.control.properties?.find((att) => att.name === k);
@@ -203,6 +204,31 @@ export abstract class Step implements Stringify, Equals<Step> {
         }
       });
     }
+
+    if (this.recordReplaySelector['bindingPath']) {
+      const path = this.recordReplaySelector['bindingPath'];
+      this.control.bindings?.forEach((b) => {
+        if (b.propertyPath === path.propertyPath) {
+          b.use = true;
+        }
+      });
+    }
+
+    if (this.recordReplaySelector['i18nText']) {
+      const propName = this.recordReplaySelector['i18nText'].propertyName;
+      this.control.i18nTexts?.forEach((it) => {
+        if (it.propertyName === propName) {
+          it.use = true;
+        }
+      });
+    }
+    /*
+
+    const copy = { ...this.recordReplaySelector };
+    delete copy['id'];
+    delete copy['properties'];
+    delete copy['i18nText'];
+    delete copy['bindingPath']; */
   }
 
   public get useControlId(): boolean {

@@ -11,7 +11,7 @@
     "test": "ng test",
     "doc": "npx compodoc",
     "doc:serve": "npx compodoc -s",
-    "docu:coverage": "npx compodoc --unitTestCoverage reports/coverage/rokr-frontend/coverage-summary.json",
+    "docu:coverage": "npx compodoc",
     "uglify:assets": "node uglify-assets.js",
     "postbuild": "node uglify-assets.js"
   },
