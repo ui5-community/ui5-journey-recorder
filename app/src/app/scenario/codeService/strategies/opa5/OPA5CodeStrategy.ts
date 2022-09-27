@@ -244,6 +244,15 @@ export default class OPA5CodeStrategy implements CodeStrategy {
       .filter((att) => att.use)
       .map(this._createAttributeValue.bind(this));
 
+    const bindingsAttributes = step.controlBindings
+      .filter((b) => b.use)
+      .map(this._createBindingValue.bind(this))
+      .filter((bs, i, a) => a.indexOf(bs) === i);
+
+    const i18nTexts = step.controlI18nTexts
+      .filter((b) => b.use)
+      .map(this._createI18nValue.bind(this));
+
     var oReturn: { [key: string]: any } = {};
     if (matcherAttributes.length <= 2 && matcherAttributes.length > 0) {
       sb.add('attributes: [').addMultiple(matcherAttributes, ', ').add(']');
@@ -268,12 +277,12 @@ export default class OPA5CodeStrategy implements CodeStrategy {
 
     if (matcherAttributes.length > 0) {
       oReturn['attribute'] = true;
-      sb.add(', ');
     }
 
-    const bindingsAttributes = step.controlBindings
-      .filter((b) => b.use)
-      .map(this._createBindingValue.bind(this));
+    if (matcherAttributes.length > 0 && bindingsAttributes.length > 0) {
+      sb.add(',');
+    }
+
     if (bindingsAttributes.length <= 2 && bindingsAttributes.length > 0) {
       sb.add('bindings: [').addMultiple(bindingsAttributes, ', ').add(']');
     } else if (bindingsAttributes.length > 0) {
@@ -296,12 +305,15 @@ export default class OPA5CodeStrategy implements CodeStrategy {
     }
     if (bindingsAttributes.length > 0) {
       oReturn['binding'] = true;
-      sb.add(', ');
     }
 
-    const i18nTexts = step.controlI18nTexts
-      .filter((b) => b.use)
-      .map(this._createI18nValue.bind(this));
+    if (
+      (matcherAttributes.length > 0 || bindingsAttributes.length > 0) &&
+      i18nTexts.length > 0
+    ) {
+      sb.add(',');
+    }
+
     if (i18nTexts.length <= 2 && i18nTexts.length > 0) {
       sb.add('i18n: [').addMultiple(i18nTexts, ', ').add(']');
     } else if (i18nTexts.length > 0) {
