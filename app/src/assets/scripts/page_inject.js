@@ -2,6 +2,7 @@
   class RecorderInject {
     #lastDetectedElement;
     #rr = sap.ui.requireSync('sap/ui/test/RecordReplay');
+    #toast = sap.ui.requireSync('sap/m/MessageToast');
 
     //#region public access points
     setupHoverSelectEffect() {//append style class
@@ -143,6 +144,10 @@
       } else {
         console.log('Elements length: ', elements.length);
       }
+    }
+
+    showToast(sMessage, props) {
+      this.#toast.show(sMessage, props);
     }
     //#endregion public access points
 
@@ -297,7 +302,6 @@
       el.getDomRef().dispatchEvent(mouseUpEvent);
       el.getDomRef().dispatchEvent(clickEvent);
     }
-
     //#endregion
   }
 
@@ -314,6 +318,10 @@
   const recorderInstance = new RecorderInject(document, window);
   recorderInstance.setupHoverSelectEffect();
   recorderInstance.setupClickListener();
+  recorderInstance.showToast("UI5 Testrecorder successfully injected", {
+    duration: 2000,
+    autoClose: true
+  })
 
   window.ui5TestRecorder = {
     ...window.ui5TestRecorder,

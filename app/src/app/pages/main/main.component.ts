@@ -11,6 +11,7 @@ import { AppHeaderService } from 'src/app/components/app-header/app-header.servi
 import { MessageService } from 'src/app/services/messageService/message.service';
 import { SnackSeverity } from 'src/app/components/dialogs/snack-dialog/snack-dialog.component';
 import { SettingsStorageService } from 'src/app/services/localStorageService/settingsStorageService.service';
+import { LoaderService } from 'src/app/services/loaderService/loaderService';
 //#endregion
 
 @Component({
@@ -42,7 +43,8 @@ export class MainComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private appHeaderService: AppHeaderService,
     public scenarioService: ScenarioService,
-    private settingsService: SettingsStorageService
+    private settingsService: SettingsStorageService,
+    private loaderService: LoaderService
   ) {}
 
   ngOnInit(): void {
@@ -64,17 +66,20 @@ export class MainComponent implements OnInit {
         confText: 'Reload Page',
         defaultConfirmValue: this.settingsService.pageReload,
         accept: (values) => {
+          this.loaderService.startLoading();
           this.chr_ext_srv.setCurrentPage(page);
           this.chr_ext_srv
             .connectToCurrentPage(values['confirmOption'])
             .then(() => {
               this.chr_ext_srv.focus_page(page).then(() => {
+                this.loaderService.endLoading();
                 this.router.navigate(['scenario/recording'], {
                   relativeTo: this.activatedRoute,
                 });
               });
             })
             .catch(() => {
+              this.loaderService.endLoading();
               this.messageService.show({
                 severity: SnackSeverity.ERROR,
                 title: 'Injection',

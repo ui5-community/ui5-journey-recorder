@@ -27,7 +27,6 @@ import { AppHeaderComponent } from './components/app-header/app-header.component
 import { AppFooterComponent } from './components/app-footer/app-footer.component';
 import { AppFooterService } from './components/app-footer/app-footer.service';
 import { AppHeaderService } from './components/app-header/app-header.service';
-import { SpinnerComponent } from './components/spinner/spinner-component.component';
 import { ConfirmDialogComponent } from './components/dialogs/confirm-dialog/confirm-dialog.component';
 //#endregion
 
@@ -49,6 +48,8 @@ import { SettingsDialogComponent } from './components/dialogs/settings-dialog/se
 import { MatSelectModule } from '@angular/material/select';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { SettingsStorageService } from './services/localStorageService/settingsStorageService.service';
+import { LoaderService } from './services/loaderService/loaderService';
+import { GlobalSpinnerComponent } from './components/globalSpinner/globalSpinner.component';
 //#endregion
 
 @NgModule({
@@ -58,10 +59,10 @@ import { SettingsStorageService } from './services/localStorageService/settingsS
     AppFooterComponent,
     MainComponent,
     AppTemplateDirective,
-    SpinnerComponent,
     ConfirmDialogComponent,
     SnackDialogComponent,
     SettingsDialogComponent,
+    GlobalSpinnerComponent,
   ],
   imports: [
     BrowserModule,
@@ -92,6 +93,7 @@ import { SettingsStorageService } from './services/localStorageService/settingsS
     ScenarioService,
     ScenarioStorageService,
     SettingsStorageService,
+    LoaderService,
   ],
   bootstrap: [AppComponent],
 })

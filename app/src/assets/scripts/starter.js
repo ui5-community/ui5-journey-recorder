@@ -21,8 +21,3 @@ chrome.action.onClicked.addListener((/* tab */) => {/*
   });
 
 });
-
-// This callback WILL NOT be called for "_execute_action"
-chrome.commands.onCommand.addListener((command) => {
-  console.log(`Command "${command}" called`);
-});
