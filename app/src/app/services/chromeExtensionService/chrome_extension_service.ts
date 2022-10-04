@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { AppFooterService } from 'src/app/components/app-footer/app-footer.service';
 import { SnackSeverity } from 'src/app/components/dialogs/snack-dialog/snack-dialog.component';
-import { Request } from '../../classes/requestBuilder';
+import {
+  Request,
+  RequestBuilder,
+  RequestMethod,
+} from '../../classes/requestBuilder';
 import { MessageService } from '../messageService/message.service';
 
 export interface Page {
@@ -99,18 +103,21 @@ export class ChromeExtensionService {
             },
             () => {
               chrome.tabs.onUpdated.removeListener(inject_after_reload);
-
-              this.messageService.show({
-                severity: SnackSeverity.SUCCESS,
-                title: 'Injection',
-                detail: 'Connection established!',
+              const conRequest = new RequestBuilder();
+              conRequest.setMethod(RequestMethod.GET);
+              conRequest.setUrl('pageInfo/connected');
+              this.sendSyncMessage(conRequest.build()).then((answer) => {
+                if (answer.status === 200) {
+                  this.appFooterService.connected();
+                  this._interval_id = setInterval(
+                    this._checkConnection.bind(this),
+                    450
+                  ) as unknown as number;
+                  resolve();
+                } else {
+                  reject();
+                }
               });
-              this.appFooterService.connected();
-              this._interval_id = setInterval(
-                this._checkConnection.bind(this),
-                450
-              ) as unknown as number;
-              resolve();
             }
           );
         }, 2500);

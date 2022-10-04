@@ -12,6 +12,7 @@ export class TestScenario implements Stringify {
   private edited: number;
   private pages: Page[];
   private scenario_name: string;
+  private ui5_version: string;
 
   constructor(id: string, timestamp?: number) {
     this.created = timestamp || -1;
@@ -19,6 +20,7 @@ export class TestScenario implements Stringify {
     this.pages = [];
     this.scenario_id = id;
     this.scenario_name = '';
+    this.ui5_version = '';
   }
 
   public addPage(p: Page) {
@@ -57,6 +59,14 @@ export class TestScenario implements Stringify {
     this.scenario_name = n;
   }
 
+  public get version(): string {
+    return this.ui5_version;
+  }
+
+  public set version(version: string) {
+    this.ui5_version = version;
+  }
+
   toString(): string {
     return JSON.stringify(this);
   }
@@ -66,6 +76,7 @@ export class TestScenario implements Stringify {
     const testScen = new TestScenario(parsedObj.scenario_id, parsedObj.created);
     testScen.latestEdit = parsedObj.edited;
     testScen.name = parsedObj.scenario_name;
+    testScen.version = parsedObj.ui5_version;
 
     if (parsedObj.pages) {
       parsedObj.pages.forEach((p: any) => {

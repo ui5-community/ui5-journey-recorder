@@ -75,6 +75,14 @@
               content: step
             }
           });
+        },
+        send_instant_message: (sMsg) => {
+          window.postMessage({
+            origin: `${sListenerId}_${API.own_id}`, message: {
+              instantType: 'instant',
+              content: sMsg
+            }
+          })
         }
       }
     }
@@ -257,6 +265,19 @@
       recorderInstance.executeAction({ step: req.body });
     } else {
       res({ status: 500, message: 'No recorder inject found!' });
+    }
+  });
+
+  communicationService.get('/pageInfo/connected', (req, res) => {
+    res({ status: 200, message: 'Connected' });
+  });
+
+  communicationService.get('/pageInfo/version', (req, res) => {
+    const version = ui5TestRecorder?.recorder?.getUI5Version();
+    if (version) {
+      res({ status: 200, message: version });
+    } else {
+      res({ status: 400, message: '' });
     }
   });
 

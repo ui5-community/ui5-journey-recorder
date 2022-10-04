@@ -28,6 +28,10 @@
       <mat-label>Scenario Name</mat-label>
       <input matInput [(ngModel)]="this.scenario.name" required="true" title="scenario">
     </mat-form-field>
+    <mat-form-field appearance="standard" style="width: 30%; margin-left: 20%;">
+      <mat-label>UI5 Version</mat-label>
+      <input matInput [(ngModel)]="this.scenario.version" disabled="true" title="version">
+    </mat-form-field>
   </p>
   <p>
     <mat-form-field appearance="standard" style="width: 100%;">

@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { RequestBuilder, RequestMethod } from 'src/app/classes/requestBuilder';
 
 import { ChromeExtensionService } from 'src/app/services/chromeExtensionService/chrome_extension_service';
 import { ScenarioService } from 'src/app/services/scenarioService/scenario.service';
@@ -49,8 +50,14 @@ export class RecordingPageComponent implements OnInit {
   }
 
   private async postRecordActions(events: Event[]): Promise<void> {
+    const req = new RequestBuilder()
+      .setMethod(RequestMethod.GET)
+      .setUrl('/pageInfo/version')
+      .build();
+    const version = await this.chr_ext_srv.sendSyncMessage(req);
     const { id } = await this.scenarioService.createScenarioFromRecording(
-      events
+      events,
+      version
     );
 
     this.router.navigate(['scenario/scenarioDetail', id]);
