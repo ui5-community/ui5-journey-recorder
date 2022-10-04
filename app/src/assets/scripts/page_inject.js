@@ -6,15 +6,6 @@
 
     //#region public access points
     setupHoverSelectEffect() {//append style class
-      let css = '.injectClass { box-shadow: 0 0 2px 2px red, inset 0 0 2px 2px red; }';
-      let head = document.head || document.getElementsByTagName('head')[0];
-      let style = document.createElement('style');
-
-      style.id = "UI5TR--css";
-      style.appendChild(document.createTextNode(css));
-
-      head.prepend(style);
-
       //append style adding and removement
       document.onmouseover = e => {
         var e = e || window.event;
@@ -148,6 +139,10 @@
 
     showToast(sMessage, props) {
       this.#toast.show(sMessage, props);
+    }
+
+    getUI5Version() {
+      return sap.ui.version;
     }
     //#endregion public access points
 

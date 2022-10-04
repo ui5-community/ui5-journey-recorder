@@ -30,8 +30,12 @@ export class ScenarioService {
     return this.local_storage_service.getAll();
   }
 
-  public createScenarioFromRecording(recording: any[]): TestScenario {
+  public createScenarioFromRecording(
+    recording: any[],
+    ui5Version: string
+  ): TestScenario {
     const ts = new TestScenario(this.createUUID(), Date.now());
+    ts.version = ui5Version;
     const stepTree = this.transformToAst(
       this.reduceSteps(
         /* this.transformEventsToSteps( */ recording.map(

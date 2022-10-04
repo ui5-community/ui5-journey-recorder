@@ -28,6 +28,17 @@
     document.head.prepend(script);
   }
 
+  function setupInjectCSS() {
+    let css = '.injectClass { box-shadow: 0 0 2px 2px red, inset 0 0 2px 2px red; }';
+    let head = document.head || document.getElementsByTagName('head')[0];
+    let style = document.createElement('style');
+
+    style.id = "UI5TR--css";
+    style.appendChild(document.createTextNode(css));
+
+    head.prepend(style);
+  }
+
   function setup_port_passthrough() {
     port = chrome.runtime.connect({ name: "ui5_tr" });
     port.onMessage.addListener((msg) => {
@@ -35,6 +46,16 @@
         origin: EXT_ID,
         ...msg
       })
+    });
+
+    port.onDisconnect.addListener(() => {
+      window.postMessage({
+        origin: EXT_ID
+        //@TODO: Add a REST-Request to inform the user and remove the injects
+      });
+      document.getElementsById(`${TAG_ID_PREFIX}communication-js`).remove();
+      document.getElementsById(`${TAG_ID_PREFIX}-js`).remove();
+      document.getElementsById(`"UI5TR--css`).remove();
     });
 
     const page_id = EXT_ID + '_ui5_tr_handler';
@@ -51,5 +72,6 @@
 
   injectJS();
   commJS();
+  setupInjectCSS();
   setup_port_passthrough();
 }());

@@ -73,6 +73,12 @@ export class MainComponent implements OnInit {
             .then(() => {
               this.chr_ext_srv.focus_page(page).then(() => {
                 this.loaderService.endLoading();
+                this.messageService.show({
+                  severity: SnackSeverity.SUCCESS,
+                  title: 'Injection',
+                  detail: 'Connection established!',
+                });
+
                 this.router.navigate(['scenario/recording'], {
                   relativeTo: this.activatedRoute,
                 });
@@ -132,6 +138,7 @@ export class MainComponent implements OnInit {
   }
 
   importScenario() {
+    this.loaderService.startLoading();
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json';
@@ -200,6 +207,7 @@ export class MainComponent implements OnInit {
     const scen_id = content['scenario_id'];
     const scen = await this.scenarioService.getScenario(scen_id);
     if (scen) {
+      this.loaderService.endLoading();
       this.messageService.confirm({
         severity: 'error',
         icon: 'error',
@@ -221,6 +229,7 @@ export class MainComponent implements OnInit {
       await this.scenarioService.saveScenario(
         TestScenario.fromJSON(JSON.stringify(content))
       );
+      this.loaderService.endLoading();
       this.messageService.show({
         severity: SnackSeverity.SUCCESS,
         title: 'Import',
