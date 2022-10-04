@@ -268,6 +268,15 @@
     }
   });
 
+  communicationService.post('/pageInfo/disconnected', (req, res) => {
+    if (ui5TestRecorder.recorder) {
+      ui5TestRecorder.recorder.showToast('UI5 Testrecorder disconnected', {
+        duration: 2000,
+        autoClose: true
+      })
+    }
+  });
+
   communicationService.get('/pageInfo/connected', (req, res) => {
     res({ status: 200, message: 'Connected' });
   });
