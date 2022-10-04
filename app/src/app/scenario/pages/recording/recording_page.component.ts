@@ -57,7 +57,7 @@ export class RecordingPageComponent implements OnInit {
     const version = await this.chr_ext_srv.sendSyncMessage(req);
     const { id } = await this.scenarioService.createScenarioFromRecording(
       events,
-      version
+      version.message
     );
 
     this.router.navigate(['scenario/scenarioDetail', id]);
