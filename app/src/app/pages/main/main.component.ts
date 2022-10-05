@@ -156,6 +156,7 @@ export class MainComponent implements OnInit {
       }
     });
     input.click();
+    input.remove();
   }
 
   private loadTabs(): void {

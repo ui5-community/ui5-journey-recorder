@@ -13,6 +13,13 @@ import { AppHeaderService } from 'src/app/components/app-header/app-header.servi
 import { MessageService } from 'src/app/services/messageService/message.service';
 import { SnackSeverity } from 'src/app/components/dialogs/snack-dialog/snack-dialog.component';
 import { Step } from 'src/app/classes/Step';
+import { LoaderService } from 'src/app/services/loaderService/loaderService';
+import { ReplaySetupDialogComponent } from '../../dialogs/ReplaySetupDialog/ReplaySetupDialog.component';
+import { MatDialog } from '@angular/material/dialog';
+
+type ReplayStep = Step & {
+  testResult?: boolean | null;
+};
 
 @Component({
   selector: 'app-object-page',
@@ -25,7 +32,7 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
 
   steps: any[] = [];
   scenario: TestScenario = new TestScenario('0');
-  scenarioSteps: Step[] = [];
+  scenarioSteps: ReplayStep[] = [];
 
   replay: boolean = false;
 
@@ -40,7 +47,9 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
     private replayService: ReplayService,
     public app_footer_service: AppFooterService,
     private app_header_service: AppHeaderService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private loaderService: LoaderService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -57,7 +66,7 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
             this.scenario = scen;
             this.scenarioSteps = scen.testPages.reduce(
               (a, b) => [...a, ...b.steps],
-              [] as Step[]
+              [] as ReplayStep[]
             );
           }
         })
@@ -86,18 +95,27 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
   }
 
   replayMode() {
-    if (this.scenario) {
-      this.app_footer_service.loadingIndicatorSource.subscribe(
-        (status: LoadStatus) => {
-          if (status === LoadStatus.DISCONNECTED) {
-            this.replay = false;
-          }
+    const ref = this.dialog.open(ReplaySetupDialogComponent, {
+      disableClose: true,
+    });
+
+    ref.afterClosed().subscribe((result) => {
+      if (result) {
+        if (this.scenario) {
+          this.app_footer_service.loadingIndicatorSource.subscribe(
+            (status: LoadStatus) => {
+              if (status === LoadStatus.DISCONNECTED) {
+                this.replay = false;
+              }
+            }
+          );
+          this.replayService.startReplay(this.scenario.startUrl).then(() => {
+            this.scenarioSteps.forEach((sSt) => (sSt.testResult = null));
+            this.replay = true;
+          });
         }
-      );
-      this.replayService.startReplay(this.scenario.startUrl).then(() => {
-        this.replay = true;
-      });
-    }
+      }
+    });
   }
 
   stopReplay() {
@@ -124,16 +142,27 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  performAction(date: Step) {
+  performAction(date: Step, event: any) {
+    if (event.target.innerHTML !== 'play_arrow') {
+      return;
+    }
     if (date) {
       this.replayService
         .performAction(date)
-        .then(() => {})
-        .catch();
+        .then(() => {
+          event.target.parentElement.parentElement.style.color = 'green';
+          event.target.innerHTML = 'check_circle';
+        })
+        .catch((e) => {
+          console.log(e);
+          event.target.parentElement.parentElement.style.color = 'red';
+          event.target.innerHTML = 'error';
+        });
     }
   }
 
   export() {
+    this.loaderService.startLoading();
     const link = document.createElement('a');
     const blob = new Blob([this.scenario?.toString() || ''], {
       type: 'octet/stream',
@@ -145,6 +174,7 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
     link.setAttribute('href', window.URL.createObjectURL(blob));
     link.setAttribute('download', name);
     link.click();
+    this.loaderService.endLoading();
   }
 
   showCodePage(): void {

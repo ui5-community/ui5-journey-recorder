@@ -42,7 +42,6 @@
   function setup_port_passthrough() {
     port = chrome.runtime.connect({ name: "ui5_tr" });
     port.onMessage.addListener((msg) => {
-      debugger;
       window.postMessage({
         origin: EXT_ID,
         ...msg
