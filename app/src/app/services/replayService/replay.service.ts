@@ -33,6 +33,11 @@ export class ReplayService {
     rb.setMethod(RequestMethod.POST);
     rb.setUrl('/controls/action');
     rb.setBody(step);
-    return this.chr_ext_srv.sendSyncMessage(rb.build());
+    return this.chr_ext_srv.sendSyncMessage(rb.build()).then((msg) => {
+      if (msg.status !== 200) {
+        throw new Error();
+      }
+      return;
+    });
   }
 }

@@ -1,7 +1,7 @@
 //#region angular
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 //#endregion
 
 import { ScenarioRoutingModule } from './scenario-routing.module';
@@ -38,6 +38,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { ClipboardModule } from '@angular/cdk/clipboard';
+import { MatRadioModule } from '@angular/material/radio';
+import { ReplaySetupDialogComponent } from './dialogs/ReplaySetupDialog/ReplaySetupDialog.component';
 //#endregion material
 
 @NgModule({
@@ -45,6 +47,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
     ObjectPageComponent,
     RecordingPageComponent,
     RecordStopDialogComponent,
+    ReplaySetupDialogComponent,
     ScenarioComponent,
     StepPageComponent,
     ActionImagePipe,
@@ -54,6 +57,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
     CommonModule,
     ScenarioRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
     ClipboardModule,
     //#region material
     MatListModule,
@@ -69,6 +73,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
     MatTableModule,
     MatCheckboxModule,
     MatMenuModule,
+    MatRadioModule,
     //#endregion matieral
   ],
   providers: [CodeService],

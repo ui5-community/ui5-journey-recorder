@@ -84,7 +84,7 @@
     <mat-list-option *ngFor="let step of this.scenarioSteps" role="listitem">
       <div matLine class="list-content-with-action-left">
         <div class="action-block" *ngIf="this.replay">
-          <button type="button" matSuffix mat-icon-button aria-label="Play" (click)="this.performAction(step)"
+          <button type="button" matSuffix mat-icon-button aria-label="Play" (click)="this.performAction(step, $event)"
             [disabled]="this.scenario.name === ''" matTooltip="Replay the Step" matTooltipPosition="above"
             style="color: green;">
             <mat-icon>play_arrow</mat-icon>

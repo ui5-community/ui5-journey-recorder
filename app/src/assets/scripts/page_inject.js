@@ -1,8 +1,21 @@
 (() => {
   class RecorderInject {
     #lastDetectedElement;
-    #rr = sap.ui.requireSync('sap/ui/test/RecordReplay');
-    #toast = sap.ui.requireSync('sap/m/MessageToast');
+    #rr;
+    #toast;
+
+    constructor() {
+      try {
+        this.#rr = sap.ui.requireSync('sap/ui/test/RecordReplay');
+      } catch (e) {
+        this.#rr = null;
+      }
+      try {
+        this.#toast = sap.ui.requireSync('sap/m/MessageToast');
+      } catch (e) {
+        this.#toast = null;
+      }
+    }
 
     //#region public access points
     setupHoverSelectEffect() {//append style class
@@ -98,42 +111,144 @@
       return Object.values(this.#getUI5Elements()).filter(el => el.getId() === id);
     }
 
-    getElementsByAttributes(controlType, attributes) {
+    getElementsBySelectors(controlSelectors) {
       let elements = this.#getUI5Elements();
       // filter by control_type
-      elements = Object.values(elements).filter(el => el.getMetadata().getElementName() === controlType);
-      // filter by control_attributes
+      elements = Object.values(elements).filter(el => el.getMetadata().getElementName() === controlSelectors.control_type);
+      // filter by control.properties
       elements = elements.filter(el => {
-        return attributes
-          // create getter function names and expected values from control_attributes
+        const byProperties = controlSelectors.properties
+          // only take the properties which should be used for identification
+          .filter(p => p.use)
+          // create getter function names and expected values from control.properties
           .map(attribute => ({ key: 'get' + Utils.upperCaseFirstLetter(attribute.name), value: attribute.value }))
           // create list of expection-results
           .map(executeMatcher => el[executeMatcher.key]() === executeMatcher.value)
           // check if all selected attributes really match
           .reduce((a, b) => a && b, true);
+
+        const byBindings = controlSelectors.bindings.filter(b => b.use)
+          .map(b => {
+            const info = el.mBindingInfos[b.propertyName];
+            if (!info) {
+              return false;
+            }
+            if (info.parts.length === 1) {
+              if (info.parts[0].path !== b.propertyPath) {
+                return false;
+              }
+              if (!info.binding || !info.binding.oContext || !(info.binding.oContext.sPath !== b.modelPath)) {
+                return false;
+              }
+              if (!info.binding || !info.binding.oValue !== b.bindingValue) {
+                return false;
+              }
+            } else if (info.parts.length > 1) {
+              const contains = info.parts.find(p => b.propertyPath === p.path);
+              if (!contains) {
+                return false;
+              }
+              const parting = info.binding.aBindings.find(ab => ab.sPath === b.propertyPath);
+              if (!parting) {
+                return false;
+              }
+              if (parting.oValue !== b.bindingValue) {
+                return false;
+              }
+            }
+            return true;
+          })
+          .reduce((a, b) => a && b, true);
+
+        const byI18ns = controlSelectors.i18nTexts.filter(i18nT => i18nT.use)
+          .map(i18n => {
+            const info = el.mBindingInfos[i18n.propertyName];
+            if (!info) {
+              return false;
+            }
+
+            if (info.parts.length === 1) {
+              if (info.parts[0].path !== b.propertyPath && info.parts[0].model !== 'i18n') {
+                return false;
+              }
+              if (!info.binding || !info.binding.oContext || !(info.binding.oContext.sPath !== b.modelPath)) {
+                return false;
+              }
+              if (!info.binding || !info.binding.oValue !== b.bindingValue) {
+                return false;
+              }
+            } else if (info.parts.length > 1) {
+              //adding an additional filter to find only 'i18n' bindings
+              const contains = info.parts.filter(p => p.model && p.model === 'i18n').find(p => b.propertyPath === p.path);
+
+              if (!contains) {
+                return false;
+              }
+              const parting = info.binding.aBindings.find(ab => ab.sPath === b.propertyPath);
+              if (!parting) {
+                return false;
+              }
+              if (parting.oValue !== b.bindingValue) {
+                return false;
+              }
+            }
+            return true;
+          })
+          .reduce((a, b) => a && b, true);
+        return byProperties && byBindings && byI18ns;
       });
       return elements;
     }
 
     executeAction(oEvent) {
-      const oItem = oEvent.step;
-      let elements = this.#getUI5Elements();
-      elements = this.getElementsByAttributes(oItem.control_type, Object.values(oItem.control_attributes)
-        // only take the attributes which should be used for identification
-        .filter(att => att.use));
+      if (this.#rr) {
+        return this.#executeByRecordReplay(oEvent.step);
+      } else {
+        return this.#executeByPure(oEvent.step);
+      }
+    }
 
-      if (elements.length > 1 && !oItem.control_id.startsWith('__')) {
-        elements = elements.filter(el => el.getId() === oItem.control_id);
+    #executeByRecordReplay(oItem) {
+      switch (oItem.action_type) {
+        case "clicked":
+          return this.#rr.interactWithControl({
+            selector: oItem.record_replay_selector,
+            interactionType: this.#rr.InteractionType.Press
+          })
+        case 'validate':
+          return this.#rr.findAllDOMElementsByControlSelector({
+            selector: oItem.record_replay_selector
+          }).then(result => {
+            if (result.length > 1) {
+              throw new Error();
+            }
+            return;
+          })
+        default:
+          return Promise.reject('ActionType not defined');
+      }
+    }
+
+    #executeByPure(oItem) {
+      let elements = this.#getUI5Elements();
+      if (oItem.control.control_id.use) {
+        elements = elements.filter(el => el.getId() === oItem.control.control_id);
+      } else {
+        elements = this.getElementsBySelectors(oItem.control);
       }
 
-      if (elements.length === 1) {
-        switch (oItem.action_type) {
-          case "clicked":
-            this.#executeClick(elements[0]);
-            break;
-        }
-      } else {
-        console.log('Elements length: ', elements.length);
+      if (elements.length !== 1) {
+        return Promise.reject();
+      }
+
+      switch (oItem.action_type) {
+        case "clicked":
+          this.#executeClick(elements[0].getDomRef());
+          return Promise.resolve();
+        case "validate":
+          return Promise.resolve();
+        default:
+          return Promise.reject(`Action Type (${oItem.action_type}) not defined`);
       }
     }
 
@@ -293,9 +408,9 @@
       });
       clickEvent.originalEvent = clickEvent;
 
-      el.getDomRef().dispatchEvent(mouseDownEvent);
-      el.getDomRef().dispatchEvent(mouseUpEvent);
-      el.getDomRef().dispatchEvent(clickEvent);
+      el.dispatchEvent(mouseDownEvent);
+      el.dispatchEvent(mouseUpEvent);
+      el.dispatchEvent(clickEvent);
     }
     //#endregion
   }
