@@ -8,11 +8,13 @@ import { Page, TestScenario } from '../../classes/testScenario';
 import { ScenarioStorageService } from '../localStorageService/scenarioStorageService.service';
 import {
   ClickStep,
+  Control,
   InputStep,
   IntermediateStep,
   KeyPressStep,
   Step,
   UnknownStep,
+  ValidationStep,
 } from 'src/app/classes/Step';
 
 @Injectable({
@@ -232,16 +234,23 @@ export class ScenarioService {
   }
 
   private transformToTypings(parts: IntermediateStep[]): IntermediateStep {
-    const inputStep = new InputStep();
-    return parts.reduce((a: InputStep, b: IntermediateStep) => {
+    const inputStep = parts.reduce((a: InputStep, b: IntermediateStep) => {
       if (b instanceof KeyPressStep) {
         a.addStep(b);
-      } else if (b instanceof ClickStep) {
+      } else if (b instanceof ClickStep || b instanceof ValidationStep) {
         a.actionLoc = b.actionLoc;
+        a.styleClasses = b.styleClasses;
+        a.recordReplaySelector = b.recordReplaySelector;
         a.controlId = b.controlId;
+        a.controlType = b.controlType;
+        a.controlAttributes = b.controlAttributes;
+        a.controlBindings = b.controlBindings;
+        a.controlI18nTexts = b.controlI18nTexts;
       }
       return a;
-    }, inputStep);
+    }, new InputStep());
+    inputStep.applyPreSelection();
+    return inputStep;
   }
 
   private createPages(stepTree: IntermediateStep[]): Page[] {

@@ -60,6 +60,8 @@ export abstract class Step implements Stringify, Equals<Step> {
         break;
       case 'keypress':
         res = new KeyPressStep();
+        (res as KeyPressStep).key = event.key;
+        (res as KeyPressStep).keyCode = event.keyCode;
         break;
       default:
         res = new UnknownStep();
@@ -214,21 +216,14 @@ export abstract class Step implements Stringify, Equals<Step> {
       });
     }
 
-    if (this.recordReplaySelector['i18nText']) {
-      const propName = this.recordReplaySelector['i18nText'].propertyName;
+    if (this.recordReplaySelector['i18NText']) {
+      const propName = this.recordReplaySelector['i18NText'].propertyName;
       this.control.i18nTexts?.forEach((it) => {
         if (it.propertyName === propName) {
           it.use = true;
         }
       });
     }
-    /*
-
-    const copy = { ...this.recordReplaySelector };
-    delete copy['id'];
-    delete copy['properties'];
-    delete copy['i18nText'];
-    delete copy['bindingPath']; */
   }
 
   public get useControlId(): boolean {

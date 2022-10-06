@@ -16,6 +16,7 @@ import { Step } from 'src/app/classes/Step';
 import { LoaderService } from 'src/app/services/loaderService/loaderService';
 import { ReplaySetupDialogComponent } from '../../dialogs/ReplaySetupDialog/ReplaySetupDialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { SettingsStorageService } from 'src/app/services/localStorageService/settingsStorageService.service';
 
 type ReplayStep = Step & {
   testResult?: 'success' | 'error' | 'warning';
@@ -51,7 +52,8 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
     private app_header_service: AppHeaderService,
     private messageService: MessageService,
     private loaderService: LoaderService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private settingsService: SettingsStorageService
   ) {}
 
   ngOnInit(): void {
@@ -161,14 +163,21 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
       return Promise.resolve();
     }
     if (date) {
+      const sttngs = this.settingsService.settings;
       return this.replayService
-        .performAction(date)
+        .performAction(date, sttngs.codeStyle)
         .then(() => {
           date.testResult = 'success';
         })
         .catch((e) => {
           date.testResult = 'error';
-          throw new Error(e);
+          if (this.automatedRun) {
+            throw new Error(e);
+          } else {
+            this.scenarioSteps
+              .filter((scS) => scS.testResult === undefined)
+              .forEach((scS) => (scS.testResult = 'warning'));
+          }
         });
     } else {
       return Promise.reject();

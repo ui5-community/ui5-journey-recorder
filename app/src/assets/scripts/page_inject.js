@@ -77,7 +77,7 @@
           if (ui5El && ui5El.focus) {
             ui5El.focus();
             for (let child of ui5El.getDomRef().querySelectorAll('input, select, textarea')) {
-              child.onkeydown = (e) => {
+              child.onkeypress = (e) => {
                 const key_message = {
                   type: 'keypress',
                   key: e.key,
@@ -86,14 +86,15 @@
                     id: ui5El.sId,
                     type: ui5El.getMetadata().getElementName(),
                     classes: ui5El.aCustomStyleClasses,
-                    domRef: ui5El.getDomRef().outerHTML,
                     properties: this.#getUI5ElementProperties(ui5El),
                     bindings: this.#getUI5ElementBindings(ui5El),
-                    view: this.#getViewProperties(ui5El)
+                    view: this.#getViewProperties(ui5El),
+                    events: {
+                      press: ui5El.getMetadata().getEvent('press') !== undefined
+                    }
                   },
                   location: window.location.href
                 }
-
                 this.#rr.findControlSelectorByDOMElement({ domElement: ui5El.getDomRef() }).then((c) => {
                   key_message.control.recordReplaySelector = c;
                   webSocket.send_record_step(key_message);
@@ -202,31 +203,66 @@
 
     executeAction(oEvent) {
       if (this.#rr) {
-        return this.#executeByRecordReplay(oEvent.step);
+        //only for RecordReplay possible to select to use selectors or not
+        return this.#executeByRecordReplay(oEvent.step, oEvent.useSelectors);
       } else {
         return this.#executeByPure(oEvent.step);
       }
     }
 
-    #executeByRecordReplay(oItem) {
+    #executeByRecordReplay(oItem, bUseSelectors) {
+      const oSelector = bUseSelectors ? this.#createSelectorFromItem(oItem) : oItem.record_replay_selector;
+
       switch (oItem.action_type) {
         case "clicked":
           return this.#rr.interactWithControl({
-            selector: oItem.record_replay_selector,
+            selector: oSelector,
             interactionType: this.#rr.InteractionType.Press
           })
         case 'validate':
           return this.#rr.findAllDOMElementsByControlSelector({
-            selector: oItem.record_replay_selector
+            selector: oSelector
           }).then(result => {
             if (result.length > 1) {
               throw new Error();
             }
             return;
+          });
+        case 'input':
+          return this.#rr.interactWithControl({
+            selector: oSelector,
+            interactionType: this.#rr.InteractionType.EnterText,
+            enterText: oItem.keys.reduce((a, b) => a + b.key_char, '')
           })
         default:
           return Promise.reject('ActionType not defined');
       }
+    }
+
+    #createSelectorFromItem(oItem) {
+      const oSelector = {};
+      if (oItem.control.control_id.use) {
+        oSelector['id'] = oItem.control.control_id.id;
+        return oSelector;
+      }
+      oSelector['controlType'] = oItem.control.control_type;
+      if (oItem.control.bindings) {
+        const bindings = oItem.control.bindings.filter(b => b.use);
+        if (bindings.length === 1) {
+          oSelector['bindingPath'] = { path: bindings[0].modelPath, propertyPath: bindings[0].propertyPath }
+        }
+      }
+      if (oItem.control.i18nTexts) {
+        const i18ns = oItem.control.i18nTexts.filter(b => b.use);
+        if (i18ns.length === 1) {
+          oSelector['i18NText'] = { key: i18ns[0].propertyPath, propertyName: i18ns[0].propertyName }
+        }
+      }
+      //just a current workaround
+      if (oItem.record_replay_selector.viewId) {
+        oSelector['viewId'] = oItem.record_replay_selector.viewId;
+      }
+      return oSelector;
     }
 
     #executeByPure(oItem) {
@@ -246,6 +282,9 @@
           this.#executeClick(elements[0].getDomRef());
           return Promise.resolve();
         case "validate":
+          return Promise.resolve();
+        case "input":
+          this.#executeTextInput(elements[0], oItem);
           return Promise.resolve();
         default:
           return Promise.reject(`Action Type (${oItem.action_type}) not defined`);
@@ -411,6 +450,21 @@
       el.dispatchEvent(mouseDownEvent);
       el.dispatchEvent(mouseUpEvent);
       el.dispatchEvent(clickEvent);
+    }
+
+    #executeTextInput(ui5El, oItem) {
+      const domNode = ui5El.getDomRef();
+      const sText = oItem.keys.reduce((a, b) => a + b.key_char, '');
+      domNode.val(sText);
+
+      var event = new KeyboardEvent('input', {
+        view: window,
+        data: sText,
+        bubbles: true,
+        cancelable: true,
+      });
+      event.originalEvent = event;
+      domNode.dispatchEvent(event);
     }
     //#endregion
   }
