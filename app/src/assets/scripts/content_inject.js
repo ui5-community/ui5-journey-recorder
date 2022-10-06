@@ -50,12 +50,16 @@
 
     port.onDisconnect.addListener(() => {
       window.postMessage({
-        origin: EXT_ID
-        //@TODO: Add a REST-Request to inform the user and remove the injects
+        origin: EXT_ID,
+        ...{
+          url: '/pageInfo/disconnected',
+          method: 'POST',
+          message_id: -1
+        }
       });
-      document.getElementsById(`${TAG_ID_PREFIX}communication-js`).remove();
-      document.getElementsById(`${TAG_ID_PREFIX}-js`).remove();
-      document.getElementsById(`"UI5TR--css`).remove();
+      document.getElementById(`${TAG_ID_PREFIX}communication-js`).remove();
+      document.getElementById(`${TAG_ID_PREFIX}-js`).remove();
+      document.getElementById(`${TAG_ID_PREFIX}-css`).remove();
     });
 
     const page_id = EXT_ID + '_ui5_tr_handler';

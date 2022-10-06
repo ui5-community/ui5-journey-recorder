@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ChromeExtensionService } from '../chromeExtensionService/chrome_extension_service';
 import { RequestBuilder, RequestMethod } from '../../classes/requestBuilder';
 import { Step } from 'src/app/classes/Step';
+import { CodeStyles } from 'src/app/scenario/codeService/codeService.service';
 
 @Injectable({ providedIn: 'root' })
 export class ReplayService {
@@ -28,11 +29,19 @@ export class ReplayService {
     return this.chr_ext_srv.disconnect();
   }
 
-  public performAction(step: Step): Promise<void> {
+  public performAction(step: Step, codeStyle: CodeStyles): Promise<void> {
     const rb = new RequestBuilder();
     rb.setMethod(RequestMethod.POST);
     rb.setUrl('/controls/action');
-    rb.setBody(step);
-    return this.chr_ext_srv.sendSyncMessage(rb.build());
+    rb.setBody({
+      step: step,
+      useManualSelection: codeStyle === CodeStyles.OPA5,
+    });
+    return this.chr_ext_srv.sendSyncMessage(rb.build()).then((msg) => {
+      if (msg.status !== 200) {
+        throw new Error();
+      }
+      return;
+    });
   }
 }

@@ -11,3 +11,16 @@
     }
   }
 }
+.radioBox {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+
+  > mat-radio-group.radioGroup {
+    display: flex;
+    flex-direction: column;
+    > * {
+      margin: 0.5rem;
+    }
+  }
+}

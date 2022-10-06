@@ -1,8 +1,21 @@
 (() => {
   class RecorderInject {
     #lastDetectedElement;
-    #rr = sap.ui.requireSync('sap/ui/test/RecordReplay');
-    #toast = sap.ui.requireSync('sap/m/MessageToast');
+    #rr;
+    #toast;
+
+    constructor() {
+      try {
+        this.#rr = sap.ui.requireSync('sap/ui/test/RecordReplay');
+      } catch (e) {
+        this.#rr = null;
+      }
+      try {
+        this.#toast = sap.ui.requireSync('sap/m/MessageToast');
+      } catch (e) {
+        this.#toast = null;
+      }
+    }
 
     //#region public access points
     setupHoverSelectEffect() {//append style class
@@ -64,7 +77,7 @@
           if (ui5El && ui5El.focus) {
             ui5El.focus();
             for (let child of ui5El.getDomRef().querySelectorAll('input, select, textarea')) {
-              child.onkeydown = (e) => {
+              child.onkeypress = (e) => {
                 const key_message = {
                   type: 'keypress',
                   key: e.key,
@@ -73,14 +86,15 @@
                     id: ui5El.sId,
                     type: ui5El.getMetadata().getElementName(),
                     classes: ui5El.aCustomStyleClasses,
-                    domRef: ui5El.getDomRef().outerHTML,
                     properties: this.#getUI5ElementProperties(ui5El),
                     bindings: this.#getUI5ElementBindings(ui5El),
-                    view: this.#getViewProperties(ui5El)
+                    view: this.#getViewProperties(ui5El),
+                    events: {
+                      press: ui5El.getMetadata().getEvent('press') !== undefined
+                    }
                   },
                   location: window.location.href
                 }
-
                 this.#rr.findControlSelectorByDOMElement({ domElement: ui5El.getDomRef() }).then((c) => {
                   key_message.control.recordReplaySelector = c;
                   webSocket.send_record_step(key_message);
@@ -98,42 +112,182 @@
       return Object.values(this.#getUI5Elements()).filter(el => el.getId() === id);
     }
 
-    getElementsByAttributes(controlType, attributes) {
+    getElementsBySelectors(controlSelectors) {
       let elements = this.#getUI5Elements();
       // filter by control_type
-      elements = Object.values(elements).filter(el => el.getMetadata().getElementName() === controlType);
-      // filter by control_attributes
+      elements = Object.values(elements).filter(el => el.getMetadata().getElementName() === controlSelectors.control_type);
+      // filter by control.properties
       elements = elements.filter(el => {
-        return attributes
-          // create getter function names and expected values from control_attributes
+        const byProperties = controlSelectors.properties
+          // only take the properties which should be used for identification
+          .filter(p => p.use)
+          // create getter function names and expected values from control.properties
           .map(attribute => ({ key: 'get' + Utils.upperCaseFirstLetter(attribute.name), value: attribute.value }))
           // create list of expection-results
           .map(executeMatcher => el[executeMatcher.key]() === executeMatcher.value)
           // check if all selected attributes really match
           .reduce((a, b) => a && b, true);
+
+        const byBindings = controlSelectors.bindings.filter(b => b.use)
+          .map(b => {
+            const info = el.mBindingInfos[b.propertyName];
+            if (!info) {
+              return false;
+            }
+            if (info.parts.length === 1) {
+              if (info.parts[0].path !== b.propertyPath) {
+                return false;
+              }
+              if (!info.binding || !info.binding.oContext || !(info.binding.oContext.sPath !== b.modelPath)) {
+                return false;
+              }
+              if (!info.binding || !info.binding.oValue !== b.bindingValue) {
+                return false;
+              }
+            } else if (info.parts.length > 1) {
+              const contains = info.parts.find(p => b.propertyPath === p.path);
+              if (!contains) {
+                return false;
+              }
+              const parting = info.binding.aBindings.find(ab => ab.sPath === b.propertyPath);
+              if (!parting) {
+                return false;
+              }
+              if (parting.oValue !== b.bindingValue) {
+                return false;
+              }
+            }
+            return true;
+          })
+          .reduce((a, b) => a && b, true);
+
+        const byI18ns = controlSelectors.i18nTexts.filter(i18nT => i18nT.use)
+          .map(i18n => {
+            const info = el.mBindingInfos[i18n.propertyName];
+            if (!info) {
+              return false;
+            }
+
+            if (info.parts.length === 1) {
+              if (info.parts[0].path !== b.propertyPath && info.parts[0].model !== 'i18n') {
+                return false;
+              }
+              if (!info.binding || !info.binding.oContext || !(info.binding.oContext.sPath !== b.modelPath)) {
+                return false;
+              }
+              if (!info.binding || !info.binding.oValue !== b.bindingValue) {
+                return false;
+              }
+            } else if (info.parts.length > 1) {
+              //adding an additional filter to find only 'i18n' bindings
+              const contains = info.parts.filter(p => p.model && p.model === 'i18n').find(p => b.propertyPath === p.path);
+
+              if (!contains) {
+                return false;
+              }
+              const parting = info.binding.aBindings.find(ab => ab.sPath === b.propertyPath);
+              if (!parting) {
+                return false;
+              }
+              if (parting.oValue !== b.bindingValue) {
+                return false;
+              }
+            }
+            return true;
+          })
+          .reduce((a, b) => a && b, true);
+        return byProperties && byBindings && byI18ns;
       });
       return elements;
     }
 
     executeAction(oEvent) {
-      const oItem = oEvent.step;
-      let elements = this.#getUI5Elements();
-      elements = this.getElementsByAttributes(oItem.control_type, Object.values(oItem.control_attributes)
-        // only take the attributes which should be used for identification
-        .filter(att => att.use));
+      if (this.#rr) {
+        //only for RecordReplay possible to select to use selectors or not
+        return this.#executeByRecordReplay(oEvent.step, oEvent.useSelectors);
+      } else {
+        return this.#executeByPure(oEvent.step);
+      }
+    }
 
-      if (elements.length > 1 && !oItem.control_id.startsWith('__')) {
-        elements = elements.filter(el => el.getId() === oItem.control_id);
+    #executeByRecordReplay(oItem, bUseSelectors) {
+      const oSelector = bUseSelectors ? this.#createSelectorFromItem(oItem) : oItem.record_replay_selector;
+
+      switch (oItem.action_type) {
+        case "clicked":
+          return this.#rr.interactWithControl({
+            selector: oSelector,
+            interactionType: this.#rr.InteractionType.Press
+          })
+        case 'validate':
+          return this.#rr.findAllDOMElementsByControlSelector({
+            selector: oSelector
+          }).then(result => {
+            if (result.length > 1) {
+              throw new Error();
+            }
+            return;
+          });
+        case 'input':
+          return this.#rr.interactWithControl({
+            selector: oSelector,
+            interactionType: this.#rr.InteractionType.EnterText,
+            enterText: oItem.keys.reduce((a, b) => a + b.key_char, '')
+          })
+        default:
+          return Promise.reject('ActionType not defined');
+      }
+    }
+
+    #createSelectorFromItem(oItem) {
+      const oSelector = {};
+      if (oItem.control.control_id.use) {
+        oSelector['id'] = oItem.control.control_id.id;
+        return oSelector;
+      }
+      oSelector['controlType'] = oItem.control.control_type;
+      if (oItem.control.bindings) {
+        const bindings = oItem.control.bindings.filter(b => b.use);
+        if (bindings.length === 1) {
+          oSelector['bindingPath'] = { path: bindings[0].modelPath, propertyPath: bindings[0].propertyPath }
+        }
+      }
+      if (oItem.control.i18nTexts) {
+        const i18ns = oItem.control.i18nTexts.filter(b => b.use);
+        if (i18ns.length === 1) {
+          oSelector['i18NText'] = { key: i18ns[0].propertyPath, propertyName: i18ns[0].propertyName }
+        }
+      }
+      //just a current workaround
+      if (oItem.record_replay_selector.viewId) {
+        oSelector['viewId'] = oItem.record_replay_selector.viewId;
+      }
+      return oSelector;
+    }
+
+    #executeByPure(oItem) {
+      let elements = this.#getUI5Elements();
+      if (oItem.control.control_id.use) {
+        elements = elements.filter(el => el.getId() === oItem.control.control_id);
+      } else {
+        elements = this.getElementsBySelectors(oItem.control);
       }
 
-      if (elements.length === 1) {
-        switch (oItem.action_type) {
-          case "clicked":
-            this.#executeClick(elements[0]);
-            break;
-        }
-      } else {
-        console.log('Elements length: ', elements.length);
+      if (elements.length !== 1) {
+        return Promise.reject();
+      }
+
+      switch (oItem.action_type) {
+        case "clicked":
+          this.#executeClick(elements[0].getDomRef());
+          return Promise.resolve();
+        case "validate":
+          return Promise.resolve();
+        case "input":
+          this.#executeTextInput(elements[0], oItem);
+          return Promise.resolve();
+        default:
+          return Promise.reject(`Action Type (${oItem.action_type}) not defined`);
       }
     }
 
@@ -293,9 +447,24 @@
       });
       clickEvent.originalEvent = clickEvent;
 
-      el.getDomRef().dispatchEvent(mouseDownEvent);
-      el.getDomRef().dispatchEvent(mouseUpEvent);
-      el.getDomRef().dispatchEvent(clickEvent);
+      el.dispatchEvent(mouseDownEvent);
+      el.dispatchEvent(mouseUpEvent);
+      el.dispatchEvent(clickEvent);
+    }
+
+    #executeTextInput(ui5El, oItem) {
+      const domNode = ui5El.getDomRef();
+      const sText = oItem.keys.reduce((a, b) => a + b.key_char, '');
+      domNode.val(sText);
+
+      var event = new KeyboardEvent('input', {
+        view: window,
+        data: sText,
+        bubbles: true,
+        cancelable: true,
+      });
+      event.originalEvent = event;
+      domNode.dispatchEvent(event);
     }
     //#endregion
   }

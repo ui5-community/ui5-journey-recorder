@@ -17,6 +17,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
 //#endregion material
 
 import { AppRoutingModule } from './app-routing.module';
@@ -83,6 +84,7 @@ import { GlobalSpinnerComponent } from './components/globalSpinner/globalSpinner
     MatCheckboxModule,
     MatSelectModule,
     MatExpansionModule,
+    MatRadioModule,
     //#endregion
   ],
   providers: [

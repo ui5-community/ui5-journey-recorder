@@ -13,6 +13,24 @@
   </mat-expansion-panel>
   <mat-expansion-panel hideToggle expanded="true" disabled="true">
     <mat-expansion-panel-header>
+      <mat-panel-title>Replay</mat-panel-title>
+    </mat-expansion-panel-header>
+    <div>
+      <mat-checkbox [checked]="this.settings?.manualReplayMode" (change)="this.manualReplayChanged($event)">Start in
+        manual mode</mat-checkbox>
+      <div class="radioBox">
+        <label>Automatic replay delay:</label>
+        <mat-radio-group class="radioGroup" (change)="this.replayDelayChanged($event)"
+          [disabled]="!!this.settings?.manualReplayMode">
+          <mat-radio-button [checked]="this.settings?.replayDelay === 0.5" value=0.5>0.5 sec</mat-radio-button>
+          <mat-radio-button [checked]="this.settings?.replayDelay === 1" value=1>1 sec</mat-radio-button>
+          <mat-radio-button [checked]="this.settings?.replayDelay === 2" value=2>2 sec</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
+  </mat-expansion-panel>
+  <mat-expansion-panel hideToggle expanded="true" disabled="true">
+    <mat-expansion-panel-header>
       <mat-panel-title>Code</mat-panel-title>
     </mat-expansion-panel-header>
     <mat-form-field appearance="fill">

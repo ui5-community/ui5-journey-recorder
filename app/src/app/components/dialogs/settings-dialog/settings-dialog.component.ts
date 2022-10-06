@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatRadioChange } from '@angular/material/radio';
 import { MatSelectChange } from '@angular/material/select';
 import { CodeStyles } from 'src/app/scenario/codeService/codeService.service';
 import {
@@ -39,15 +40,29 @@ export class SettingsDialogComponent implements OnInit {
 
   languageChanged(event: MatSelectChange): void {
     if (!this.settings) {
-      this.settings = { codeStyle: CodeStyles.OPA5, reloadPageDefault: true };
+      this.settings = SettingsStorageService.getDefaults();
     }
     this.settings.codeStyle = event.value;
   }
 
   reloadChanged(event: MatCheckboxChange): void {
     if (!this.settings) {
-      this.settings = { codeStyle: CodeStyles.OPA5, reloadPageDefault: true };
+      this.settings = SettingsStorageService.getDefaults();
     }
     this.settings.reloadPageDefault = event.checked;
+  }
+
+  manualReplayChanged(event: MatCheckboxChange): void {
+    if (!this.settings) {
+      this.settings = SettingsStorageService.getDefaults();
+    }
+    this.settings.manualReplayMode = event.checked;
+  }
+
+  replayDelayChanged(event: MatRadioChange): void {
+    if (!this.settings) {
+      this.settings = SettingsStorageService.getDefaults();
+    }
+    this.settings.replayDelay = Number(event.value);
   }
 }

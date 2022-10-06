@@ -160,6 +160,8 @@
         res({ status: 404, error: `The requested ressource does not exist!` });
         return;
       }
+      //reset the regex because of the global 'g' modifier
+      this.#getter_expr.forEach(r => r.regex.lastIndex = 0);
       const req = {}
       req.pathParams = this.#retrievePathParameters(url, handler);
 
@@ -186,6 +188,8 @@
         res({ status: 404, error: `The requested ressource does not exist!` });
         return;
       }
+      //reset the regex because of the global 'g' modifier
+      this.#post_expr.forEach(r => r.regex.lastIndex = 0);
       const req = {}
       var parts = [decodeURIComponent(url.pathname).matchAll(handler.regex)][0];
       const key = parts[2];
@@ -262,9 +266,23 @@
   communicationService.post('/controls/action', (req, res) => {
     const recorderInstance = window.ui5TestRecorder?.recorder;
     if (recorderInstance) {
-      recorderInstance.executeAction({ step: req.body });
+      const body = req.body;
+      recorderInstance.executeAction({ step: body.step, useSelectors: body.useManualSelection }).then(() => {
+        res({ status: 200, message: 'executed' });
+      }).catch((e) => {
+        res({ status: 500, message: e });
+      });
     } else {
       res({ status: 500, message: 'No recorder inject found!' });
+    }
+  });
+
+  communicationService.post('/pageInfo/disconnected', (req, res) => {
+    if (ui5TestRecorder.recorder) {
+      ui5TestRecorder.recorder.showToast('UI5 Testrecorder disconnected', {
+        duration: 2000,
+        autoClose: true
+      })
     }
   });
 
