@@ -30,3 +30,15 @@ header.object-header > * {
 .section {
   padding: 1rem;
 }
+
+.succeededTest {
+  color: green;
+}
+
+.errorTest {
+  color: red;
+}
+
+.warningTest {
+  color: orange;
+}

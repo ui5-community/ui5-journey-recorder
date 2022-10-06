@@ -2,9 +2,9 @@
 <div mat-dialog-content>
   <form [formGroup]="replayOptions">
     <mat-checkbox [formControl]="manualModeControl">Start in manual mode</mat-checkbox>
-    <div>
+    <div class="radioBox">
       <label>Automatic replay delay:</label>
-      <mat-radio-group [formControl]="delayControl">
+      <mat-radio-group [formControl]="delayControl" class="radioGroup">
         <mat-radio-button value="0.5">0.5 sec</mat-radio-button>
         <mat-radio-button value="1">1 sec</mat-radio-button>
         <mat-radio-button value="2">2 sec</mat-radio-button>
