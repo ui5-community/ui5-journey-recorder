@@ -80,14 +80,17 @@
     </div>
   </div>
 
-  <mat-selection-list role="list" [multiple]="false">
+  <mat-selection-list role="list" [multiple]="false" [disabled]="this.automatedRun">
     <mat-list-option *ngFor="let step of this.scenarioSteps" role="listitem">
       <div matLine class="list-content-with-action-left">
         <div class="action-block" *ngIf="this.replay">
-          <button type="button" matSuffix mat-icon-button aria-label="Play" (click)="this.performAction(step, $event)"
+          <button type="button" matSuffix mat-icon-button aria-label="Play" (click)="this.performAction(step)"
             [disabled]="this.scenario.name === ''" matTooltip="Replay the Step" matTooltipPosition="above"
-            style="color: green;">
-            <mat-icon>play_arrow</mat-icon>
+            [class.succeededTest]="step.testResult === 'success' || !step.testResult"
+            [class.errorTest]="step.testResult === 'error'" [class.warningTest]="step.testResult === 'warning'">
+            <mat-icon>{{step.testResult === undefined ? 'play_arrow' : (step.testResult === 'success' ? 'check_circle' :
+              (step.testResult === 'warning' ? 'help' : 'error'))}}
+            </mat-icon>
           </button>
           <!-- <i class="pi pi-play" style="font-size: 2rem;" (click)="this.performAction(step)"></i> -->
         </div>

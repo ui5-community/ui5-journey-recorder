@@ -18,7 +18,7 @@ import { ReplaySetupDialogComponent } from '../../dialogs/ReplaySetupDialog/Repl
 import { MatDialog } from '@angular/material/dialog';
 
 type ReplayStep = Step & {
-  testResult?: boolean | null;
+  testResult?: 'success' | 'error' | 'warning';
 };
 
 @Component({
@@ -35,6 +35,8 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
   scenarioSteps: ReplayStep[] = [];
 
   replay: boolean = false;
+  automatedRun: boolean = false;
+  replayDelay: number = 0.0;
 
   private scenario_id: string = '';
 
@@ -100,20 +102,31 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
     });
 
     ref.afterClosed().subscribe((result) => {
+      this.loaderService.startLoading();
       if (result) {
+        this.automatedRun = !result.manualMode;
+        this.replayDelay = Number(result.delay);
         if (this.scenario) {
           this.app_footer_service.loadingIndicatorSource.subscribe(
             (status: LoadStatus) => {
-              if (status === LoadStatus.DISCONNECTED) {
+              if (status !== LoadStatus.CONNECTED) {
                 this.replay = false;
+              }
+              if (status === LoadStatus.CONNECTED) {
+                this.loaderService.endLoading();
               }
             }
           );
           this.replayService.startReplay(this.scenario.startUrl).then(() => {
-            this.scenarioSteps.forEach((sSt) => (sSt.testResult = null));
+            this.scenarioSteps.forEach((sSt) => (sSt.testResult = undefined));
             this.replay = true;
+            if (this.automatedRun) {
+              this.runAutomatedTesting();
+            }
           });
         }
+      } else {
+        this.loaderService.endLoading();
       }
     });
   }
@@ -122,6 +135,7 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
     if (this.scenario) {
       this.replayService.stopReplay().then(() => {
         this.replay = false;
+        this.automatedRun = false;
       });
     }
   }
@@ -142,22 +156,22 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  performAction(date: Step, event: any) {
-    if (event.target.innerHTML !== 'play_arrow') {
-      return;
+  performAction(date: ReplayStep): Promise<void> {
+    if (date.testResult !== undefined) {
+      return Promise.resolve();
     }
     if (date) {
-      this.replayService
+      return this.replayService
         .performAction(date)
         .then(() => {
-          event.target.parentElement.parentElement.style.color = 'green';
-          event.target.innerHTML = 'check_circle';
+          date.testResult = 'success';
         })
         .catch((e) => {
-          console.log(e);
-          event.target.parentElement.parentElement.style.color = 'red';
-          event.target.innerHTML = 'error';
+          date.testResult = 'error';
+          throw new Error(e);
         });
+    } else {
+      return Promise.reject();
     }
   }
 
@@ -188,5 +202,65 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
     replacement_sign: string
   ): string {
     return text.replace(/[\s\/\\\:\*\?\"\<\>\|\-]+/gm, replacement_sign);
+  }
+
+  private async runAutomatedTesting(): Promise<void> {
+    let index = -1;
+    let remaining = this.scenarioSteps.filter(
+      (s) => s.testResult === undefined
+    ).length;
+    while (remaining !== 0) {
+      await this.timeout(1000 * this.replayDelay)
+        .then(() => {
+          index += 1;
+          return this.performAction(this.scenarioSteps[index]);
+        })
+        .then(() => {
+          remaining = this.scenarioSteps.filter(
+            (s) => s.testResult === undefined
+          ).length;
+          if (remaining === 0) {
+            const success = this.scenarioSteps.reduce(
+              (a, s) => a && s.testResult === 'success',
+              true
+            );
+
+            if (success) {
+              this.messageService.show({
+                title: 'Test Result',
+                detail: 'All test steps executed successfully',
+                severity: SnackSeverity.SUCCESS,
+                icon: 'check_circle',
+              });
+            } else {
+              this.messageService.show({
+                title: 'Test Result',
+                detail: 'One test failed while testing',
+                severity: SnackSeverity.ERROR,
+                icon: 'error',
+              });
+            }
+
+            this.stopReplay();
+          }
+        })
+        .catch(() => {
+          remaining = 0;
+          for (let i = index + 1; i < this.scenarioSteps.length; i++) {
+            this.scenarioSteps[i].testResult = 'warning';
+          }
+
+          this.messageService.show({
+            title: 'Test Result',
+            detail: 'One test failed while testing',
+            severity: SnackSeverity.ERROR,
+            icon: 'error',
+          });
+        });
+    }
+  }
+
+  private timeout(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

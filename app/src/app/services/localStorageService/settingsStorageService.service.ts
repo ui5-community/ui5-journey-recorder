@@ -4,6 +4,8 @@ import { CodeStyles } from 'src/app/scenario/codeService/codeService.service';
 export type AppSettings = {
   codeStyle: CodeStyles;
   reloadPageDefault: boolean;
+  manualReplayMode: boolean;
+  replayDelay: number;
 };
 
 @Inject({
@@ -12,12 +14,17 @@ export type AppSettings = {
 export class SettingsStorageService {
   private _settings!: AppSettings;
   constructor() {
-    this.setDefaults();
+    this._settings = SettingsStorageService.getDefaults();
     this.initService();
   }
 
-  private setDefaults() {
-    this._settings = { codeStyle: CodeStyles.OPA5, reloadPageDefault: true };
+  public static getDefaults(): AppSettings {
+    return {
+      codeStyle: CodeStyles.OPA5,
+      reloadPageDefault: true,
+      manualReplayMode: true,
+      replayDelay: 0.5,
+    };
   }
 
   private async initService(): Promise<void> {
