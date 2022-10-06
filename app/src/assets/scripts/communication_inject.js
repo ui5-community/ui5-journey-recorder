@@ -266,7 +266,8 @@
   communicationService.post('/controls/action', (req, res) => {
     const recorderInstance = window.ui5TestRecorder?.recorder;
     if (recorderInstance) {
-      recorderInstance.executeAction({ step: req.body }).then(() => {
+      const body = req.body;
+      recorderInstance.executeAction({ step: body.step, useSelectors: body.useManualSelection }).then(() => {
         res({ status: 200, message: 'executed' });
       }).catch((e) => {
         res({ status: 500, message: e });
