@@ -1,4 +1,3 @@
-import { match } from 'assert';
 import { Step, StepType } from 'src/app/classes/Step';
 import StringBuilder from 'src/app/classes/StringBuilder';
 import { Page, TestScenario } from 'src/app/classes/testScenario';
