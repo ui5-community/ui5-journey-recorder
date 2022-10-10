@@ -1,0 +1,820 @@
+{
+    "created": 1663878301647,
+    "edited": 1663878326558,
+    "pages": [
+        {
+            "page_id": "0",
+            "page_location": "https://ui5.sap.com/test-resources/sap/m/demokit/cart/webapp/index.html?sap-ui-theme=sap_fiori_3",
+            "page_steps": [
+                {
+                    "action_type": "clicked",
+                    "style_classes": [
+                        "injectClass"
+                    ],
+                    "action_location": "https://ui5.sap.com/test-resources/sap/m/demokit/cart/webapp/index.html?sap-ui-theme=sap_fiori_3",
+                    "record_replay_selector": {
+                        "controlType": "sap.m.StandardListItem",
+                        "viewId": "container-cart---homeView",
+                        "bindingPath": {
+                            "path": "/ProductCategories('AC')",
+                            "propertyPath": "CategoryName"
+                        }
+                    },
+                    "control": {
+                        "control_id": {
+                            "id": "__item1-container-cart---homeView--categoryList-0",
+                            "use": false
+                        },
+                        "control_type": "sap.m.StandardListItem",
+                        "properties": [
+                            {
+                                "name": "title",
+                                "value": "Accessories",
+                                "use": false
+                            },
+                            {
+                                "name": "description",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "icon",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "iconInset",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "iconDensityAware",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "activeIcon",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "info",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "infoState",
+                                "value": "None",
+                                "use": false
+                            },
+                            {
+                                "name": "adaptTitleSize",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "titleTextDirection",
+                                "value": "Inherit",
+                                "use": false
+                            },
+                            {
+                                "name": "infoTextDirection",
+                                "value": "Inherit",
+                                "use": false
+                            },
+                            {
+                                "name": "wrapping",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "infoStateInverted",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "wrapCharLimit",
+                                "value": 0,
+                                "use": false
+                            },
+                            {
+                                "name": "avatar",
+                                "value": null,
+                                "use": false
+                            }
+                        ],
+                        "i18nTexts": [
+                            {
+                                "propertyName": "tooltip",
+                                "propertyPath": "openCategoryProducts",
+                                "bindingValue": "Open category"
+                            }
+                        ],
+                        "bindings": [
+                            {
+                                "propertyName": "tooltip",
+                                "bindingValue": "Accessories",
+                                "modelPath": "/ProductCategories('AC')",
+                                "propertyPath": "CategoryName"
+                            },
+                            {
+                                "propertyName": "counter",
+                                "bindingValue": 34,
+                                "modelPath": "/ProductCategories('AC')",
+                                "propertyPath": "NumberOfProducts"
+                            },
+                            {
+                                "propertyName": "title",
+                                "bindingValue": "Accessories",
+                                "modelPath": "/ProductCategories('AC')",
+                                "propertyPath": "CategoryName"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "view_information": {
+                "absoluteViewName": "sap.ui.demo.cart.view.Home",
+                "relativeViewName": "Home"
+            }
+        },
+        {
+            "page_id": "1",
+            "page_location": "https://ui5.sap.com/test-resources/sap/m/demokit/cart/webapp/index.html?sap-ui-theme=sap_fiori_3#/category/AC",
+            "page_steps": [
+                {
+                    "action_type": "clicked",
+                    "style_classes": [
+                        "injectClass"
+                    ],
+                    "action_location": "https://ui5.sap.com/test-resources/sap/m/demokit/cart/webapp/index.html?sap-ui-theme=sap_fiori_3#/category/AC",
+                    "record_replay_selector": {
+                        "controlType": "sap.m.ObjectListItem",
+                        "viewId": "container-cart---category",
+                        "bindingPath": {
+                            "path": "/Products('HT-2001')",
+                            "propertyPath": "PictureUrl"
+                        }
+                    },
+                    "control": {
+                        "control_id": {
+                            "id": "__item7-container-cart---category--productList-0",
+                            "use": false
+                        },
+                        "control_type": "sap.m.ObjectListItem",
+                        "properties": [
+                            {
+                                "name": "title",
+                                "value": "10\" Portable DVD player",
+                                "use": false
+                            },
+                            {
+                                "name": "number",
+                                "value": "449,99",
+                                "use": false
+                            },
+                            {
+                                "name": "numberUnit",
+                                "value": "EUR",
+                                "use": false
+                            },
+                            {
+                                "name": "intro",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "icon",
+                                "value": "./localService/mockdata/images/HT-2001.jpg",
+                                "use": false
+                            },
+                            {
+                                "name": "activeIcon",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "iconDensityAware",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "markFavorite",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "markFlagged",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "showMarkers",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "numberState",
+                                "value": "None",
+                                "use": false
+                            },
+                            {
+                                "name": "titleTextDirection",
+                                "value": "Inherit",
+                                "use": false
+                            },
+                            {
+                                "name": "introTextDirection",
+                                "value": "Inherit",
+                                "use": false
+                            },
+                            {
+                                "name": "numberTextDirection",
+                                "value": "Inherit",
+                                "use": false
+                            },
+                            {
+                                "name": "markLocked",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "secondStatus",
+                                "value": null,
+                                "use": false
+                            },
+                            {
+                                "name": "markers",
+                                "value": [],
+                                "use": false
+                            }
+                        ],
+                        "i18nTexts": [
+                            {
+                                "propertyName": "tooltip",
+                                "propertyPath": "openProductDetails",
+                                "bindingValue": "Open details for"
+                            }
+                        ],
+                        "bindings": [
+                            {
+                                "propertyName": "tooltip",
+                                "bindingValue": "10\" Portable DVD player",
+                                "modelPath": "/Products('HT-2001')",
+                                "propertyPath": "Name"
+                            },
+                            {
+                                "propertyName": "numberUnit",
+                                "bindingValue": "EUR",
+                                "modelPath": "/Products('HT-2001')",
+                                "propertyPath": "CurrencyCode"
+                            },
+                            {
+                                "propertyName": "number",
+                                "bindingValue": "449.99",
+                                "modelPath": "/Products('HT-2001')",
+                                "propertyPath": "Price"
+                            },
+                            {
+                                "propertyName": "title",
+                                "bindingValue": "10\" Portable DVD player",
+                                "modelPath": "/Products('HT-2001')",
+                                "propertyPath": "Name"
+                            },
+                            {
+                                "propertyName": "icon",
+                                "bindingValue": "sap/ui/demo/mock/images/HT-2001.jpg",
+                                "modelPath": "/Products('HT-2001')",
+                                "propertyPath": "PictureUrl"
+                            },
+                            {
+                                "propertyName": "type",
+                                "propertyPath": "/system/phone",
+                                "modelName": "device"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "view_information": {
+                "absoluteViewName": "sap.ui.demo.cart.view.Category",
+                "relativeViewName": "Category"
+            }
+        },
+        {
+            "page_id": "2",
+            "page_location": "https://ui5.sap.com/test-resources/sap/m/demokit/cart/webapp/index.html?sap-ui-theme=sap_fiori_3#/category/AC/product/HT-2001",
+            "page_steps": [
+                {
+                    "action_type": "validate",
+                    "style_classes": [
+                        "injectClass"
+                    ],
+                    "action_location": "https://ui5.sap.com/test-resources/sap/m/demokit/cart/webapp/index.html?sap-ui-theme=sap_fiori_3#/category/AC/product/HT-2001",
+                    "record_replay_selector": {
+                        "controlType": "sap.m.ObjectHeader",
+                        "viewId": "container-cart---product",
+                        "bindingPath": {
+                            "path": "/Products('HT-2001')",
+                            "propertyPath": "Name"
+                        }
+                    },
+                    "control": {
+                        "control_id": {
+                            "id": "__header0",
+                            "use": false
+                        },
+                        "control_type": "sap.m.ObjectHeader",
+                        "properties": [
+                            {
+                                "name": "title",
+                                "value": "10\" Portable DVD player",
+                                "use": false
+                            },
+                            {
+                                "name": "number",
+                                "value": "449,99",
+                                "use": false
+                            },
+                            {
+                                "name": "numberUnit",
+                                "value": "EUR",
+                                "use": false
+                            },
+                            {
+                                "name": "intro",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "introActive",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "titleActive",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "icon",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "iconActive",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "iconAlt",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "iconTooltip",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "iconDensityAware",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "imageShape",
+                                "value": "Square",
+                                "use": false
+                            },
+                            {
+                                "name": "markFavorite",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "markFlagged",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "showMarkers",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "showTitleSelector",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "numberState",
+                                "value": "None",
+                                "use": false
+                            },
+                            {
+                                "name": "condensed",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "responsive",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "fullScreenOptimized",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "titleHref",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "titleTarget",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "introHref",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "introTarget",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "titleTextDirection",
+                                "value": "Inherit",
+                                "use": false
+                            },
+                            {
+                                "name": "introTextDirection",
+                                "value": "Inherit",
+                                "use": false
+                            },
+                            {
+                                "name": "numberTextDirection",
+                                "value": "Inherit",
+                                "use": false
+                            },
+                            {
+                                "name": "titleSelectorTooltip",
+                                "value": "Options",
+                                "use": false
+                            },
+                            {
+                                "name": "titleLevel",
+                                "value": "H3",
+                                "use": false
+                            },
+                            {
+                                "name": "firstStatus",
+                                "value": null,
+                                "use": false
+                            },
+                            {
+                                "name": "secondStatus",
+                                "value": null,
+                                "use": false
+                            },
+                            {
+                                "name": "additionalNumbers",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "headerContainer",
+                                "value": null,
+                                "use": false
+                            },
+                            {
+                                "name": "markers",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaDescribedBy",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaLabelledBy",
+                                "value": [],
+                                "use": false
+                            }
+                        ],
+                        "bindings": [
+                            {
+                                "propertyName": "number",
+                                "bindingValue": "449.99",
+                                "modelPath": "/Products('HT-2001')",
+                                "propertyPath": "Price"
+                            },
+                            {
+                                "propertyName": "title",
+                                "bindingValue": "10\" Portable DVD player",
+                                "modelPath": "/Products('HT-2001')",
+                                "propertyPath": "Name"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "action_type": "clicked",
+                    "style_classes": [
+                        "sapUiSmallMargin",
+                        "injectClass"
+                    ],
+                    "action_location": "https://ui5.sap.com/test-resources/sap/m/demokit/cart/webapp/index.html?sap-ui-theme=sap_fiori_3#/category/AC/product/HT-2001",
+                    "record_replay_selector": {
+                        "id": "container-cart---product--productImage"
+                    },
+                    "control": {
+                        "control_id": {
+                            "id": "container-cart---product--productImage",
+                            "use": true
+                        },
+                        "control_type": "sap.m.Image",
+                        "properties": [
+                            {
+                                "name": "src",
+                                "value": "./localService/mockdata/images/HT-2001.jpg",
+                                "use": false
+                            },
+                            {
+                                "name": "width",
+                                "value": "100%",
+                                "use": false
+                            },
+                            {
+                                "name": "height",
+                                "value": "100%",
+                                "use": false
+                            },
+                            {
+                                "name": "decorative",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "alt",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "useMap",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "densityAware",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "activeSrc",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "mode",
+                                "value": "Image",
+                                "use": false
+                            },
+                            {
+                                "name": "backgroundSize",
+                                "value": "cover",
+                                "use": false
+                            },
+                            {
+                                "name": "backgroundPosition",
+                                "value": "initial",
+                                "use": false
+                            },
+                            {
+                                "name": "backgroundRepeat",
+                                "value": "no-repeat",
+                                "use": false
+                            },
+                            {
+                                "name": "lazyLoading",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "ariaHasPopup",
+                                "value": "None",
+                                "use": false
+                            },
+                            {
+                                "name": "ariaDescribedBy",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaLabelledBy",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaDetails",
+                                "value": [],
+                                "use": false
+                            }
+                        ],
+                        "bindings": [
+                            {
+                                "propertyName": "src",
+                                "bindingValue": "sap/ui/demo/mock/images/HT-2001.jpg",
+                                "modelPath": "/Products('HT-2001')",
+                                "propertyPath": "PictureUrl"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "action_type": "clicked",
+                    "style_classes": [
+                        "injectClass"
+                    ],
+                    "action_location": "https://ui5.sap.com/test-resources/sap/m/demokit/cart/webapp/index.html?sap-ui-theme=sap_fiori_3#/category/AC/product/HT-2001",
+                    "record_replay_selector": {
+                        "id": "container-cart---product--lightBox-closeButton",
+                        "searchOpenDialogs": true
+                    },
+                    "control": {
+                        "control_id": {
+                            "id": "container-cart---product--lightBox-closeButton",
+                            "use": true
+                        },
+                        "control_type": "sap.m.Button",
+                        "properties": [
+                            {
+                                "name": "text",
+                                "value": "Close",
+                                "use": false
+                            },
+                            {
+                                "name": "type",
+                                "value": "Transparent",
+                                "use": false
+                            },
+                            {
+                                "name": "width",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "enabled",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "icon",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "iconFirst",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "activeIcon",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "iconDensityAware",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "textDirection",
+                                "value": "Inherit",
+                                "use": false
+                            },
+                            {
+                                "name": "ariaHasPopup",
+                                "value": "None",
+                                "use": false
+                            },
+                            {
+                                "name": "ariaDescribedBy",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaLabelledBy",
+                                "value": [],
+                                "use": false
+                            }
+                        ]
+                    }
+                },
+                {
+                    "action_type": "clicked",
+                    "style_classes": [
+                        "sapMBarChild",
+                        "injectClass"
+                    ],
+                    "action_location": "https://ui5.sap.com/test-resources/sap/m/demokit/cart/webapp/index.html?sap-ui-theme=sap_fiori_3#/category/AC/product/HT-2001",
+                    "record_replay_selector": {
+                        "controlType": "sap.m.Button",
+                        "viewId": "container-cart---product",
+                        "i18NText": {
+                            "propertyName": "text",
+                            "key": "addToCartShort"
+                        }
+                    },
+                    "control": {
+                        "control_id": {
+                            "id": "__button10",
+                            "use": false
+                        },
+                        "control_type": "sap.m.Button",
+                        "properties": [
+                            {
+                                "name": "text",
+                                "value": "Add to Cart",
+                                "use": false
+                            },
+                            {
+                                "name": "type",
+                                "value": "Emphasized",
+                                "use": false
+                            },
+                            {
+                                "name": "width",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "enabled",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "icon",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "iconFirst",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "activeIcon",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "iconDensityAware",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "textDirection",
+                                "value": "Inherit",
+                                "use": false
+                            },
+                            {
+                                "name": "ariaHasPopup",
+                                "value": "None",
+                                "use": false
+                            },
+                            {
+                                "name": "ariaDescribedBy",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaLabelledBy",
+                                "value": [],
+                                "use": false
+                            }
+                        ],
+                        "i18nTexts": [
+                            {
+                                "propertyName": "text",
+                                "propertyPath": "addToCartShort",
+                                "bindingValue": "Add to Cart"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "view_information": {
+                "absoluteViewName": "sap.ui.demo.cart.view.Product",
+                "relativeViewName": "Product"
+            }
+        }
+    ],
+    "scenario_id": "26912794-5179-4b53-8e23-f2979d6552d3",
+    "scenario_name": "Journey_220922_22-22"
+}
