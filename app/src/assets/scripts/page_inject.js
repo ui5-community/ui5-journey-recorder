@@ -482,7 +482,7 @@
   const recorderInstance = new RecorderInject(document, window);
   recorderInstance.setupHoverSelectEffect();
   recorderInstance.setupClickListener();
-  recorderInstance.showToast("UI5 Testrecorder successfully injected", {
+  recorderInstance.showToast("UI5 Journey Recorder successfully injected", {
     duration: 2000,
     autoClose: true
   })

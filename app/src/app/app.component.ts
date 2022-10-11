@@ -9,7 +9,7 @@ export let browserRefresh = false;
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  title = 'ui5-testrecorder';
+  title = 'UI5 Journey Recorder';
 
   constructor(private router: Router) {}
 
