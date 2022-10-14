@@ -29,6 +29,7 @@ Therefore you just have to execute the *doc, doc:serve or docu:coverage* NPM-Scr
 After this you can open the documentation from `app\documentation\index.html`.
 
 ## work on the *UI5 Journey Recorder*
+<<<<<<< HEAD
 The *UI5 Journey Recorder* consists of two parts: 
 - the injected content
 - the popup content
@@ -58,3 +59,10 @@ Changes are only allowed via Pull-Requests.
 We have a setup of eslint for eslint please be aware of these.
 
 "More to be comming"
+=======
+@TODO
+
+## commiting changes
+@TODO
+
+>>>>>>> 1127b48 (Added first setup for official documentation)
