@@ -29,8 +29,32 @@ Therefore you just have to execute the *doc, doc:serve or docu:coverage* NPM-Scr
 After this you can open the documentation from `app\documentation\index.html`.
 
 ## work on the *UI5 Journey Recorder*
-@TODO
+The *UI5 Journey Recorder* consists of two parts: 
+- the injected content
+- the popup content
+
+### Injected content
+This is the part which is injected into the page where the journey should be recorded. Here you can find the: 
+- page_inject
+- communication_inject
+- content_inject
+
+#### page_inject
+The page_inject contains all necessary functionality to detect ui5 controls, replay actions gather control informations
+
+#### communication_inject
+The communication_inject contains a REST-Like interface to communicate with the popup-Part of the Extension. 
+This should enable an easier extension and maintenance of the extension-page-communication.
+
+#### content_inject
+The content_inject is the bridge between the page and the extension-popup it contains the load-up for the page_inject and communication_inject.<br>
+Additonally it creates a "bridge"/"passthrough" for the communication-events.
+
+## debugging
+All parts of the extension can be debugged with the default Chrome-Debbuging tools. 
 
 ## commiting changes
-@TODO
+Changes are only allowed via Pull-Requests.
+We have a setup of eslint for eslint please be aware of these.
 
+"More to be comming"
