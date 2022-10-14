@@ -540,23 +540,23 @@ export default class CommonPageBuilder extends PageBuilder {
   private _generateAssertionFunctions(): StringBuilder {
     var oAssertFunctions = new StringBuilder();
     if (this._assertions['exists'].render) {
-      oAssertFunctions.add(',').addNewLine();
+      oAssertFunctions.add(',').addNewLine(2);
       oAssertFunctions.add(this._renderExistsFunction());
     }
     if (this._assertions['attributes'].render) {
-      oAssertFunctions.add(',').addNewLine();
+      oAssertFunctions.add(',').addNewLine(2);
       oAssertFunctions.add(this._renderAttributesFunction());
     }
     if (this._assertions['aggregationEmpty'].render) {
-      oAssertFunctions.add(',').addNewLine();
+      oAssertFunctions.add(',').addNewLine(2);
       oAssertFunctions.add(this._renderEmptyAggFunction());
     }
     if (this._assertions['aggregationFilled'].render) {
-      oAssertFunctions.add(',').addNewLine();
+      oAssertFunctions.add(',').addNewLine(2);
       oAssertFunctions.add(this._renderFilledAggFunction());
     }
     if (this._assertions['aggregationCount'].render) {
-      oAssertFunctions.add(',').addNewLine();
+      oAssertFunctions.add(',').addNewLine(2);
       oAssertFunctions.add(this._renderCountAggFunction());
     }
     return oAssertFunctions;

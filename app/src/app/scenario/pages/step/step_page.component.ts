@@ -116,11 +116,11 @@ export class StepPageComponent implements OnInit {
           {
             style: this.selected,
           }
-        );
+        ).trim();
       } else {
         this.codeData.value = CodeService.generateStepCode(this.currentStep, {
           style: this.selected,
-        });
+        }).trim();
       }
     }
   }
