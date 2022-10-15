@@ -1,4 +1,5 @@
-import { Step, StepType } from 'src/app/classes/Step';
+import { match } from 'assert';
+import { InputStep, Step, StepType } from 'src/app/classes/Step';
 import StringBuilder from 'src/app/classes/StringBuilder';
 import { Page, TestScenario } from 'src/app/classes/testScenario';
 import CodeStrategy from '../StrategyInterface';
@@ -77,8 +78,12 @@ export default class OPA5CodeStrategy implements CodeStrategy {
     switch (step.actionType) {
       case StepType.Click:
         return OPA5SingleStepStrategy.generateSinglePressStep(step);
-      /* case StepType.Validation:
-        return OPA5SingleStepStrategy.generateSingleValidateStep(step); */
+      case StepType.Validation:
+        return OPA5SingleStepStrategy.generateSingleValidateStep(step);
+      case StepType.Input:
+        return OPA5SingleStepStrategy.generateSingleEnterTextStep(
+          step as InputStep
+        );
       default:
         return 'Unknown StepType';
     }
@@ -93,16 +98,11 @@ export default class OPA5CodeStrategy implements CodeStrategy {
         return this._createClickStep(step, viewName);
       case StepType.Validation:
         return this._createValidateStep(step, viewName);
+      case StepType.Input:
+        return this._createInputStep(step as InputStep, viewName);
       default:
         return '';
     }
-  }
-
-  private _capitalize(text: string) {
-    if (typeof text !== 'string') {
-      return '';
-    }
-    return text.charAt(0).toUpperCase() + text.slice(1);
   }
 
   private _createAppCloseStep(jurney: { [key: string]: any }) {
@@ -163,37 +163,6 @@ export default class OPA5CodeStrategy implements CodeStrategy {
     jurney['content'].push(startStep.toString());
   }
 
-  private _createConstants(testPages: Page[]) {
-    //@TODO
-    /*
-    aElements.forEach(function (el) {
-        for (var sK in el.selector.selectorUI5) {
-            var properties = el.selector.selectorUI5[sK];
-            for (var sPK in properties.properties) {
-                var sValue = typeof Object.values(properties.properties[sPK])[0] === "string" ? Object.values(properties.properties[sPK])[0].trim() : Object.values(properties.properties[sPK])[0];
-                var constant = this.__code.constants.filter(c => c.value === sValue)[0];
-                if (constant) {
-                    properties.properties[sPK]['constant'] = constant.symbol;
-                } else {
-                    var newConstant = this.__createConstant(sValue);
-                    this.__code.constants.push(newConstant);
-                    properties.properties[sPK]['constant'] = newConstant.symbol;
-                }
-            }
-        }
-    }.bind(this));
-    if (this.__code.constants.length > 0) {
-        var constants = Array(2).join('\t') +
-            'var' +
-            this.__code.constants
-            .map(c => Array(3).join('\t') + c.symbol + ' = \"' + c.value + '\"')
-            .reduce((a, b) => a + ',\n' + b, '')
-            .substring(2) +
-            ';';
-        this.__code.content.push(constants.replace(/var\t{2}/g, 'var ') + '\n');
-    } */
-  }
-
   private _setupHeader(jurney: { [key: string]: any }) {
     var oCode = new StringBuilder('sap.ui.define([');
     oCode.addNewLine().addTab().add('"sap/ui/test/Opa5",');
@@ -233,6 +202,68 @@ export default class OPA5CodeStrategy implements CodeStrategy {
 
     sb.add('});');
     return sb.toString();
+  }
+
+  private _createInputStep(
+    step: InputStep,
+    viewName: string = '<view_name>'
+  ): string {
+    var sb = new StringBuilder();
+    sb.addTab(2).add('When.on').add(viewName).add('.inputTextInto({');
+
+    var usedMatchers: { [key: string]: any } = {};
+    if (step.useControlId) {
+      sb.add(`id: {value: "${step.controlId}",isRegex: true}`).add(',');
+      usedMatchers['enterText'] = true;
+    }
+
+    const elementMatcher = this._createObjectMatcherInfos(step, sb);
+    if (Object.keys(elementMatcher).length === 0) {
+      sb.remove();
+    }
+    usedMatchers = {
+      ...usedMatchers,
+      ...elementMatcher,
+    };
+
+    if (step.useControlId || Object.keys(elementMatcher).length > 0) {
+      this._pages[viewName]?.addEnterTextAction(usedMatchers);
+      this._pages['Common']?.addEnterTextAction(usedMatchers);
+    }
+
+    sb.add('}, ');
+    sb.add(`"${step.getResultText()}"`);
+    sb.add(');');
+    return sb.toString();
+  }
+
+  private _createValidateStep(
+    step: Step,
+    viewName: string = '<view_name>'
+  ): string {
+    const validate = new StringBuilder();
+    validate.addTab(2).add('Then.on').add(viewName).add('.thereShouldBe({');
+    var usedMatchers: { [key: string]: any } = {};
+    if (step.useControlId) {
+      validate.add(`id: {value: "${step.controlId}",isRegex: true}`).add(',');
+    }
+
+    const elementMatcher = this._createObjectMatcherInfos(step, validate);
+    if (Object.keys(elementMatcher).length === 0) {
+      validate.remove();
+    }
+    usedMatchers = {
+      ...usedMatchers,
+      ...elementMatcher,
+    };
+
+    if (step.useControlId || Object.keys(elementMatcher).length > 0) {
+      this._pages[viewName]?.addValidationStep(usedMatchers);
+      this._pages['Common']?.addValidationStep(usedMatchers);
+    }
+
+    validate.add('});');
+    return validate.toString();
   }
 
   private _createObjectMatcherInfos(
@@ -380,34 +411,5 @@ export default class OPA5CodeStrategy implements CodeStrategy {
 
   private _sanatize(s: string): string {
     return `"${s}"`.trim();
-  }
-
-  private _createValidateStep(
-    step: Step,
-    viewName: string = '<view_name>'
-  ): string {
-    const validate = new StringBuilder();
-    validate.addTab(2).add('Then.on').add(viewName).add('.thereShouldBe({');
-    var usedMatchers: { [key: string]: any } = {};
-    if (step.useControlId) {
-      validate.add(`id: {value: "${step.controlId}",isRegex: true}`).add(',');
-    }
-
-    const elementMatcher = this._createObjectMatcherInfos(step, validate);
-    if (Object.keys(elementMatcher).length === 0) {
-      validate.remove();
-    }
-    usedMatchers = {
-      ...usedMatchers,
-      ...elementMatcher,
-    };
-
-    if (step.useControlId || Object.keys(elementMatcher).length > 0) {
-      this._pages[viewName]?.addValidationStep(usedMatchers);
-      this._pages['Common']?.addValidationStep(usedMatchers);
-    }
-
-    validate.add('});');
-    return validate.toString();
   }
 }

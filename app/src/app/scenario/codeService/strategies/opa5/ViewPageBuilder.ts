@@ -89,6 +89,13 @@ export default class ViewPageBuilder extends PageBuilder {
     if (this._actions['press'].render) {
       actions.addBuilder(this._generatePressFunction());
     }
+    if (this._actions['press'].render && this._actions['enterText'].render) {
+      actions.remove();
+      actions.add(',').addNewLine();
+    }
+    if (this._actions['enterText'].render) {
+      actions.addBuilder(this._generateEnterTextFunction());
+    }
     actions.addTab(3).add('}');
     return actions;
   }
@@ -127,6 +134,35 @@ export default class ViewPageBuilder extends PageBuilder {
       .addTab(6)
       .add(
         `errorMessage: "Won't be able to click the control at the view '${this._viewName}' with requirements: " + JSON.stringify(oActionProperties)`
+      )
+      .addNewLine();
+    click.addTab(5).add('});').addNewLine();
+    click.addTab(4).add('}').addNewLine();
+    return click;
+  }
+
+  private _generateEnterTextFunction(): StringBuilder {
+    var click = new StringBuilder();
+    click
+      .addTab(4)
+      .add('inputTextInto: function(oActionProperties) {')
+      .addNewLine();
+    click
+      .addTab(5)
+      .add('return this.enterText(oActionProperties, {')
+      .addNewLine();
+    click.addTab(6).add('success: function() {').addNewLine();
+    click
+      .addTab(7)
+      .add(
+        `Opa5.assert.ok(true, "Could enter text at the control at view ${this._viewName}");`
+      )
+      .addNewLine();
+    click.addTab(6).add('},').addNewLine();
+    click
+      .addTab(6)
+      .add(
+        `errorMessage: "Won't be able to enter text at the control at the view '${this._viewName}' with requirements: " + JSON.stringify(oActionProperties)`
       )
       .addNewLine();
     click.addTab(5).add('});').addNewLine();

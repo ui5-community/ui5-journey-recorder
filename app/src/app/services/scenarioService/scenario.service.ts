@@ -39,11 +39,7 @@ export class ScenarioService {
     const ts = new TestScenario(this.createUUID(), Date.now());
     ts.version = ui5Version;
     const stepTree = this.transformToAst(
-      this.reduceSteps(
-        /* this.transformEventsToSteps( */ recording.map(
-          Step.recordEventToStep
-        ) /* ) */
-      )
+      this.reduceSteps(recording.map(Step.recordEventToStep))
     );
     const pages = this.createPages(stepTree);
     pages.forEach((p) => p.steps.forEach((s) => s.applyPreSelection()));
@@ -166,38 +162,6 @@ export class ScenarioService {
     return step;
   }
 
-  /* private transformEventsToSteps(events: any): IntermediateStep[] {
-    return events.map((a: any) => {
-      let res: IntermediateStep;
-      switch (a.type) {
-        case 'clicked':
-          if (a.control && a.control.events && a.control.events.press) {
-            res = new ClickStep();
-          } else {
-            res = new ValidationStep();
-          }
-          break;
-        case 'keypress':
-          res = new KeyPressStep();
-          break;
-        default:
-          res = new UnknownStep();
-      }
-
-      res.controlId = a.control.id;
-      res.useControlId = res.controlId.startsWith('__') ? false : true;
-      res.controlType = a.control.type;
-      res.controlAttributes = Object.entries(a.control.properties).map(
-        (entry) => ({ name: entry[0], value: entry[1], use: false })
-      );
-      res.styleClasses = a.control.classes;
-      res.actionLoc = a.location;
-      res.view = a.control.view;
-      res.recordReplaySelector = a.control.recordReplaySelector;
-      return res;
-    });
-  } */
-
   private reduceSteps(steps: IntermediateStep[]): IntermediateStep[][] {
     return steps.reduce(
       (a: IntermediateStep[][], b: IntermediateStep): any[] => {
@@ -250,7 +214,11 @@ export class ScenarioService {
       return a;
     }, new InputStep());
     inputStep.applyPreSelection();
-    return inputStep;
+    const temp = inputStep as IntermediateStep;
+    temp.view = parts[0]
+      ? parts[0].view
+      : { absoluteViewName: '', relativeViewName: '' };
+    return temp;
   }
 
   private createPages(stepTree: IntermediateStep[]): Page[] {
