@@ -1,17 +1,17 @@
 import { Step, StepType } from 'src/app/classes/Step';
 import { TestScenario } from 'src/app/classes/testScenario';
 import CodeStrategy from '../StrategyInterface';
-import Wdi5CodePageBuilder from './Wdi5PageBuilder';
-import Wdi5RootPageBuilder from './Wdi5RootPageBuilder';
+import Wdi5PageBuilder from './Wdi5PageBuilder';
+// import Wdi5RootPageBuilder from './Wdi5RootPageBuilder';
 import Wdi5SingleStepStrategy from './Wdi5SingleStepStrategy';
 
 export default class Wdi5CodeStrategy implements CodeStrategy {
   generateTestCode(scenario: TestScenario): any[] {
     const codes: any[] = [];
-    const pages: { [key: string]: Wdi5CodePageBuilder } = {};
-    pages['Page'] = new Wdi5RootPageBuilder();
+    const pages: { [key: string]: Wdi5PageBuilder } = {};
+    // pages['Page'] = new Wdi5RootPageBuilder();
 
-    Object.entries(pages).forEach((entry: [string, Wdi5CodePageBuilder]) => {
+    Object.entries(pages).forEach((entry: [string, Wdi5PageBuilder]) => {
       const code = {
         title: `${entry[0]}-Page`,
         code: entry[1].generate(),
@@ -25,6 +25,9 @@ export default class Wdi5CodeStrategy implements CodeStrategy {
     switch (step.actionType) {
       case StepType.Click:
         return Wdi5SingleStepStrategy.generateSinglePressStep(step);
+      case StepType.Validation:
+        return Wdi5SingleStepStrategy.generateSingleExistsStep(step);
+      
       default:
         return 'Unknown StepType';
     }
