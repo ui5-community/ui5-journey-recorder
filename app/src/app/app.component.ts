@@ -16,7 +16,8 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     const fKey = (event: any) => {
       const e = event || window.event;
-      if (e.keyCode === 116) {
+      // capture for F5 or ctrl+r or cmd+r
+      if (e.keyCode === 116 || (e.keyCode == 82 && (e.ctrlKey || e.metaKey))) {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();

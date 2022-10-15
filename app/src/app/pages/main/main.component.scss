@@ -15,6 +15,10 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
+  .text-content {
+    max-width: 90%;
+  }
 }
 
 :host ::ng-deep .header-search {
