@@ -9,6 +9,13 @@ export default class Wdi5SingleStepStrategy {
     return pressStep.toString();
   }
 
+  public static generateSingleInputStep(step: Step): string {
+    const pressStep = new StringBuilder();
+    pressStep.add(Wdi5SingleStepStrategy.generateSingleExistsStep(step));
+    pressStep.add(`.enterText("FIXME");`); // FIXME: add actual step input value
+    return pressStep.toString();
+  }
+
   public static generateSingleExistsStep(step: Step): string {
     const exists = new StringBuilder();
     exists.add('await browser.asControl({').addNewLine();
