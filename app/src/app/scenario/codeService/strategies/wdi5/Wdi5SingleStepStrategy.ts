@@ -1,3 +1,5 @@
+import { type } from 'os';
+import { exit } from 'process';
 import { Step } from 'src/app/classes/Step';
 import StringBuilder from 'src/app/classes/StringBuilder';
 
@@ -28,10 +30,33 @@ export default class Wdi5SingleStepStrategy {
 
   private static generateSelector(step: Step): StringBuilder {
     const selectorBuilder = new StringBuilder();
-    Object.values(step.recordReplaySelector).forEach((v) => {
-      selectorBuilder.addTab(2).add(`${v[0]}: ${v[1]}`).add(',').addNewLine();
-    });
-    selectorBuilder.remove(2).addNewLine();
+    /**
+     * traverse a json object and pretty-js-code format it as a string
+     * @param entry key-value pair that might either be string:string or string:object
+     */
+    let indent = 2; 
+    const traverse = (entry: [any, any]) => {
+      if (typeof entry[1] === 'string') {
+        selectorBuilder
+          .addTab(indent)
+          .add(`${entry[0]}: "${entry[1].replace('\\','')}"`)
+          .add(',')
+          .addNewLine();
+      } else {
+        selectorBuilder.addTab(indent).add(`${entry[0]}: {`).addNewLine()
+        for (const deepEntry of Object.entries(entry[1])) {
+          ++indent;
+          traverse(deepEntry);
+          --indent;
+        }
+        selectorBuilder.addTab(indent).add("}").addNewLine()
+      }
+    };
+
+    // format the json-style record replay seclector as pretty looking js code
+    for (const entry of Object.entries(step.recordReplaySelector)) {
+      traverse(entry);
+    }
     return selectorBuilder;
   }
 }
