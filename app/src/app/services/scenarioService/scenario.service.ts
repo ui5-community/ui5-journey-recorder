@@ -13,6 +13,7 @@ import {
   IntermediateStep,
   KeyPressStep,
   Step,
+  StepType,
   UnknownStep,
   ValidationStep,
 } from 'src/app/classes/Step';
@@ -166,38 +167,6 @@ export class ScenarioService {
     return step;
   }
 
-  /* private transformEventsToSteps(events: any): IntermediateStep[] {
-    return events.map((a: any) => {
-      let res: IntermediateStep;
-      switch (a.type) {
-        case 'clicked':
-          if (a.control && a.control.events && a.control.events.press) {
-            res = new ClickStep();
-          } else {
-            res = new ValidationStep();
-          }
-          break;
-        case 'keypress':
-          res = new KeyPressStep();
-          break;
-        default:
-          res = new UnknownStep();
-      }
-
-      res.controlId = a.control.id;
-      res.useControlId = res.controlId.startsWith('__') ? false : true;
-      res.controlType = a.control.type;
-      res.controlAttributes = Object.entries(a.control.properties).map(
-        (entry) => ({ name: entry[0], value: entry[1], use: false })
-      );
-      res.styleClasses = a.control.classes;
-      res.actionLoc = a.location;
-      res.view = a.control.view;
-      res.recordReplaySelector = a.control.recordReplaySelector;
-      return res;
-    });
-  } */
-
   private reduceSteps(steps: IntermediateStep[]): IntermediateStep[][] {
     return steps.reduce(
       (a: IntermediateStep[][], b: IntermediateStep): any[] => {
@@ -205,7 +174,7 @@ export class ScenarioService {
         if (!el) {
           a.push([b]);
         } else {
-          if (el[0].equalsTo(b)) {
+          if (el[0].equalsTo(b) && b.actionType === StepType.KeyPress) {
             el.push(b);
             a.push(el);
           } else {
