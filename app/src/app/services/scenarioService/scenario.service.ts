@@ -13,6 +13,7 @@ import {
   IntermediateStep,
   KeyPressStep,
   Step,
+  StepType,
   UnknownStep,
   ValidationStep,
 } from 'src/app/classes/Step';
@@ -169,7 +170,7 @@ export class ScenarioService {
         if (!el) {
           a.push([b]);
         } else {
-          if (el[0].equalsTo(b)) {
+          if (el[0].equalsTo(b) && b.actionType === StepType.KeyPress) {
             el.push(b);
             a.push(el);
           } else {
