@@ -23,6 +23,8 @@ describe("wdi5 step generation", () => {
     const code = Wdi5SingleStepStrategy.generateSinglePressStep(existsStep)
     assert.equal(code, expected)
   })
+
+  it.todo("input step")
 });
 
 
