@@ -10,7 +10,7 @@
   console.log('injected');
 
   function injectJS() {
-    console.log('--- Inject UI5 Testrecorder JS ---');
+    console.log('--- Inject UI5 Journey Recorder JS ---');
     let script = document.createElement('script');
     script.id = `${TAG_ID_PREFIX}-js`;
     script.src = chrome.runtime.getURL('/assets/scripts/page_inject.js');

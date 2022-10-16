@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "UI5 Testrecorder Angular",
-  "short_name": "UI5 Test Ang",
+  "name": "UI5 Journey Recorder",
+  "short_name": "UI5 Journey Rec",
   "description": "A point-and-click adventure for your UI5 tests",
   "version": "0.0.2",
   "minimum_chrome_version": "46",

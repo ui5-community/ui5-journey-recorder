@@ -279,7 +279,7 @@
 
   communicationService.post('/pageInfo/disconnected', (req, res) => {
     if (ui5TestRecorder.recorder) {
-      ui5TestRecorder.recorder.showToast('UI5 Testrecorder disconnected', {
+      ui5TestRecorder.recorder.showToast('UI5 Journey Recorder disconnected', {
         duration: 2000,
         autoClose: true
       })

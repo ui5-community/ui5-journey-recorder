@@ -27,7 +27,7 @@
       </mat-list-option>
     </mat-selection-list>
   </mat-tab>
-  <mat-tab label="Scenarios">
+  <mat-tab label="Journeys">
     <ng-template matTabContent>
       <div class="list-header">
         <mat-form-field class="header-search" appearance="fill">
@@ -48,7 +48,7 @@
       <mat-selection-list role="list" [multiple]="false">
         <mat-list-option *ngFor="let scen of this.scenarios" role="listitem">
           <div matLine class="list-content-with-action">
-            <div (click)="this.openExisting(scen)">
+            <div class="text-content" (click)="this.openExisting(scen)">
               <span matLine>{{scen.name}}</span>
               <div matLine>
                 <label>URL:&nbsp;&nbsp;</label>

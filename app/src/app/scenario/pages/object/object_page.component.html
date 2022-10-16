@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <h2>Scenario</h2>
+  <h2>Journey</h2>
   <span class="spacer"></span>
   <h3 [innerText]="this.scenario.name"></h3>
   <span class="spacer"></span>
@@ -10,7 +10,7 @@
       <span>Code</span>
     </button>
     <button type="button" matSuffix mat-button aria-label="Export" (click)="this.export()"
-      [disabled]="this.scenario.name === ''" color="primary" matTooltip="Export the scenario">
+      [disabled]="this.scenario.name === ''" color="primary" matTooltip="Export the journey">
       <mat-icon>download</mat-icon>
       <span>Export</span>
     </button>
@@ -25,8 +25,8 @@
   <h4>Header Details</h4>
   <p>
     <mat-form-field appearance="standard" style="width: 50%;">
-      <mat-label>Scenario Name</mat-label>
-      <input matInput [(ngModel)]="this.scenario.name" required="true" title="scenario">
+      <mat-label>Journey Name</mat-label>
+      <input matInput [(ngModel)]="this.scenario.name" required="true" title="journey">
     </mat-form-field>
     <mat-form-field appearance="standard" style="width: 30%; margin-left: 20%;">
       <mat-label>UI5 Version</mat-label>
