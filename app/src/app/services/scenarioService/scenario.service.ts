@@ -147,7 +147,7 @@ export class ScenarioService {
     }
   }
 
-  public async getStep(scenario_id: string, control_id: string): Promise<Step> {
+  public async getStep(scenario_id: string, step_id: string): Promise<Step> {
     let scen = this.cachedScenarios.find((s) => s.id === scenario_id);
     if (!scen) {
       scen = await this.local_storage_service.getById(scenario_id);
@@ -156,7 +156,7 @@ export class ScenarioService {
     const step = scen.testPages
       .map((tp) => tp.steps)
       .reduce((a, b) => [...a, ...b], [])
-      .find((s: Step) => s.controlId === control_id);
+      .find((s: Step) => s.stepId === step_id);
     if (!step) {
       return Promise.reject();
     }

@@ -38,7 +38,7 @@ interface I18nText {
 })
 export class StepPageComponent implements OnInit {
   private scenario_id: string | undefined;
-  private control_id: string | undefined;
+  private step_id: string | undefined;
 
   pagedCode = false;
   currentStep: Step = new UnknownStep();
@@ -83,9 +83,9 @@ export class StepPageComponent implements OnInit {
     this.app_header_service.showBack();
     this.active_route.params.subscribe((parameters: Params) => {
       this.scenario_id = parameters['scenarioId'];
-      this.control_id = parameters['controlId'];
+      this.step_id = parameters['stepId'];
       this.scenario_service
-        .getStep(this.scenario_id || '', this.control_id || '')
+        .getStep(this.scenario_id || '', this.step_id || '')
         .then((step: Step) => {
           this.currentStep = step;
           this.attributesTableData = this.currentStep.controlAttributes;
