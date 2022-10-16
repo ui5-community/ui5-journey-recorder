@@ -1,5 +1,5 @@
 import { Step, StepType } from 'src/app/classes/Step';
-import { TestScenario } from 'src/app/classes/testScenario';
+import { Page, TestScenario } from 'src/app/classes/testScenario';
 import CodeStrategy from '../StrategyInterface';
 import Wdi5PageBuilder from './Wdi5PageBuilder';
 import Wdi5SingleStepStrategy from './Wdi5SingleStepStrategy';
@@ -7,14 +7,15 @@ import Wdi5SingleStepStrategy from './Wdi5SingleStepStrategy';
 export default class Wdi5CodeStrategy implements CodeStrategy {
   generateTestCode(scenario: TestScenario): any[] {
     const codes: any[] = [];
-    const pages: { [key: string]: Wdi5PageBuilder } = {};
-
-    Object.entries(pages).forEach((entry: [string, Wdi5PageBuilder]) => {
+    scenario.testPages.forEach((page: Page) => {
       const code = {
-        title: `${entry[0]}-Page`,
-        code: entry[1].generate(),
+        title: `${page.view.relativeViewName}.page.js`,
+        code: new Wdi5PageBuilder(
+          page,
+          page.view.relativeViewName,
+          `#/${page.view.relativeViewName}`
+        ).generate(),
       };
-      //@TODO: Generate the correct Journey and wdi5 page codes
       codes.push(code);
     });
     return codes;
