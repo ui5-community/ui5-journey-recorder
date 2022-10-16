@@ -64,7 +64,7 @@
               bindings: this.#getUI5ElementBindings(ui5El),
               view: this.#getViewProperties(ui5El),
               events: {
-                press: ui5El.getMetadata().getEvent('press') !== undefined
+                press: ui5El.getMetadata().getEvent('press') !== undefined || ui5El.getMetadata().getEvent('click') !== undefined
               }
             },
             location: window.location.href
@@ -76,7 +76,11 @@
 
           if (ui5El && ui5El.focus) {
             ui5El.focus();
-            for (let child of ui5El.getDomRef().querySelectorAll('input, select, textarea')) {
+            let childs = ui5El.getDomRef().querySelectorAll('input, select, textarea');
+            if (childs.length === 0 && ui5El.getDomRef().shadowRoot) {
+              childs = ui5El.getDomRef().shadowRoot.querySelectorAll('input, select, textarea');
+            }
+            for (let child of childs) {
               child.onkeypress = (e) => {
                 const key_message = {
                   type: 'keypress',

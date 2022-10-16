@@ -20,7 +20,7 @@ const routes: Routes = [
         children: [
           { path: '', component: ObjectPageComponent },
           {
-            path: 'step/:controlId',
+            path: 'step/:stepId',
             component: StepPageComponent,
           },
           {

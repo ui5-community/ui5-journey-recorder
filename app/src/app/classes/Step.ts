@@ -1,4 +1,5 @@
 import { Equals, Stringify } from './interfaces';
+import { v4 as uuidV4 } from 'uuid';
 
 export enum StepType {
   Click = 'clicked',
@@ -38,6 +39,7 @@ export type Control = {
 };
 
 export abstract class Step implements Stringify, Equals<Step> {
+  private step_id: string;
   private action_type: StepType;
   private action_location: string;
   private control: Control;
@@ -126,21 +128,21 @@ export abstract class Step implements Stringify, Equals<Step> {
     };
     switch (parsedObj.action_type) {
       case StepType.Validation:
-        const val = new ValidationStep();
+        const val = new ValidationStep(parsedObj.step_id);
         val.styleClasses = parsedObj.style_classes;
         val.actionLoc = parsedObj.action_location;
         val.recordReplaySelector = parsedObj.record_replay_selector;
         val.control = stepControl;
         return val;
       case StepType.Click:
-        const cs = new ClickStep();
+        const cs = new ClickStep(parsedObj.step_id);
         cs.styleClasses = parsedObj.style_classes;
         cs.actionLoc = parsedObj.action_location;
         cs.recordReplaySelector = parsedObj.record_replay_selector;
         cs.control = stepControl;
         return cs;
       case StepType.Input:
-        const is = new InputStep();
+        const is = new InputStep(parsedObj.step_id);
         is.styleClasses = parsedObj.style_classes;
         is.actionLoc = parsedObj.action_location;
         is.recordReplaySelector = parsedObj.record_replay_selector;
@@ -152,7 +154,7 @@ export abstract class Step implements Stringify, Equals<Step> {
         }
         return is;
       case StepType.KeyPress:
-        const kps = new KeyPressStep();
+        const kps = new KeyPressStep(parsedObj.step_id);
         kps.styleClasses = parsedObj.style_classes;
         kps.actionLoc = parsedObj.action_location;
         kps.key = parsedObj.key_char;
@@ -161,11 +163,16 @@ export abstract class Step implements Stringify, Equals<Step> {
         kps.control = stepControl;
         return kps;
       default:
-        return new UnknownStep();
+        return new UnknownStep(parsedObj.step_id);
     }
   }
 
-  constructor(type: StepType) {
+  constructor(type: StepType, step_id?: string) {
+    if (step_id) {
+      this.step_id = step_id;
+    } else {
+      this.step_id = uuidV4();
+    }
     this.action_type = type;
     this.style_classes = [];
     this.action_location = '';
@@ -224,6 +231,10 @@ export abstract class Step implements Stringify, Equals<Step> {
         }
       });
     }
+  }
+
+  public get stepId() {
+    return '' + this.step_id;
   }
 
   public get useControlId(): boolean {
@@ -353,14 +364,14 @@ export abstract class Step implements Stringify, Equals<Step> {
 }
 
 export class ClickStep extends Step {
-  constructor() {
-    super(StepType.Click);
+  constructor(step_id?: string) {
+    super(StepType.Click, step_id);
   }
 }
 
 export class ValidationStep extends Step {
-  constructor() {
-    super(StepType.Validation);
+  constructor(step_id?: string) {
+    super(StepType.Validation, step_id);
   }
 }
 
@@ -368,8 +379,12 @@ export class KeyPressStep extends Step {
   private key_char: string;
   private key_code: number;
 
-  constructor(k?: string, c?: number) {
-    super(StepType.KeyPress);
+  constructor(k?: string, c?: number, step_id?: string) {
+    if (k && k.length > 1) {
+      super(StepType.KeyPress, k);
+    } else {
+      super(StepType.KeyPress, step_id);
+    }
     this.key_char = k || '';
     this.key_code = c || -1;
   }
@@ -394,8 +409,8 @@ export class KeyPressStep extends Step {
 export class InputStep extends Step {
   private keys: KeyPressStep[];
 
-  constructor() {
-    super(StepType.Input);
+  constructor(step_id?: string) {
+    super(StepType.Input, step_id);
     this.keys = [];
   }
 
@@ -421,7 +436,7 @@ export class InputStep extends Step {
 }
 
 export class UnknownStep extends Step {
-  constructor() {
-    super(StepType.Unknown);
+  constructor(step_id?: string) {
+    super(StepType.Unknown, step_id);
   }
 }

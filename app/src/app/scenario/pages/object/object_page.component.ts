@@ -153,7 +153,7 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
   }
 
   editViewStep(s: Step) {
-    this.router.navigate(['step', encodeURIComponent(s.controlId)], {
+    this.router.navigate(['step', encodeURIComponent(s.stepId)], {
       relativeTo: this.active_route,
     });
   }
