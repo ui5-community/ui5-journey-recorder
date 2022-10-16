@@ -34,22 +34,25 @@ export default class Wdi5SingleStepStrategy {
      * traverse a json object and pretty-js-code format it as a string
      * @param entry key-value pair that might either be string:string or string:object
      */
-    let indent = 2; 
+    let indent = 2;
     const traverse = (entry: [any, any]) => {
-      if (typeof entry[1] === 'string') {
+      const prop = typeof entry[1];
+      if (prop === 'string' || prop === 'boolean') {
+        const isBool = prop === 'boolean' ? true : false;
+        const propValue = prop === 'string' ?  entry[1].replace('\\', '') : entry[1]; // neverending story of json escaping
         selectorBuilder
           .addTab(indent)
-          .add(`${entry[0]}: "${entry[1].replace('\\','')}"`)
+          .add(`${entry[0]}: ${isBool ? propValue : '"' + propValue + '"'}`) // insert properly formatted value
           .add(',')
           .addNewLine();
       } else {
-        selectorBuilder.addTab(indent).add(`${entry[0]}: {`).addNewLine()
+        selectorBuilder.addTab(indent).add(`${entry[0]}: {`).addNewLine();
         for (const deepEntry of Object.entries(entry[1])) {
           ++indent;
           traverse(deepEntry);
           --indent;
         }
-        selectorBuilder.addTab(indent).add("}").addNewLine()
+        selectorBuilder.addTab(indent).add('}').addNewLine();
       }
     };
 
