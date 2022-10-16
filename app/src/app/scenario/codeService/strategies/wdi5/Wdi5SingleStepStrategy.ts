@@ -1,5 +1,3 @@
-import { type } from 'os';
-import { exit } from 'process';
 import { Step } from 'src/app/classes/Step';
 import StringBuilder from 'src/app/classes/StringBuilder';
 
