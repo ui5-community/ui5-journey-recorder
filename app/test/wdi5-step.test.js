@@ -16,6 +16,13 @@ describe("wdi5 step generation", () => {
     const code = Wdi5SingleStepStrategy.generateSinglePressStep(clickstep)
     assert.equal(code, expected)
   });
+
+  it("validate/exists", () => {
+    const expected = "await browser.asControl({\n\tselector: {\n\t\tid: \"NavFwdButton\",\n\t\tviewName: \"test.Sample.tsapp.view.Main\",\n\t}\n})"
+    const existsStep = scenario.pages[1].page_steps[0]
+    const code = Wdi5SingleStepStrategy.generateSinglePressStep(existsStep)
+    assert.equal(code, expected)
+  })
 });
 
 
