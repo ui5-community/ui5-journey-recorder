@@ -21,20 +21,20 @@ export default class Wdi5CodeStrategy implements CodeStrategy {
     return codes;
   }
 
-  generateStepCode(step: Step): string {
+  generateStepCode(step: Step, indent: number = 0): string {
     switch (step.actionType) {
       case StepType.Click:
-        return Wdi5SingleStepStrategy.generateSinglePressStep(step);
+        return Wdi5SingleStepStrategy.generateSinglePressStep(step, indent);
       case StepType.Validation:
-        return Wdi5SingleStepStrategy.generateSingleExistsStep(step);
+        return Wdi5SingleStepStrategy.generateSingleExistsStep(step, indent);
       case StepType.Input:
-        return Wdi5SingleStepStrategy.generateSingleInputStep(step);
+        return Wdi5SingleStepStrategy.generateSingleInputStep(step, indent);
       default:
         return 'Unknown StepType';
     }
   }
 
   generatePagedStepCode(step: Step, viewName?: string | undefined): string {
-    return this.generateStepCode(step)
+    return this.generateStepCode(step);
   }
 }

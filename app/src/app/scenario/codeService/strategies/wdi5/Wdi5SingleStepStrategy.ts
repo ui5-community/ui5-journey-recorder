@@ -2,37 +2,39 @@ import { Step } from 'src/app/classes/Step';
 import StringBuilder from 'src/app/classes/StringBuilder';
 
 export default class Wdi5SingleStepStrategy {
-  public static generateSinglePressStep(step: Step): string {
+  public static generateSinglePressStep(step: Step, indent: number = 0): string {
     const pressStep = new StringBuilder();
-    pressStep.add(Wdi5SingleStepStrategy.generateSingleExistsStep(step));
+    pressStep.add(Wdi5SingleStepStrategy.generateSingleExistsStep(step, indent));
     pressStep.add('.press();');
     return pressStep.toString();
   }
 
-  public static generateSingleInputStep(step: Step): string {
+  public static generateSingleInputStep(step: Step, indent: number = 0): string {
     const pressStep = new StringBuilder();
-    pressStep.add(Wdi5SingleStepStrategy.generateSingleExistsStep(step));
+    pressStep.add(Wdi5SingleStepStrategy.generateSingleExistsStep(step, indent));
     pressStep.add(`.enterText("FIXME");`); // FIXME: add actual step input value
     return pressStep.toString();
   }
 
-  public static generateSingleExistsStep(step: Step): string {
+  public static generateSingleExistsStep(step: Step, indent: number = 0): string {
     const exists = new StringBuilder();
-    exists.add('await browser.asControl({').addNewLine();
-    exists.addTab().add('selector: {').addNewLine();
-    exists.addBuilder(Wdi5SingleStepStrategy.generateSelector(step));
-    exists.addTab().add('}').addNewLine();
+    debugger;
+    indent > 0 ? exists.addTab(indent) : null;
+    exists.add('await browser.asControl({').addNewLine()
+    exists.addTab(indent+1).add('selector: {').addNewLine();
+    exists.addBuilder(Wdi5SingleStepStrategy.generateSelector(step, indent+2));
+    exists.addTab(indent+1).add('}').addNewLine();
+    indent > 0 ? exists.addTab(indent) : null;
     exists.add('})');
     return exists.toString();
   }
 
-  private static generateSelector(step: Step): StringBuilder {
+  private static generateSelector(step: Step, indent: number = 0): StringBuilder {
     const selectorBuilder = new StringBuilder();
     /**
      * traverse a json object and pretty-js-code format it as a string
      * @param entry key-value pair that might either be string:string or string:object
      */
-    let indent = 2;
     const traverse = (entry: [any, any]) => {
       const prop = typeof entry[1];
       if (prop === 'string' || prop === 'boolean') {
