@@ -5,11 +5,12 @@ import Wdi5PageBuilder from './Wdi5PageBuilder';
 import Wdi5SingleStepStrategy from './Wdi5SingleStepStrategy';
 
 export default class Wdi5CodeStrategy implements CodeStrategy {
+  // we treat each "page" as part of the entire journey and slice it up accordingly
   generateTestCode(scenario: TestScenario): any[] {
     const codes: any[] = [];
     scenario.testPages.forEach((page: Page) => {
       const code = {
-        title: `${page.view.relativeViewName}.page.js`,
+        title: `part ${page.id} of Journey`,
         code: new Wdi5PageBuilder(
           page,
           page.view.relativeViewName,
@@ -20,6 +21,8 @@ export default class Wdi5CodeStrategy implements CodeStrategy {
     });
     return codes;
   }
+
+  // no difference in wdi5 btw a step in a page or a standalone step
 
   generateStepCode(step: Step, indent: number = 0): string {
     switch (step.actionType) {
@@ -34,6 +37,7 @@ export default class Wdi5CodeStrategy implements CodeStrategy {
     }
   }
 
+  // no difference in wdi5 btw a step in a page or a standalone step
   generatePagedStepCode(step: Step, viewName?: string | undefined): string {
     return this.generateStepCode(step);
   }
