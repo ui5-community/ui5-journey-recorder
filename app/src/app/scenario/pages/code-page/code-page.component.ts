@@ -77,20 +77,32 @@ export class CodePageComponent implements OnInit {
 
   downloadAll(): void {
     const zip = new JSZip();
+    if (this.selected === CodeStyles.OPA5) {
+      const jurney = this.codePages.find((p) => p.type === 'journey');
+      const pages = this.codePages.filter((p) => p.type === 'page');
 
-    const jurney = this.codePages.find((p) => p.type === 'journey');
-    const pages = this.codePages.filter((p) => p.type === 'page');
+      const integrationFolder = zip.folder('integration');
+      const pagesFolder = integrationFolder?.folder('pages');
+      integrationFolder?.file(
+        `${this.replaceUnsupportedFileSigns(jurney?.title || '', '_')}.js`,
+        jurney?.code || ''
+      );
 
-    const integrationFolder = zip.folder('integration');
-    const pagesFolder = integrationFolder?.folder('pages');
-    integrationFolder?.file(
-      `${this.replaceUnsupportedFileSigns(jurney?.title || '', '_')}.js`,
-      jurney?.code || ''
-    );
-
-    pages.forEach((p) => {
-      pagesFolder?.file(`${this.replaceUnsupportedFileSigns(p.title, '_')}.js`, p.code);
-    });
+      pages.forEach((p) => {
+        pagesFolder?.file(
+          `${this.replaceUnsupportedFileSigns(p.title, '_')}.js`,
+          p.code
+        );
+      });
+    } else {
+      const wdi5Folder = zip.folder('wdi5_test');
+      this.codePages.forEach((p) => {
+        wdi5Folder?.file(
+          `${this.replaceUnsupportedFileSigns(p.title, '_')}.js`,
+          p.code
+        );
+      });
+    }
 
     zip.generateAsync({ type: 'blob' }).then((content) => {
       const el = document.createElement('a');
