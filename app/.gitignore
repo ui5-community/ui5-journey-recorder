@@ -50,3 +50,5 @@ Thumbs.db
 
 # test-time: code service
 dist-codeservice
+
+/source_maps
