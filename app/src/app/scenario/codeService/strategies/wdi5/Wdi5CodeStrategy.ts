@@ -1,4 +1,4 @@
-import { Step, StepType } from 'src/app/classes/Step';
+import { InputStep, Step, StepType } from 'src/app/classes/Step';
 import { Page, TestScenario } from 'src/app/classes/testScenario';
 import CodeStrategy from '../StrategyInterface';
 import Wdi5PageBuilder from './Wdi5PageBuilder';
@@ -31,7 +31,7 @@ export default class Wdi5CodeStrategy implements CodeStrategy {
       case StepType.Validation:
         return Wdi5SingleStepStrategy.generateSingleExistsStep(step, indent);
       case StepType.Input:
-        return Wdi5SingleStepStrategy.generateSingleInputStep(step, indent);
+        return Wdi5SingleStepStrategy.generateSingleInputStep(step as InputStep, indent);
       default:
         return 'Unknown StepType';
     }

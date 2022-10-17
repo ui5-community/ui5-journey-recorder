@@ -1,4 +1,4 @@
-import { Step } from 'src/app/classes/Step';
+import { InputStep, Step } from 'src/app/classes/Step';
 import StringBuilder from 'src/app/classes/StringBuilder';
 
 export default class Wdi5SingleStepStrategy {
@@ -15,14 +15,14 @@ export default class Wdi5SingleStepStrategy {
   }
 
   public static generateSingleInputStep(
-    step: Step,
+    step: InputStep,
     indent: number = 0
   ): string {
     const pressStep = new StringBuilder();
     pressStep.add(
       Wdi5SingleStepStrategy.generateSingleExistsStep(step, indent)
     );
-    pressStep.add(`.enterText("FIXME");`); // FIXME: add actual step input value
+    pressStep.add(`.enterText("${step.getResultText()}");`); // FIXME: add actual step input value
     return pressStep.toString();
   }
 
