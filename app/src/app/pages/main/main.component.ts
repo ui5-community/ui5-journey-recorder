@@ -120,7 +120,7 @@ export class MainComponent implements OnInit {
       this.messageService.show({
         severity: SnackSeverity.SUCCESS,
         title: 'Remove',
-        detail: 'Scenario deleted!',
+        detail: 'Journey deleted!',
       });
       this.loadScenarios();
     });
@@ -212,8 +212,8 @@ export class MainComponent implements OnInit {
       this.messageService.confirm({
         severity: 'error',
         icon: 'error',
-        title: 'Scenario already exists!',
-        message: 'A scenario with the same id already exists, override?',
+        title: 'Journey already exists!',
+        message: 'A journey with the same id already exists, override?',
         accept: async () => {
           await this.scenarioService.saveScenario(
             TestScenario.fromJSON(JSON.stringify(content))
@@ -221,7 +221,7 @@ export class MainComponent implements OnInit {
           this.messageService.show({
             severity: SnackSeverity.SUCCESS,
             title: 'Import',
-            detail: 'Scenario imported',
+            detail: 'Journey imported',
           });
           this.loadScenarios();
         },
@@ -234,7 +234,7 @@ export class MainComponent implements OnInit {
       this.messageService.show({
         severity: SnackSeverity.SUCCESS,
         title: 'Import',
-        detail: 'Scenario imported',
+        detail: 'Journey imported',
       });
       this.loadScenarios();
     }
