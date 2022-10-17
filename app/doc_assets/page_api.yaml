@@ -37,8 +37,8 @@ paths:
     get:
       tags: 
       - "controls"
-      summary: "Find controls on page by thier attributes"
-      description: "Multiple controls can be searched filtered by thier attributes"
+      summary: "Find controls on page by their attributes"
+      description: "Multiple controls can be searched filtered by their attributes"
       operationId: "getControls"
       produces: 
       - "application/json"

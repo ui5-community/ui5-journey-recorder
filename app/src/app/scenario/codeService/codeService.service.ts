@@ -7,7 +7,7 @@ import Wdi5SingleStepStrategy from './strategies/wdi5/Wdi5SingleStepStrategy';
 
 export enum CodeStyles {
   OPA5 = 'OPA5',
-  WDI5 = 'Wdi5',
+  WDI5 = 'wdi5',
   UNDEFINDED = 'UNDEFINED',
 }
 

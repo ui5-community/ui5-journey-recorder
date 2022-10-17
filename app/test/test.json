@@ -1,0 +1,309 @@
+{
+    "created": 1665843587196,
+    "edited": 1665843663704,
+    "pages": [
+        {
+            "page_id": "0",
+            "page_location": "http://localhost:8080/index.html",
+            "page_steps": [
+                {
+                    "action_type": "validate",
+                    "style_classes": [
+                        "injectClass"
+                    ],
+                    "action_location": "http://localhost:8080/index.html",
+                    "record_replay_selector": {
+                        "id": "mainUserInput",
+                        "viewName": "test.Sample.tsapp.view.Main"
+                    },
+                    "control": {
+                        "control_id": {
+                            "id": "__component0---Main--mainUserInput",
+                            "use": true
+                        },
+                        "control_type": "sap.ui.webc.main.Input",
+                        "properties": [
+                            {
+                                "name": "enabled",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "name",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "noTypeahead",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "placeholder",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "readonly",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "required",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "showClearIcon",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "showSuggestions",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "type",
+                                "value": "Text",
+                                "use": false
+                            },
+                            {
+                                "name": "value",
+                                "value": "Helvetius Nagy",
+                                "use": false
+                            },
+                            {
+                                "name": "valueState",
+                                "value": "None",
+                                "use": false
+                            },
+                            {
+                                "name": "valueStateMessage",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "icon",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "suggestionItems",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaLabelledBy",
+                                "value": [],
+                                "use": false
+                            }
+                        ],
+                        "bindings": [
+                            {
+                                "propertyName": "value",
+                                "bindingValue": "Helvetius Nagy",
+                                "propertyPath": "/Customers('TRAIH')/ContactName",
+                                "use": false
+                            }
+                        ]
+                    }
+                }
+            ],
+            "view_information": {
+                "absoluteViewName": "test.Sample.tsapp.view.Main",
+                "relativeViewName": "Main"
+            }
+        },
+        {
+            "page_id": "1",
+            "page_location": "http://localhost:8080/index.html#/other",
+            "page_steps": [
+                {
+                    "action_type": "validate",
+                    "style_classes": [
+                        "injectClass"
+                    ],
+                    "action_location": "http://localhost:8080/index.html#/other",
+                    "record_replay_selector": {
+                        "id": "NavFwdButton",
+                        "viewName": "test.Sample.tsapp.view.Main"
+                    },
+                    "control": {
+                        "control_id": {
+                            "id": "__component0---Main--NavFwdButton",
+                            "use": true
+                        },
+                        "control_type": "sap.ui.webc.main.Button",
+                        "properties": [
+                            {
+                                "name": "accessibilityAttributes",
+                                "value": {},
+                                "use": false
+                            },
+                            {
+                                "name": "design",
+                                "value": "Default",
+                                "use": false
+                            },
+                            {
+                                "name": "enabled",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "icon",
+                                "value": "sap-icon://forward",
+                                "use": false
+                            },
+                            {
+                                "name": "iconEnd",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "submits",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "text",
+                                "value": "to Other view",
+                                "use": false
+                            },
+                            {
+                                "name": "textDirection",
+                                "value": "Inherit",
+                                "use": false
+                            },
+                            {
+                                "name": "ariaLabelledBy",
+                                "value": [],
+                                "use": false
+                            }
+                        ],
+                        "i18nTexts": [
+                            {
+                                "propertyName": "text",
+                                "propertyPath": "startPage.navButton.text",
+                                "bindingValue": "to Other view",
+                                "use": false
+                            }
+                        ]
+                    }
+                },
+                {
+                    "action_type": "clicked",
+                    "style_classes": [
+                        "sapMBtnIcon",
+                        "sapMBtnIconLeft",
+                        "injectClass"
+                    ],
+                    "action_location": "http://localhost:8080/index.html#/other",
+                    "record_replay_selector": {
+                        "controlType": "sap.ui.core.Icon",
+                        "viewName": "test.Sample.tsapp.view.Other",
+                        "properties": {
+                            "src": {
+                                "regex": {
+                                    "source": "nav\\-back"
+                                }
+                            }
+                        }
+                    },
+                    "control": {
+                        "control_id": {
+                            "id": "__component0---Other--OtherPage-navButton-iconBtn",
+                            "use": false
+                        },
+                        "control_type": "sap.ui.core.Icon",
+                        "properties": [
+                            {
+                                "name": "src",
+                                "value": "sap-icon://nav-back",
+                                "use": true
+                            },
+                            {
+                                "name": "size",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "color",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "hoverColor",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "activeColor",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "width",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "height",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "backgroundColor",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "hoverBackgroundColor",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "activeBackgroundColor",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "decorative",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "useIconTooltip",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "alt",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "noTabStop",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "ariaLabelledBy",
+                                "value": [],
+                                "use": false
+                            }
+                        ]
+                    }
+                }
+            ],
+            "view_information": {
+                "absoluteViewName": "test.Sample.tsapp.view.Main",
+                "relativeViewName": "Main"
+            }
+        }
+    ],
+    "scenario_id": "6de3707e-0b83-42fd-8b46-c183e5aa0b70",
+    "scenario_name": "test",
+    "ui5_version": "1.106.0"
+}

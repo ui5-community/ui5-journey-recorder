@@ -47,3 +47,6 @@ Thumbs.db
 
 # Documentation
 /documentation
+
+# test-time: code service
+dist-codeservice
