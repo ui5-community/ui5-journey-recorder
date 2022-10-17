@@ -3,12 +3,11 @@
 The _UI5 Journey Recorder_ is a [Chrome](https://www.google.com/chrome/)-Extension.
 It is used to record and generate test journeys for [UI5](https://ui5.sap.com).
 
-The recorded journeys can be used to generate [OPA5](https://ui5.sap.com/#/topic/7cdee404cac441888539ed7bfe076e57) test code or [wdi5](https://github.com/ui5-community/wdi5) test code.
+The recorded journeys can be used to generate [OPA5](https://ui5.sap.com/#/topic/7cdee404cac441888539ed7bfe076e57) or [wdi5](https://github.com/ui5-community/wdi5) test code.
 
-Check the video below:
-
-[![Watch the video](./docs/img_6.png)](./docs/JourneyRecorder.mp4)
-
+<p align="center">
+    <img style="width: 100%" src="./docs/journeyRecorder.gif"/>
+<p>
 # Installation
 
 The _UI5 Journey Recorder_ can be installed via the [Chrome WebStore](https://chrome.google.com/webstore/detail/ui5-inspector/bebecogbafbighhaildooiibipcnbngo).
