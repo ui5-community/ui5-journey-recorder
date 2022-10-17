@@ -14,7 +14,7 @@ Because the _UI5 Journey Recorder_ is a Chrome Extension the Chrome-Webbrowser i
 1. Clone the repo from [Github](https://github.com/ui5-community/ui5-journey-recorder.git)
 2. Navigate to the app folder of the repository and install the dependencies `npm install`
 3. Execute the watch-NPM-Script `npm run watch`
-4. Open Chrome and the [Chrome-Extension Page](chrome://extensions)
+4. Open Chrome and the [Chrome-Extension Page chrome://extensions](chrome://extensions)
 5. Choose the "Load unpacked" Button in the top left
   ![Load unpacked](./img/LoadUnpacked.png)
 6. Choose the dist-folder `<repository-path>\app\dist`
