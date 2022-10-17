@@ -4,6 +4,9 @@ const path = require("path");
 
 const asset_script_path = "dist/assets/scripts/";
 const map_path = "source_maps";
+if (!fs.existsSync(path.join(__dirname, map_path))) {
+  fs.mkdirSync(path.join(__dirname, map_path));
+}
 
 const options = {
   compress: {
