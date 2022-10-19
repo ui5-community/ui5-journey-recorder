@@ -26,8 +26,7 @@
   ],
   "permissions": [
     "storage",
-    "scripting",
-    "activeTab"
+    "scripting"
   ],
   "optional_permissions": [
     "tabs"
