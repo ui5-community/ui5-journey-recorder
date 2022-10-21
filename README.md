@@ -8,9 +8,10 @@ The recorded journeys can be used to generate [OPA5](https://ui5.sap.com/#/topic
 <p align="center">
     <img style="width: 100%" src="./docs/journeyRecorder.gif"/>
 <p>
+
 # Installation
 
-The _UI5 Journey Recorder_ can be installed via the [Chrome WebStore](https://chrome.google.com/webstore/detail/ui5-inspector/bebecogbafbighhaildooiibipcnbngo).
+The _UI5 Journey Recorder_ can be installed via the [Chrome WebStore](https://chrome.google.com/webstore/detail/ui5-journey-recorder/clhcepeibbgcdmhalaaomdpofecmgimf).
 After that the _UI5 Journey Recorder_ can be accessed via the Extension Menu at the top right of **Chrome**.
 Another way to install the _UI5 Journey Recorder_ is via the setup of the [development environment](./docs/Contribution.md).<br>
 In the end you can open the extension via the extension menu at the top right of Chrome: 
