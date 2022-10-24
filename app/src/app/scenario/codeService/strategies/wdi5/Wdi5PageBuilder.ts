@@ -40,7 +40,7 @@ export default class Wdi5PageBuilder extends Wdi5IPageBuilder {
 
   _generateOpenMethod(): string {
     const p = new StringBuilder();
-    p.addTab().add(`async open("${this.hashPath}") {`).addNewLine();
+    p.addTab().add(`async open() {`).addNewLine();
     p.addTab(2).add(`wdi5.goTo("${this.hashPath}")`).addNewLine();
     p.addTab().add(`}`).addNewLine();
     return p.toString();
