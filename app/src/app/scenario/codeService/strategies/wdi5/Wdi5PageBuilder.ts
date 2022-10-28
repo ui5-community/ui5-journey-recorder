@@ -16,7 +16,7 @@ export default class Wdi5PageBuilder extends Wdi5IPageBuilder {
   generate(): string {
     const p = new StringBuilder();
     p.add(`const { wdi5 } = require("wdio-ui5-service");`).addNewLine();
-    p.add(`module.exports = class ${this.pageName} {`).addNewLine();
+    p.add(`class ${this.pageName} {`).addNewLine();
 
     p.add(this._generateOpenMethod());
 
@@ -28,6 +28,9 @@ export default class Wdi5PageBuilder extends Wdi5IPageBuilder {
     p.addTab().add(`}`).addNewLine();
 
     p.add(`};`);
+    // for easier usage at dev time:
+    // require $pageobject -> use as $pageobject.method() immediately
+    p.add(`module.exports = new ${this.pageName}();`)
     return p.toString();
   }
 
