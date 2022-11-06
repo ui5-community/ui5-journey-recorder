@@ -27,10 +27,10 @@ export default class Wdi5PageBuilder extends Wdi5IPageBuilder {
     });
     p.addTab().add(`}`).addNewLine();
 
-    p.add(`};`);
+    p.add(`};`).addNewLine();
     // for easier usage at dev time:
     // require $pageobject -> use as $pageobject.method() immediately
-    p.add(`module.exports = new ${this.pageName}();`)
+    p.add(`module.exports = new ${this.pageName}();`);
     return p.toString();
   }
 
