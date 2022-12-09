@@ -107,7 +107,7 @@ export class ScenarioService {
     }
 
     rb.addSearchParam(
-      'attributes',
+      'properties',
       JSON.stringify(step.controlAttributes.filter((att) => att.use))
     );
 

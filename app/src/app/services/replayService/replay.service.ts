@@ -35,7 +35,7 @@ export class ReplayService {
     rb.setUrl('/controls/action');
     rb.setBody({
       step: step,
-      useManualSelection: codeStyle === CodeStyles.OPA5,
+      useManualSelection: false,
     });
     return this.chr_ext_srv.sendSyncMessage(rb.build()).then((msg) => {
       if (msg.status !== 200) {

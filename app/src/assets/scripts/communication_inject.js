@@ -235,10 +235,16 @@
   communicationService.get('/controls', (req, res) => {
     if (req.searchParams.count === '') {
       const controlType = req.searchParams.control_type;
-      const attributes = decodeURIComponent(req.searchParams.attributes);
+      const attributes = decodeURIComponent(req.searchParams.properties || '[]');
+      const bindings = decodeURIComponent(req.searchParams.bindings || '[]');
+      const i18nTexts = decodeURIComponent(req.searchParams.i18nTexts || '[]');
       const recorderInstance = window.ui5TestRecorder?.recorder;
       if (recorderInstance) {
-        let elements = recorderInstance.getElementsByAttributes(controlType, JSON.parse(attributes));
+        let elements = recorderInstance.getElementsBySelectors(controlType, {
+          bindings: JSON.parse(bindings),
+          i18nTexts: JSON.parse(i18nTexts),
+          properties: JSON.parse(attributes)
+        });
         res({ status: 200, message: elements.length });
       } else {
         res({ status: 500, message: 'No recorder inject found!' });

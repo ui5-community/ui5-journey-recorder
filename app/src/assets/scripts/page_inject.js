@@ -116,23 +116,23 @@
       return Object.values(this.#getUI5Elements()).filter(el => el.getId() === id);
     }
 
-    getElementsBySelectors(controlSelectors) {
+    getElementsBySelectors(controlType, attributes) {
       let elements = this.#getUI5Elements();
       // filter by control_type
-      elements = Object.values(elements).filter(el => el.getMetadata().getElementName() === controlSelectors.control_type);
+      elements = Object.values(elements).filter(el => el.getMetadata().getElementName() === controlType);
       // filter by control.properties
       elements = elements.filter(el => {
-        const byProperties = controlSelectors.properties
+        const byProperties = attributes?.properties
           // only take the properties which should be used for identification
-          .filter(p => p.use)
-          // create getter function names and expected values from control.properties
-          .map(attribute => ({ key: 'get' + Utils.upperCaseFirstLetter(attribute.name), value: attribute.value }))
-          // create list of expection-results
-          .map(executeMatcher => el[executeMatcher.key]() === executeMatcher.value)
-          // check if all selected attributes really match
-          .reduce((a, b) => a && b, true);
+          ?.filter(p => p.use)
+            // create getter function names and expected values from control.properties
+            .map(attribute => ({ key: 'get' + Utils.upperCaseFirstLetter(attribute.name), value: attribute.value }))
+            // create list of expection-results
+            .map(executeMatcher => el[executeMatcher.key]() === executeMatcher.value)
+            // check if all selected attributes really match
+            .reduce((a, b) => a && b, true);
 
-        const byBindings = controlSelectors.bindings.filter(b => b.use)
+        const byBindings = attributes?.bindings?.filter(b => b.use)
           .map(b => {
             const info = el.mBindingInfos[b.propertyName];
             if (!info) {
@@ -165,7 +165,7 @@
           })
           .reduce((a, b) => a && b, true);
 
-        const byI18ns = controlSelectors.i18nTexts.filter(i18nT => i18nT.use)
+        const byI18ns = attributes?.i18nTexts?.filter(i18nT => i18nT.use)
           .map(i18n => {
             const info = el.mBindingInfos[i18n.propertyName];
             if (!info) {
@@ -233,10 +233,18 @@
             return;
           });
         case 'input':
+          const sb = [];
+          oItem.keys.forEach((k) => {
+            if (k.key_code !== 20 && k.key_code !== 8 && k.key_code !== 13) {
+              sb.push(k.key_char || '');
+            } else if (k.key_code === 8) {
+              sb.pop();
+            }
+          });
           return this.#rr.interactWithControl({
             selector: oSelector,
             interactionType: this.#rr.InteractionType.EnterText,
-            enterText: oItem.keys.reduce((a, b) => a + b.key_char, '')
+            enterText: sb.join('')
           })
         default:
           return Promise.reject('ActionType not defined');

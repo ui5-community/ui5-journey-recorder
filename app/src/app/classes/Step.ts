@@ -425,7 +425,7 @@ export class InputStep extends Step {
   public getResultText(): string {
     const sb: string[] = [];
     this.keys.forEach((k) => {
-      if (k.keyCode !== 20 && k.keyCode !== 8) {
+      if (k.keyCode !== 20 && k.keyCode !== 8 && k.keyCode !== 13) {
         sb.push(k.key || '');
       } else if (k.keyCode === 8) {
         sb.pop();
