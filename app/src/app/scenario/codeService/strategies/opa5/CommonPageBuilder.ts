@@ -214,29 +214,29 @@ export default class CommonPageBuilder extends PageBuilder {
 
     if (this._bindMatcher) {
       oDependencies.add(',').addNewLine();
-      oDependencies.addTab().add('"sap/ui/test/matcher/BindingPath"');
+      oDependencies.addTab().add('"sap/ui/test/matchers/BindingPath"');
     }
     if (this._i18nMatcher) {
       oDependencies.add(',').addNewLine();
-      oDependencies.addTab().add('"sap/ui/test/matcher/I18NText"');
+      oDependencies.addTab().add('"sap/ui/test/matchers/I18NText"');
     }
     if (this._attMatcher) {
       oDependencies.add(',').addNewLine();
-      oDependencies.addTab().add('"sap/ui/test/matcher/PropertyStrictEquals"');
+      oDependencies.addTab().add('"sap/ui/test/matchers/PropertyStrictEquals"');
     }
     if (this._aggEmptyMatcher) {
       oDependencies.add(',').addNewLine();
-      oDependencies.addTab().add('"sap/ui/test/matcher/AggregationEmpty"');
+      oDependencies.addTab().add('"sap/ui/test/matchers/AggregationEmpty"');
     }
     if (this._aggFilledMatcher) {
       oDependencies.add(',').addNewLine();
-      oDependencies.addTab().add('"sap/ui/test/matcher/AggregationFilled"');
+      oDependencies.addTab().add('"sap/ui/test/matchers/AggregationFilled"');
     }
     if (this._aggCountMatcher) {
       oDependencies.add(',').addNewLine();
       oDependencies
         .addTab()
-        .add('"sap/ui/test/matcher/AggregationLengthEquals"');
+        .add('"sap/ui/test/matchers/AggregationLengthEquals"');
     }
     if (this._enterTextAction) {
       oDependencies.add(',').addNewLine();
