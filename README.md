@@ -17,7 +17,7 @@ Another way to install the _UI5 Journey Recorder_ is via the setup of the [devel
 In the end you can open the extension via the extension menu at the top right of Chrome: 
 ![Extension Menu](./docs/img/ExtensionMenu.png)
 
-Another way to install the _UI5 Journey Recorder_ is to download a release from the release section of github and unpack it where you want. 
+Another way to install the _UI5 Journey Recorder_ is to download the zip of a release from the release section of github and unpack it where you want. 
 Then go to the extension site of chrome ([chrome://extensions](chrome://extensions)) and load the unpacked extension by using the button at the left top corner ![Load unpacked](./docs/img/LoadUnpacked.png).
 
 ## License
