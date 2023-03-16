@@ -424,8 +424,8 @@
       }
 
       return {
-        absoluteViewName: curEl.getViewName(),
-        relativeViewName: curEl.getViewName().split(".").pop()
+        absoluteViewName: curEl?.getViewName() || '',
+        relativeViewName: curEl?.getViewName().split(".").pop() || ''
       };
     }
 
