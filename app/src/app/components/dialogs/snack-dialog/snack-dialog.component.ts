@@ -43,7 +43,7 @@ export class SnackDialogComponent {
       } else if (data?.severity) {
         switch (data.severity) {
           case SnackSeverity.SUCCESS: {
-            this.icon = 'new_releases';
+            this.icon = 'check';
             break;
           }
           case SnackSeverity.WARNING: {

@@ -39,6 +39,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTreeModule } from '@angular/material/tree';
 import { ReplaySetupDialogComponent } from './dialogs/ReplaySetupDialog/ReplaySetupDialog.component';
 //#endregion material
 
@@ -74,6 +76,8 @@ import { ReplaySetupDialogComponent } from './dialogs/ReplaySetupDialog/ReplaySe
     MatCheckboxModule,
     MatMenuModule,
     MatRadioModule,
+    MatSidenavModule,
+    MatTreeModule,
     //#endregion matieral
   ],
   providers: [CodeService],

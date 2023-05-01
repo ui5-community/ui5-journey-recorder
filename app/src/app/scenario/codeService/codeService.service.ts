@@ -15,6 +15,11 @@ export type CodeOptions = {
   style: CodeStyles;
 };
 
+export enum PageType {
+  JOURNEY = 'journey',
+  PAGE = 'page',
+}
+
 @Injectable({
   providedIn: 'root',
 })
