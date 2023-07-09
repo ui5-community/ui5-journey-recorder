@@ -3,6 +3,7 @@ import { Page, TestScenario } from 'src/app/classes/testScenario';
 import CodeStrategy from '../StrategyInterface';
 import Wdi5PageBuilder from './Wdi5PageBuilder';
 import Wdi5SingleStepStrategy from './Wdi5SingleStepStrategy';
+import { PageType } from '../../codeService.service';
 
 export default class Wdi5CodeStrategy implements CodeStrategy {
   // we treat each "page" as part of the entire journey and slice it up accordingly
@@ -16,6 +17,7 @@ export default class Wdi5CodeStrategy implements CodeStrategy {
           page.view.relativeViewName,
           `#/${page.view.relativeViewName}`
         ).generate(),
+        type: PageType.JOURNEY
       };
       codes.push(code);
     });
