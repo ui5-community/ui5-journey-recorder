@@ -60,36 +60,21 @@ export default class Wdi5SingleStepStrategy {
     indent: number = 0
   ): StringBuilder {
     const selectorBuilder = new StringBuilder();
-    /**
-     * traverse a json object and pretty-js-code format it as a string
-     * @param entry key-value pair that might either be string:string or string:object
-     */
-    const traverse = (entry: [any, any]) => {
-      const prop = typeof entry[1];
-      if (prop === 'string' || prop === 'boolean') {
-        const isBool = prop === 'boolean' ? true : false;
-        const propValue =
-          prop === 'string' ? entry[1].replace('\\', '') : entry[1]; // neverending story of json escaping
-        selectorBuilder
-          .addTab(indent)
-          .add(`${entry[0]}: ${isBool ? propValue : '"' + propValue + '"'}`) // insert properly formatted value
-          .add(',')
-          .addNewLine();
-      } else {
-        selectorBuilder.addTab(indent).add(`${entry[0]}: {`).addNewLine();
-        for (const deepEntry of Object.entries(entry[1])) {
-          ++indent;
-          traverse(deepEntry);
-          --indent;
-        }
-        selectorBuilder.addTab(indent).add('}').addNewLine();
-      }
-    };
 
-    // format the json-style record replay seclector as pretty looking js code
-    for (const entry of Object.entries(step.recordReplaySelector)) {
-      traverse(entry);
-    }
+    //Take the preformatted JSON string and apply the code-generator style to it
+    let array = JSON.stringify(step.recordReplaySelector, null, 4).split('\n');
+    array.pop(); // remove the last brace
+    array.shift(); // remove the first brace
+
+    const content = array.map(item => {
+      const sb = new StringBuilder();
+      sb.addTab(indent-1);
+      sb.add(item);
+      sb.addNewLine();
+      return sb.toString();
+    }).reduce((a,b) => a + b, '');
+    selectorBuilder.add(content);
+
     return selectorBuilder;
   }
 }
