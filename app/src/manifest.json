@@ -3,7 +3,7 @@
   "name": "UI5 Journey Recorder",
   "short_name": "UI5 Journey Rec",
   "description": "A point-and-click adventure for your UI5 tests",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "minimum_chrome_version": "88",
   "background": {
     "service_worker": "/assets/scripts/starter.js"
