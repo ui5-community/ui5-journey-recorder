@@ -24,24 +24,16 @@
       <mat-checkbox style="margin-right: 0.5rem;" [checked]="this.currentStep.useControlId"
         (change)="this.useIdChanged($event.checked)" color="primary"
         matTooltip="Check to use the id for control identification"></mat-checkbox>
-      <mat-form-field appearance="standard" style="width: 90%;">
+      <mat-form-field style="width: 90%;">
         <mat-label>Control ID</mat-label>
         <input matInput [value]="currentStep.controlId" title="controlID">
       </mat-form-field>
     </div>
-    <mat-form-field appearance="standard" style="width: 45%;">
+    <mat-form-field style="width: 45%;">
       <mat-label>Control Type</mat-label>
       <input matInput [value]="currentStep.controlType" disabled="true" title="control-type">
     </mat-form-field>
   </div>
-  <!--
-
-  <div class="flex vertical space-even">
-    <mat-form-field appearance="standard" style="width: 80%;">
-      <mat-label>Control Classes</mat-label>
-      <input matInput [value]="currentStep.styleClasses.join(',')" disabled="true" title="control-classes">
-    </mat-form-field>
-  </div> -->
 
   <mat-action-row>
     <div>

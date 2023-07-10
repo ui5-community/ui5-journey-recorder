@@ -15,17 +15,17 @@
         <mat-icon>refresh</mat-icon>
       </button>
     </div>
-    <mat-selection-list role="list" [multiple]="false">
-      <mat-list-option *ngFor="let tab of this.elements" (click)="this.connect_to_page(tab)"
-        (keydown)="this.checkKeyPress($event, tab)" role="listitem">
-        <img matListAvatar [src]="tab.icon" alt="fav_icon" />
-        <span matline class="one-line-text no-wrap">{{tab.title}}</span>
-        <div matLine>
+    <mat-list role="list">
+      <button mat-list-item *ngFor="let tab of this.elements" (click)="this.connect_to_page(tab)"
+        (keydown)="this.checkKeyPress($event, tab)" class="list-item">
+        <img matListItemAvatar [src]="tab.icon" alt="fav_icon" />
+        <span matListItemTitle class="one-line-text no-wrap">{{tab.title}}</span>
+        <div matListItemLine>
           <label>URL:&nbsp;&nbsp;</label>
           <span class="one-line-text no-wrap">{{tab.path}}</span>
         </div>
-      </mat-list-option>
-    </mat-selection-list>
+      </button>
+    </mat-list>
   </mat-tab>
   <mat-tab label="Journeys">
     <ng-template matTabContent>
@@ -45,16 +45,16 @@
         </button>
       </div>
 
-      <mat-selection-list role="list" [multiple]="false">
-        <mat-list-option *ngFor="let scen of this.scenarios" role="listitem">
-          <div matLine class="list-content-with-action">
+      <mat-list role="list">
+        <button mat-list-item *ngFor="let scen of this.scenarios" class="list-item">
+          <div class="list-content-with-action">
             <div class="text-content" (click)="this.openExisting(scen)">
-              <span matLine>{{scen.name}}</span>
-              <div matLine>
+              <span matListItemTitle>{{scen.name}}</span>
+              <div matListItemLine>
                 <label>URL:&nbsp;&nbsp;</label>
                 <span>{{scen.startUrl}}</span>
               </div>
-              <div matLine
+              <div
                 style="display: flex; justify-content: space-between; font-size: 0.7rem; border-top: 1px solid darkgray;">
                 <div>
                   <label>Created:&nbsp;&nbsp;</label>
@@ -73,8 +73,8 @@
               </button>
             </div>
           </div>
-        </mat-list-option>
-      </mat-selection-list>
+        </button>
+      </mat-list>
     </ng-template>
   </mat-tab>
 </mat-tab-group>
