@@ -15,7 +15,7 @@ import { SnackSeverity } from 'src/app/components/dialogs/snack-dialog/snack-dia
 import { Step } from 'src/app/classes/Step';
 import { LoaderService } from 'src/app/services/loaderService/loaderService';
 import { ReplaySetupDialogComponent } from '../../dialogs/ReplaySetupDialog/ReplaySetupDialog.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { SettingsStorageService } from 'src/app/services/localStorageService/settingsStorageService.service';
 
 type ReplayStep = Step & {

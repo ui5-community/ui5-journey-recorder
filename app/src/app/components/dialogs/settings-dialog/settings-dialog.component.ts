@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { MatCheckboxChange } from '@angular/material/checkbox';
-import { MatDialogRef } from '@angular/material/dialog';
-import { MatRadioChange } from '@angular/material/radio';
-import { MatSelectChange } from '@angular/material/select';
+import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatLegacyRadioChange as MatRadioChange } from '@angular/material/legacy-radio';
+import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';
 import { CodeStyles } from 'src/app/scenario/codeService/codeService.service';
 import {
   AppSettings,

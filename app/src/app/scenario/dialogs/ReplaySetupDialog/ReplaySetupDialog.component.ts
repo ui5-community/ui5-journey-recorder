@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
-import { FloatLabelType } from '@angular/material/form-field';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { LegacyFloatLabelType as FloatLabelType } from '@angular/material/legacy-form-field';
 import { SettingsStorageService } from 'src/app/services/localStorageService/settingsStorageService.service';
 @Component({
   templateUrl: './ReplaySetupDialog.component.html',
