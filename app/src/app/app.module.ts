@@ -6,18 +6,18 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //#endregion
 
 //#region material
-import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
-import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatListModule } from '@angular/material/list';
+import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
-import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
-import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
 //#endregion material
 
 import { AppRoutingModule } from './app-routing.module';
@@ -46,7 +46,7 @@ import { MainComponent } from './pages/main/main.component';
 import { AppTemplateDirective } from './directives/app-template.directive';
 import { SnackDialogComponent } from './components/dialogs/snack-dialog/snack-dialog.component';
 import { SettingsDialogComponent } from './components/dialogs/settings-dialog/settings-dialog.component';
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
+import { MatSelectModule as MatSelectModule } from '@angular/material/select';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { SettingsStorageService } from './services/localStorageService/settingsStorageService.service';
 import { LoaderService } from './services/loaderService/loaderService';

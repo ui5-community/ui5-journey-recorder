@@ -7,7 +7,7 @@ import {
   QueryList,
   TemplateRef,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
+import { MatDialog as MatDialog, MatDialogConfig as MatDialogConfig } from '@angular/material/dialog';
 import { AppTemplateDirective } from 'src/app/directives/app-template.directive';
 import { SettingsDialogComponent } from '../dialogs/settings-dialog/settings-dialog.component';
 import { AppHeaderService } from './app-header.service';

@@ -1,9 +1,8 @@
 import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import {
-  MatLegacySnackBarConfig as MatSnackBarConfig,
-  MatLegacySnackBarRef as MatSnackBarRef,
-  MAT_LEGACY_SNACK_BAR_DATA as MAT_SNACK_BAR_DATA,
-} from '@angular/material/legacy-snack-bar';
+  MatSnackBarRef,
+  MAT_SNACK_BAR_DATA,
+} from '@angular/material/snack-bar';
 
 export enum SnackSeverity {
   INFO = 'info',

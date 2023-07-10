@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 import { pipe, Subject, Subscription, takeUntil } from 'rxjs';
 import { ChromeExtensionService } from 'src/app/services/chromeExtensionService/chrome_extension_service';
 

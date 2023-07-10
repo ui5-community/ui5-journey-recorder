@@ -9,7 +9,7 @@ import {
   CodeStyles,
   PageType,
 } from '../../codeService/codeService.service';
-import { MatLegacyOptionSelectionChange as MatOptionSelectionChange } from '@angular/material/legacy-core';
+import { MatOptionSelectionChange as MatOptionSelectionChange } from '@angular/material/core';
 import { SettingsStorageService } from 'src/app/services/localStorageService/settingsStorageService.service';
 import * as JSZip from 'jszip';
 import { NestedTreeControl } from '@angular/cdk/tree';

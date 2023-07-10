@@ -21,44 +21,26 @@
   }
 }
 
-:host ::ng-deep .header-search {
+.header-search {
   width: 80%;
-  > .mat-form-field-wrapper {
-    padding-bottom: 0;
-
-    > .mat-form-field-underline {
-      position: initial;
-    }
-
-    > .mat-form-field-flex {
-      border-radius: 4px 31px 0 0;
-    }
-  }
 }
 
-:host ::ng-deep .header-search.mat-form-field-appearance-fill {
-  > .mat-form-field-wrapper {
-    > .mat-form-field-flex::before {
-      content: "";
-      background: white;
-      width: 4em;
-      height: 3em;
-      position: absolute;
-      top: 0;
-      right: 0;
-      border-radius: 0 0 0 3em;
-    }
+.list-item {
+  border: none;
+  border-bottom: 2px solid lightgray;
 
-    .mat-form-field-suffix {
-      transform: translate(0.4rem, -0.6rem);
-    }
+  &:hover {
+    background-color: lightgray;
+  }
+
+  &:active {
+    background-color: gray;
   }
 }
 
 .one-line-text {
   overflow: hidden;
   text-overflow: ellipsis;
-  max-height: 1.4rem;
 }
 
 .no-wrap {
