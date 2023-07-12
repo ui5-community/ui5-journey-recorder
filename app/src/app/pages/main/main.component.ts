@@ -47,9 +47,12 @@ export class MainComponent implements OnInit {
     private loaderService: LoaderService
   ) {}
 
-  ngOnInit(): void {
+  public async ngOnInit(): Promise<void> {
     this.appHeaderService.hideBack();
-    this.loadTabs();
+    await this.loadTabs();
+    await this.loadScenarios();
+    //@TODO: Remove
+    this.openExisting(this.scenarios[0]);
     this.timerIndex = setInterval(
       this.loadTabs.bind(this),
       3000 //refresh every 3sec
@@ -130,13 +133,6 @@ export class MainComponent implements OnInit {
     this.router.navigate(['scenario/scenarioDetail', scenario.id]);
   }
 
-  handleChange(index: number) {
-    this.tabIndex = index;
-    if (index === 1) {
-      this.loadScenarios();
-    }
-  }
-
   importScenario() {
     this.loaderService.startLoading();
     const input = document.createElement('input');
@@ -159,10 +155,11 @@ export class MainComponent implements OnInit {
     input.remove();
   }
 
-  private loadTabs(): void {
-    ChromeExtensionService.get_all_tabs().then((tabs: Page[]) => {
+  private loadTabs(): Promise<Page[]> {
+    return ChromeExtensionService.get_all_tabs().then((tabs: Page[]) => {
       this.raw_elements = tabs;
       this.filterTabs('');
+      return tabs;
     });
   }
 
@@ -194,8 +191,8 @@ export class MainComponent implements OnInit {
     this.elements = intermediateResult;
   }
 
-  private loadScenarios(): void {
-    this.scenarioService.getAllScenarios().then((scenarios: TestScenario[]) => {
+  private loadScenarios(): Promise<void> {
+    return this.scenarioService.getAllScenarios().then((scenarios: TestScenario[]) => {
       this.raw_scenarios = scenarios?.sort(
         (sc1: TestScenario, sc2: TestScenario) =>
           sc2.latestEdit - sc1.latestEdit

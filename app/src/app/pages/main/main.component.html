@@ -1,4 +1,4 @@
-<mat-tab-group mat-align-tabs="center" (selectedIndexChange)="this.handleChange($event)">
+<mat-tab-group mat-align-tabs="center" [selectedIndex]="1">
   <mat-tab label="Tabs">
     <div class="list-header">
       <mat-form-field class="header-search" appearance="fill">
@@ -46,14 +46,11 @@
       </div>
 
       <mat-list role="list">
-        <button mat-list-item *ngFor="let scen of this.scenarios" class="list-item">
-          <div class="list-content-with-action">
-            <div class="text-content" (click)="this.openExisting(scen)">
-              <span matListItemTitle>{{scen.name}}</span>
-              <div matListItemLine>
-                <label>URL:&nbsp;&nbsp;</label>
-                <span>{{scen.startUrl}}</span>
-              </div>
+        <button mat-list-item *ngFor="let scen of this.scenarios" class="list-item" (click)="this.openExisting(scen)">
+            <span matListItemTitle>{{scen.name}}</span>
+            <div matListItemLine>
+              <label>URL:&nbsp;&nbsp;</label>
+              <span>{{scen.startUrl}}</span>
               <div
                 style="display: flex; justify-content: space-between; font-size: 0.7rem; border-top: 1px solid darkgray;">
                 <div>
@@ -72,7 +69,6 @@
                   delete</mat-icon>
               </button>
             </div>
-          </div>
         </button>
       </mat-list>
     </ng-template>

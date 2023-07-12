@@ -42,6 +42,10 @@ body {
   justify-content: space-between;
 }
 
+.flex-end {
+  justify-content: flex-end;
+}
+
 .center-cross {
   align-items: center;
 }
@@ -56,6 +60,9 @@ body {
 
 .distance-right-1 {
   margin-right: 1rem;
+}
+.distance-left-1 {
+  margin-left: 1rem;
 }
 
 .no-margin {

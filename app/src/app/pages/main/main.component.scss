@@ -1,28 +1,21 @@
-.tab-list {
-  list-style: none;
-  margin: 1em;
-  padding-left: 0;
-}
 
 .list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid lightgray;
-}
 
-.mat-list-base .mat-list-item .list-content-with-action {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-
-  .text-content {
-    max-width: 90%;
+  .header-search {
+    width: 80%;
   }
-}
 
-.header-search {
-  width: 80%;
+  ::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background: transparent;
+    .mat-mdc-form-field-focus-overlay {
+      opacity: 0;
+      background: transparent;
+    }
+  }
 }
 
 .list-item {
@@ -36,13 +29,4 @@
   &:active {
     background-color: gray;
   }
-}
-
-.one-line-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.no-wrap {
-  white-space: nowrap;
 }

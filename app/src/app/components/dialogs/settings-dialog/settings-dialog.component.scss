@@ -1,7 +1,7 @@
-.mat-dialog-content.settings-dialog-content {
-  padding: 1.5rem;
+.mat-mdc-dialog-content.settings-dialog-content {
+  padding: 1rem;
 
-  > .mat-expansion-panel {
+  > .mat-expansion-panel:not([class*=mat-elevation-z]) {
     box-shadow: none;
 
     .mat-expansion-panel-header[aria-disabled="true"] {
