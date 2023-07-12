@@ -16,7 +16,7 @@ import { AppHeaderService } from './app-header.service';
   templateUrl: './app-header.component.html',
   styleUrls: ['./app-header.component.scss'],
 })
-export class AppHeaderComponent implements OnInit, AfterContentInit {
+export class AppHeaderComponent implements AfterContentInit {
   actionButtonsTemplate: TemplateRef<any> | null = null;
   titleContentTemplate: TemplateRef<any> | null = null;
 
@@ -30,8 +30,6 @@ export class AppHeaderComponent implements OnInit, AfterContentInit {
     public appHeaderService: AppHeaderService,
     private dialog: MatDialog
   ) {}
-
-  ngOnInit() {}
 
   ngAfterContentInit() {
     this.templates?.forEach((item) => {

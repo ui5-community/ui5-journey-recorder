@@ -20,6 +20,21 @@ header.object-header > * {
   }
 }
 
+
+.mat-mdc-list.mat-mdc-list-base {
+  .mat-mdc-list-item{
+    cursor: pointer;
+    
+    .mdc-list-item.mdc-list-item--with-leading-avatar {
+      mat-icon.mat-mdc-list-item-avatar {
+        border-radius: 0;
+        text-align: center;
+        line-height: var(--mdc-list-list-item-leading-avatar-size);
+      }
+    }
+  }
+}
+
 .list-header {
   display: flex;
   justify-content: space-between;
@@ -41,4 +56,13 @@ header.object-header > * {
 
 .warningTest {
   color: orange;
+}
+
+.line-item {
+  display: flex;
+  flex-direction: column;
+
+  &::before {
+    content: none;
+  }
 }
