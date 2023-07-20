@@ -11,7 +11,7 @@ export let browserRefresh = false;
 export class AppComponent implements OnInit {
   title = 'UI5 Journey Recorder';
 
-  constructor(private router: Router) {}
+  constructor() {}
 
   ngOnInit() {
     const fKey = (event: any) => {
