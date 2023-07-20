@@ -52,7 +52,7 @@ export class MainComponent implements OnInit {
     await this.loadTabs();
     await this.loadScenarios();
     //@TODO: Remove
-    this.openExisting(this.scenarios[0]);
+    /* this.openExisting(this.scenarios[0]); */
     this.timerIndex = setInterval(
       this.loadTabs.bind(this),
       3000 //refresh every 3sec

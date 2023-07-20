@@ -101,6 +101,8 @@ export class ObjectPageComponent implements OnInit, OnDestroy {
   replayMode() {
     const ref = this.dialog.open(ReplaySetupDialogComponent, {
       disableClose: true,
+      height: '37vh',
+      width: '30vw'
     });
 
     ref.afterClosed().subscribe((result) => {
