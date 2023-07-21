@@ -1,21 +1,52 @@
 module.exports = {
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
-  plugins: ['unused-imports'],
+  plugins: ['unused-imports', 'sonarjs'],
   extends: [
-    'plugin:@typescript-eslint/recommended', // Uses the recommended rules from the @typescript-eslint/eslint-plugin
-    'prettier', // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
-    'plugin:prettier/recommended', // Enables eslint-plugin-prettier and eslint-config-prettier. This will display prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
+      'eslint:recommended',
+      'plugin:sonarjs/recommended',
+      'plugin:@typescript-eslint/eslint-recommended',
+      'plugin:@typescript-eslint/recommended'
   ],
   parserOptions: {
-    ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
-    sourceType: 'module', // Allows for the use of imports
-    prefixWithI: 'always',
+      // Allows for the parsing of modern ECMAScript features
+      ecmaVersion: 2018, 
+      sourceType: 'module', // Allows for the use of imports
+      prefixWithI: 'always',
   },
   rules: {
-    'prettier/prettier': ['error', { 'endOfLine': 'lf' }],
-    '@typescript-eslint/no-unused-vars': 'off',
-    '@typescript-eslint/no-empty-function': 'off',
-    'unused-imports/no-unused-imports-ts': 2,
-    'unused-imports/no-unused-vars-ts': 1,
+      '@typescript-eslint/camelcase': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/no-inferrable-types': 'off',
+      '@typescript-eslint/type-annotation-spacing': 1,
+      '@typescript-eslint/typedef': [
+          'error',
+          {
+              'arrowParameter': true,
+              'arrayDestructuring': true,
+              'objectDestructuring': true,
+              'parameter': true
+          }
+      ],
+      'unused-imports/no-unused-imports-ts': 2, 
+      'unused-imports/no-unused-vars-ts': 1,
+      'linebreak-style': [2, 'unix'], 
+      'quotes': [2, 'single'],
+      'no-prototype-builtins': 0,
+      'no-case-declarations': 0,
+      'indent': ['error', 4, {
+          'SwitchCase': 1,
+      }],
+      'semi': 2,
+      'arrow-parens': 1,
+      'object-curly-newline': 1,
+      'max-len': [1, {'code': 140, 'comments': 120, 'ignoreStrings': true}],
+      'no-warning-comments': [2, {'terms': ['@TODO', '@FIXME']}],
+      'space-infix-ops': 1,
+      'space-before-blocks': 1,
+      'keyword-spacing': 1,
+      'brace-style': 1,
+      'spaced-comment': 1
   },
+  root: true
 };
