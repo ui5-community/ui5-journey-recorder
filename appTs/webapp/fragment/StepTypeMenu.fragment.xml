@@ -1,0 +1,23 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Menu itemSelected="onStepTypeChange">
+        <MenuItem
+            text="Click"
+            icon="sap-icon://cursor-arrow"
+        />
+        <MenuItem
+            text="Input"
+            icon="sap-icon://text"
+        />
+        <MenuItem
+            text="KeyPress"
+            icon="sap-icon://keyboard-and-mouse"
+        />
+        <MenuItem
+            text="Validation"
+            icon="sap-icon://validate"
+        />
+    </Menu>
+</core:FragmentDefinition>

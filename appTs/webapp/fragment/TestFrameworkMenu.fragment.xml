@@ -1,0 +1,9 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Menu itemSelected="onFrameworkChange">
+        <MenuItem text="OPA5" />
+        <MenuItem text="wdi5" />
+    </Menu>
+</core:FragmentDefinition>

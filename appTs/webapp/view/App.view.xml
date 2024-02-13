@@ -1,0 +1,35 @@
+<mvc:View
+    controllerName="com.ui5.journeyrecorder.controller.App"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+>
+    <Page
+        id="page"
+        class="app-root"
+    >
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Button visible="{/showNavButton}" type="Back" press=".backNav"/>
+                    <Image src="assets/icons/ui5_journey_recorder.png" height="2.5rem"/>
+                    <Title text="{i18n>appTitle}" />
+                </contentLeft>
+                <contentRight>
+                    <Button icon="sap-icon://action-settings" press=".onOpenDialog"/>
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <content>
+            <App id="app" />
+        </content>
+        <footer>
+            <Bar>
+                <contentLeft>
+                    <core:Icon src="sap-icon://disconnected" color="Critical"></core:Icon>
+                </contentLeft>
+            </Bar>
+        </footer>
+    </Page>
+</mvc:View>

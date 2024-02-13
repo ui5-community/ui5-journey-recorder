@@ -1,0 +1,93 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+    <Dialog title="Settings">
+        <content>
+            <Panel headerText="General">
+                <Checkbox
+                    text="Page reload at inject"
+                    selected="{settings>/reloadPageDefault}"
+                />
+                <VBox>
+                    <Label text="Theme:" />
+                    <RadioButtonGroup select="onThemeSelect">
+                        <RadioButton
+                            text="Morning Horizon"
+                            selected="{= ${path: 'settings>/theme'} === 'sap_horizon'}"
+                        />
+                        <RadioButton
+                            text="Evening Horizon"
+                            selected="{= ${path: 'settings>/theme'} === 'sap_horizon_dark'}"
+                        />
+                        <RadioButton
+                            text="Quartz Light"
+                            selected="{= ${path: 'settings>/theme'} === 'sap_fiori_3'}"
+                        />
+                        <RadioButton
+                            text="Quartz Dark"
+                            selected="{= ${path: 'settings>/theme'} === 'sap_fiori_3_dark'}"
+                        />
+                    </RadioButtonGroup>
+                </VBox>
+            </Panel>
+            <Panel headerText="Replay">
+                <VBox>
+                    <Checkbox
+                        text="Start in manual mode"
+                        selected="{settings>/manualReplayMode}"
+                    />
+                    <Label text="Automatic replay delay:" />
+                    <RadioButtonGroup
+                        select="onDelaySelect"
+                        editable="{= !${settings>/manualReplayMode}}"
+                    >
+                        <RadioButton
+                            text="0.5 sec"
+                            selected="{= ${path: 'settings>/replayDelay'} === 0.5}"
+                        />
+                        <RadioButton
+                            text="1.0 sec"
+                            selected="{= ${path: 'settings>/replayDelay'} === 1.0}"
+                        />
+                        <RadioButton
+                            text="2.0 sec"
+                            selected="{= ${path: 'settings>/replayDelay'} === 2.0}"
+                        />
+                    </RadioButtonGroup>
+                </VBox>
+            </Panel>
+            <Panel headerText="Code">
+                <VBox>
+                    <Label text="Framework:" />
+                    <RadioButtonGroup select="onFrameworkSelect">
+                        <RadioButton
+                            text="OPA5"
+                            selected="{= ${path: 'settings>/codeStyle'} === 'OPA5'}"
+                        />
+                        <RadioButton
+                            text="Wdi5"
+                            selected="{= ${path: 'settings>/codeStyle'} === 'wdi5'}"
+                        />
+                    </RadioButtonGroup>
+                </VBox>
+            </Panel>
+        </content>
+        <beginButton>
+            <Button
+                text="Save"
+                press="onCloseDialog"
+                type="Emphasized"
+                app:settingsDialogClose="save"
+            />
+        </beginButton>
+        <endButton>
+            <Button
+                text="Close"
+                press="onCloseDialog"
+                app:settingsDialogClose="ignore"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
