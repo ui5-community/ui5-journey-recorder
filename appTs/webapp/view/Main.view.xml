@@ -1,0 +1,93 @@
+<mvc:View
+    controllerName="com.ui5.journeyrecorder.controller.Main"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+>
+    <Page>
+        <content>
+            <IconTabBar
+                headerBackgroundDesign="Transparent"
+                class="sapUiResponsiveContentPadding"
+            >
+                <items>
+                    <IconTabFilter
+                        id="tabsTab"
+                        text="{i18n>tabs}"
+                        icon="sap-icon://internet-browser"
+                    >
+                        <List
+                            id="tabsList"
+                            items="{ path: 'main>/tabs', templateShareable: false}"
+                        >
+                            <headerToolbar>
+                                <Toolbar>
+                                    <SearchField
+                                        id="search-tabs"
+                                        liveChange=".onSearch"
+                                        width="100%"
+                                    />
+                                </Toolbar>
+                            </headerToolbar>
+                            <StandardListItem
+                                title="{main>title}"
+                                description="{main>path}"
+                                icon="{main>icon}"
+                                iconDensityAware="false"
+                                iconInset="false"
+                                type="Navigation"
+                            />
+                        </List>
+                    </IconTabFilter>
+                    <IconTabFilter
+                        id="journeysTab"
+                        text="{i18n>journeys}"
+                        icon="sap-icon://journey-change"
+                    >
+                        <List
+                            id="journeysList"
+                            items="{main>/journeys}"
+                        >
+                            <headerToolbar>
+                                <Toolbar>
+                                    <SearchField
+                                        id="search-journeys"
+                                        liveChange=".onSearch"
+                                        width="100%"
+                                    />
+                                    <ToolbarSeparator />
+                                    <Button
+                                        icon="sap-icon://upload"
+                                        press=".onUploadJourney"
+                                    />
+                                </Toolbar>
+                            </headerToolbar>
+                            <items>
+                                <CustomListItem
+                                    type="Navigation"
+                                    press=".navigateToJourney"
+                                >
+                                    <HBox>
+                                        <VBox class="sapUiContentPadding">
+                                            <Title text="{main>name}" />
+                                            <Text text="{main>startUrl}" />
+                                        </VBox>
+                                        <VBox
+                                            class="sapUiContentPadding journey-line"
+                                        >
+                                            <Button
+                                                icon="sap-icon://delete"
+                                                type="Transparent"
+                                                press=".removeJourney"
+                                            />
+                                        </VBox>
+                                    </HBox>
+                                </CustomListItem>
+                            </items>
+                        </List>
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </content>
+    </Page>
+</mvc:View>

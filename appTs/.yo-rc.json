@@ -1,0 +1,19 @@
+{
+  "generator-ui5-ts-app": {
+    "namespace": "com.ui5.journeyrecorder",
+    "framework": "OpenUI5",
+    "frameworkVersion": "1.120.6",
+    "author": "Adrian Marten",
+    "initrepo": false,
+    "tstypes": "@openui5/types",
+    "tstypesVersion": "1.120.6",
+    "appId": "com.ui5.journeyrecorder",
+    "appURI": "com/ui5/journeyrecorder",
+    "cdnDomain": "sdk.openui5.org",
+    "defaultTheme": "sap_horizon",
+    "gte1_98_0": true,
+    "gte1_104_0": true,
+    "gte1_115_0": true,
+    "setupCompleted": true
+  }
+}
