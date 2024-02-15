@@ -64,14 +64,18 @@
                     <RadioButtonGroup select="onFrameworkSelect">
                         <RadioButton
                             text="OPA5"
-                            selected="{= ${path: 'settings>/codeStyle'} === 'OPA5'}"
+                            selected="{= ${path: 'settings>/testFramework'} === 'OPA5'}"
                         />
                         <RadioButton
                             text="Wdi5"
-                            selected="{= ${path: 'settings>/codeStyle'} === 'wdi5'}"
+                            selected="{= ${path: 'settings>/testFramework'} === 'wdi5'}"
                         />
                     </RadioButtonGroup>
                 </VBox>
+                <Checkbox
+                    text="Code generation paged"
+                    selected="{settings>/pagedDefault}"
+                />
             </Panel>
         </content>
         <beginButton>
