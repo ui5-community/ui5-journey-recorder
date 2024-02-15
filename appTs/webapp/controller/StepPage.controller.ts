@@ -7,6 +7,11 @@ import Menu from "sap/m/Menu";
 import Button from "sap/m/Button";
 import MenuItem from "sap/m/MenuItem";
 import MessageToast from "sap/m/MessageToast";
+import OPA5CodeStrategy from "../model/class/codeStrategies/opa5/OPA5CodeStrategy.class";
+import { Step } from "../model/class/Step.class";
+import { AppSettings } from "../service/SettingsStorage.service";
+import { TestFrameworks } from "../model/enum/TestFrameworks";
+import Wdi5CodeStrategy from "../model/class/codeStrategies/wdi5/Wdi5CodeStrategy.class";
 
 /**
  * @namespace com.ui5.journeyrecorder.controller
@@ -19,6 +24,7 @@ export default class StepPage extends BaseController {
     onInit() {
         this.model = new JSONModel({});
         this.setModel(this.model, 'step');
+        const settingsModel = (this.getOwnerComponent().getModel('settings') as JSONModel).getData() as AppSettings;
         this.setupModel = new JSONModel({
             codeStyle: 'javascript',
             code: `module.exports = function (config) {
@@ -28,7 +34,9 @@ export default class StepPage extends BaseController {
                     frameworks: ["ui5"],
                     browsers: ["Chrome"]
                 });
-            };`
+            };`,
+            paged: settingsModel.pagedDefault,
+            framework: settingsModel.testFramework
         });
         this.setModel(this.setupModel, 'stepSetup');
         this.getRouter().getRoute("step").attachMatched(this._loadStep, this);
@@ -59,7 +67,7 @@ export default class StepPage extends BaseController {
     }
 
     onStepTypeChange(oEvent: Event) {
-        let oItem = oEvent.getParameter("item") as any;
+        let oItem = oEvent.getParameter("item" as never) as MenuItem;
         let sItemPath = "";
 
         while (oItem instanceof MenuItem) {
@@ -68,22 +76,13 @@ export default class StepPage extends BaseController {
         }
 
         sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
-
         MessageToast.show("Action triggered on item: " + sItemPath);
     }
 
     onFrameworkChange(oEvent: Event) {
-        let oItem = oEvent.getParameter("item") as any;
-        let sItemPath = "";
-
-        while (oItem instanceof MenuItem) {
-            sItemPath = oItem.getText() + " > " + sItemPath;
-            oItem = oItem.getParent();
-        }
-
-        sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
-
-        MessageToast.show("Action triggered on item: " + sItemPath);
+        const oItem = oEvent.getParameter("item" as never) as MenuItem;
+        (this.getModel('stepSetup') as JSONModel).setProperty('/framework', oItem.getText());
+        this._generateStepCode();
     }
 
     getAttributeCount(property: unknown[]): number {
@@ -98,5 +97,20 @@ export default class StepPage extends BaseController {
         const oArgs: { id: string; stepId: string } = oEvent.getParameter("arguments" as never);
         const step = await JourneyStorageService.getInstance().getStepById({ journeyId: oArgs.id, stepId: oArgs.stepId });
         this.model.setData(step);
+        this._generateStepCode();
+    }
+
+    private _generateStepCode(): void {
+        const step = this.model.getData() as Step;
+        let code = '';
+        const paged = this.getModel('stepSetup').getProperty('/paged') as boolean;
+        const framework = this.getModel('stepSetup').getProperty('/framework') as TestFrameworks;
+        const strategy = framework === TestFrameworks.WDI5 ? Wdi5CodeStrategy : OPA5CodeStrategy;
+        if (!paged) {
+            code = strategy.generateStepCode(step);
+        } else {
+            code = '!!!PAGED NOT IMPLEMENTED !!!';
+        }
+        (this.getModel('stepSetup') as JSONModel).setProperty('/code', code);
     }
 }

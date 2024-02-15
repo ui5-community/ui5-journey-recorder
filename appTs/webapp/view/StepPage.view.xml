@@ -227,7 +227,11 @@
                                 <headerToolbar>
                                     <Toolbar>
                                         <ToolbarSpacer />
-                                        <Checkbox text="Paged Style" />
+                                        <Checkbox
+                                            text="Paged Style"
+                                            selected="{stepSetup>/paged}"
+                                            select="_generateStepCode"
+                                        />
                                         <Button
                                             icon="sap-icon://syntax"
                                             text="Test Framework"

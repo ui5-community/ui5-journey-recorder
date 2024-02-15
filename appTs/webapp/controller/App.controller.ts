@@ -5,11 +5,8 @@ import JSONModel from "sap/ui/model/json/JSONModel";
 import History from "sap/ui/core/routing/History";
 import Router from "sap/m/routing/Router";
 import Event from "sap/ui/base/Event";
-import Button from "sap/m/Button";
-import EventProvider from "sap/ui/base/EventProvider";
 import SettingsStorageService, { AppSettings } from "../service/SettingsStorage.service";
-import RadioButton from "sap/m/RadioButton";
-import { CodeStyles } from "../model/enum/CodeStyles";
+import { TestFrameworks } from "../model/enum/TestFrameworks";
 import { Themes } from "../model/enum/Themes";
 import Theming from "sap/ui/core/Theming";
 
@@ -89,13 +86,13 @@ export default class App extends BaseController {
 		const index = oEvent.getParameter("selectedIndex");
 		switch (index) {
 			case 0:
-				this.getModel('settings').setProperty('/codeStyle', CodeStyles.OPA5);
+				this.getModel('settings').setProperty('/testFrameworks', TestFrameworks.OPA5);
 				break;
 			case 1:
-				this.getModel('settings').setProperty('/codeStyle', CodeStyles.WDI5);
+				this.getModel('settings').setProperty('/testFramework', TestFrameworks.WDI5);
 				break;
 			default:
-				this.getModel('settings').setProperty('/codeStyle', CodeStyles.OPA5);
+				this.getModel('settings').setProperty('/testFramework', TestFrameworks.OPA5);
 		}
 	}
 

@@ -7,6 +7,7 @@
 	"scripts": {
 		"clean": "rimraf dist coverage",
 		"build": "ui5 build self-contained --clean-dest --include-all-dependencies",
+		"build:watch": "run-when-changed --watch \"webapp/**\" --exec \"npm run build\"",
 		"start": "ui5 serve --port 8080 -o index.html",
 		"start:dist": "npm start -- --config ui5-dist.yaml",
 		"ts-typecheck": "tsc --noEmit",
@@ -35,6 +36,7 @@
 		"karma-ui5": "^3.0.4",
 		"karma-ui5-transpile": "^3.3.3",
 		"rimraf": "^5.0.5",
+		"run-when-changed": "^2.1.0",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.3.3",
 		"ui5-middleware-livereload": "^3.0.2",
