@@ -70,6 +70,11 @@ export default class Journey {
         this._steps.push(step);
     }
 
+    public updateStep(step: Step) {
+        const index = this._steps.findIndex((ownStep: Step) => step.id === ownStep.id);
+        this._steps[index] = step;
+    }
+
     public toString(): string {
         return JSON.stringify({
             id: this.id,

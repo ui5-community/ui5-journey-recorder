@@ -9,154 +9,190 @@
     xmlns:recorder="com.ui5.journeyrecorder.control"
     xmlns:mvc="sap.ui.core.mvc"
 >
-    <uxap:ObjectPageLayout>
-        <uxap:headerTitle>
-            <uxap:ObjectPageDynamicHeaderTitle class="journey-page-header">
-                <uxap:heading>
-                    <recorder:EditableTitle
-                        prefix="{i18n>journey}:"
-                        text="{journey>/name}"
+    <Page>
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Button
+                        type="Back"
+                        press=".onNavBack"
                     />
-                </uxap:heading>
-                <uxap:expandedContent>
-                    <HBox
-                        justifyContent="SpaceBetween"
-                        width="100%"
+                    <Image
+                        src="assets/icons/ui5_journey_recorder.png"
+                        height="2.5rem"
+                    />
+                    <Title text="{i18n>appTitle}" />
+                </contentLeft>
+                <contentRight>
+                    <Button
+                        icon="sap-icon://action-settings"
+                        press=".onOpenSettingsDialog"
+                    />
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <content>
+            <uxap:ObjectPageLayout>
+                <uxap:headerTitle>
+                    <uxap:ObjectPageDynamicHeaderTitle
+                        class="journey-page-header"
                     >
-                        <layout:VerticalLayout>
-                            <ObjectStatus
-                                title="Site-Url"
-                                text="{journey>/startUrl}"
+                        <uxap:heading>
+                            <recorder:EditableTitle
+                                prefix="{i18n>journey}:"
+                                text="{journey>/name}"
                             />
-                            <ObjectStatus
-                                title="UI5 Version"
-                                text="{journey>/ui5Version}"
-                            />
-                        </layout:VerticalLayout>
-                        <layout:VerticalLayout>
-                            <ObjectStatus
-                                title="Created"
-                                text="{
+                        </uxap:heading>
+                        <uxap:expandedContent>
+                            <HBox
+                                justifyContent="SpaceBetween"
+                                width="100%"
+                            >
+                                <layout:VerticalLayout>
+                                    <ObjectStatus
+                                        title="Site-Url"
+                                        text="{journey>/startUrl}"
+                                    />
+                                    <ObjectStatus
+                                        title="UI5 Version"
+                                        text="{journey>/ui5Version}"
+                                    />
+                                </layout:VerticalLayout>
+                                <layout:VerticalLayout>
+                                    <ObjectStatus
+                                        title="Created"
+                                        text="{
                                     path: 'journey>/created',
                                     formatter: '.dateTimeFormatter'
                                 }"
-                            />
-                            <ObjectStatus
-                                title="Latest Edit"
-                                text="{
+                                    />
+                                    <ObjectStatus
+                                        title="Latest Edit"
+                                        text="{
                                     path: 'journey>/edited',
                                     formatter: '.dateTimeFormatter'
                                 }"
-                            />
-                        </layout:VerticalLayout>
-                    </HBox>
-                </uxap:expandedContent>
-                <uxap:actions>
+                                    />
+                                </layout:VerticalLayout>
+                            </HBox>
+                        </uxap:expandedContent>
+                        <uxap:actions />
+                    </uxap:ObjectPageDynamicHeaderTitle>
+                </uxap:headerTitle>
+                <uxap:sections>
+                    <uxap:ObjectPageSection
+                        titleUppercase="false"
+                        title="Journey Steps"
+                    >
+                        <uxap:subSections>
+                            <uxap:ObjectPageSubSection titleUppercase="false">
+                                <uxap:blocks>
+                                    <List
+                                        items="{journey>/steps}"
+                                        class="step-list"
+                                    >
+                                        <items>
+                                            <CustomListItem
+                                                type="Navigation"
+                                                class="step-item"
+                                                press=".navigateToStep"
+                                            >
+                                                <HBox>
+                                                    <Button
+                                                        icon="sap-icon://bo-strategy-management"
+                                                        enabled="false"
+                                                        type="Transparent"
+                                                    />
+                                                    <VBox>
+                                                        <Title
+                                                            text="{journey>control/controlId/id}"
+                                                        />
+                                                        <Text
+                                                            text="{journey>actionLocation}"
+                                                        />
+                                                    </VBox>
+                                                </HBox>
+                                            </CustomListItem>
+                                        </items>
+                                    </List>
+                                </uxap:blocks>
+                                <uxap:actions>
+                                    <Button
+                                        icon="sap-icon://connected"
+                                        press=""
+                                        text="Connect"
+                                    />
+                                    <Button
+                                        icon="sap-icon://restart"
+                                        press=""
+                                        text="Replay"
+                                    />
+                                </uxap:actions>
+                            </uxap:ObjectPageSubSection>
+                        </uxap:subSections>
+                    </uxap:ObjectPageSection>
+
+                    <uxap:ObjectPageSection
+                        titleUppercase="false"
+                        title="Code"
+                    >
+                        <uxap:subSections>
+                            <uxap:ObjectPageSubSection titleUppercase="false">
+                                <uxap:blocks>
+                                    <Panel
+                                        width="auto"
+                                        expanded="true"
+                                        height="40rem"
+                                    >
+                                        <IconTabHeader
+                                            id="codeTabHeader"
+                                            selectedKey=""
+                                            select=".onSelectCodeTab"
+                                            items="{journeyControl>/codeNames}"
+                                        >
+                                            <items>
+                                                <IconTabFilter
+                                                    text="{journeyControl>name}"
+                                                    key="{journeyControl>name}"
+                                                />
+                                            </items>
+                                        </IconTabHeader>
+                                        <code:CodeEditor
+                                            id="codeeditor"
+                                            type="javascript"
+                                            height="35rem"
+                                            value="{journeyControl>/activeCode}"
+                                        />
+                                    </Panel>
+                                </uxap:blocks>
+                            </uxap:ObjectPageSubSection>
+                        </uxap:subSections>
+                    </uxap:ObjectPageSection>
+                </uxap:sections>
+            </uxap:ObjectPageLayout>
+        </content>
+        <footer>
+            <Bar>
+                <contentLeft>
+                    <core:Icon
+                        src="sap-icon://disconnected"
+                        color="Critical"
+                    />
+                </contentLeft>
+                <contentRight>
                     <Button
                         icon="sap-icon://download"
                         text="Export"
-                        type="Transparent"
                         press=".onExport"
                     />
                     <Button
                         id="saveBtn"
                         icon="sap-icon://save"
                         text="Save"
-                        type="Transparent"
                         press=".onSave"
                     />
-                </uxap:actions>
-            </uxap:ObjectPageDynamicHeaderTitle>
-        </uxap:headerTitle>
-        <uxap:sections>
-            <uxap:ObjectPageSection
-                titleUppercase="false"
-                title="Journey Steps"
-            >
-                <uxap:subSections>
-                    <uxap:ObjectPageSubSection titleUppercase="false">
-                        <uxap:blocks>
-                            <List
-                                items="{journey>/steps}"
-                                class="step-list"
-                            >
-                                <items>
-                                    <CustomListItem
-                                        type="Navigation"
-                                        class="step-item"
-                                        press=".navigateToStep"
-                                    >
-                                        <HBox>
-                                            <Button
-                                                icon="sap-icon://bo-strategy-management"
-                                                enabled="false"
-                                                type="Transparent"
-                                            />
-                                            <VBox>
-                                                <Title
-                                                    text="{journey>control/controlId/id}"
-                                                />
-                                                <Text
-                                                    text="{journey>actionLocation}"
-                                                />
-                                            </VBox>
-                                        </HBox>
-                                    </CustomListItem>
-                                </items>
-                            </List>
-                        </uxap:blocks>
-                        <uxap:actions>
-                            <Button
-                                icon="sap-icon://connected"
-                                press=""
-                                text="Connect"
-                            />
-                            <Button
-                                icon="sap-icon://restart"
-                                press=""
-                                text="Replay"
-                            />
-                        </uxap:actions>
-                    </uxap:ObjectPageSubSection>
-                </uxap:subSections>
-            </uxap:ObjectPageSection>
-
-            <uxap:ObjectPageSection
-                titleUppercase="false"
-                title="Code"
-            >
-                <uxap:subSections>
-                    <uxap:ObjectPageSubSection titleUppercase="false">
-                        <uxap:blocks>
-                            <Panel
-                                width="auto"
-                                expanded="true"
-                                height="40rem"
-                            >
-                                <IconTabHeader
-                                    id="codeTabHeader"
-                                    selectedKey=""
-                                    select=".onSelectCodeTab"
-                                    items="{journeyControl>/codeNames}"
-                                >
-                                    <items>
-                                        <IconTabFilter
-                                            text="{journeyControl>name}"
-                                            key="{journeyControl>name}"
-                                        />
-                                    </items>
-                                </IconTabHeader>
-                                <code:CodeEditor
-                                    id="codeeditor"
-                                    type="javascript"
-                                    height="35rem"
-                                    value="{journeyControl>/activeCode}"
-                                />
-                            </Panel>
-                        </uxap:blocks>
-                    </uxap:ObjectPageSubSection>
-                </uxap:subSections>
-            </uxap:ObjectPageSection>
-        </uxap:sections>
-    </uxap:ObjectPageLayout>
+                </contentRight>
+            </Bar>
+        </footer>
+    </Page>
 </mvc:View>

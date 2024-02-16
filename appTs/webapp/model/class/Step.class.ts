@@ -57,7 +57,7 @@ export type Control = {
     }[];
     bindings?: {
         propertyName: string;
-        bindingValue: unknown;
+        bindingValue: string | number | boolean;
         modelPath: string;
         propertyPath: string;
         modelName: string;
@@ -136,7 +136,7 @@ export abstract class Step {
                 }
                 stepControl.bindings.push({
                     propertyName: binding.key as string,
-                    bindingValue: binding.value,
+                    bindingValue: binding.value as string | number | boolean,
                     modelPath: binding.modelPath as string,
                     propertyPath: binding.propertyPath as string,
                     modelName: binding.model as string,
@@ -261,7 +261,8 @@ export abstract class Step {
             actionLocation: this.actionLocation,
             control: this.control,
             styleClasses: this.styleClasses,
-            recordReplaySelector: this.recordReplaySelector
+            recordReplaySelector: this.recordReplaySelector,
+            viewInfos: this.viewInfos
         }
     }
 
@@ -314,7 +315,7 @@ export abstract class Step {
     set controlBindings(
         bindings: {
             propertyName: string;
-            bindingValue: unknown;
+            bindingValue: string | number | boolean;
             modelPath: string;
             propertyPath: string;
             modelName: string;

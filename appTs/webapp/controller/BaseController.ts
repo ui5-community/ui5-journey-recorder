@@ -6,11 +6,21 @@ import ResourceModel from "sap/ui/model/resource/ResourceModel";
 import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import Router from "sap/ui/core/routing/Router";
 import History from "sap/ui/core/routing/History";
+import UI5Element from "sap/ui/core/Element";
+import Dialog from "sap/m/Dialog";
+import Event from "sap/ui/base/Event";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import SettingsStorageService, { AppSettings } from "../service/SettingsStorage.service";
+import { TestFrameworks } from "../model/enum/TestFrameworks";
+import { Themes } from "../model/enum/Themes";
+import Theming from "sap/ui/core/Theming";
 
 /**
  * @namespace com.ui5.journeyrecorder.controller
  */
 export default abstract class BaseController extends Controller {
+	protected settingsDialog: UI5Element;
+
 	/**
 	 * Convenience method for accessing the component of the controller's view.
 	 * @returns The component of the controller's view
@@ -79,5 +89,81 @@ export default abstract class BaseController extends Controller {
 		} else {
 			this.getRouter().navTo("main", {}, undefined, true);
 		}
+	}
+
+	async onOpenSettingsDialog() {
+		if (!this.settingsDialog) {
+			this.settingsDialog = await this.loadFragment({
+				name: "com.ui5.journeyrecorder.fragment.SettingsDialog"
+			}) as UI5Element;
+			this.getView().addDependent(this.settingsDialog);
+		}
+		(this.settingsDialog as Dialog).open();
+	}
+
+	onCloseDialog(oEvent: Event) {
+		const closeReason = (oEvent.getSource() as unknown as { data: (s: string) => string }).data("settingsDialogClose");
+		if (closeReason === 'save') {
+			(this.getModel("settings") as JSONModel).getData();
+			void SettingsStorageService.save((this.getModel("settings") as JSONModel).getData() as AppSettings);
+		} else {
+			void SettingsStorageService.getSettings().then((settings: AppSettings) => {
+				(this.getModel("settings") as JSONModel).setData(settings);
+			})
+		}
+		(this.settingsDialog as Dialog).close();
+	}
+
+	onDelaySelect(oEvent: Event) {
+		const index = oEvent.getParameter("selectedIndex" as never);
+		switch (index) {
+			case 0:
+				(this.getModel("settings") as JSONModel).setProperty('/replayDelay', 0.5);
+				break;
+			case 1:
+				(this.getModel("settings") as JSONModel).setProperty('/replayDelay', 1.0);
+				break;
+			case 2:
+				(this.getModel("settings") as JSONModel).setProperty('/replayDelay', 2.0);
+				break;
+			default:
+				(this.getModel("settings") as JSONModel).setProperty('/replayDelay', 0.5);
+		}
+	}
+
+	onFrameworkSelect(oEvent: Event) {
+		const index = oEvent.getParameter("selectedIndex" as never);
+		switch (index) {
+			case 0:
+				(this.getModel("settings") as JSONModel).setProperty('/testFramework', TestFrameworks.OPA5);
+				break;
+			case 1:
+				(this.getModel("settings") as JSONModel).setProperty('/testFramework', TestFrameworks.WDI5);
+				break;
+			default:
+				(this.getModel("settings") as JSONModel).setProperty('/testFramework', TestFrameworks.OPA5);
+		}
+	}
+
+	onThemeSelect(oEvent: Event) {
+		const index = oEvent.getParameter("selectedIndex" as never);
+		switch (index) {
+			case 1:
+				(this.getModel("settings") as JSONModel).setProperty('/theme', Themes.EVENING_HORIZON);
+				break;
+			case 2:
+				(this.getModel("settings") as JSONModel).setProperty('/theme', Themes.QUARTZ_LIGHT);
+				break;
+			case 3:
+				(this.getModel("settings") as JSONModel).setProperty('/theme', Themes.QUARTZ_DARK);
+				break;
+			default:
+				(this.getModel("settings") as JSONModel).setProperty('/theme', Themes.MORNING_HORIZON);
+		}
+		Theming.setTheme((this.getModel("settings") as JSONModel).getProperty('/theme') as string);
+	}
+
+	compareProps(args: unknown[]) {
+		return args[0] === args[1];
 	}
 }

@@ -5,19 +5,27 @@
     <Menu itemSelected="onStepTypeChange">
         <MenuItem
             text="Click"
+            key="clicked"
             icon="sap-icon://cursor-arrow"
+            enabled="{= ${step>/actionType} !== 'clicked'}"
         />
         <MenuItem
             text="Input"
+            key="input"
             icon="sap-icon://text"
+            enabled="{= ${step>/actionType} !== 'input'}"
         />
         <MenuItem
             text="KeyPress"
+            key="keypress"
             icon="sap-icon://keyboard-and-mouse"
+            enabled="{= ${step>/actionType} !== 'keypress'}"
         />
         <MenuItem
             text="Validation"
+            key="validate"
             icon="sap-icon://validate"
+            enabled="{= ${step>/actionType} !== 'validate'}"
         />
     </Menu>
 </core:FragmentDefinition>
