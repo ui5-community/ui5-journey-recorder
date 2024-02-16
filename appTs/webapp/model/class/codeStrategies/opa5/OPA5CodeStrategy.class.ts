@@ -1,17 +1,11 @@
-import Page from "sap/m/Page";
 import Journey from "../../Journey.class";
 import { InputStep, Step, StepType } from "../../Step.class";
 import StringBuilder from "../../StringBuilder.class";
+import { CodePage } from "../CodePage.type";
 import CommonPageBuilder from "./CommonPageBuilder.class";
 import OPA5SingleStepStrategy from "./OPA5SingleStepStrategy.class";
 import { AdderOptions, PageBuilder } from "./PageBuilder.class";
 import ViewPageBuilder from "./ViewPageBuilder.class";
-
-export type CodePage = {
-    title: string;
-    code: string | StringBuilder;
-    type: 'journey' | 'page';
-};
 
 export default class OPA5CodeStrategy {
     private _pages: Record<string, PageBuilder> = {};
