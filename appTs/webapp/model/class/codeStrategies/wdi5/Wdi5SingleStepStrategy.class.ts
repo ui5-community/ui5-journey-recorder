@@ -4,7 +4,7 @@ import StringBuilder from "../../StringBuilder.class";
 export default class Wdi5SingleStepStrategy {
     public static generateSinglePressStep(
         step: Step,
-        indent: number = 0
+        indent: number = 2
     ): string {
         const pressStep = new StringBuilder();
         pressStep.add(
@@ -16,7 +16,7 @@ export default class Wdi5SingleStepStrategy {
 
     public static generateSingleInputStep(
         step: InputStep,
-        indent: number = 0
+        indent: number = 2
     ): string {
         const pressStep = new StringBuilder();
         pressStep.add(
@@ -28,7 +28,7 @@ export default class Wdi5SingleStepStrategy {
 
     public static generateSingleExistsStep(
         step: Step,
-        indent: number = 0
+        indent: number = 2
     ): string {
         const exists = new StringBuilder();
 
@@ -57,7 +57,7 @@ export default class Wdi5SingleStepStrategy {
 
     private static generateSelector(
         step: Step,
-        indent: number = 0
+        indent: number = 2
     ): StringBuilder {
         const selectorBuilder = new StringBuilder();
 
