@@ -14,6 +14,7 @@ import SettingsStorageService, { AppSettings } from "../service/SettingsStorage.
 import { TestFrameworks } from "../model/enum/TestFrameworks";
 import { Themes } from "../model/enum/Themes";
 import Theming from "sap/ui/core/Theming";
+import { ConnectionStatus } from "../model/enum/ConnectionStatus";
 
 /**
  * @namespace com.ui5.journeyrecorder.controller
@@ -165,5 +166,17 @@ export default abstract class BaseController extends Controller {
 
 	compareProps(args: unknown[]) {
 		return args[0] === args[1];
+	}
+
+	setConnecting() {
+		(this.getModel() as JSONModel).setProperty('/connectionStatus', ConnectionStatus.CONNECTING);
+	}
+
+	setConnected() {
+		(this.getModel() as JSONModel).setProperty('/connectionStatus', ConnectionStatus.CONNECTED);
+	}
+
+	setDisconnected() {
+		(this.getModel() as JSONModel).setProperty('/connectionStatus', ConnectionStatus.DISCONNECTED);
 	}
 }
