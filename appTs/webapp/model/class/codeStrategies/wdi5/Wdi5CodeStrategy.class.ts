@@ -1,7 +1,9 @@
+import Journey from "../../Journey.class";
 import { InputStep, Step, StepType } from "../../Step.class";
 import Wdi5SingleStepStrategy from "./Wdi5SingleStepStrategy.class";
 
 export default class Wdi5CodeStrategy {
+
     public static generateStepCode(step: Step): string {
         switch (step.actionType) {
             case StepType.CLICK:
@@ -13,6 +15,14 @@ export default class Wdi5CodeStrategy {
             default:
                 return 'Unknown StepType';
         }
+    }
+
+    generateJourneyCode(journey: Journey): { title: string; code: string; type: 'journey' | 'page' }[] {
+        return [{
+            title: "'I'M SORRY",
+            code: 'This feature is not implemented right now. ●|￣|＿',
+            type: 'journey'
+        }];
     }
 
     generatePagedStepCode(step: Step): string {

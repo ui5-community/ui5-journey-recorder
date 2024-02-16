@@ -1,7 +1,17 @@
+import Page from "sap/m/Page";
+import Journey from "../../Journey.class";
 import { InputStep, Step, StepType } from "../../Step.class";
 import StringBuilder from "../../StringBuilder.class";
+import CommonPageBuilder from "./CommonPageBuilder.class";
 import OPA5SingleStepStrategy from "./OPA5SingleStepStrategy.class";
 import { AdderOptions, PageBuilder } from "./PageBuilder.class";
+import ViewPageBuilder from "./ViewPageBuilder.class";
+
+export type CodePage = {
+    title: string;
+    code: string | StringBuilder;
+    type: 'journey' | 'page';
+};
 
 export default class OPA5CodeStrategy {
     private _pages: Record<string, PageBuilder> = {};
@@ -21,9 +31,71 @@ export default class OPA5CodeStrategy {
         }
     }
 
+    public generateJourneyCode(journey: Journey): CodePage[] {
+
+        const codes: CodePage[] = [];
+        const journeyCode: CodePage = {
+            title: '',
+            code: new StringBuilder(),
+            type: 'journey'
+        };
+        //(1) setup codes environment
+        this._pages['Common'] = new CommonPageBuilder('', '', '');
+
+        //(2) execute script
+        journeyCode.title = journey.name.replace(/\s/gm, '_');
+
+        this._setupHeader(journeyCode);
+
+        /* this._createConstants(scenario.testPages); */
+
+        (journeyCode.code as StringBuilder).addBuilder(
+            new StringBuilder()
+                .addNewLine()
+                .addTab()
+                .add('QUnit.module("')
+                .add(journey.name)
+                .add('");')
+                .addNewLine(2)
+        );
+
+        this._createAppStartStep(journeyCode, journey);
+
+        (journeyCode.code as StringBuilder).addBuilder(this._createTestSteps(journey));
+
+        this._createAppCloseStep(journeyCode);
+
+        (journeyCode.code as StringBuilder).add('});');
+
+        journeyCode.code = (journeyCode.code as StringBuilder).toString();
+
+        codes.push(journeyCode);
+
+        const posNamespace = Object.values(this._pages)
+            .map((p) => p.namespace)
+            .filter((n) => n !== '<namespace>')[0];
+        if (posNamespace) {
+            this._pages['Common'].namespace = posNamespace;
+        }
+
+        Object.entries(this._pages).forEach((entry: [string, PageBuilder]) => {
+            const oCode: CodePage = {
+                title: `${entry[0]}-Page`,
+                code: entry[1].generate(),
+                type: 'page',
+            };
+            codes.push(oCode);
+        });
+
+        return codes;
+    }
+
     public generatePagedStepCode(
         step: Step
     ): string {
+        if (!this._pages[step.viewInfos.relativeViewName]) {
+            this._pages[step.viewInfos.relativeViewName] = new ViewPageBuilder(step);
+        }
         switch (step.actionType) {
             case StepType.CLICK:
                 return this._createClickStep(step);
@@ -34,6 +106,69 @@ export default class OPA5CodeStrategy {
             default:
                 return '';
         }
+    }
+
+    private _setupHeader(journey: CodePage) {
+        const oCode = new StringBuilder('sap.ui.define([');
+        oCode.addNewLine().addTab().add('"sap/ui/test/Opa5",');
+        oCode.addNewLine().addTab().add('"sap/ui/test/opaQunit"');
+        oCode.addNewLine().add('], function (Opa5, opaTest) {');
+        oCode.addNewLine().addTab().add('"use strict";');
+        oCode.addNewLine();
+        (journey.code as StringBuilder).addBuilder(oCode);
+    }
+
+    private _createAppStartStep(
+        journeyCode: CodePage,
+        journey: Journey
+    ) {
+        const startStep = new StringBuilder();
+        startStep
+            .addTab()
+            .add('opaTest("')
+            .add(journey.name)
+            .add('", function(Given, When, Then) {')
+            .addNewLine();
+        let sNavHash = '';
+        if (journey.startUrl.indexOf('#') > -1) {
+            sNavHash = journey.startUrl.substring(
+                journey.startUrl.indexOf('#') + 1
+            );
+        }
+        startStep
+            .addTab(2)
+            .add('Given.iStartTheAppByHash({hash: "')
+            .add(sNavHash)
+            .add('"});')
+            .addNewLine(2);
+
+        (journeyCode.code as StringBuilder).addBuilder(startStep);
+    }
+
+    private _createTestSteps(journey: Journey): StringBuilder {
+        const steps = journey.steps;
+        const stepsCode = new StringBuilder();
+        steps.forEach((step: Step) => {
+            const stepCode = this.generatePagedStepCode(step);
+            if (stepCode) {
+                stepsCode.add(stepCode);
+                stepsCode.addNewLine();
+            }
+        });
+        return stepsCode;
+    }
+
+    private _createAppCloseStep(journeyCode: CodePage) {
+        const oCloseStep = new StringBuilder();
+        oCloseStep
+            .addNewLine()
+            .addTab(2)
+            .add('Given.iTeardownTheApp();')
+            .addNewLine()
+            .addTab()
+            .add('});')
+            .addNewLine();
+        (journeyCode.code as StringBuilder).addBuilder(oCloseStep);
     }
 
     private _createClickStep(

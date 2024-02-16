@@ -14,7 +14,14 @@ import Text from "sap/m/Text";
 import MessageToast from "sap/m/MessageToast";
 import Journey from "../model/class/Journey.class";
 import CodeEditor from "sap/ui/codeeditor";
-
+import CodeGenerationService from "../service/CodeGeneration.service";
+import Menu from "sap/m/Menu";
+import Fragment from "sap/ui/core/Fragment";
+import MenuItem from "sap/m/MenuItem";
+import SettingsStorageService from "../service/SettingsStorage.service";
+import { TestFrameworks } from "../model/enum/TestFrameworks";
+import { CodePage } from "../model/class/codeStrategies/opa5/OPA5CodeStrategy.class";
+import { downloadZip } from "client-zip";
 /**
  * @namespace com.ui5.journeyrecorder.controller
  */
@@ -22,15 +29,17 @@ export default class JourneyPage extends BaseController {
     private model: JSONModel;
     private _unsafeDialog: Dialog;
     private _editor: CodeEditor;
+    private _frameworkMenu: Menu;
 
-    onInit(): void {
+    async onInit() {
         this.model = new JSONModel({});
         this.setModel(this.model, 'journey');
-        this.setModel(new JSONModel({ titleVisible: true, titleInputVisible: false }), 'journeyControl');
-        this.getRouter().getRoute("journey").attachMatched(this._loadJourney, this);
-        this.model.attachEvent('propertyChange', null, this._setToUnsafed, this);
+        this.setModel(new JSONModel({ titleVisible: true, titleInputVisible: false, }), 'journeyControl');
+        this.getRouter().getRoute("journey").attachMatched((oEvent) => { void this._loadJourney(oEvent); });
+        this.model.attachEvent('propertyChange', null, () => { this._setToUnsafed(); }, this);
         this._editor = this.byId('codeeditor');
-        this._generateCode();
+        const settings = (await SettingsStorageService.getSettings());
+        (this.getModel('journeyControl') as JSONModel).setProperty('/framework', settings.testFramework);
     }
 
     toTitleEdit() {
@@ -46,8 +55,8 @@ export default class JourneyPage extends BaseController {
     navigateToStep(oEvent: Event) {
         const source: UI5Element = oEvent.getSource();
         const bindingCtx = source.getBindingContext('journey');
-        const journeyId = bindingCtx.oModel.getData().id;
-        const stepId = bindingCtx.getProperty("id");
+        const journeyId = ((bindingCtx.getModel() as JSONModel).getData() as Partial<Journey>).id;
+        const stepId = bindingCtx.getProperty("id") as string;
         this.getRouter().navTo('step', { id: journeyId, stepId: stepId });
     }
 
@@ -102,27 +111,83 @@ export default class JourneyPage extends BaseController {
         MessageToast.show('Journey saved!');
     }
 
+    async frameworkChange($event: Event) {
+        const button: Button = $event.getSource();
+        if (!this._frameworkMenu) {
+            this._frameworkMenu = await Fragment.load({
+                id: this.getView().getId(),
+                name: "com.ui5.journeyrecorder.fragment.TestFrameworkMenu",
+                controller: this
+            }) as Menu;
+            this.getView().addDependent(this._frameworkMenu);
+        }
+        this._frameworkMenu.openBy(button, false);
+    }
+
+    onFrameworkChange(oEvent: Event) {
+        const oItem = oEvent.getParameter("item" as never) as MenuItem;
+        (this.getModel('journeyControl') as JSONModel).setProperty('/framework', oItem.getText());
+        const journey = (this.getModel('journey') as JSONModel).getData() as Journey;
+        this._generateCode(journey);
+    }
+
     onSelectCodeTab(oEvent: Event) {
         const codeId = oEvent.getParameter("selectedKey" as never) as string;
         const modelData = (this.getModel('journeyControl') as JSONModel).getData() as Record<string, unknown>;
-        const generatedCode = modelData['generatedCode'] as Record<string, string>;
-        const codeString = generatedCode[codeId];
-        (this.getModel('journeyControl') as JSONModel).setProperty('/activeCode', codeString);
+        const generatedCode = modelData['codes'] as CodePage[];
+        const page = generatedCode.find((cp: CodePage) => cp.title === codeId);
+        (this.getModel('journeyControl') as JSONModel).setProperty('/activeCode', page.code);
     }
 
-    private _generateCode() {
-        const codeParts: Record<string, string> = {
-            "Code Part 1": "function loadDoc() {\n\treturn 'bar';\n}",
-            "Code Part 2": "function myFunction(p1, p2) {\n\treturn 'foo';\n}"
-        };
-        const codeNames = [{
-            name: "Code Part 1"
-        }, {
-            name: "Code Part 2"
-        }];
-        (this.getModel('journeyControl') as JSONModel).setProperty('/codeNames', codeNames);
-        (this.getModel('journeyControl') as JSONModel).setProperty('/generatedCode', codeParts);
-        (this.getModel('journeyControl') as JSONModel).setProperty('/activeCode', codeParts[codeNames[0].name]);
+    async onCopyCode() {
+        await navigator.clipboard.writeText((this.getModel('journeyControl') as JSONModel).getProperty('/activeCode') as string);
+        MessageToast.show("Code copied");
+    }
+
+    async onCodeDownload() {
+        const modelData = (this.getModel('journeyControl') as JSONModel).getData() as Record<string, unknown>;
+        const generatedCode = modelData['codes'] as CodePage[];
+        const journey = (this.getModel('journey') as JSONModel).getData() as Partial<Journey>;
+
+        const files = [];
+        const framework = modelData.framework;
+        if (framework === TestFrameworks.OPA5) {
+            const journeyPage = generatedCode.find((p) => p.type === 'journey');
+            const viewPages = generatedCode.filter((p) => p.type === 'page');
+
+            const jourName = `${Utils.replaceUnsupportedFileSigns(journeyPage?.title || '', '_')}.js`;
+            files.push({ name: `integration/${jourName}`, input: (journeyPage?.code as string || '') });
+
+            viewPages.forEach((p) => {
+                const name = `${Utils.replaceUnsupportedFileSigns(p.title, '_')}.js`;
+                files.push({ name: `integration/pages/${name}`, input: (p.code as string || '') });
+            });
+
+        } else {
+            generatedCode.forEach((p) => {
+                const name = `${Utils.replaceUnsupportedFileSigns(p.title, '_')}.js`;
+                files.push({
+                    name: `wdi5_test/${name}`,
+                    input: p.code as string
+                });
+            });
+        }
+        // get the ZIP stream in a Blob
+        const blob = await downloadZip(files).blob()
+
+        // make and click a temporary link to download the Blob
+        const link = document.createElement("a")
+        link.href = URL.createObjectURL(blob)
+        link.download = `${Utils.replaceUnsupportedFileSigns(journey.name, '_')}.zip`
+        link.click()
+        link.remove()
+    }
+
+    private _generateCode(journey: Journey) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const framework = (this.getModel('journeyControl') as JSONModel).getProperty('/framework') as TestFrameworks;
+        const codes = CodeGenerationService.generateJourneyCode(journey, framework);
+        (this.getModel('journeyControl') as JSONModel).setProperty('/codes', codes);
     }
 
     private async _export() {
@@ -142,6 +207,7 @@ export default class JourneyPage extends BaseController {
         const oArgs: { id: string } = oEvent.getParameter("arguments" as never);
         const journey = await JourneyStorageService.getInstance().getById(oArgs.id);
         this.model.setData(journey);
+        this._generateCode(journey);
     }
 
     private _setToUnsafed() {

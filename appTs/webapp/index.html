@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate" />
-		<meta http-equiv="Pragma" content="no-cache" />
-		<meta http-equiv="expires" content="0" />
-		<meta charset="utf-8" />
 
-		<title>UI5 Journey Recorder</title>
+<head>
+	<meta http-equiv="Cache-control"
+		  content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="Pragma"
+		  content="no-cache" />
+	<meta http-equiv="expires"
+		  content="0" />
+	<meta charset="utf-8" />
 
-		<script
-			id="sap-ui-bootstrap"
+	<title>UI5 Journey Recorder</title>
+
+	<script id="sap-ui-bootstrap"
 			src="resources/sap-ui-core.js"
 			data-sap-ui-resourceroots='{
-				"com.ui5.journeyrecorder": "./"
+				"com.ui5.journeyrecorder": "./",
+				"client-zip": "./resources/client-zip"
 			}'
 			data-sap-ui-theme="sap_horizon"
 			data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
@@ -20,11 +24,12 @@
 			data-sap-ui-compatVersion="edge"
 			data-sap-ui-frameOptions="trusted"
 			data-sap-ui-xx-waitForTheme="true"
-			data-sap-ui-xx-supportedLanguages="en,de"
-		></script>
-	</head>
+			data-sap-ui-xx-supportedLanguages="en,de"></script>
+</head>
 
-	<body class="sapUiBody">
-		<div data-sap-ui-component data-name="com.ui5.journeyrecorder"></div>
-	</body>
+<body class="sapUiBody">
+	<div data-sap-ui-component
+		 data-name="com.ui5.journeyrecorder"></div>
+</body>
+
 </html>
