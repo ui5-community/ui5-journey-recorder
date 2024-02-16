@@ -10,15 +10,15 @@ import {
 import { MessageService } from '../messageService/message.service';
 
 export interface Page {
-  title: string;
-  path: string;
-  id: number;
-  icon: string;
+    title: string;
+    path: string;
+    id: number;
+    icon: string;
 }
 
 export type Synchronizer = {
-  success: (value: any) => void;
-  error: (error: any) => void;
+    success: (value: any) => void;
+    error: (error: any) => void;
 };
 
 @Injectable({
@@ -37,9 +37,9 @@ export class ChromeExtensionService {
     private _message_map: { [key: number]: Synchronizer } = {};
 
     constructor(
-    private messageService: MessageService,
-    private appFooterService: AppFooterService
-    ) {}
+        private messageService: MessageService,
+        private appFooterService: AppFooterService
+    ) { }
 
     public static get_all_tabs(only_ui5: boolean = false): Promise<Page[]> {
         return new Promise((resolve, _) => {
@@ -84,8 +84,8 @@ export class ChromeExtensionService {
             ) => {
                 if (
                     !this.bInjectAttempted &&
-          this.currentPage?.id === iTabId &&
-          oChangeInfo.status === 'complete'
+                    this.currentPage?.id === iTabId &&
+                    oChangeInfo.status === 'complete'
                 ) {
                     this.bInjectAttempted = true;
                 } else {
@@ -298,9 +298,9 @@ export class ChromeExtensionService {
     private _onMessageListener(message: any, port: chrome.runtime.Port) {
         if (
             message &&
-      message.data &&
-      message.data.message_id &&
-      this._message_map[message.data.message_id]
+            message.data &&
+            message.data.message_id &&
+            this._message_map[message.data.message_id]
         ) {
             const { success, error } = this._message_map[message.data.message_id];
             delete message.data.message_id;
@@ -319,9 +319,9 @@ export class ChromeExtensionService {
     }
 
     private _requestPermission(oPermissionInfo: {
-    id?: number;
-    url: string;
-  }): Promise<void> {
+        id?: number;
+        url: string;
+    }): Promise<void> {
         return new Promise((resolve, reject) => {
             chrome.permissions.contains(
                 {

@@ -4,6 +4,7 @@ import Device from "sap/ui/Device";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import SettingsStorageService, { AppSettings } from "./service/SettingsStorage.service";
 import Theming from "sap/ui/core/Theming";
+import { ConnectionStatus } from "./model/enum/ConnectionStatus";
 
 /**
  * @namespace com.ui5.journeyrecorder
@@ -19,7 +20,7 @@ export default class Component extends UIComponent {
 		// call the base component's init function
 		super.init();
 		// create the application wide default model, only for setups
-		this.setModel(new JSONModel({ showNavButton: false }));
+		this.setModel(new JSONModel({ connectionStatus: ConnectionStatus.DISCONNECTED }));
 		// create the app settings model
 		void SettingsStorageService.getSettings().then((settings: AppSettings) => {
 			this.setModel(new JSONModel(settings), 'settings');

@@ -54,6 +54,7 @@
                                 iconDensityAware="false"
                                 iconInset="false"
                                 type="Navigation"
+                                press=".connectToTab"
                             />
                         </List>
                     </IconTabFilter>
