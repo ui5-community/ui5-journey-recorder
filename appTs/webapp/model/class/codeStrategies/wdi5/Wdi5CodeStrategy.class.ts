@@ -14,4 +14,8 @@ export default class Wdi5CodeStrategy {
                 return 'Unknown StepType';
         }
     }
+
+    generatePagedStepCode(step: Step): string {
+        return Wdi5CodeStrategy.generateStepCode(step);
+    }
 }

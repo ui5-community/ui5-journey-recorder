@@ -2,9 +2,27 @@
     controllerName="com.ui5.journeyrecorder.controller.Main"
     displayBlock="true"
     xmlns="sap.m"
+    xmlns:core="sap.ui.core"
     xmlns:mvc="sap.ui.core.mvc"
 >
-    <Page showHeader="false" showFooter="false">
+    <Page>
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Image
+                        src="assets/icons/ui5_journey_recorder.png"
+                        height="2.5rem"
+                    />
+                    <Title text="{i18n>appTitle}" />
+                </contentLeft>
+                <contentRight>
+                    <Button
+                        icon="sap-icon://action-settings"
+                        press=".onOpenSettingsDialog"
+                    />
+                </contentRight>
+            </Bar>
+        </customHeader>
         <content>
             <IconTabBar
                 headerBackgroundDesign="Transparent"
