@@ -138,31 +138,57 @@
                     >
                         <uxap:subSections>
                             <uxap:ObjectPageSubSection titleUppercase="false">
+                                <uxap:actions>
+                                    <Button
+                                        icon="sap-icon://syntax"
+                                        text="Change Framework"
+                                        press="frameworkChange"
+                                    />
+                                    <Button
+                                        icon="sap-icon://download"
+                                        text="Download TestCode"
+                                        press="onCodeDownload"
+                                    />
+                                </uxap:actions>
                                 <uxap:blocks>
                                     <Panel
                                         width="auto"
                                         expanded="true"
                                         height="40rem"
                                     >
-                                        <IconTabHeader
-                                            id="codeTabHeader"
-                                            selectedKey=""
+                                        <IconTabBar
                                             select=".onSelectCodeTab"
-                                            items="{journeyControl>/codeNames}"
+                                            expanded="true"
+                                            expandable="false"
+                                            class="sapUiResponsiveContentPadding"
+                                            items="{journeyControl>/codes}"
                                         >
                                             <items>
                                                 <IconTabFilter
-                                                    text="{journeyControl>name}"
-                                                    key="{journeyControl>name}"
-                                                />
+                                                    text="{journeyControl>title}"
+                                                    key="{journeyControl>title}"
+                                                >
+                                                    <code:CodeEditor
+                                                        id="codeeditor"
+                                                        type="javascript"
+                                                        height="30rem"
+                                                        editable="false"
+                                                        value="{journeyControl>code}"
+                                                    />
+                                                </IconTabFilter>
                                             </items>
-                                        </IconTabHeader>
-                                        <code:CodeEditor
-                                            id="codeeditor"
-                                            type="javascript"
-                                            height="35rem"
-                                            value="{journeyControl>/activeCode}"
-                                        />
+                                        </IconTabBar>
+                                        <Toolbar design="Solid">
+                                            <Label
+                                                text="Current Framework: {journeyControl>/framework}"
+                                            />
+                                            <ToolbarSpacer />
+                                            <Button
+                                                icon="sap-icon://copy"
+                                                press="onCopyCode"
+                                                tooltip="Copy current editor content"
+                                            />
+                                        </Toolbar>
                                     </Panel>
                                 </uxap:blocks>
                             </uxap:ObjectPageSubSection>

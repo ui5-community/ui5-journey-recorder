@@ -25,10 +25,10 @@ export abstract class PageBuilder {
   };
   _customMatchers: { [key: string]: boolean };
 
-  constructor(namespace: string, viewName: string, baseClass: string) {
-    this._namespace = namespace ? namespace : '<namespace>';
-    this._viewName = viewName ? viewName : 'view1';
-    this._baseClass = baseClass ? baseClass : 'Common';
+  constructor() {
+    this._namespace = '<namespace>';
+    this._viewName = 'view1';
+    this._baseClass = 'Common';
     this._dependencies = [
       {
         asyncDep: 'sap/ui/test/Opa5',
@@ -91,6 +91,7 @@ export abstract class PageBuilder {
         addParentMatcher: false,
       },
     };
+
     this._customMatchers = {
       parent: false,
     };
@@ -103,6 +104,22 @@ export abstract class PageBuilder {
 
   public get namespace(): string {
     return this._namespace;
+  }
+
+  public set viewName(viewName: string) {
+    this._viewName = viewName;
+  }
+
+  public get viewName(): string {
+    return this._viewName;
+  }
+
+  public set baseClass(baseClass: string) {
+    this._baseClass = baseClass;
+  }
+
+  public get baseClass(): string {
+    return this._baseClass;
   }
   //#endregion getter/setter
 
