@@ -6,16 +6,14 @@ import Fragment from "sap/ui/core/Fragment";
 import Menu from "sap/m/Menu";
 import Button from "sap/m/Button";
 import MenuItem from "sap/m/MenuItem";
-import { Step, StepType } from "../model/class/Step.class";
+import { Step } from "../model/class/Step.class";
 import { AppSettings } from "../service/SettingsStorage.service";
 import { TestFrameworks } from "../model/enum/TestFrameworks";
 import MessageToast from "sap/m/MessageToast";
-import Dialog from "sap/m/Dialog";
-import { ButtonType, DialogType } from "sap/m/library";
-import { ValueState } from "sap/ui/core/library";
-import Text from "sap/m/Text";
 import CodeGenerationService from "../service/CodeGeneration.service";
 import { Route$MatchedEvent } from "sap/ui/core/routing/Route";
+import History from "sap/ui/core/routing/History";
+import { StepType } from "../model/enum/StepType";
 
 /**
  * @namespace com.ui5.journeyrecorder.controller
@@ -25,7 +23,6 @@ export default class StepPage extends BaseController {
     private setupModel: JSONModel;
     private frameworkMenu: Menu;
     private stepMenu: Menu;
-    private _unsafeDialog: Dialog;
 
     onInit() {
         this.model = new JSONModel({});
@@ -52,36 +49,33 @@ export default class StepPage extends BaseController {
         });
     }
 
-    onNavBack() {
+   /*  onNavBack() {
         const unsafed = (this.getModel('stepSetup') as JSONModel).getProperty('/propertyChanged') as boolean;
         if (unsafed) {
-            if (!this._unsafeDialog) {
-                this._unsafeDialog = new Dialog({
-                    type: DialogType.Message,
-                    state: ValueState.Warning,
-                    title: 'Unsafed Changes!',
-                    content: new Text({ text: "You have unsafed changes, proceed?" }),
-                    beginButton: new Button({
-                        type: ButtonType.Attention,
-                        text: 'Proceed',
-                        press: () => {
-                            this._unsafeDialog.close();
-                            BaseController.prototype.onNavBack.call(this);
-                        }
-                    }),
-                    endButton: new Button({
-                        text: 'Cancel',
-                        press: () => {
-                            this._unsafeDialog.close();
-                        }
-                    })
+            this._openUnsafedDialog()
+                .then(() => {
+                    const sPreviousHash = History.getInstance().getPreviousHash();
+                    if (sPreviousHash?.indexOf('recording') > -1) {
+                        const journeyId = (this.getModel('stepSetup') as JSONModel).getProperty('/journeyId') as string;
+                        ((history.state as Record<string, unknown>).sap as { history: string[] }).history = ((history.state as Record<string, unknown>).sap as { history: string[] }).history.filter((s: string) => s.indexOf('recording') > -1);
+                        this.getRouter().navTo("journey", { id: journeyId });
+                    } else {
+                        super.onNavBack();
+                    }
                 })
-            }
-            this._unsafeDialog.open();
+                .catch(() => {
+                    // do nothing
+                })
         } else {
-            super.onNavBack();
+            const sPreviousHash = History.getInstance().getPreviousHash();
+            if (sPreviousHash?.indexOf('recording') > -1) {
+                const journeyId = (this.getModel('stepSetup') as JSONModel).getProperty('/journeyId') as string;
+                this.getRouter().navTo("journey", { id: journeyId }, {}, true);
+            } else {
+                super.onNavBack();
+            }
         }
-    }
+    } */
 
     async onSave() {
         const journey = await JourneyStorageService.getInstance().getById((this.getModel('stepSetup') as JSONModel).getProperty('/journeyId') as string);

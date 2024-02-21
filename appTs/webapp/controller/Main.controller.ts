@@ -5,7 +5,7 @@ import Journey from "../model/class/Journey.class";
 import BusyIndicator from "sap/ui/core/BusyIndicator";
 import Dialog from "sap/m/Dialog";
 import Text from "sap/m/Text";
-import { ButtonType, DialogType, FlexAlignContent, FlexAlignItems } from "sap/m/library";
+import { ButtonType, DialogType } from "sap/m/library";
 import MessageToast from "sap/m/MessageToast";
 import Button from "sap/m/Button";
 import { ChromeExtensionService } from "../service/ChromeExtension.service";
@@ -15,9 +15,6 @@ import List from "sap/m/List";
 import SearchField from "sap/m/SearchField";
 import Filter from "sap/ui/model/Filter";
 import FilterOperator from "sap/ui/model/FilterOperator";
-import VBox from "sap/m/VBox";
-import CheckBox, { CheckBox$SelectEvent } from "sap/m/CheckBox";
-import { AppSettings } from "../service/SettingsStorage.service";
 import { Tab } from "../service/ChromeExtension.service";
 
 /**
@@ -25,7 +22,6 @@ import { Tab } from "../service/ChromeExtension.service";
  */
 export default class Main extends BaseController {
 	private _approveUploadDialog: Dialog;
-	private _approveConnectDialog: Dialog;
 	private _removeJourneyDialog: Dialog;
 	private _timerIndex: number;
 	onInit() {
@@ -36,6 +32,7 @@ export default class Main extends BaseController {
 			//the periodic load
 			this._timerIndex = setInterval(this._loadTabs.bind(this), 5000);
 		}, this);
+		// eslint-disable-next-line @typescript-eslint/unbound-method
 		this.getRouter().getRoute("main").attachPatternMatched(this._loadJourneys, this);
 		this.getView().addEventDelegate({
 			onBeforeHide: () => {
@@ -100,67 +97,12 @@ export default class Main extends BaseController {
 	}
 
 	connectToTab($event: sap.ui.base.Event) {
-		const settingsModel = (this.getModel('settings') as JSONModel).getData() as AppSettings;
 		const source: UI5Element = $event.getSource() as UI5Element;
 		const bindingCtx = source.getBindingContext('main');
 		const tab: Tab = bindingCtx.getObject() as Tab;
-		let reload = settingsModel.reloadPageDefault;
-		const connectFn = () => {
-			console.log("Reload?:", reload);
-			this._approveUploadDialog.close()
-			BusyIndicator.show();
-			this.setConnecting();
-			ChromeExtensionService.getInstance().setCurrentTab(tab);
-			ChromeExtensionService.getInstance().connectToCurrentTab().then(() => {
-				this.setConnected();
-				void ChromeExtensionService.getInstance().focusTab(tab);
-				MessageToast.show('Connected');
-				// make the navigation
-				BusyIndicator.hide();
-			}).catch(() => {
-				BusyIndicator.hide();
-			});
-		};
 
 		if (tab) {
-			if (!this._approveConnectDialog) {
-				const dialogContent = new VBox({
-					alignItems: FlexAlignItems.Start,
-					justifyContent: FlexAlignContent.Start
-				});
-				dialogContent.addItem(
-					new Text({ text: `Connect to the tab "${tab.title}" and inject analytic scripts?` })
-				);
-				const chkBox =
-					new CheckBox({ text: 'Reload tab', selected: reload });
-				chkBox.attachSelect((p1: CheckBox$SelectEvent) => {
-					reload = p1.getParameter("selected");
-				})
-				dialogContent.addItem(
-					chkBox
-				);
-				this._approveUploadDialog = new Dialog({
-					type: DialogType.Message,
-					title: 'Connect to tab',
-					content: dialogContent,
-					beginButton: new Button({
-						type: ButtonType.Accept,
-						text: "Connect!",
-						press: connectFn
-					}),
-					endButton: new Button({
-						text: "Cancel",
-						press: () => {
-							this._approveUploadDialog.close()
-						}
-					})
-				});
-			} else {
-				const dialogContent = this._approveConnectDialog.getAggregation('content') as sap.ui.core.Control[];
-				((dialogContent[0] as VBox).getItems()[0] as Text).setText(`Connect to the tab "${tab.title}" and inject analytic scripts?`);
-				this._approveConnectDialog.getBeginButton().attachPress(connectFn);
-			}
-			this._approveUploadDialog.open();
+			this.getRouter().navTo("recording", { tabId: tab.id });
 		}
 	}
 

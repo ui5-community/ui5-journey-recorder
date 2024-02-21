@@ -46,7 +46,7 @@ export abstract class Step implements Stringify, Equals<Step> {
   private style_classes: string[];
   private record_replay_selector: { [key: string]: any };
 
-  public static recordEventToStep(event: any): IntermediateStep {
+  public static recordEventToStep(event: object): IntermediateStep {
     let res: IntermediateStep;
     switch (event.type) {
       case 'clicked':

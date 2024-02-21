@@ -1,0 +1,54 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+    <Dialog title="Replay">
+        <content>
+            <VBox
+                justifyContent="Start"
+                alignItems="Center"
+            >
+                <Checkbox
+                    text="Start in manual mode"
+                    selected="{journeyControl>/replaySettings/manual}"
+                />
+                <Label text="Automatic replay delay:" />
+                <RadioButtonGroup
+                    select="onChangeReplayDelay"
+                    editable="{= !${journeyControl>/replaySettings/manual}}"
+                >
+                    <RadioButton
+                        text="0.5 sec"
+                        selected="{= ${path: 'journeyControl>/replaySettings/delay'} === 0.5}"
+                    />
+                    <RadioButton
+                        text="1.0 sec"
+                        selected="{= ${path: 'journeyControl>/replaySettings/delay'} === 1.0}"
+                    />
+                    <RadioButton
+                        text="2.0 sec"
+                        selected="{= ${path: 'journeyControl>/replaySettings/delay'} === 2.0}"
+                    />
+                </RadioButtonGroup>
+                <Checkbox
+                    text="Use Record Replay Selector"
+                    selected="{journeyControl>/replaySettings/rrSelectorUse}"
+                />
+            </VBox>
+        </content>
+        <beginButton>
+            <Button
+                text="Replay"
+                press="onStartReplay"
+                type="Emphasized"
+            />
+        </beginButton>
+        <endButton>
+            <Button
+                text="Cancel"
+                press="onRejectReplay"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

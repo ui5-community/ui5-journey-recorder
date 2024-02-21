@@ -15,12 +15,17 @@ import { TestFrameworks } from "../model/enum/TestFrameworks";
 import { Themes } from "../model/enum/Themes";
 import Theming from "sap/ui/core/Theming";
 import { ConnectionStatus } from "../model/enum/ConnectionStatus";
+import { IconColor, ValueState } from "sap/ui/core/library";
+import { ButtonType, DialogType } from "sap/m/library";
+import Button from "sap/m/Button";
+import Text from "sap/m/Text";
 
 /**
  * @namespace com.ui5.journeyrecorder.controller
  */
 export default abstract class BaseController extends Controller {
 	protected settingsDialog: UI5Element;
+	protected _unsafeDialog: Dialog;
 
 	/**
 	 * Convenience method for accessing the component of the controller's view.
@@ -178,5 +183,60 @@ export default abstract class BaseController extends Controller {
 
 	setDisconnected() {
 		(this.getModel() as JSONModel).setProperty('/connectionStatus', ConnectionStatus.DISCONNECTED);
+	}
+
+	connectionIcon(connectionStatus: ConnectionStatus) {
+		switch (connectionStatus) {
+			case ConnectionStatus.CONNECTED:
+				return 'sap-icon://connected';
+			case ConnectionStatus.DISCONNECTED:
+				return 'sap-icon://disconnected';
+			case ConnectionStatus.CONNECTING:
+				return 'sap-icon://along-stacked-chart';
+			default:
+				return '';
+		}
+	}
+
+	connectionColor(connectionStatus: ConnectionStatus) {
+		switch (connectionStatus) {
+			case ConnectionStatus.CONNECTED:
+				return IconColor.Positive;
+			case ConnectionStatus.DISCONNECTED:
+				return IconColor.Negative;
+			case ConnectionStatus.CONNECTING:
+				return IconColor.Neutral;
+			default:
+				return IconColor.Default;
+		}
+	}
+
+	protected _openUnsafedDialog() {
+		return new Promise<void>((resolve, reject) => {
+			if (!this._unsafeDialog) {
+				this._unsafeDialog = new Dialog({
+					type: DialogType.Message,
+					state: ValueState.Warning,
+					title: 'Unsafed Changes!',
+					content: new Text({ text: "You have unsafed changes, proceed?" }),
+					beginButton: new Button({
+						type: ButtonType.Attention,
+						text: 'Proceed',
+						press: () => {
+							resolve();
+							this._unsafeDialog.close();
+						}
+					}),
+					endButton: new Button({
+						text: 'Cancel',
+						press: () => {
+							reject();
+							this._unsafeDialog.close();
+						}
+					})
+				})
+			}
+			this._unsafeDialog.open();
+		})
 	}
 }

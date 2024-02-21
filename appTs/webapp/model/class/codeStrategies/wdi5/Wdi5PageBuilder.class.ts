@@ -1,4 +1,5 @@
-import { InputStep, Step, StepType } from "../../Step.class";
+import { StepType } from "../../../enum/StepType";
+import { InputStep, Step } from "../../Step.class";
 import StringBuilder from "../../StringBuilder.class";
 import Wdi5SingleStepStrategy from "./Wdi5SingleStepStrategy.class";
 

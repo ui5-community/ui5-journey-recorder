@@ -134,6 +134,11 @@
           "target": "journey"
         },
         {
+          "pattern": "journey/recording/{tabId}",
+          "name": "recording",
+          "target": "journey"
+        },
+        {
           "pattern": "journey/{id}/step/{stepId}",
           "name": "step",
           "target": "step"

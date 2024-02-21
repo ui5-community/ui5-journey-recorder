@@ -1,4 +1,5 @@
-import { Control, Step, StepType, ViewInformation } from "./Step.class";
+import { StepType } from "../enum/StepType";
+import { Control, Step, ViewInformation } from "./Step.class";
 
 export default class Journey {
     private _id: string;
@@ -15,6 +16,19 @@ export default class Journey {
         this._id = id;
         this._name = '';
         this._ui5Version = '';
+    }
+
+    public static fromObject(obj: Partial<Journey>): Journey {
+        const journey = new Journey(obj.id, obj.created);
+        journey.edited = obj.edited;
+        journey.name = obj.name;
+        journey.ui5Version = obj.ui5Version;
+        if (obj.steps) {
+            obj.steps.forEach((s: Partial<Step>) => {
+                journey.addStep(Step.fromObject(s));
+            });
+        }
+        return journey;
     }
 
     public static fromJSON(json: string): Journey {
@@ -64,6 +78,10 @@ export default class Journey {
             ui5Version: old.ui5_version as string,
             steps: steps as Step[]
         };
+    }
+
+    public equals(other: Journey): boolean {
+        return other.toString() === this.toString();
     }
 
     public addStep(step: Step): void {

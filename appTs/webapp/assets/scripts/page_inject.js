@@ -3,6 +3,7 @@
     #lastDetectedElement;
     #rr;
     #toast;
+    #clickListenerActive
 
     constructor() {
       try {
@@ -15,6 +16,7 @@
       } catch (e) {
         this.#toast = null;
       }
+      this.#clickListenerActive = true;
     }
 
     //#region public access points
@@ -48,6 +50,9 @@
 
     setupClickListener() {
       document.onclick = (e) => {
+        if (!this.#clickListenerActive) {
+          return;
+        }
         let event = e || window.event;
         let el = event.target || event.srcElement;
         let ui5El = this.#getUI5Element(el);
@@ -119,7 +124,7 @@
     getElementsBySelectors(controlSelectors) {
       let elements = this.#getUI5Elements();
       // filter by control_type
-      elements = Object.values(elements).filter(el => el.getMetadata().getElementName() === controlSelectors.control_type);
+      elements = Object.values(elements).filter(el => el.getMetadata().getElementName() === controlSelectors.type);
       // filter by control.properties
       elements = elements.filter(el => {
         const byProperties = controlSelectors.properties
@@ -206,18 +211,20 @@
     }
 
     executeAction(oEvent) {
+      this.#clickListenerActive = false;
       if (this.#rr) {
         //only for RecordReplay possible to select to use selectors or not
         return this.#executeByRecordReplay(oEvent.step, oEvent.useSelectors);
       } else {
         return this.#executeByPure(oEvent.step);
       }
+      this.#clickListenerActive = true;
     }
 
     #executeByRecordReplay(oItem, bUseSelectors) {
-      const oSelector = bUseSelectors ? this.#createSelectorFromItem(oItem) : oItem.record_replay_selector;
+      const oSelector = bUseSelectors ? this.#createSelectorFromItem(oItem) : oItem.recordReplaySelector;
 
-      switch (oItem.action_type) {
+      switch (oItem.actionType) {
         case "clicked":
           return this.#rr.interactWithControl({
             selector: oSelector,
@@ -245,34 +252,49 @@
 
     #createSelectorFromItem(oItem) {
       const oSelector = {};
-      if (oItem.control.control_id.use) {
-        oSelector['id'] = oItem.control.control_id.id;
+      if (oItem.control.controlId.use) {
+        oSelector['id'] = oItem.control.controlId.id;
         return oSelector;
       }
-      oSelector['controlType'] = oItem.control.control_type;
+      oSelector['controlType'] = oItem.control.type;
       if (oItem.control.bindings) {
         const bindings = oItem.control.bindings.filter(b => b.use);
         if (bindings.length === 1) {
-          oSelector['bindingPath'] = { path: bindings[0].modelPath, propertyPath: bindings[0].propertyPath }
+          oSelector['bindingPath'] = {
+            path: bindings[0].modelPath,
+            propertyPath: bindings[0].propertyPath
+          }
         }
       }
       if (oItem.control.i18nTexts) {
         const i18ns = oItem.control.i18nTexts.filter(b => b.use);
         if (i18ns.length === 1) {
-          oSelector['i18NText'] = { key: i18ns[0].propertyPath, propertyName: i18ns[0].propertyName }
+          oSelector['i18NText'] = {
+            key: i18ns[0].propertyPath,
+            propertyName: i18ns[0].propertyName
+          }
         }
       }
+      if (oItem.control.properties) {
+        const props = oItem.control.properties.filter(b => b.use);
+        if (props.length > 0 && !oSelector.properties) {
+          oSelector.properties = {}
+        }
+        props.forEach(property => {
+          oSelector.properties[property.name] = property.value;
+        })
+      }
       //just a current workaround
-      if (oItem.record_replay_selector.viewId) {
-        oSelector['viewId'] = oItem.record_replay_selector.viewId;
+      if (oItem.recordReplaySelector.viewId) {
+        oSelector['viewId'] = oItem.recordReplaySelector.viewId;
       }
       return oSelector;
     }
 
     #executeByPure(oItem) {
       let elements = this.#getUI5Elements();
-      if (oItem.control.control_id.use) {
-        elements = elements.filter(el => el.getId() === oItem.control.control_id);
+      if (oItem.control.controlId.use) {
+        elements = elements.filter(el => el.getId() === oItem.control.controlId);
       } else {
         elements = this.getElementsBySelectors(oItem.control);
       }
@@ -291,7 +313,7 @@
           this.#executeTextInput(elements[0], oItem);
           return Promise.resolve();
         default:
-          return Promise.reject(`Action Type (${oItem.action_type}) not defined`);
+          return Promise.reject(`Action Type (${oItem.actionType}) not defined`);
       }
     }
 
@@ -458,7 +480,7 @@
 
     #executeTextInput(ui5El, oItem) {
       const domNode = ui5El.getDomRef();
-      const sText = oItem.keys.reduce((a, b) => a + b.key_char, '');
+      const sText = oItem.keys.reduce((a, b) => a + b.keyChar, '');
       domNode.val(sText);
 
       var event = new KeyboardEvent('input', {

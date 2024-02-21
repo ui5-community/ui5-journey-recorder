@@ -1,5 +1,6 @@
+import { StepType } from "../../../enum/StepType";
 import Journey from "../../Journey.class";
-import { InputStep, Step, StepType } from "../../Step.class";
+import { InputStep, Step } from "../../Step.class";
 import { CodePage } from "../CodePage.type";
 import Wdi5PageBuilder from "./Wdi5PageBuilder.class";
 import Wdi5SingleStepStrategy from "./Wdi5SingleStepStrategy.class";

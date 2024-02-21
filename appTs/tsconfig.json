@@ -29,5 +29,8 @@
 	},
 	"include": [
 		"./webapp/**/*"
+	],
+	"exclude": [
+		"./webapp/assets/scripts"
 	]
 }
