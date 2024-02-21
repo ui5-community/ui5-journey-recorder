@@ -1,5 +1,6 @@
+import { StepType } from "../../../enum/StepType";
 import Journey from "../../Journey.class";
-import { InputStep, Step, StepType } from "../../Step.class";
+import { InputStep, Step } from "../../Step.class";
 import StringBuilder from "../../StringBuilder.class";
 import { CodePage } from "../CodePage.type";
 import CommonPageBuilder from "./CommonPageBuilder.class";
@@ -169,7 +170,7 @@ export default class OPA5CodeStrategy {
         step: Step
     ): string {
         const sb = new StringBuilder();
-        const viewName = step.viewInfos.relativeViewName;
+        const viewName = step.viewInfos.relativeViewName || '<view_name>';
 
         sb.addTab(2).add('When.on').add(viewName).add('.pressOn({');
 
@@ -199,9 +200,9 @@ export default class OPA5CodeStrategy {
 
     private _createInputStep(
         step: InputStep,
-        viewName: string = '<view_name>'
     ): string {
         const sb = new StringBuilder();
+        const viewName = step.viewInfos.relativeViewName || '<view_name>';
         sb.addTab(2).add('When.on').add(viewName).add('.inputTextInto({');
 
         let usedMatchers: Record<string, unknown> = {};
@@ -231,10 +232,10 @@ export default class OPA5CodeStrategy {
     }
 
     private _createValidateStep(
-        step: Step,
-        viewName: string = '<view_name>'
+        step: Step
     ): string {
         const validate = new StringBuilder();
+        const viewName = step.viewInfos.relativeViewName || '<view_name>';
         validate.addTab(2).add('Then.on').add(viewName).add('.thereShouldBe({');
         let usedMatchers: Record<string, unknown> = {};
         if (step.control.controlId.use) {

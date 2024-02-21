@@ -2,6 +2,7 @@ import MessageToast from "sap/m/MessageToast";
 import { RequestBuilder, RequestMethod, Request } from "../model/class/RequestBuilder.class";
 import EventBus from "sap/ui/core/EventBus";
 import BaseController from "../controller/BaseController";
+import { Step } from "../model/class/Step.class";
 
 export interface Tab {
     title: string;
@@ -60,6 +61,19 @@ export class ChromeExtensionService {
         });
     }
 
+    public static getTabInfoById(tabId: number): Promise<Tab> {
+        return new Promise((resolve, _) => {
+            chrome.tabs.get(parseInt('' + tabId, 10), (tab: chrome.tabs.Tab) => {
+                resolve({
+                    title: (tab.title) || '',
+                    path: (tab.url) || '',
+                    id: ((tab.id) || tabId),
+                    icon: (tab.favIconUrl) || ''
+                });
+            });
+        });
+    }
+
     public setCurrentTab(tab?: Tab) {
         this._currentTab = tab;
     }
@@ -113,11 +127,11 @@ export class ChromeExtensionService {
             const setupPort = (port: chrome.runtime.Port) => {
                 // ignore if a connection is already active
                 if (port && port.name === 'ui5_tr') {
-                    this.internal_port = port;
-                    this.internal_port.onDisconnect.addListener(
+                    this._internalPort = port;
+                    this._internalPort.onDisconnect.addListener(
                         this._onDisconnectListener.bind(this)
                     );
-                    this.internal_port.onMessage.addListener(
+                    this._internalPort.onMessage.addListener(
                         this._onMessageListener.bind(this)
                     );
                     chrome.runtime.onMessage.addListener(
@@ -177,6 +191,100 @@ export class ChromeExtensionService {
         });
     }
 
+    public sendSyncMessage(msg: Request): Promise<unknown> {
+        msg.message_id = ++this._messageId;
+        return new Promise((resolve, reject) => {
+            const syncObject: Synchronizer = { success: resolve, error: reject };
+            this._messageMap[this._messageId] = syncObject;
+            this._sendMessage(msg);
+        });
+    }
+
+    public registerRecordingWebsocket(listenerFunction: (channel: string, event: string, data: object) => void, listener: BaseController) {
+        this._eventBus.subscribe(RECORD_TOKEN_CHANNEL, NEW_RECORD_TOKEN, listenerFunction, listener);
+    }
+
+    public unregisterRecordingWebsocket(listenerFunction: (channel: string, event: string, data: object) => void, listener: BaseController) {
+        this._eventBus.unsubscribe(RECORD_TOKEN_CHANNEL, NEW_RECORD_TOKEN, listenerFunction, listener);
+    }
+
+    public focusTab(tab: Tab): Promise<void> {
+        return new Promise((resolve, reject) => {
+            chrome.tabs.update(tab.id, { active: true }, (tab) => {
+                if (tab) {
+                    chrome.windows.update(tab.windowId, { focused: true }).then(() => {
+                        resolve();
+                    }).catch(() => {
+                        reject();
+                    })
+                } else {
+                    reject();
+                }
+            });
+        });
+    }
+
+    public async reconnectToPage(url: string): Promise<void> {
+        const tabs = await ChromeExtensionService.getAllTabs();
+        let fittingTab = tabs.filter((t: Tab) => t.path === url);
+
+        if (!fittingTab[0]) {
+            const chromeTab = await this._createTabByUrl(url);
+            await this._waitTabToLoad(chromeTab.id);
+            const tab = await ChromeExtensionService.getTabInfoById(chromeTab.id);
+            fittingTab = [tab];
+        }
+
+        this.setCurrentTab(fittingTab[0]);
+        await this.connectToCurrentTab(true);
+        await this.focusTab(fittingTab[0]);
+    }
+
+    public async disconnect(): Promise<void> {
+        if (this._internalPort && this._currentTab) {
+            await chrome.tabs.reload(this._currentTab.id, {
+                bypassCache: false,
+            });
+            this._resetConnection();
+        }
+    }
+
+    public async performAction(step: Step, useRRSelector: boolean = true) {
+        const rb = new RequestBuilder();
+        rb.setMethod(RequestMethod.POST);
+        rb.setUrl('/controls/action');
+        rb.setBody({
+            step: step.getObject(),
+            useManualSelection: !useRRSelector,
+        });
+        const result = await this.sendSyncMessage(rb.build()) as { status: number };
+        if (result.status !== 200) {
+            throw new Error();
+        }
+    }
+
+    private _waitTabToLoad(iTabNumber: number): Promise<void> {
+        const targetTabId: number = iTabNumber;
+        return new Promise((resolve) => {
+            const finishedLoad = (
+                iTabId: number,
+                oChangeInfo: chrome.tabs.TabChangeInfo
+            ) => {
+                if (
+                    targetTabId === iTabId &&
+                    oChangeInfo.status === 'complete'
+                ) {
+                    resolve();
+                } else {
+                    return;
+                }
+
+                chrome.tabs.onUpdated.removeListener(finishedLoad);
+            }
+            chrome.tabs.onUpdated.addListener(finishedLoad);
+        });
+    }
+
     private _requestPermission(oPermissionInfo: {
         id?: number;
         url: string;
@@ -208,39 +316,6 @@ export class ChromeExtensionService {
                     }
                 }
             );
-        });
-    }
-
-    public sendSyncMessage(msg: Request): Promise<unknown> {
-        msg.message_id = ++this._messageId;
-        return new Promise((resolve, reject) => {
-            const syncObject: Synchronizer = { success: resolve, error: reject };
-            this._messageMap[this._messageId] = syncObject;
-            this._sendMessage(msg);
-        });
-    }
-
-    public registerRecordingWebsocket(listenerFunction: (channel: string, event: string, data: object) => void, listener: BaseController) {
-        this._eventBus.subscribe(RECORD_TOKEN_CHANNEL, NEW_RECORD_TOKEN, listenerFunction, listener);
-    }
-
-    public unregisterRecordingWebsocket(listenerFunction: (channel: string, event: string, data: object) => void, listener: BaseController) {
-        this._eventBus.unsubscribe(RECORD_TOKEN_CHANNEL, NEW_RECORD_TOKEN, listenerFunction, listener);
-    }
-
-    public focusTab(tab: Tab): Promise<void> {
-        return new Promise((resolve, reject) => {
-            chrome.tabs.update(tab.id, { active: true }, (tab) => {
-                if (tab) {
-                    chrome.windows.update(tab.windowId, { focused: true }).then(() => {
-                        resolve();
-                    }).catch(() => {
-                        reject();
-                    })
-                } else {
-                    reject();
-                }
-            });
         });
     }
 
@@ -284,6 +359,7 @@ export class ChromeExtensionService {
 
     private _onMessageListener(message: { data?: { message_id?: number, status: number, instantType: 'record-token', content?: unknown } }) {
         const messageId = message?.data?.message_id;
+
         if (
             messageId &&
             this._messageMap[messageId]
@@ -307,6 +383,7 @@ export class ChromeExtensionService {
     }
 
     private _onInstantMessage(msg: { message_id?: number, code: number, instantType: 'record-token', content?: unknown, data: unknown }): void {
+
         if (msg?.message_id && this._messageMap[msg.message_id]) {
             if (msg.code >= 200 && msg.code <= 299) {
                 this._messageMap[msg.message_id].success(msg.data);
@@ -316,5 +393,9 @@ export class ChromeExtensionService {
         } else {
             console.log(msg);
         }
+    }
+
+    private _createTabByUrl(url: string): Promise<chrome.tabs.Tab> {
+        return chrome.tabs.create({ url: url, active: true });
     }
 }

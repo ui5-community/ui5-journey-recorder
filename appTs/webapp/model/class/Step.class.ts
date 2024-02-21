@@ -1,14 +1,4 @@
-export enum StepType {
-    CLICK = 'clicked',
-    INPUT = 'input',
-    KEYPRESS = 'keypress',
-    UNKNOWN = 'unknown',
-    VALIDATION = 'validate',
-}
-
-export type IntermediateStep = Step & {
-    view?: { absoluteViewName: string; relativeViewName: string };
-};
+import { StepType } from "../enum/StepType"
 
 export type RecordEvent = {
     type: StepType,
@@ -85,8 +75,8 @@ export abstract class Step {
     private _control: Control;
     private _recordReplaySelector: Record<string, unknown>;
 
-    public static recordEventToStep(event: RecordEvent): IntermediateStep {
-        let res: IntermediateStep;
+    public static recordEventToStep(event: RecordEvent): Step {
+        let res: Step;
         switch (event.type) {
             case StepType.CLICK:
                 if (
@@ -147,7 +137,7 @@ export abstract class Step {
         res.control = stepControl;
         res.styleClasses = event.control.classes;
         res.actionLocation = event.location;
-        res.view = event.control.view;
+        res.viewInfos = event.control.view;
         res.recordReplaySelector = event.control.recordReplaySelector;
         res.applyPreSelection();
         return res;
@@ -406,6 +396,13 @@ export class KeyPressStep extends Step {
     get keyCode(): number {
         return this.key_code;
     }
+
+    getObject(): Record<string, unknown> {
+        const original = super.getObject();
+        original.keyCode = this.key_code;
+        original.keyChar = this.key_char;
+        return original;
+    }
 }
 
 export class InputStep extends Step {
@@ -434,6 +431,12 @@ export class InputStep extends Step {
             }
         });
         return sb.join('');
+    }
+
+    getObject(): Record<string, unknown> {
+        const original = super.getObject();
+        original.keys = this._keys.map(k => k.getObject());
+        return original;
     }
 }
 

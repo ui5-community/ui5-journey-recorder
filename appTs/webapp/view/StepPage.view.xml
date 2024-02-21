@@ -325,8 +325,8 @@
             <Bar>
                 <contentLeft>
                     <core:Icon
-                        src="sap-icon://disconnected"
-                        color="Critical"
+                        src="{ path: '/connectionStatus', formatter: '.connectionIcon'}"
+                        color="{ path: '/connectionStatus', formatter: '.connectionColor'}"
                     />
                 </contentLeft>
                 <contentRight>

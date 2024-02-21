@@ -1,0 +1,40 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+    <Dialog title="Recording ongoing">
+        <content>
+            <List
+                items="{journey>/steps}"
+                headerText="Steps already recorded"
+            >
+                <items>
+                    <CustomListItem
+                        class="step-item"
+                        press=".navigateToStep"
+                    >
+                        <HBox>
+                            <Button
+                                icon="sap-icon://bo-strategy-management"
+                                enabled="false"
+                                type="Transparent"
+                            />
+                            <VBox>
+                                <Title text="{journey>control/controlId/id}" />
+                                <Text text="{journey>actionLocation}" />
+                            </VBox>
+                        </HBox>
+                    </CustomListItem>
+                </items>
+            </List>
+        </content>
+        <endButton>
+            <Button
+                text="Stop recording"
+                press="onStopRecording"
+                type="Critical"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

@@ -56,6 +56,11 @@
                             selected="{= ${path: 'settings>/replayDelay'} === 2.0}"
                         />
                     </RadioButtonGroup>
+
+                    <Checkbox
+                        text="Use Record Replay Selector"
+                        selected="{settings>/useRRSelector}"
+                    />
                 </VBox>
             </Panel>
             <Panel headerText="Code">

@@ -41,6 +41,7 @@
 
   function setup_port_passthrough() {
     port = chrome.runtime.connect({ name: "ui5_tr" });
+
     port.onMessage.addListener((msg) => {
       window.postMessage({
         origin: EXT_ID,
@@ -49,6 +50,7 @@
     });
 
     port.onDisconnect.addListener(() => {
+
       window.postMessage({
         origin: EXT_ID,
         ...{
@@ -64,6 +66,7 @@
 
     const page_id = EXT_ID + '_ui5_tr_handler';
     window.addEventListener("message", (event) => {
+
       if (event.data.origin === page_id && event.origin === page_origin) {
         port.postMessage({ data: event.data.message || event.data.response });
       }

@@ -76,7 +76,20 @@
                                 </layout:VerticalLayout>
                             </HBox>
                         </uxap:expandedContent>
-                        <uxap:actions />
+                        <uxap:actions>
+                            <Button
+                                icon="sap-icon://connected"
+                                press="onConnect"
+                                text="Connect"
+                                visible="{= ${path: '/connectionStatus'} !== 'connected' &amp;&amp; ${path: '/connectionStatus'} !== 'connecting'}"
+                            />
+                            <Button
+                                icon="sap-icon://disconnected"
+                                press="onDisconnect"
+                                text="Disconnect"
+                                visible="{= ${path: '/connectionStatus'} === 'connected'}"
+                            />
+                        </uxap:actions>
                     </uxap:ObjectPageDynamicHeaderTitle>
                 </uxap:headerTitle>
                 <uxap:sections>
@@ -118,14 +131,16 @@
                                 </uxap:blocks>
                                 <uxap:actions>
                                     <Button
-                                        icon="sap-icon://connected"
-                                        press=""
-                                        text="Connect"
+                                        icon="sap-icon://restart"
+                                        press="onReplay"
+                                        text="Replay"
+                                        visible="{= !${path: 'journeyControl>/replayEnabled'}}"
                                     />
                                     <Button
-                                        icon="sap-icon://restart"
-                                        press=""
-                                        text="Replay"
+                                        icon="sap-icon://stop"
+                                        press="onStopReplay"
+                                        text="Stop Replay"
+                                        visible="{= ${path: 'journeyControl>/replayEnabled'}}"
                                     />
                                 </uxap:actions>
                             </uxap:ObjectPageSubSection>
@@ -201,8 +216,8 @@
             <Bar>
                 <contentLeft>
                     <core:Icon
-                        src="sap-icon://disconnected"
-                        color="Critical"
+                        src="{ path: '/connectionStatus', formatter: '.connectionIcon'}"
+                        color="{ path: '/connectionStatus', formatter: '.connectionColor'}"
                     />
                 </contentLeft>
                 <contentRight>

@@ -7,39 +7,151 @@ import UI5Element from "sap/ui/core/Element";
 import BusyIndicator from "sap/ui/core/BusyIndicator";
 import Utils from "../model/class/Utils.class";
 import Dialog from "sap/m/Dialog";
-import { ButtonType, DialogType } from "sap/m/library";
-import { ValueState } from "sap/ui/core/library";
+import { ButtonType, DialogType, FlexAlignContent, FlexAlignItems } from "sap/m/library";
 import Button from "sap/m/Button";
 import Text from "sap/m/Text";
 import MessageToast from "sap/m/MessageToast";
 import Journey from "../model/class/Journey.class";
-import CodeEditor from "sap/ui/codeeditor";
 import CodeGenerationService from "../service/CodeGeneration.service";
 import Menu from "sap/m/Menu";
 import Fragment from "sap/ui/core/Fragment";
 import MenuItem from "sap/m/MenuItem";
-import SettingsStorageService from "../service/SettingsStorage.service";
+import SettingsStorageService, { AppSettings } from "../service/SettingsStorage.service";
 import { TestFrameworks } from "../model/enum/TestFrameworks";
-import { CodePage } from "../model/class/codeStrategies/opa5/OPA5CodeStrategy.class";
 import { downloadZip } from "client-zip";
+import { CodePage } from "../model/class/codeStrategies/CodePage.type";
+import { ChromeExtensionService } from "../service/ChromeExtension.service";
+import { RecordEvent, Step } from "../model/class/Step.class";
+import { RequestBuilder, RequestMethod } from "../model/class/RequestBuilder.class";
+import VBox from "sap/m/VBox";
+import CheckBox, { CheckBox$SelectEvent } from "sap/m/CheckBox";
+import History from "sap/ui/core/routing/History";
+
 /**
  * @namespace com.ui5.journeyrecorder.controller
  */
 export default class JourneyPage extends BaseController {
     private model: JSONModel;
-    private _unsafeDialog: Dialog;
-    private _editor: CodeEditor;
+    private _approveConnectDialog: Dialog;
+    private _recordingDialog: Dialog;
+    private _replayDialog: Dialog;
     private _frameworkMenu: Menu;
 
-    async onInit() {
-        this.model = new JSONModel({});
-        this.setModel(this.model, 'journey');
-        this.setModel(new JSONModel({ titleVisible: true, titleInputVisible: false, }), 'journeyControl');
-        this.getRouter().getRoute("journey").attachMatched((oEvent) => { void this._loadJourney(oEvent); });
-        this.model.attachEvent('propertyChange', null, () => { this._setToUnsafed(); }, this);
-        this._editor = this.byId('codeeditor');
-        const settings = (await SettingsStorageService.getSettings());
-        (this.getModel('journeyControl') as JSONModel).setProperty('/framework', settings.testFramework);
+    onInit() {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, @typescript-eslint/unbound-method
+        this.getRouter().getRoute("journey").attachMatched(this._loadJourney, this);
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, @typescript-eslint/unbound-method
+        this.getRouter().getRoute("recording").attachMatched(this._recordJourney, this);
+    }
+
+    onNavBack() {
+        void JourneyStorageService.isChanged((this.getModel('journey') as JSONModel).getData() as Journey).then((unsafed: boolean) => {
+            if (unsafed) {
+                void this._openUnsafedDialog().then(() => {
+                    void ChromeExtensionService.getInstance().disconnect().then(() => {
+                        this.setDisconnected();
+                        const sPreviousHash = History.getInstance().getPreviousHash();
+                        if (sPreviousHash?.indexOf('recording') > -1) {
+                            this.getRouter().navTo("main");
+                        } else {
+                            super.onNavBack();
+                        }
+                    });
+                })
+            } else {
+                void ChromeExtensionService.getInstance().disconnect().then(() => {
+                    this.setDisconnected();
+                    const sPreviousHash = History.getInstance().getPreviousHash();
+                    if (sPreviousHash?.indexOf('recording') > -1) {
+                        this.getRouter().navTo("main");
+                    } else {
+                        super.onNavBack();
+                    }
+                });
+            }
+        });
+    }
+
+    async onConnect() {
+        BusyIndicator.show();
+        this.setConnecting();
+        const url = this.model.getProperty('/startUrl') as string;
+        await ChromeExtensionService.getInstance().reconnectToPage(url);
+        BusyIndicator.hide();
+        this.setConnected();
+        MessageToast.show('Connected');
+    }
+
+    onDisconnect() {
+        void ChromeExtensionService.getInstance().disconnect().then(() => {
+            this.setDisconnected();
+            MessageToast.show('Disconnected');
+        })
+    }
+
+    async onReplay() {
+        const settings = (this.getModel('settings') as JSONModel).getData() as AppSettings;
+        (this.getModel('journeyControl') as JSONModel).setProperty('/replaySettings', { delay: settings.replayDelay, manual: settings.manualReplayMode, rrSelectorUse: settings.useRRSelector });
+        await this._openReplayDialog();
+    }
+
+    onRejectReplay() {
+        this._replayDialog.close();
+        (this.getModel('journeyControl') as JSONModel).setProperty('/replayEnabled', false);
+    }
+
+    async onStartReplay() {
+        this._replayDialog.close();
+        const replaySettings = (this.getModel('journeyControl') as JSONModel).getProperty('/replaySettings') as { delay: number, manual: boolean, rrSelectorUse: boolean };
+        await this.onConnect();
+
+        (this.getModel('journeyControl') as JSONModel).setProperty('/replayEnabled', true);
+        if (!replaySettings.manual) {
+            await this._startAutomaticReplay(replaySettings.delay, replaySettings.rrSelectorUse);
+        } else {
+            MessageToast.show('Replay engaged!');
+        }
+    }
+
+    onStopReplay() {
+        (this.getModel('journeyControl') as JSONModel).setProperty('/replayEnabled', false);
+        this.onDisconnect();
+    }
+    onChangeReplayDelay(oEvent: Event) {
+        const index = oEvent.getParameter("selectedIndex" as never);
+        switch (index) {
+            case 0:
+                (this.getModel("journeyControl") as JSONModel).setProperty('/replaySettings/delay', 0.5);
+                break;
+            case 1:
+                (this.getModel("journeyControl") as JSONModel).setProperty('/replaySettings/delay', 1.0);
+                break;
+            case 2:
+                (this.getModel("journeyControl") as JSONModel).setProperty('/replaySettings/delay', 2.0);
+                break;
+            default:
+                (this.getModel("journeyControl") as JSONModel).setProperty('/replaySettings/delay', 0.5);
+        }
+    }
+    private async _startAutomaticReplay(delay: number, rrSelectorUse: boolean) {
+        BusyIndicator.show();
+        const journeySteps = [...(this.model.getData() as Journey).steps];
+        while (journeySteps.length !== 0) {
+            await this._delay(1000 * delay)
+            const curStep = journeySteps.shift();
+            try {
+                await ChromeExtensionService.getInstance().performAction(curStep, rrSelectorUse);
+            } catch (e) {
+                this.onDisconnect();
+                MessageToast.show('An Error happened during testing');
+            }
+        }
+        this.onStopReplay();
+        BusyIndicator.hide();
+        MessageToast.show('All tests executed successfully');
+    }
+    private _delay(ms: number) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
     toTitleEdit() {
@@ -73,33 +185,15 @@ export default class JourneyPage extends BaseController {
         const unsafed = (this.getModel('journeyControl') as JSONModel).getProperty('/unsafed') as boolean;
 
         if (unsafed) {
-            if (!this._unsafeDialog) {
-                this._unsafeDialog = new Dialog({
-                    type: DialogType.Message,
-                    state: ValueState.Warning,
-                    title: 'Unsafed Changes!',
-                    content: new Text({ text: "You have unsafed changes, proceed?" }),
-                    beginButton: new Button({
-                        type: ButtonType.Attention,
-                        text: 'Proceed',
-                        press: () => {
-                            this._unsafeDialog.close();
-                            void this._export().then(() => {
-                                BusyIndicator.hide();
-                            });
-                        }
-                    }),
-                    endButton: new Button({
-                        text: 'Cancel',
-                        press: () => {
-                            this._unsafeDialog.close();
-                            this.byId('saveBtn').focus();
-                            BusyIndicator.hide();
-                        }
-                    })
-                })
+            try {
+                await this._openUnsafedDialog()
+                await this._export();
+                BusyIndicator.hide();
             }
-            this._unsafeDialog.open();
+            catch (e) {
+                this.byId('saveBtn').focus();
+                BusyIndicator.hide();
+            }
         } else {
             await this._export();
             BusyIndicator.hide();
@@ -107,7 +201,8 @@ export default class JourneyPage extends BaseController {
     }
 
     async onSave() {
-        await JourneyStorageService.getInstance().save(this.model.getData() as Journey)
+        await JourneyStorageService.getInstance().save(this.model.getData() as Journey);
+        (this.getModel('journeyControl') as JSONModel).setProperty('/unsafed', false);
         MessageToast.show('Journey saved!');
     }
 
@@ -183,6 +278,24 @@ export default class JourneyPage extends BaseController {
         link.remove()
     }
 
+    async onStopRecording() {
+        this._recordingDialog.close();
+        BusyIndicator.show();
+        const ui5Version = await this._requestUI5Version();
+        const data = this.model.getData() as Partial<Journey>;
+        data.ui5Version = ui5Version;
+        const journey = JourneyStorageService.createJourneyFromRecording(data);
+        ChromeExtensionService.getInstance().unregisterRecordingWebsocket(
+            // eslint-disable-next-line @typescript-eslint/unbound-method
+            this._onStepRecord,
+            this
+        );
+        BusyIndicator.hide();
+        this.model.setData(journey);
+        (this.getModel('journeyControl') as JSONModel).setProperty('/unsafed', true);
+        this._generateCode(journey);
+    }
+
     private _generateCode(journey: Journey) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         const framework = (this.getModel('journeyControl') as JSONModel).getProperty('/framework') as TestFrameworks;
@@ -203,14 +316,136 @@ export default class JourneyPage extends BaseController {
         link.remove();
     }
 
+    private _setToUnsafed() {
+        (this.getModel('journeyControl') as JSONModel).setProperty('/unsafed', true);
+    }
+
     private async _loadJourney(oEvent: Event) {
+        await this._setupJourneyControlModel();
         const oArgs: { id: string } = oEvent.getParameter("arguments" as never);
         const journey = await JourneyStorageService.getInstance().getById(oArgs.id);
-        this.model.setData(journey);
+        this.model = new JSONModel(journey);
+        this.setModel(this.model, 'journey');
+        this.model.attachEvent('propertyChange', null, () => { this._setToUnsafed(); }, this);
         this._generateCode(journey);
     }
 
-    private _setToUnsafed() {
-        (this.getModel('journeyControl') as JSONModel).setProperty('/unsafed', true);
+    private async _recordJourney(oEvent: Event) {
+        BusyIndicator.show();
+        await this._setupJourneyControlModel();
+        const { tabId } = oEvent.getParameter('arguments' as never) as { tabId: number };
+        const tab = await ChromeExtensionService.getTabInfoById(tabId);
+        this.model = new JSONModel({ name: tab.title });
+        this.setModel(this.model, 'journey');
+
+        const settingsModel = (this.getModel('settings') as JSONModel).getData() as AppSettings;
+        let reload = settingsModel.reloadPageDefault;
+        const connectFn = () => {
+            BusyIndicator.show();
+            this._approveConnectDialog.close();
+            this.setConnecting();
+            ChromeExtensionService.getInstance().setCurrentTab(tab);
+            ChromeExtensionService.getInstance().connectToCurrentTab(reload).then(async () => {
+                ChromeExtensionService.getInstance().registerRecordingWebsocket(
+                    // eslint-disable-next-line @typescript-eslint/unbound-method
+                    this._onStepRecord,
+                    this
+                )
+                this.setConnected();
+                void ChromeExtensionService.getInstance().focusTab(tab);
+                BusyIndicator.hide();
+                await this._openRecordingDialog();
+                MessageToast.show('Connected');
+            }).catch(() => {
+                BusyIndicator.hide();
+            });
+        };
+
+
+        if (!this._approveConnectDialog) {
+            const dialogContent = new VBox({
+                alignItems: FlexAlignItems.Start,
+                justifyContent: FlexAlignContent.Start
+            });
+            dialogContent.addItem(
+                new Text({ text: `Connect to the tab "${tab.title}" and inject analytic scripts?` })
+            );
+            const chkBox =
+                new CheckBox({ text: 'Reload tab', selected: reload });
+            chkBox.attachSelect((p1: CheckBox$SelectEvent) => {
+                reload = p1.getParameter("selected");
+            })
+            dialogContent.addItem(
+                chkBox
+            );
+            this._approveConnectDialog = new Dialog({
+                type: DialogType.Message,
+                title: 'Connect to tab',
+                content: dialogContent,
+                beginButton: new Button({
+                    type: ButtonType.Accept,
+                    text: "Connect!",
+                    press: connectFn
+                }),
+                endButton: new Button({
+                    text: "Cancel",
+                    press: () => {
+                        this._approveConnectDialog.close()
+                    }
+                })
+            });
+        } else {
+            const dialogContent = this._approveConnectDialog.getAggregation('content') as sap.ui.core.Control[];
+            ((dialogContent[0] as VBox).getItems()[0] as Text).setText(`Connect to the tab "${tab.title}" and inject analytic scripts?`);
+            this._approveConnectDialog.getBeginButton().attachPress(connectFn);
+        }
+        BusyIndicator.hide();
+        this._approveConnectDialog.open();
+    }
+
+    private async _setupJourneyControlModel() {
+        this.setModel(new JSONModel({ titleVisible: true, titleInputVisible: false, replayEnabled: false }), 'journeyControl');
+        const settings = (await SettingsStorageService.getSettings());
+        (this.getModel('journeyControl') as JSONModel).setProperty('/framework', settings.testFramework);
+    }
+
+    private async _openRecordingDialog() {
+        if (!this._recordingDialog) {
+            this._recordingDialog = await this.loadFragment({
+                name: "com.ui5.journeyrecorder.fragment.RecordingDialog"
+            }) as Dialog;
+            this.getView().addDependent(this._recordingDialog);
+        }
+        (this._recordingDialog).open();
+    }
+
+    private async _openReplayDialog() {
+        if (!this._replayDialog) {
+            this._replayDialog = await this.loadFragment({
+                name: "com.ui5.journeyrecorder.fragment.ReplayStartDialog"
+            }) as Dialog;
+            this.getView().addDependent(this._replayDialog);
+        }
+        (this._replayDialog).open();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    private _onStepRecord(_1: string, _2: string, recordData: object) {
+        const data = this.model.getData() as { name: string; steps?: Step[] };
+        const newStep = Step.recordEventToStep(recordData as RecordEvent);
+        if (!data.steps) {
+            data.steps = [];
+        }
+        data.steps.push(newStep);
+        this.model.setData(data);
+    }
+
+    private async _requestUI5Version() {
+        const req = new RequestBuilder()
+            .setMethod(RequestMethod.GET)
+            .setUrl('/pageInfo/version')
+            .build();
+        const version = await ChromeExtensionService.getInstance().sendSyncMessage(req) as { message: string };
+        return version.message;
     }
 }

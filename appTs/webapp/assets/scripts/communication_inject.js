@@ -70,7 +70,8 @@
       this.webSocket = {
         send_record_step: (step) => {
           window.postMessage({
-            origin: `${sListenerId}_${API.own_id}`, message: {
+            origin: `${sListenerId}_${API.own_id}`,
+            message: {
               instantType: 'record-token',
               content: step
             }
