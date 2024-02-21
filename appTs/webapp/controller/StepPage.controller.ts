@@ -131,36 +131,6 @@ export default class StepPage extends BaseController {
         return property?.length > 0;
     }
 
-    actionIcon(action: StepType) {
-        switch (action) {
-            case StepType.CLICK:
-                return "sap-icon://cursor-arrow";
-            case StepType.INPUT:
-                return "sap-icon://text";
-            case StepType.KEYPRESS:
-                return "sap-icon://keyboard-and-mouse";
-            case StepType.VALIDATION:
-                return "sap-icon://validate";
-            default:
-                return '';
-        }
-    }
-
-    actionText(action: StepType) {
-        switch (action) {
-            case StepType.CLICK:
-                return "Click";
-            case StepType.INPUT:
-                return "Input";
-            case StepType.KEYPRESS:
-                return "KeyPress";
-            case StepType.VALIDATION:
-                return "Validation";
-            default:
-                return '';
-        }
-    }
-
     async onCopyCode() {
         await navigator.clipboard.writeText((this.getModel('stepSetup') as JSONModel).getProperty('/code') as string);
         MessageToast.show("Code copied");

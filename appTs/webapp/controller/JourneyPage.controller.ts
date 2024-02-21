@@ -26,6 +26,13 @@ import { RequestBuilder, RequestMethod } from "../model/class/RequestBuilder.cla
 import VBox from "sap/m/VBox";
 import CheckBox, { CheckBox$SelectEvent } from "sap/m/CheckBox";
 import History from "sap/ui/core/routing/History";
+import { ValueState } from "sap/ui/core/library";
+import BlockLayout from "sap/ui/layout/BlockLayout";
+
+type ReplayEnabledStep = Step & {
+    state?: ValueState;
+    executable?: boolean;
+}
 
 /**
  * @namespace com.ui5.journeyrecorder.controller
@@ -79,13 +86,13 @@ export default class JourneyPage extends BaseController {
         await ChromeExtensionService.getInstance().reconnectToPage(url);
         BusyIndicator.hide();
         this.setConnected();
-        MessageToast.show('Connected');
+        MessageToast.show('Connected', { duration: 500 });
     }
 
     onDisconnect() {
         void ChromeExtensionService.getInstance().disconnect().then(() => {
             this.setDisconnected();
-            MessageToast.show('Disconnected');
+            MessageToast.show('Disconnected', { duration: 500 });
         })
     }
 
@@ -110,6 +117,7 @@ export default class JourneyPage extends BaseController {
             await this._startAutomaticReplay(replaySettings.delay, replaySettings.rrSelectorUse);
         } else {
             MessageToast.show('Replay engaged!');
+            this._startManualReplay(replaySettings.rrSelectorUse);
         }
     }
 
@@ -135,21 +143,70 @@ export default class JourneyPage extends BaseController {
     }
     private async _startAutomaticReplay(delay: number, rrSelectorUse: boolean) {
         BusyIndicator.show();
-        const journeySteps = [...(this.model.getData() as Journey).steps];
-        while (journeySteps.length !== 0) {
+        const journeySteps = (this.model.getData() as Journey).steps as ReplayEnabledStep[];
+        for (let index = 0; index < journeySteps.length; index++) {
             await this._delay(1000 * delay)
-            const curStep = journeySteps.shift();
+            const curStep = journeySteps[index];
             try {
+                this.model.setProperty(`/steps/${index}/state`, ValueState.Information);
                 await ChromeExtensionService.getInstance().performAction(curStep, rrSelectorUse);
+                this.model.setProperty(`/steps/${index}/state`, ValueState.Success);
             } catch (e) {
                 this.onDisconnect();
-                MessageToast.show('An Error happened during testing');
+                this.model.setProperty(`/steps/${index}/state`, ValueState.Error);
+                MessageToast.show('An Error happened during testing', { duration: 3000 });
+                BusyIndicator.hide();
+                this.onStopReplay();
+                return;
             }
         }
-        this.onStopReplay();
         BusyIndicator.hide();
-        MessageToast.show('All tests executed successfully');
+        this.onStopReplay();
+        MessageToast.show('All tests executed successfully', { duration: 3000 });
     }
+
+    private _startManualReplay(rrSelectorUse: boolean) {
+        const model = (this.getModel('journeyControl') as JSONModel);
+
+        model.setProperty('/manualReplay', true);
+        model.setProperty('/manualReplayIndex', 0);
+        model.setProperty('/manualReplayRRSelector', rrSelectorUse);
+        this.model.setProperty(`/steps/0/executable`, true);
+    }
+
+    public async executeTestStep() {
+        const journeySteps = (this.model.getData() as Journey).steps as ReplayEnabledStep[];
+        const model = (this.getModel('journeyControl') as JSONModel);
+        const index = model.getProperty('/manualReplayIndex') as number;
+        const rrSelectorUse = model.getProperty('/manualReplayRRSelector') as boolean;
+
+        const curStep = journeySteps[index];
+        try {
+            this.model.setProperty(`/steps/${index}/state`, ValueState.Information);
+            await ChromeExtensionService.getInstance().performAction(curStep, rrSelectorUse);
+            this.model.setProperty(`/steps/${index}/state`, ValueState.Success);
+            model.setProperty('/manualReplayIndex', index + 1);
+            this.model.setProperty(`/steps/${index}/executable`, false);
+
+            if (index === (journeySteps.length - 1)) {
+                this.onStopReplay();
+                MessageToast.show('All tests executed successfully', { duration: 3000 });
+                return;
+            }
+
+            if (index + 1 < journeySteps.length) {
+                this.model.setProperty(`/steps/${index + 1}/executable`, true);
+            }
+        } catch (e) {
+            this.onDisconnect();
+            this.model.setProperty(`/steps/${index}/state`, ValueState.Error);
+            MessageToast.show('An Error happened during testing', { duration: 3000 });
+            BusyIndicator.hide();
+            this.onStopReplay();
+            return;
+        }
+    }
+
     private _delay(ms: number) {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }

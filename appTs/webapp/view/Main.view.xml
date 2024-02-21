@@ -27,6 +27,7 @@
             <IconTabBar
                 headerBackgroundDesign="Transparent"
                 class="sapUiResponsiveContentPadding"
+                expandable="false"
             >
                 <items>
                     <IconTabFilter
