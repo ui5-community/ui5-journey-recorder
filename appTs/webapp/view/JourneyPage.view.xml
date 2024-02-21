@@ -8,6 +8,9 @@
     xmlns:code="sap.ui.codeeditor"
     xmlns:recorder="com.ui5.journeyrecorder.control"
     xmlns:mvc="sap.ui.core.mvc"
+    core:require="{
+		formatter: 'com/ui5/journeyrecorder/model/formatter'
+	}"
 >
     <Page>
         <customHeader>
@@ -111,19 +114,48 @@
                                                 press=".navigateToStep"
                                             >
                                                 <HBox>
-                                                    <Button
-                                                        icon="sap-icon://bo-strategy-management"
-                                                        enabled="false"
-                                                        type="Transparent"
-                                                    />
-                                                    <VBox>
-                                                        <Title
-                                                            text="{journey>control/controlId/id}"
+                                                    <VBox
+                                                        justifyContent="Center"
+                                                    >
+                                                        <Button
+                                                            icon="sap-icon://media-play"
+                                                            press=".executeTestStep"
+                                                            visible="{= !!${ path: 'journey>executable'} &amp;&amp; !!${ path: 'journeyControl>/manualReplay'}}"
                                                         />
-                                                        <Text
-                                                            text="{journey>actionLocation}"
+                                                        <core:Icon
+                                                            src="{
+                                                                path: 'journey>state',
+                                                                formatter: 'formatter.stateIcon'
+                                                            }"
+                                                            color="{                                                            
+                                                                path: 'journey>state',
+                                                                formatter: 'formatter.stateIconColor'
+                                                            }"
+                                                            visible="{= !${ path: 'journey>executable'} &amp;&amp; !!${ path: 'journeyControl>/manualReplay'}}"
                                                         />
                                                     </VBox>
+                                                    <HBox>
+                                                        <Button
+                                                            icon="{
+                                                            path: 'journey>actionType',
+                                                            formatter: 'formatter.actionIcon'
+                                                        }"
+                                                            tooltip="{
+                                                            path: 'journey>actionType',
+                                                            formatter: 'formatter.actionText'
+                                                        }"
+                                                            enabled="false"
+                                                            type="Transparent"
+                                                        />
+                                                        <VBox>
+                                                            <Title
+                                                                text="{journey>control/controlId/id}"
+                                                            />
+                                                            <Text
+                                                                text="{journey>actionLocation}"
+                                                            />
+                                                        </VBox>
+                                                    </HBox>
                                                 </HBox>
                                             </CustomListItem>
                                         </items>

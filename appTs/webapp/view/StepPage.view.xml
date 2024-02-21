@@ -9,6 +9,9 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:code="sap.ui.codeeditor"
     xmlns:forms="sap.ui.layout.form"
+    core:require="{
+		formatter: 'com/ui5/journeyrecorder/model/formatter'
+	}"
 >
     <Page>
         <customHeader>
@@ -46,10 +49,10 @@
                             <layout:VerticalLayout>
                                 <ObjectStatus
                                     title="Step action"
-                                    text="{path: 'step>/actionType', formatter: '.actionText'}"
+                                    text="{path: 'step>/actionType', formatter: 'formatter.actionText'}"
                                     icon="{
                                 path: 'step>/actionType',
-                                formatter: '.actionIcon'
+                                formatter: 'formatter.actionIcon'
                             }"
                                 />
                             </layout:VerticalLayout>
@@ -58,10 +61,10 @@
                             <layout:VerticalLayout>
                                 <ObjectStatus
                                     title="Step action"
-                                    text="{path: 'step>/actionType', formatter: '.actionText'}"
+                                    text="{path: 'step>/actionType', formatter: 'formatter.actionText'}"
                                     icon="{
                                 path: 'step>/actionType',
-                                formatter: '.actionIcon'
+                                formatter: 'formatter.actionIcon'
                             }"
                                 />
                             </layout:VerticalLayout>
