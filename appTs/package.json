@@ -16,7 +16,8 @@
 		"karma-ci": "karma start karma-ci.conf.js",
 		"karma-ci-cov": "karma start karma-ci-cov.conf.js",
 		"test": "npm run lint && npm run karma-ci-cov",
-		"wdi5": "wdio run ./webapp/test/e2e/\\wdio.conf.ts"
+		"wdi5": "wdio run ./webapp/test/e2e/\\wdio.conf.ts",
+		"postbuild": "node ./utils/buildSize.js"
 	},
 	"devDependencies": {
 		"@openui5/types": "^1.120.6",

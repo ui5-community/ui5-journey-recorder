@@ -1,8 +1,6 @@
 const glob = require("glob");
 const fs = require("fs");
 
-const { readdir, stat } = require('fs/promises');
-const { join } = require('path');
 const byte_size = (size) => {
     const size_map = {
         0: 'B',
@@ -17,36 +15,16 @@ const byte_size = (size) => {
     }
     return `${Math.floor(size * 100) / 100.0} ${size_map[divided]}`;
 }
-const dirSize = async dir => {
-    const files = await readdir(dir, { withFileTypes: true });
-
-    const paths = files.map(async file => {
-        const path = join(dir, file.name);
-
-        if (file.isDirectory()) return await dirSize(path);
-
-        if (file.isFile()) {
-            const { size } = await stat(path);
-
-            return size;
-        }
-
-        return 0;
-    });
-
-    return (await Promise.all(paths)).flat(Infinity).reduce((i, size) => i + size, 0);
-}
 
 const getDistSize = async () => {
     const files = await glob.glob('./dist/**/*.*');
-    console.log(files.length);
     return files.map(f => {
         try {
             return fs.statSync(f).size
         } catch (_) {
             return 0;
         }
-    }).reduce((a, b) => { console.log(a + b); return a + b; }, 0);
+    }).reduce((a, b) => { return a + b; }, 0);
 }
 
 const removeFiles = async () => {
