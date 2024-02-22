@@ -337,12 +337,22 @@
                         icon="sap-icon://survey"
                         text="Validate"
                         type="Accept"
+                        press=".onValidate"
+                        tooltip="Validates your selection of properties and actions"
+                    />
+                    <Button
+                        icon="sap-icon://delete"
+                        tooltip="Remove this step from the whole journey and nav back"
+                        text="Remove this step"
+                        press=".onStepRemove"
+                        type="Attention"
                     />
                     <Button
                         id="saveBtn"
                         icon="sap-icon://save"
                         text="Save"
                         press=".onSave"
+                        type="Emphasized"
                     />
                 </contentRight>
             </Bar>

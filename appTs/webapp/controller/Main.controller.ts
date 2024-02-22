@@ -16,6 +16,8 @@ import SearchField from "sap/m/SearchField";
 import Filter from "sap/ui/model/Filter";
 import FilterOperator from "sap/ui/model/FilterOperator";
 import { Tab } from "../service/ChromeExtension.service";
+import App from "./App.controller";
+import { AppSettings } from "../service/SettingsStorage.service";
 
 /**
  * @namespace com.ui5.journeyrecorder.controller
@@ -108,7 +110,8 @@ export default class Main extends BaseController {
 
 	private _loadTabs(): void {
 		//the initial load
-		void ChromeExtensionService.getAllTabs().then((aTabs) => {
+		const settings = (this.getModel('settings') as JSONModel).getData() as AppSettings;
+		void ChromeExtensionService.getAllTabs(settings.showUI5only).then((aTabs) => {
 			(this.getModel('main') as JSONModel).setProperty("/tabs", aTabs);
 		});
 	}

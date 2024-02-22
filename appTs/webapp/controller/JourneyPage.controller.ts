@@ -27,7 +27,7 @@ import VBox from "sap/m/VBox";
 import CheckBox, { CheckBox$SelectEvent } from "sap/m/CheckBox";
 import History from "sap/ui/core/routing/History";
 import { ValueState } from "sap/ui/core/library";
-import BlockLayout from "sap/ui/layout/BlockLayout";
+import ChangeReason from "sap/ui/model/ChangeReason";
 
 type ReplayEnabledStep = Step & {
     state?: ValueState;
@@ -96,6 +96,23 @@ export default class JourneyPage extends BaseController {
         })
     }
 
+
+    onStepDelete(oEvent: Event) {
+        const sPath = (oEvent.getSource()).getBindingContext('journey')?.sPath as string || '';
+        if (sPath !== '') {
+            const index = Number(sPath.replace('/steps/', ''));
+            const jour = this.model.getData() as Journey;
+            const steps = jour.steps;
+            steps.splice(index, 1);
+            this.model.setProperty('/steps', steps);
+            this.model.firePropertyChange({
+                reason: ChangeReason.Change,
+                path: '/steps',
+                value: steps
+            });
+        }
+    }
+
     async onReplay() {
         const settings = (this.getModel('settings') as JSONModel).getData() as AppSettings;
         (this.getModel('journeyControl') as JSONModel).setProperty('/replaySettings', { delay: settings.replayDelay, manual: settings.manualReplayMode, rrSelectorUse: settings.useRRSelector });
@@ -123,6 +140,7 @@ export default class JourneyPage extends BaseController {
 
     onStopReplay() {
         (this.getModel('journeyControl') as JSONModel).setProperty('/replayEnabled', false);
+        (this.getModel('journeyControl') as JSONModel).setProperty('/manualReplay', true);
         this.onDisconnect();
     }
     onChangeReplayDelay(oEvent: Event) {
@@ -142,7 +160,7 @@ export default class JourneyPage extends BaseController {
         }
     }
     private async _startAutomaticReplay(delay: number, rrSelectorUse: boolean) {
-        BusyIndicator.show();
+        BusyIndicator.show(0);
         const journeySteps = (this.model.getData() as Journey).steps as ReplayEnabledStep[];
         for (let index = 0; index < journeySteps.length; index++) {
             await this._delay(1000 * delay)
@@ -200,6 +218,7 @@ export default class JourneyPage extends BaseController {
         } catch (e) {
             this.onDisconnect();
             this.model.setProperty(`/steps/${index}/state`, ValueState.Error);
+            this.model.setProperty(`/steps/${index}/executable`, false);
             MessageToast.show('An Error happened during testing', { duration: 3000 });
             BusyIndicator.hide();
             this.onStopReplay();
@@ -383,7 +402,10 @@ export default class JourneyPage extends BaseController {
         const journey = await JourneyStorageService.getInstance().getById(oArgs.id);
         this.model = new JSONModel(journey);
         this.setModel(this.model, 'journey');
-        this.model.attachEvent('propertyChange', null, () => { this._setToUnsafed(); }, this);
+        this.model.attachPropertyChange(() => {
+            this._setToUnsafed();
+            this._generateCode(this.model.getData() as Journey);
+        });
         this._generateCode(journey);
     }
 

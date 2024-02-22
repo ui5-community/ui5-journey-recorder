@@ -132,6 +132,13 @@ export default class Journey {
         return this._steps;
     }
 
+    public set steps(steps: Step[]) {
+        if (!steps) {
+            this._steps = [];
+        }
+        this._steps = steps;
+    }
+
     public get name(): string {
         return this._name;
     }

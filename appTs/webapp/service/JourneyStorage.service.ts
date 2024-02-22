@@ -42,7 +42,10 @@ export default class JourneyStorageService {
         return !journey.equals(storageJourney);
     }
 
-    public async getById(id: string): Promise<Journey> {
+    public async getById(id: string): Promise<Journey | null> {
+        if (!id) {
+            return null;
+        }
         if (this._journeyCache[id]) {
             return this._journeyCache[id];
         } else {

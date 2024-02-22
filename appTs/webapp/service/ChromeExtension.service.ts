@@ -24,6 +24,22 @@ export interface RequestAnswer {
 export const RECORD_TOKEN_CHANNEL = 'record-token-channel';
 export const NEW_RECORD_TOKEN = 'new-record-token';
 
+//copied from the chrome.scripting index.d.ts for better type help
+interface InjectionResult<T = unknown> {
+    /**
+     * The document associated with the injection.
+     * @since Chrome 106.
+     */
+    documentId: string;
+    /**
+     * The frame associated with the injection.
+     * @since Chrome 90.
+     */
+    frameId: number;
+    /* The result of the script execution. */
+    result?: T | undefined;
+}
+
 export class ChromeExtensionService {
     private static instance: ChromeExtensionService;
 
@@ -47,16 +63,98 @@ export class ChromeExtensionService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public static getAllTabs(onylUI5: boolean = false): Promise<Tab[]> {
+        const _resultingTabs = (tabs: chrome.tabs.Tab[]) => {
+            return tabs.map(tab => ({
+                title: (tab.title) || '',
+                path: (tab.url) || '',
+                id: (tab.id) || -1,
+                icon: (tab.favIconUrl) || ''
+            } as Tab)).filter(tab => tab.path !== '' && tab.id !== -1);
+        }
+
         return new Promise((resolve) => {
-            chrome.tabs.query({ currentWindow: false }, (tabs: chrome.tabs.Tab[]) => {
-                resolve(tabs.map((tab, index) => {
-                    return {
-                        title: (tab.title) || '',
-                        path: (tab.url) || '',
-                        id: (tab.id) || index,
-                        icon: (tab.favIconUrl) || ''
+            chrome.tabs.query({
+                currentWindow: false,
+                url: [
+                    "http://*/*",
+                    "https://*/*"
+                ],
+                status: "complete"
+            }, (tabs: chrome.tabs.Tab[]) => {
+                if (onylUI5) {
+                    Promise.allSettled(tabs.map((tab: chrome.tabs.Tab) => {
+                        return ChromeExtensionService._containsUI5(tab)
+                    })).then((results: PromiseSettledResult<boolean>[]) => {
+                        results.forEach((res: PromiseSettledResult<boolean>, ind: number) => {
+                            // if no ui5 is present we can remove the url to filter out
+                            if (!(res).value) {
+                                tabs[ind].url = '';
+                            }
+                        })
+                        resolve(_resultingTabs(tabs));
+                    }).catch(() => {
+                        resolve(_resultingTabs(tabs));
+                    })
+                } else {
+                    resolve(_resultingTabs(tabs));
+                }
+            });
+        });
+    }
+
+    private static _containsUI5(tab: chrome.tabs.Tab): Promise<boolean> {
+        function checkUI5() {
+            let normal = [].slice.call(document.head.getElementsByTagName('script')).filter(function (s) {
+                return s.src.indexOf('sap-ui-core.js') > -1;
+            }).length == 1;
+            let onPremise = [].slice.call(document.head.getElementsByTagName('script')).filter(function (s) {
+                return s.src.indexOf('/sap/bc/ui5_ui5/') > -1;
+            }).length >= 1;
+
+            if (!normal && !onPremise) {
+                //check if we are integrated into an iframe..
+                const iFrames = document.getElementsByTagName("iframe");
+                for (let i = 0; i < iFrames.length; i++) {
+                    if (iFrames[i].contentDocument) {
+                        normal = [].slice.call(iFrames[i].contentDocument.head.getElementsByTagName('script')).filter(function (s) {
+                            return s.src.indexOf('sap-ui-core.js') > -1 || s.src.indexOf('sap-ui-m-zen.js') > -1;
+                        }).length == 1;
+                        onPremise = [].slice.call(iFrames[i].contentDocument.head.getElementsByTagName('script')).filter(function (s) {
+                            return s.src.indexOf('/sap/bc/ui5_ui5/') > -1;
+                        }).length >= 1;
+
+                        if (normal || onPremise) {
+                            return true;
+                        }
                     }
-                }).filter((tab) => tab.path !== ''));
+                }
+            }
+
+            return normal || onPremise;
+        }
+
+        return new Promise((resolve, reject) => {
+            ChromeExtensionService.getInstance()._requestPermission({
+                id: tab.id,
+                url: tab.url,
+            }).then(() => {
+                chrome.scripting.executeScript({
+                    target: { tabId: tab.id },
+                    func: checkUI5
+                }, (result: InjectionResult<boolean>[]) => {
+                    // problem here, we have requested all necessary permissions but the error shows continously up
+                    if (chrome.runtime.lastError?.message.indexOf('Cannot access') < 0) {
+                        console.error(chrome.runtime.lastError?.message);
+                    }
+                    if (result) {
+                        resolve(result[0].result);
+                    } else {
+                        reject(false);
+                    }
+                })
+            }).catch((e) => {
+                console.log(e);
+                resolve(true);
             });
         });
     }

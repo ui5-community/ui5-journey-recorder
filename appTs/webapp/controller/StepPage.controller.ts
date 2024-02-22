@@ -12,8 +12,8 @@ import { TestFrameworks } from "../model/enum/TestFrameworks";
 import MessageToast from "sap/m/MessageToast";
 import CodeGenerationService from "../service/CodeGeneration.service";
 import { Route$MatchedEvent } from "sap/ui/core/routing/Route";
-import History from "sap/ui/core/routing/History";
-import { StepType } from "../model/enum/StepType";
+import BusyIndicator from "sap/ui/core/BusyIndicator";
+import { ChromeExtensionService } from "../service/ChromeExtension.service";
 
 /**
  * @namespace com.ui5.journeyrecorder.controller
@@ -49,34 +49,6 @@ export default class StepPage extends BaseController {
         });
     }
 
-   /*  onNavBack() {
-        const unsafed = (this.getModel('stepSetup') as JSONModel).getProperty('/propertyChanged') as boolean;
-        if (unsafed) {
-            this._openUnsafedDialog()
-                .then(() => {
-                    const sPreviousHash = History.getInstance().getPreviousHash();
-                    if (sPreviousHash?.indexOf('recording') > -1) {
-                        const journeyId = (this.getModel('stepSetup') as JSONModel).getProperty('/journeyId') as string;
-                        ((history.state as Record<string, unknown>).sap as { history: string[] }).history = ((history.state as Record<string, unknown>).sap as { history: string[] }).history.filter((s: string) => s.indexOf('recording') > -1);
-                        this.getRouter().navTo("journey", { id: journeyId });
-                    } else {
-                        super.onNavBack();
-                    }
-                })
-                .catch(() => {
-                    // do nothing
-                })
-        } else {
-            const sPreviousHash = History.getInstance().getPreviousHash();
-            if (sPreviousHash?.indexOf('recording') > -1) {
-                const journeyId = (this.getModel('stepSetup') as JSONModel).getProperty('/journeyId') as string;
-                this.getRouter().navTo("journey", { id: journeyId }, {}, true);
-            } else {
-                super.onNavBack();
-            }
-        }
-    } */
-
     async onSave() {
         const journey = await JourneyStorageService.getInstance().getById((this.getModel('stepSetup') as JSONModel).getProperty('/journeyId') as string);
         const step = Step.fromObject((this.getModel("step") as JSONModel).getData() as Partial<Step>);
@@ -84,6 +56,28 @@ export default class StepPage extends BaseController {
         await JourneyStorageService.getInstance().save(journey);
         (this.getModel('stepSetup') as JSONModel).setProperty('/propertyChanged', false);
         MessageToast.show('Step saved!');
+    }
+
+    public async onValidate() {
+        const step = Step.fromObject((this.getModel("step") as JSONModel).getData() as Partial<Step>);
+        BusyIndicator.show(0);
+        this.setConnecting()
+        const url = step.actionLocation;
+        try {
+            await ChromeExtensionService.getInstance().reconnectToPage(url);
+            this.setConnected();
+            await ChromeExtensionService.getInstance().performAction(step, false);
+            await ChromeExtensionService.getInstance().disconnect();
+            this.setDisconnected();
+            BusyIndicator.hide();
+            MessageToast.show('Step is valid and executable', { duration: 2000 });
+        } catch (e) {
+            await ChromeExtensionService.getInstance().disconnect();
+            this.setDisconnected();
+            BusyIndicator.hide();
+            MessageToast.show('An Error happened during validation', { duration: 2000 });
+        }
+
     }
 
     async typeChange($event: Event) {
@@ -110,6 +104,17 @@ export default class StepPage extends BaseController {
             this.getView().addDependent(this.frameworkMenu);
         }
         this.frameworkMenu.openBy(button, false);
+    }
+
+    async onStepRemove() {
+        const jId = this.getModel('stepSetup').getProperty('/journeyId') as string;
+        const id = this.model.getProperty('/id') as string;
+        const journey = await JourneyStorageService.getInstance().getById(jId);
+        if (journey) {
+            const index = journey.steps.findIndex(step => step.id === id);
+            journey.steps.splice(index, 1);
+            this.navTo("journey", { id: journey.id });
+        }
     }
 
     onStepTypeChange(oEvent: Event) {
