@@ -21,11 +21,16 @@ export default class Component extends UIComponent {
 		super.init();
 		// create the application wide default model, only for setups
 		this.setModel(new JSONModel({ connectionStatus: ConnectionStatus.DISCONNECTED }));
+
+		const version = this.getManifestObject().getJson().version as string;
+		(this.getModel() as JSONModel).setProperty('/appVersion', version);
+
 		// create the app settings model
 		void SettingsStorageService.getSettings().then((settings: AppSettings) => {
 			this.setModel(new JSONModel(settings), 'settings');
 			Theming.setTheme(settings.theme);
 		});
+
 		// create the device model
 		this.setModel(models.createDeviceModel(), "device");
 

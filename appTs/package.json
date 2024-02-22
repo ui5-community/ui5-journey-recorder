@@ -31,6 +31,7 @@
 		"@wdio/mocha-framework": "^8.29.3",
 		"@wdio/spec-reporter": "^8.29.7",
 		"eslint": "^8.56.0",
+		"glob": "^10.3.10",
 		"karma": "^6.4.2",
 		"karma-chrome-launcher": "^3.2.0",
 		"karma-coverage": "^2.2.1",
