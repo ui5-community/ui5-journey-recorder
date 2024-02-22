@@ -9,6 +9,7 @@ export type AppSettings = {
     replayDelay: number;
     theme: Themes;
     useRRSelector: boolean;
+    showUI5only: boolean;
 }
 
 export default class SettingsStorageService {
@@ -21,7 +22,8 @@ export default class SettingsStorageService {
             manualReplayMode: true,
             replayDelay: 0.5,
             theme: Themes.QUARTZ_LIGHT,
-            useRRSelector: true
+            useRRSelector: true,
+            showUI5only: false
         };
     }
 

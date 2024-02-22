@@ -6,10 +6,16 @@
     <Dialog title="Settings">
         <content>
             <Panel headerText="General">
-                <Checkbox
-                    text="Page reload at inject"
-                    selected="{settings>/reloadPageDefault}"
-                />
+                <Vbox>
+                    <Checkbox
+                        text="Show only UI5 running Tabs"
+                        selected="{settings>/showUI5only}"
+                    />
+                    <Checkbox
+                        text="Page reload at inject"
+                        selected="{settings>/reloadPageDefault}"
+                    />
+                </Vbox>
                 <VBox>
                     <Label text="Theme:" />
                     <RadioButtonGroup select="onThemeSelect">

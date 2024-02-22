@@ -120,9 +120,11 @@
                                                         <Button
                                                             icon="sap-icon://media-play"
                                                             press=".executeTestStep"
+                                                            class="sapUiTinyMarginEnd"
                                                             visible="{= !!${ path: 'journey>executable'} &amp;&amp; !!${ path: 'journeyControl>/manualReplay'}}"
                                                         />
                                                         <core:Icon
+                                                            class="sapUiTinyMarginEnd"
                                                             src="{
                                                                 path: 'journey>state',
                                                                 formatter: 'formatter.stateIcon'
@@ -131,30 +133,43 @@
                                                                 path: 'journey>state',
                                                                 formatter: 'formatter.stateIconColor'
                                                             }"
-                                                            visible="{= !${ path: 'journey>executable'} &amp;&amp; !!${ path: 'journeyControl>/manualReplay'}}"
+                                                            visible="{= !${ path: 'journey>executable'}}"
                                                         />
                                                     </VBox>
-                                                    <HBox>
-                                                        <Button
-                                                            icon="{
-                                                            path: 'journey>actionType',
-                                                            formatter: 'formatter.actionIcon'
-                                                        }"
+                                                    <HBox
+                                                        alignItems="Center"
+                                                        width="100%"
+                                                    >
+                                                        <core:Icon
+                                                            src="{
+                                                                path: 'journey>actionType',
+                                                                formatter: 'formatter.actionIcon'
+                                                            }"
                                                             tooltip="{
-                                                            path: 'journey>actionType',
-                                                            formatter: 'formatter.actionText'
-                                                        }"
-                                                            enabled="false"
-                                                            type="Transparent"
+                                                                path: 'journey>actionType',
+                                                                formatter: 'formatter.actionText'
+                                                            }"
                                                         />
-                                                        <VBox>
-                                                            <Title
-                                                                text="{journey>control/controlId/id}"
+                                                        <HBox
+                                                            justifyContent="SpaceBetween"
+                                                            alignItems="Center"
+                                                            width="100%"
+                                                            class="sapUiSmallMarginBegin"
+                                                        >
+                                                            <VBox>
+                                                                <Title
+                                                                    text="{journey>control/controlId/id}"
+                                                                />
+                                                                <Text
+                                                                    text="{journey>actionLocation}"
+                                                                />
+                                                            </VBox>
+                                                            <Button
+                                                                icon="sap-icon://delete"
+                                                                tooltip="Remove this step"
+                                                                press=".onStepDelete"
                                                             />
-                                                            <Text
-                                                                text="{journey>actionLocation}"
-                                                            />
-                                                        </VBox>
+                                                        </HBox>
                                                     </HBox>
                                                 </HBox>
                                             </CustomListItem>
