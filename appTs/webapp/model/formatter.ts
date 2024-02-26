@@ -17,7 +17,7 @@ export default {
 			case StepType.VALIDATION:
 				return "sap-icon://validate";
 			default:
-				return '';
+				return 'sap-icon://question-mark';
 		}
 	},
 
@@ -50,7 +50,7 @@ export default {
 				return IconColor.Default;
 		}
 	},
-	
+
 	stateIcon(state: ValueState) {
 		switch (state) {
 			case ValueState.Error:

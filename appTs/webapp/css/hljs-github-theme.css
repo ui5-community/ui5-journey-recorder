@@ -1,0 +1,229 @@
+pre code.hljs {
+    overflow-x: auto;
+    padding: 1em
+}
+code.hljs {
+	padding: 3px 5px
+}
+/*!
+    Theme: GitHub & Github Dark mixed
+    Description: Dark theme as seen on github.com
+    Author: github.com
+    Maintainer: @Hirse
+    Updated: 2021-05-15
+  
+    Outdated base version: https://github.com/primer/github-syntax-dark
+    Current colors taken from GitHub's CSS
+  */
+  /** bright theme **/
+pre.bright .hljs {
+    color: #24292e;
+    background: #ffffff
+}
+pre.bright .hljs-doctag,
+pre.bright .hljs-keyword,
+pre.bright .hljs-meta .hljs-keyword,
+pre.bright .hljs-template-tag,
+pre.bright .hljs-template-variable,
+pre.bright .hljs-type,
+pre.bright .hljs-variable.language_ {
+  /* prettylights-syntax-keyword */
+  color: #d73a49
+}
+
+pre.bright .hljs-title,
+pre.bright .hljs-title.class_,
+pre.bright .hljs-title.class_.inherited__,
+pre.bright .hljs-title.function_ {
+  /* prettylights-syntax-entity */
+  color: #6f42c1
+}
+
+pre.bright .hljs-attr,
+pre.bright .hljs-attribute,
+pre.bright .hljs-literal,
+pre.bright .hljs-meta,
+pre.bright .hljs-number,
+pre.bright .hljs-operator,
+pre.bright .hljs-variable,
+pre.bright .hljs-selector-attr,
+pre.bright .hljs-selector-class,
+pre.bright .hljs-selector-id {
+  /* prettylights-syntax-constant */
+  color: #005cc5
+}
+
+pre.bright .hljs-regexp,
+pre.bright .hljs-string,
+pre.bright .hljs-meta .hljs-string {
+  /* prettylights-syntax-string */
+  color: #032f62
+}
+
+pre.bright .hljs-built_in,
+pre.bright .hljs-symbol {
+  /* prettylights-syntax-variable */
+  color: #e36209
+}
+
+pre.bright .hljs-comment,
+pre.bright .hljs-code,
+pre.bright .hljs-formula {
+  /* prettylights-syntax-comment */
+  color: #6a737d
+}
+
+pre.bright .hljs-name,
+pre.bright .hljs-quote,
+pre.bright .hljs-selector-tag,
+pre.bright .hljs-selector-pseudo {
+  /* prettylights-syntax-entity-tag */
+  color: #22863a
+}
+
+pre.bright .hljs-subst {
+  /* prettylights-syntax-storage-modifier-import */
+  color: #24292e
+}
+
+pre.bright .hljs-section {
+  /* prettylights-syntax-markup-heading */
+  color: #005cc5;
+  font-weight: bold
+}
+
+pre.bright .hljs-bullet {
+  /* prettylights-syntax-markup-list */
+  color: #735c0f
+}
+
+pre.bright .hljs-emphasis {
+  /* prettylights-syntax-markup-italic */
+  color: #24292e;
+  font-style: italic
+}
+
+pre.bright .hljs-strong {
+  /* prettylights-syntax-markup-bold */
+  color: #24292e;
+  font-weight: bold
+}
+
+pre.bright .hljs-addition {
+  /* prettylights-syntax-markup-inserted */
+  color: #22863a;
+  background-color: #f0fff4
+}
+
+pre.bright .hljs-deletion {
+  /* prettylights-syntax-markup-deleted */
+  color: #b31d28;
+  background-color: #ffeef0
+}
+
+/** dark theme **/
+pre.dark .hljs {
+    color: #c9d1d9;
+    background: #0d1117
+}
+
+pre.dark .hljs-doctag,
+pre.dark .hljs-keyword,
+pre.dark .hljs-meta .hljs-keyword,
+pre.dark .hljs-template-tag,
+pre.dark .hljs-template-variable,
+pre.dark .hljs-type,
+pre.dark .hljs-variable.language_ {
+  /* prettylights-syntax-keyword */
+  color: #ff7b72
+}
+
+pre.dark .hljs-title,
+pre.dark .hljs-title.class_,
+pre.dark .hljs-title.class_.inherited__,
+pre.dark .hljs-title.function_ {
+  /* prettylights-syntax-entity */
+  color: #d2a8ff
+}
+
+pre.dark .hljs-attr,
+pre.dark .hljs-attribute,
+pre.dark .hljs-literal,
+pre.dark .hljs-meta,
+pre.dark .hljs-number,
+pre.dark .hljs-operator,
+pre.dark .hljs-variable,
+pre.dark .hljs-selector-attr,
+pre.dark .hljs-selector-class,
+pre.dark .hljs-selector-id {
+  /* prettylights-syntax-constant */
+  color: #79c0ff
+}
+
+pre.dark .hljs-regexp,
+pre.dark .hljs-string,
+pre.dark .hljs-meta .hljs-string {
+  /* prettylights-syntax-string */
+  color: #a5d6ff
+}
+
+pre.dark .hljs-built_in,
+pre.dark .hljs-symbol {
+  /* prettylights-syntax-variable */
+  color: #ffa657
+}
+
+pre.dark .hljs-comment,
+pre.dark .hljs-code,
+pre.dark .hljs-formula {
+  /* prettylights-syntax-comment */
+  color: #8b949e
+}
+
+pre.dark .hljs-name,
+pre.dark .hljs-quote,
+pre.dark .hljs-selector-tag,
+pre.dark .hljs-selector-pseudo {
+  /* prettylights-syntax-entity-tag */
+  color: #7ee787
+}
+
+pre.dark .hljs-subst {
+  /* prettylights-syntax-storage-modifier-import */
+  color: #c9d1d9
+}
+
+pre.dark .hljs-section {
+  /* prettylights-syntax-markup-heading */
+  color: #1f6feb;
+  font-weight: bold
+}
+
+pre.dark .hljs-bullet {
+  /* prettylights-syntax-markup-list */
+  color: #f2cc60
+}
+
+pre.dark .hljs-emphasis {
+  /* prettylights-syntax-markup-italic */
+  color: #c9d1d9;
+  font-style: italic
+}
+
+pre.dark .hljs-strong {
+  /* prettylights-syntax-markup-bold */
+  color: #c9d1d9;
+  font-weight: bold
+}
+
+pre.dark .hljs-addition {
+  /* prettylights-syntax-markup-inserted */
+  color: #aff5b4;
+  background-color: #033a16
+}
+
+pre.dark .hljs-deletion {
+  /* prettylights-syntax-markup-deleted */
+  color: #ffdcd7;
+  background-color: #67060c
+}

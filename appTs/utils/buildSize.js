@@ -26,6 +26,7 @@ const getDirSize = async (sDirectoryName) => {
     }).reduce((a, b) => { return a + b; }, 0);
 }
 (async () => {
-    const size = await getDirSize('dist');
+    const folderName = process.argv[2];
+    const size = await getDirSize(folderName);
     console.log('Build size: ', byteSize(size));
 })();

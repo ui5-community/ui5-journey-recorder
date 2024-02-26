@@ -7,3 +7,5 @@
 .step-page-header .sapFDynamicPageTitleMain>.sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle:not(.sapUICompVarMngmtTitle){
     font-size: 1rem;
 }
+
+/*for code styling look at the journey css*/
