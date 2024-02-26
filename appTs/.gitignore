@@ -1,6 +1,8 @@
 # build results
 dist
 coverage
+deploySelection
+deployments
 
 # Logs
 logs

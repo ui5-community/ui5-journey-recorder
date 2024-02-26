@@ -1,4 +1,4 @@
-specVersion: "3.0"
+specVersion: "3.2"
 metadata:
   name: com.ui5.journeyrecorder
 type: application
@@ -7,20 +7,35 @@ framework:
   version: "1.120.6"
   libraries:
     - name: sap.m
-    - name: sap.uxap
     - name: sap.ui.core
-    - name: sap.ui.codeeditor
-    - name: sap.ui.layout
-    - name: themelib_sap_horizon
+    - name: sap.uxap
     - name: themelib_sap_fiori_3
+    - name: themelib_sap_horizon
 builder:
   customTasks:
+    #- name: task-usage-search
+    #  afterTask: replaceVersion
     - name: ui5-tooling-modules-task
       afterTask: replaceVersion
       configuration:
         addToNamespace: true
     - name: ui5-tooling-transpile-task
       afterTask: replaceVersion
+    - name: ui5-task-minify-xml
+      afterTask: replaceVersion
+      configuration:
+        minifyOptions:
+          removeComments: true
+          collapseEmptyElements: true
+          collapseWhitespaceInAttributeValues: true
+        fileExtensions:
+          - "xml"
+    - name: ui5-task-minifier
+      afterTask: minify
+      configuration:
+        html: true
+        css: true
+        json: true
 server:
   customMiddleware:
     - name: ui5-tooling-modules-middleware
@@ -29,3 +44,12 @@ server:
       afterMiddleware: compression
     - name: ui5-middleware-livereload
       afterMiddleware: compression
+---
+# Task extension usage-search
+specVersion: "3.2"
+kind: extension
+type: task
+metadata:
+  name: task-usage-search
+task:
+  path: utils/custom_tasks/task-usage-search.js

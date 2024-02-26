@@ -10,3 +10,25 @@
     font-size: 1rem;
 }
 
+pre code.hljs.internal, pre.dark code.hljs.internal {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+pre code.hljs div.row, pre.dark code.hljs div.row {
+    display: flex;
+    flex-direction: row;
+}
+
+pre code.hljs div.row .line-indicator, pre.dark code.hljs div.row .line-indicator {
+    min-width: 1rem;
+    padding: 0 0.5rem;
+    text-align: end;
+    border-right: 1px solid;
+}
+
+pre code.hljs div.row .code, pre.dark code.hljs div.row .code {
+    margin-left: 0.5rem;
+}

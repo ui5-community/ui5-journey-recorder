@@ -1,0 +1,15 @@
+- removing layout library -> 208.89 MB
+- "--exclude-task=createDebugFiles" -> didn't work
+- using UI5 Webcomponents -> 244.87 MB
+- replacing all components with WebComp -> breaks
+- removeFromBuild util-script -> (208.89MB) 92.69MB
+- remove types.ts from assets/scripts -> 208.89 MB
+- ui5-minify-xml task -> 208.84 MB
+- ui5-task-minifier -> 208.84 MB
+- add removing messagebundles for unnecessary languages to the removeFromBuildScript -> 92.48 MB -> 87.6 MB
+- removing less files from themes -> 80.91 MB
+- creating a selective bundling script only for copying necessary stuff -> 43.7 MB
+- rebuild code viewer with highlight.js (removing core.ui.codeeditor) -> 178.14 (208.84) -> removeFromBuild.js 71.94
+- merge dark and bright css -> 178.13MB
+- minify.sh script -> 43.16MB
+- using webcomponents instead of sap.m

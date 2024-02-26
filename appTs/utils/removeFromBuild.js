@@ -16,8 +16,8 @@ const byte_size = (size) => {
     return `${Math.floor(size * 100) / 100.0} ${size_map[divided]}`;
 }
 
-const getDistSize = async () => {
-    const files = await glob.glob('./dist/**/*.*');
+const getDirSize = async (folderGlob) => {
+    const files = await glob.glob(folderGlob);
     return files.map(f => {
         try {
             return fs.statSync(f).size
@@ -27,32 +27,62 @@ const getDistSize = async () => {
     }).reduce((a, b) => { return a + b; }, 0);
 }
 
-const removeFiles = async () => {
-    ['dist/**/*-dbg.js',
-        'dist/**/*.js.map',
-        'dist/**/*.ts',].forEach(async (g) => {
-            const files = await glob.glob(g)
-            files.forEach(f => {
-                if (fs.existsSync(f)) {
-                    fs.unlinkSync(f)
-                }
-            })
-        });
-}
-
-const removeFolders = async () => {
-    ['dist/test/', 'dist/test-resources/'].forEach(f => {
+const removeFolders = async (aFoldersToRemove) => {
+    aFoldersToRemove.forEach(f => {
         if (fs.existsSync(f)) {
             fs.rmSync(f, { recursive: true });
         }
-    })
+    });
 }
 
+const removeFiles = async (aFilesToRemoveGlobs) => {
+    aFilesToRemoveGlobs.forEach(async (g) => {
+        const files = await glob.glob(g)
+        files.forEach(f => {
+            if (fs.existsSync(f)) {
+                fs.unlinkSync(f)
+            }
+        })
+    });
+}
+
+const removeMessageBundles = async (aMessageBundlePatterns, langs) => {
+    // by specifying '_' as part of the name we automatically ignore the default message bundles
+    aMessageBundlePatterns.forEach(async (g) => {
+        const bundles = await glob.glob(g);
+        bundles.forEach(f => {
+            // if this messagebundle contains the languages for only one of the allowed, keep it.
+            const usedBundle = langs.map(lang => f.indexOf(lang) !== -1).reduce((a, b) => a || b, false);
+            if (!usedBundle && fs.existsSync(f)) {
+                fs.unlinkSync(f);
+            }
+        })
+    });
+}
+
+
+const allowedLanguages = ['de', 'en'];
+const distFolder = './dist/**/*.*';
+const filesToRemove = ['dist/**/*-dbg.js',
+    'dist/**/*-dbg.*.js',
+    'dist/**/*.js.map',
+    'dist/**/*.type.js',
+    'dist/**/*.ts',
+    'dist/**/*.gitkeep',
+    'dist/**/*.less',
+];
+const messageBundlesGlob = ['dist/**/messagebundle_*.properties'];
+const unnecessaryFolders = ['dist/test/', 'dist/test-resources/'];
+
 (async () => {
-    const sizeBefore = await getDistSize();
-    await removeFiles();
-    await removeFolders();
-    const sizeAfter = await getDistSize();
+    const sizeBefore = await getDirSize(distFolder);
+    console.log('Removing unnecessary files');
+    await removeFiles(filesToRemove);
+    console.log('Removing test related folders');
+    await removeFolders(unnecessaryFolders);
+    console.log('Removing unnecessary message bundles');
+    await removeMessageBundles(messageBundlesGlob, allowedLanguages);
+    const sizeAfter = await getDirSize(distFolder);
     console.log('Size "dist" before: ', byte_size(sizeBefore));
     console.log('Size "dist" after: ', byte_size(sizeAfter));
 })()

@@ -4,11 +4,8 @@
     xmlns="sap.m"
     xmlns:uxap="sap.uxap"
     xmlns:core="sap.ui.core"
-    xmlns:layout="sap.ui.layout"
     xmlns:recorder="com.ui5.journeyrecorder.control"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns:code="sap.ui.codeeditor"
-    xmlns:forms="sap.ui.layout.form"
     core:require="{
 		formatter: 'com/ui5/journeyrecorder/model/formatter'
 	}"
@@ -46,7 +43,7 @@
                             />
                         </uxap:heading>
                         <uxap:expandedContent>
-                            <layout:VerticalLayout>
+                            <VBox>
                                 <ObjectStatus
                                     title="Step action"
                                     text="{path: 'step>/actionType', formatter: 'formatter.actionText'}"
@@ -55,10 +52,10 @@
                                 formatter: 'formatter.actionIcon'
                             }"
                                 />
-                            </layout:VerticalLayout>
+                            </VBox>
                         </uxap:expandedContent>
                         <uxap:snappedContent>
-                            <layout:VerticalLayout>
+                            <VBox>
                                 <ObjectStatus
                                     title="Step action"
                                     text="{path: 'step>/actionType', formatter: 'formatter.actionText'}"
@@ -67,7 +64,7 @@
                                 formatter: 'formatter.actionIcon'
                             }"
                                 />
-                            </layout:VerticalLayout>
+                            </VBox>
                         </uxap:snappedContent>
                         <uxap:actions>
                             <Button
@@ -299,9 +296,10 @@
                                                 </Toolbar>
                                             </headerToolbar>
                                             <content>
-                                                <code:CodeEditor
-                                                    type="{stepSetup>/codeStyle}"
-                                                    value="{stepSetup>/code}"
+                                                <recorder:CodeViewer
+                                                    id="stepCode"
+                                                    language="{stepSetup>/codeStyle}"
+                                                    code="{stepSetup>/code}"
                                                 />
                                             </content>
                                         </Panel>

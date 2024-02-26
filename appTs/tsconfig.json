@@ -13,6 +13,7 @@
 			"@openui5/types",
 			"@types/qunit",
 			"@types/chrome",
+			"@types/node",
 			"chrome"
 		],
 		"paths": {
@@ -31,6 +32,7 @@
 		"./webapp/**/*"
 	],
 	"exclude": [
-		"./webapp/assets/scripts"
+		"./webapp/assets/scripts",
+		"./utils"
 	]
 }

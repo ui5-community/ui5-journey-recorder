@@ -8,7 +8,7 @@ if (argv.includes('--pre')) {
 }
 
 const zipping = async () => {
-  zip('../dist', `../journey_recorder_${suffix}${version.replace(/\./gm, '-')}.zip`);
+  zip('../deploySelection', `../journey_recorder_${suffix}${version.replace(/\./gm, '-')}.zip`);
 }
 
 zipping();

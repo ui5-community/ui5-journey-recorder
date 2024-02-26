@@ -3,9 +3,7 @@
     displayBlock="true"
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
-    xmlns:layout="sap.ui.layout"
     xmlns:uxap="sap.uxap"
-    xmlns:code="sap.ui.codeeditor"
     xmlns:recorder="com.ui5.journeyrecorder.control"
     xmlns:mvc="sap.ui.core.mvc"
     core:require="{
@@ -51,7 +49,7 @@
                                 justifyContent="SpaceBetween"
                                 width="100%"
                             >
-                                <layout:VerticalLayout>
+                                <VBox>
                                     <ObjectStatus
                                         title="Site-Url"
                                         text="{journey>/startUrl}"
@@ -60,8 +58,8 @@
                                         title="UI5 Version"
                                         text="{journey>/ui5Version}"
                                     />
-                                </layout:VerticalLayout>
-                                <layout:VerticalLayout>
+                                </VBox>
+                                <VBox>
                                     <ObjectStatus
                                         title="Created"
                                         text="{
@@ -76,7 +74,7 @@
                                     formatter: '.dateTimeFormatter'
                                 }"
                                     />
-                                </layout:VerticalLayout>
+                                </VBox>
                             </HBox>
                         </uxap:expandedContent>
                         <uxap:actions>
@@ -230,12 +228,11 @@
                                                     text="{journeyControl>title}"
                                                     key="{journeyControl>title}"
                                                 >
-                                                    <code:CodeEditor
-                                                        id="codeeditor"
-                                                        type="javascript"
+                                                    <recorder:CodeViewer
+                                                        id="journeyCode"
+                                                        language="javascript"
                                                         height="30rem"
-                                                        editable="false"
-                                                        value="{journeyControl>code}"
+                                                        code="{journeyControl>code}"
                                                     />
                                                 </IconTabFilter>
                                             </items>
