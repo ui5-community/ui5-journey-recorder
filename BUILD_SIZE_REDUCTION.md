@@ -11,5 +11,5 @@
 - creating a selective bundling script only for copying necessary stuff -> 43.7 MB
 - rebuild code viewer with highlight.js (removing core.ui.codeeditor) -> 178.14 (208.84) -> removeFromBuild.js 71.94
 - merge dark and bright css -> 178.13MB
-- minify.sh script -> 43.16MB
+- deploy script -> 43.16MB
 - using webcomponents instead of sap.m

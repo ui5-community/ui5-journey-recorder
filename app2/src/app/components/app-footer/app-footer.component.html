@@ -1,7 +1,0 @@
-<footer>
-  <div [ngClass]="'connection-indicator ' + (this.footerService.loadingIndicatorSource|async)">
-    <mat-icon *ngIf="(this.footerService.loadingIndicatorSource | async) === 'connected'">link</mat-icon>
-    <app-spinner *ngIf="(this.footerService.loadingIndicatorSource | async) === 'loading'"></app-spinner>
-    <mat-icon *ngIf="(this.footerService.loadingIndicatorSource | async) === 'disconnected'">link_off</mat-icon>
-  </div>
-</footer>
