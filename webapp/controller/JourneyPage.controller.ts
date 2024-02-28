@@ -28,6 +28,7 @@ import CheckBox, { CheckBox$SelectEvent } from "sap/m/CheckBox";
 import History from "sap/ui/core/routing/History";
 import { ValueState } from "sap/ui/core/library";
 import ChangeReason from "sap/ui/model/ChangeReason";
+import DropInfo from "sap/ui/core/dnd/DropInfo";
 
 type ReplayEnabledStep = Step & {
     state?: ValueState;
@@ -54,7 +55,7 @@ export default class JourneyPage extends BaseController {
     onNavBack() {
         void JourneyStorageService.isChanged((this.getModel('journey') as JSONModel).getData() as Journey).then((unsafed: boolean) => {
             if (unsafed) {
-                void this._openUnsafedDialog().then(() => {
+                this._openUnsafedDialog().then(() => {
                     void ChromeExtensionService.getInstance().disconnect().then(() => {
                         this.setDisconnected();
                         const sPreviousHash = History.getInstance().getPreviousHash();
@@ -64,6 +65,8 @@ export default class JourneyPage extends BaseController {
                             super.onNavBack();
                         }
                     });
+                }).catch(() => {
+                    this.byId('saveBtn').focus();
                 })
             } else {
                 void ChromeExtensionService.getInstance().disconnect().then(() => {
@@ -159,6 +162,21 @@ export default class JourneyPage extends BaseController {
                 (this.getModel("journeyControl") as JSONModel).setProperty('/replaySettings/delay', 0.5);
         }
     }
+
+    onReorderItems(event: Event) {
+        const movedId = event.getParameter('draggedControl').getBindingContext('journey').getObject().id as string;
+        const droppedId = event.getParameter('droppedControl').getBindingContext('journey').getObject().id as string;
+        this._moveStep(movedId, droppedId);
+    }
+
+    private _moveStep(movedStepId: string, anchorStepId: string) {
+        let steps = (this.model.getData() as Journey).steps;
+        const movedIndex = steps.findIndex(s => s.id === movedStepId);
+        const anchorIndex = steps.findIndex(s => s.id === anchorStepId);
+        steps = Utils.moveInArray(steps, movedIndex, anchorIndex);
+        this.model.setProperty('/steps', steps);
+    }
+
     private async _startAutomaticReplay(delay: number, rrSelectorUse: boolean) {
         BusyIndicator.show(0);
         const journeySteps = (this.model.getData() as Journey).steps as ReplayEnabledStep[];
@@ -228,16 +246,6 @@ export default class JourneyPage extends BaseController {
 
     private _delay(ms: number) {
         return new Promise((resolve) => setTimeout(resolve, ms));
-    }
-
-    toTitleEdit() {
-        this.model.setProperty('/titleVisible', false);
-        this.model.setProperty('/titleInputVisible', true);
-    }
-
-    toTitleShow() {
-        this.model.setProperty('/titleVisible', true);
-        this.model.setProperty('/titleInputVisible', false);
     }
 
     navigateToStep(oEvent: Event) {
