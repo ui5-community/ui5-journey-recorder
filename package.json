@@ -22,7 +22,7 @@
 		"deployBuild": "node ./utils/deployBuild.js",
 		"prepare": "husky",
 		"commit": "npx commit",
-		"release": "standard-version"
+		"changelog": "standard-version"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^19.0.3",
