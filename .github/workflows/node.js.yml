@@ -22,9 +22,13 @@ jobs:
         node-version: '20.x'
         cache: 'npm'
     - run: npm ci
+    - name: Configure committer
+      run: |
+        git config user.name "Github Actions Bot"
+        git config user.email "<>"
+    - run: npm run changelog
     - run: npm run deployBuild -- --pre
       working-directory: ${{ github.workspace }}
-    - run: npm run changelog
     - name: Create Pre Release
       id: create_pre_release
       uses: actions/create-release@v1
