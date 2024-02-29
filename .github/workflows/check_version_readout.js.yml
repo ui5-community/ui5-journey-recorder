@@ -4,7 +4,7 @@
 name: Check Version
 
 on:
-  pull-requests:
+  pull-request:
     types: [edited, opened]
     branches: 
       - 'develop'
