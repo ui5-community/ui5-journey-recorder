@@ -27,4 +27,4 @@ jobs:
       - name: Read release version
         id: read_version
         run: |
-          printf '%s\n' "$version" # This will output 'yellow'
+          echo "$version"
