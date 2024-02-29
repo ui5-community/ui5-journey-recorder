@@ -5,37 +5,40 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: ["develop"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20.x'
-        cache: 'npm'
-    - run: npm ci
-    - name: Configure committer
-      run: |
-        git config user.name "Github Actions Bot"
-        git config user.email "<>"
-    - run: npm run changelog
-    - run: npm run deployBuild -- --pre
-      working-directory: ${{ github.workspace }}
-    - name: Create Pre Release
-      id: create_pre_release
-      uses: actions/create-release@v1
-      env: 
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        body: |
-          Automatic generated pre-release with the latest features and bugfixes
-        draft: false
-        prerelease: true
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20.x"
+          cache: "npm"
+      - run: npm ci
+      - name: Configure committer
+        run: |
+          git config user.name "Github Actions Bot"
+          git config user.email "<>"
+      - run: npm run changelog
+      - run: npm run deployBuild -- --pre
+        working-directory: ${{ github.workspace }}
+      - name: Set release names
+        id: set_names
+        run: |
+          echo "version=$(cat package.json | grep -sw '"\bversion\b"' | cut -d '"' -f 4)_nightly" >> "$GITHUB_ENV"
+      - name: Create Pre Release
+        id: create_pre_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ version }}
+          release_name: Pre-Release ${{ version }}
+          body: |
+            Automatic generated pre-release with the latest features and bugfixes
+          draft: false
+          prerelease: true
