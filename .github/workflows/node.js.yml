@@ -26,7 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: node ./utils/deployBuild.js --pre
+    - run: npm run deployBuild -- --pre
     - run: npm run changelog
     - name: Create Pre Release
       id: create_pre_release
