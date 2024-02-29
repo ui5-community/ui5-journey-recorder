@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: "20.x"
           cache: "npm"
-      - name: Set release version
+      - name: Set release version 
         id: set_version
         run: |
           echo "version=$(cat package.json | grep -sw '"\bversion\b"' | cut -d '"' -f 4)_nightly" >> "$GITHUB_ENV"
