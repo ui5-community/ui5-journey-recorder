@@ -28,6 +28,7 @@ jobs:
         cache: 'npm'
     - run: npm install
     - run: npm run deployBuild -- --pre
+      working-directory: ${{ github.workspace }}
     - run: npm run changelog
     - name: Create Pre Release
       id: create_pre_release
