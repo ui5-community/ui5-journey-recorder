@@ -1,9 +1,12 @@
 "use strict";
 const fs = require("fs");
 const glob = require("glob");
+const path = require("path");
 const { zip } = require('zip-a-folder');
 const { version } = require('../package.json');
 const { argv } = require('process');
+
+const WORK_DIR = process.cwd();
 
 const CONFIG = {
     DEPLOY_BUILD: "deploySelection",
@@ -34,8 +37,10 @@ const CONFIG = {
         "favicon.ico",
         "manifest.json",
         "resources/sap-ui-custom.js",
-        "resources/sap/m/Checkbox.js",
-        "resources/sap/m/Vbox.js",
+        "resources/sap/m/CheckBox.js",
+        "resources/sap/m/CheckBoxRenderer.js",
+        "resources/sap/m/VBox.js",
+        "resources/sap/m/VBoxRenderer.js",
         "resources/sap/ui/core/messagebundle.properties",
         "resources/sap/ui/core/messagebundle_de.properties",
         "resources/sap/ui/core/messagebundle_en_GB.properties",
@@ -78,7 +83,7 @@ const CONFIG = {
 
 function cleanup() {
     console.log("Remove old deploy build");
-    fs.rmSync(CONFIG.DEPLOY_BUILD, { recursive: true, force: true });
+    fs.rmSync(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD), { recursive: true, force: true });
 }
 
 async function buildExtension(projectPath, destinationPath) {
@@ -103,44 +108,44 @@ async function _removeFiles(aFilesToRemoveGlobs) {
 
 function cleanupTheBuildStuff() {
     console.log('Removing unnecessary files for recursive copy');
-    return _removeFiles(CONFIG.UNUSEDFILE_ENDINGS.map(ending => `${CONFIG.BUILD_FOLDER}${ending}`));
+    return _removeFiles(CONFIG.UNUSEDFILE_ENDINGS.map(ending => path.join(WORK_DIR, CONFIG.BUILD_FOLDER, ending)));
 }
 
 async function buildFolderStructure() {
     console.log("Recreate deploy build");
     // create necessary subfolders
     console.log("Create folderstructure");
-    await fs.promises.mkdir(CONFIG.DEPLOY_BUILD);
-    await fs.promises.mkdir(`./${CONFIG.DEPLOY_BUILD}/resources`);
-    await fs.promises.mkdir(`./${CONFIG.DEPLOY_BUILD}/resources/sap`);
-    await fs.promises.mkdir(`./${CONFIG.DEPLOY_BUILD}/resources/sap/ui`);
+    await fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD));
+    await fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, '/resources'));
+    await fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, '/resources/sap'));
+    await fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, '/resources/sap/ui'));
     await Promise.all([
-        fs.promises.mkdir(`./${CONFIG.DEPLOY_BUILD}/resources/sap/m`),
-        fs.promises.mkdir(`./${CONFIG.DEPLOY_BUILD}/resources/sap/uxap`),
-        fs.promises.mkdir(`./${CONFIG.DEPLOY_BUILD}/resources/sap/f`)
+        fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, "/resources/sap/m")),
+        fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, "/resources/sap/uxap")),
+        fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, "/resources/sap/f"))
     ]);
     await Promise.all([
-        fs.promises.mkdir(`./${CONFIG.DEPLOY_BUILD}/resources/sap/ui/core`).then(() => {
+        fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, "/resources/sap/ui/core")).then(() => {
             return Promise.all([
-                fs.promises.mkdir(`./${CONFIG.DEPLOY_BUILD}/resources/sap/ui/core/date`),
-                fs.promises.mkdir(`./${CONFIG.DEPLOY_BUILD}/resources/sap/ui/core/cldr`)
+                fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, "/resources/sap/ui/core/date")),
+                fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, "/resources/sap/ui/core/cldr"))
             ])
         }),
-        fs.promises.mkdir(`./${CONFIG.DEPLOY_BUILD}/resources/sap/ui/layout`),
-        fs.promises.mkdir(`./${CONFIG.DEPLOY_BUILD}/resources/sap/ui/unified`)
+        fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, "/resources/sap/ui/layout")),
+        fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, "/resources/sap/ui/unified"))
     ]);
 }
 
 function recursiveFolderCopy() {
     //recursive copy necessary folder
     console.log("Copy folders");
-    return Promise.all(CONFIG.RECURSIVE_FOLDERS.map(rc => fs.promises.cp(`./${CONFIG.BUILD_FOLDER}/${rc}`, `./${CONFIG.DEPLOY_BUILD}/${rc}`, { recursive: true })));
+    return Promise.all(CONFIG.RECURSIVE_FOLDERS.map(rc => fs.promises.cp(path.join(WORK_DIR, CONFIG.BUILD_FOLDER, rc), path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, rc), { recursive: true })));
 }
 
 function selectiveFileCopy() {
     //copy single files
     console.log("copy files");
-    return Promise.all(CONFIG.FILES_TO_COPY.map(rc => fs.promises.cp(`./${CONFIG.BUILD_FOLDER}/${rc}`, `./${CONFIG.DEPLOY_BUILD}/${rc}`)));
+    return Promise.all(CONFIG.FILES_TO_COPY.map(rc => fs.promises.cp(path.join(WORK_DIR, CONFIG.BUILD_FOLDER, rc), path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, rc))));
 }
 
 function createDeployZip(bPreVersion) {
@@ -149,10 +154,10 @@ function createDeployZip(bPreVersion) {
     if (bPreVersion) {
         suffix = 'nightly_'
     }
-    if (!fs.existsSync(CONFIG.DEPLOY_VERSIONS)) {
-        fs.mkdirSync(`${CONFIG.DEPLOY_VERSIONS}`);
+    if (!fs.existsSync(path.join(WORK_DIR, CONFIG.DEPLOY_VERSIONS))) {
+        fs.mkdirSync(path.join(WORK_DIR, CONFIG.DEPLOY_VERSIONS));
     }
-    return zip(`${CONFIG.DEPLOY_BUILD}`, `${CONFIG.DEPLOY_VERSIONS}/journey_recorder_${suffix}${version.replace(/\./gm, '-')}.zip`);
+    return zip(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD), path.join(WORK_DIR, CONFIG.DEPLOY_VERSIONS, `journey_recorder_${suffix}${version.replace(/\./gm, '-')}.zip`));
 }
 
 function _byteSize(iSize) {
@@ -183,21 +188,21 @@ async function getDirSize(sDirName) {
 
 (async () => {
     cleanup();
-    await buildExtension(CONFIG.PROJECT_FOLDER, CONFIG.BUILD_FOLDER);
+    await buildExtension(path.join(WORK_DIR, CONFIG.PROJECT_FOLDER), path.join(WORK_DIR, CONFIG.BUILD_FOLDER));
     if (argv.includes('--size')) {
-        console.log('Build-Size, ui5 tooling: ', (await getDirSize(CONFIG.BUILD_FOLDER)));
+        console.log('Build-Size, ui5 tooling: ', (await getDirSize(path.join(WORK_DIR, CONFIG.BUILD_FOLDER))));
     }
     await cleanupTheBuildStuff();
 
     if (argv.includes('--size')) {
-        console.log('Build-Size, cleanup: ', (await getDirSize(CONFIG.BUILD_FOLDER)));
+        console.log('Build-Size, cleanup: ', (await getDirSize(path.join(WORK_DIR, CONFIG.BUILD_FOLDER))));
     }
     await buildFolderStructure();
     await recursiveFolderCopy();
     await selectiveFileCopy();
 
     if (argv.includes('--size')) {
-        console.log('Build-Size, deploy: ', (await getDirSize(CONFIG.DEPLOY_BUILD)));
+        console.log('Build-Size, deploy: ', (await getDirSize(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD))));
     }
     await createDeployZip(argv.includes('--pre'));
 

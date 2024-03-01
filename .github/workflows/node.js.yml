@@ -1,0 +1,62 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Create Nightly Release
+
+on:
+  push:
+    branches: 
+      - develop
+    paths: 
+      - 'webapp/**'
+jobs:
+  build-and-release:
+    if: "!startsWith(github.event.head_commit.message, 'chore') && !startsWith(github.event.head_commit.message, 'docs') && !startsWith(github.event.head_commit.message, 'ci')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20.x"
+          cache: "npm"
+      - name: Install dependencies
+        run: npm ci
+      - name: Configure committer
+        run: |
+          git config user.name "UI5 journey recorder bot"
+          git config user.email "ui5-journey-recorder-bot@users.noreply.github.com"
+      - name: Create changelog and increase version
+        run: npm run changelog -- --prerelease nightly
+      - name: Build the extension for deploy
+        run: npm run deployBuild -- --pre
+        working-directory: ${{ github.workspace }}
+      - name: Extract versions
+        id: version_extract
+        run: |
+          echo "VERSION=$(cat package.json | grep -sw '"\bversion\b"' | cut -d '"' -f 4)" >> "$GITHUB_ENV"
+          echo "FILE_VERSION=$(cat package.json | grep -sw '"\bversion\b"' | cut -d '"' -f 4 | sed "s/\./\-/g")" >> "$GITHUB_ENV"
+      - name: Push version and changlog 
+        run: git push --follow-tags origin develop
+      - name: Create Github Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ env.VERSION }}_nightly
+          release_name: Nightly-Release $env.version
+          body: |
+            Automatic generated nightly release with the latest features and bugfixes
+          draft: false
+          prerelease: true
+      - name: Upload release artifact
+        id: upload_release_artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./deployments/journey_recorder_nightly_${{ env.FILE_VERSION }}.zip
+          asset_name: journey_recorder_nightly_${{ env.FILE_VERSION }}.zip
+          asset_content_type: application/zip

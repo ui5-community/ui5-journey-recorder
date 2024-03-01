@@ -1,6 +1,6 @@
 {
 	"name": "com.ui5.journeyrecorder",
-	"version": "0.4.0",
+	"version": "0.3.1",
 	"description": "UI5 Application: com.ui5.journeyrecorder",
 	"author": "Adrian Marten",
 	"license": "Apache-2.0",
@@ -19,12 +19,17 @@
 		"karma-ci-cov": "karma start karma-ci-cov.conf.js",
 		"test": "npm run lint && npm run karma-ci-cov",
 		"wdi5": "wdio run ./webapp/test/e2e/\\wdio.conf.ts",
-		"deployBuild": "node ./utils/deployBuild.js"
+		"deployBuild": "node ./utils/deployBuild.js",
+		"prepare": "husky",
+		"commit": "npx commit",
+		"changelog": "standard-version"
 	},
 	"devDependencies": {
+		"@commitlint/cli": "^19.0.3",
+		"@commitlint/config-conventional": "^19.0.3",
+		"@commitlint/prompt-cli": "^19.0.3",
 		"@openui5/types": "^1.120.6",
 		"@types/chrome": "^0.0.260",
-		"@types/jszip": "^3.4.1",
 		"@types/node": "^20.11.20",
 		"@typescript-eslint/eslint-plugin": "^6.20.0",
 		"@typescript-eslint/parser": "^6.20.0",
@@ -37,6 +42,7 @@
 		"eslint": "^8.56.0",
 		"glob": "^10.3.10",
 		"http-server": "^14.1.1",
+		"husky": "^9.0.11",
 		"karma": "^6.4.2",
 		"karma-chrome-launcher": "^3.2.0",
 		"karma-coverage": "^2.2.1",
@@ -44,6 +50,7 @@
 		"karma-ui5-transpile": "^3.3.3",
 		"rimraf": "^5.0.5",
 		"run-when-changed": "^2.1.0",
+		"standard-version": "^9.5.0",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.3.3",
 		"ui5-middleware-livereload": "^3.0.2",
