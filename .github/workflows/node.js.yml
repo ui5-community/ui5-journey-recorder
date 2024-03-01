@@ -32,15 +32,15 @@ jobs:
       - name: Set release names
         id: set_names
         run: |
-          echo "version=$(cat package.json | grep -sw '"\bversion\b"' | cut -d '"' -f 4)" >> "$GITHUB_ENV"
+          echo "VERSION=$(cat package.json | grep -sw '"\bversion\b"' | cut -d '"' -f 4)" >> "$GITHUB_ENV"
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: format('{0}_nightly', $version)
-          release_name: format('{0} {1}', Nightly-Release, $version)
+          tag_name: ${{ env.VERSION }}_nightly
+          release_name: Nightly-Release ${{ env.version }}
           body: |
             Automatic generated nightly release with the latest features and bugfixes
           draft: false
@@ -52,6 +52,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: format('deployments/journey_recorder_nightly_{0}.zip', $version)
-          asset_name: format('journey_recorder_nightly_{0}.zip', $version)
+          asset_path: format('deployments/journey_recorder_nightly_{0}.zip', $VERSION)
+          asset_name: format('journey_recorder_nightly_{0}.zip', $VERSION)
           asset_content_type: application/zip
