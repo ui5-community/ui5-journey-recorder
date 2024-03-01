@@ -142,6 +142,11 @@
           "pattern": "journey/{id}/step/{stepId}",
           "name": "step",
           "target": "step"
+        },
+        {
+          "pattern": "journey/{id}/define/{stepId}",
+          "name": "step-define",
+          "target": "step"
         }
       ],
       "targets": {

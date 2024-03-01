@@ -20,101 +20,27 @@
     }
 
     //#region public access points
-    setupHoverSelectEffect() {//append style class
-      //append style adding and removement
-      document.onmouseover = e => {
-        var e = e || window.event;
-        var el = e.target || e.srcElement;
-        var ui5El = this.#getUI5Element(el);
-
-        if (ui5El && ui5El.addStyleClass) {
-          ui5El.addStyleClass('injectClass');
-        }
-
-        if (this.#lastDetectedElement && this.#lastDetectedElement.removeStyleClass && ui5El && this.#lastDetectedElement.getId() !== ui5El.getId()) {
-          this.#lastDetectedElement.removeStyleClass('injectClass');
-        }
-        this.#lastDetectedElement = ui5El;
-      }
-
-      document.onmouseout = e => {
-        var e = e || window.event;
-        var el = e.target || e.srcElement;
-        var ui5El = this.#getUI5Element(el);
-
-        if (ui5El && ui5El.removeStyleClass) {
-          ui5El.removeStyleClass('injectClass');
-        }
-      };
+    enableRecording() {
+      // append style adding and removement
+      // append the click listener
+      // check if the binding was already made
+      this.#mouseoverListener = this.#mouseoverListener.name.startsWith('bound ') ? this.#mouseoverListener : this.#mouseoverListener.bind(this);
+      this.#mouseoutListener = this.#mouseoutListener.name.startsWith('bound ') ? this.#mouseoutListener : this.#mouseoutListener.bind(this);
+      this.#clickListener = this.#clickListener.name.startsWith('bound ') ? this.#clickListener : this.#clickListener.bind(this);
+      document.addEventListener('mouseover', this.#mouseoverListener);
+      document.addEventListener('mouseout', this.#mouseoutListener);
+      document.addEventListener('click', this.#clickListener);
     }
 
-    setupClickListener() {
-      document.onclick = (e) => {
-        if (!this.#clickListenerActive) {
-          return;
-        }
-        let event = e || window.event;
-        let el = event.target || event.srcElement;
-        let ui5El = this.#getUI5Element(el);
-
-        const webSocket = window?.ui5TestRecorder?.communication?.webSocket;
-        if (webSocket) {
-          const message = {
-            type: 'clicked',
-            control: {
-              id: ui5El.sId,
-              type: ui5El.getMetadata().getElementName(),
-              classes: ui5El.aCustomStyleClasses,
-              properties: this.#getUI5ElementProperties(ui5El),
-              bindings: this.#getUI5ElementBindings(ui5El),
-              view: this.#getViewProperties(ui5El),
-              events: {
-                press: ui5El.getMetadata().getEvent('press') !== undefined || ui5El.getMetadata().getEvent('click') !== undefined
-              }
-            },
-            location: window.location.href
-          }
-          this.#rr.findControlSelectorByDOMElement({ domElement: ui5El.getDomRef() }).then((c) => {
-            message.control.recordReplaySelector = c;
-            webSocket.send_record_step(message);
-          }).catch(err => { console.log(err.message) });
-
-          if (ui5El && ui5El.focus) {
-            ui5El.focus();
-            let childs = ui5El.getDomRef().querySelectorAll('input, select, textarea');
-            if (childs.length === 0 && ui5El.getDomRef().shadowRoot) {
-              childs = ui5El.getDomRef().shadowRoot.querySelectorAll('input, select, textarea');
-            }
-            for (let child of childs) {
-              child.onkeypress = (e) => {
-                const key_message = {
-                  type: 'keypress',
-                  key: e.key,
-                  keyCode: e.keyCode,
-                  control: {
-                    id: ui5El.sId,
-                    type: ui5El.getMetadata().getElementName(),
-                    classes: ui5El.aCustomStyleClasses,
-                    properties: this.#getUI5ElementProperties(ui5El),
-                    bindings: this.#getUI5ElementBindings(ui5El),
-                    view: this.#getViewProperties(ui5El),
-                    events: {
-                      press: ui5El.getMetadata().getEvent('press') !== undefined
-                    }
-                  },
-                  location: window.location.href
-                }
-                this.#rr.findControlSelectorByDOMElement({ domElement: ui5El.getDomRef() }).then((c) => {
-                  key_message.control.recordReplaySelector = c;
-                  webSocket.send_record_step(key_message);
-                }).catch(err => { console.log(err.message) });
-              }
-            }
-          }
-        } else {
-          console.error('UI5-Testrecorder: ', 'No communication websocket found!');
-        }
+    disableRecording() {
+      if (this.#lastDetectedElement && this.#lastDetectedElement.removeStyleClass) {
+        this.#lastDetectedElement.removeStyleClass('injectClass');
       }
+      this.#lastDetectedElement = null;
+
+      document.removeEventListener('mouseover', this.#mouseoverListener);
+      document.removeEventListener('mouseout', this.#mouseoutListener);
+      document.removeEventListener('click', this.#clickListener);
     }
 
     getElementsForId(id) {
@@ -212,109 +138,15 @@
 
     executeAction(oEvent) {
       this.#clickListenerActive = false;
+      let result;
       if (this.#rr) {
         //only for RecordReplay possible to select to use selectors or not
-        return this.#executeByRecordReplay(oEvent.step, oEvent.useSelectors);
+        result = this.#executeByRecordReplay(oEvent.step, oEvent.useSelectors);
       } else {
-        return this.#executeByPure(oEvent.step);
+        result = this.#executeByPure(oEvent.step);
       }
       this.#clickListenerActive = true;
-    }
-
-    #executeByRecordReplay(oItem, bUseSelectors) {
-      const oSelector = bUseSelectors ? this.#createSelectorFromItem(oItem) : oItem.recordReplaySelector;
-
-      switch (oItem.actionType) {
-        case "clicked":
-          return this.#rr.interactWithControl({
-            selector: oSelector,
-            interactionType: this.#rr.InteractionType.Press
-          })
-        case 'validate':
-          return this.#rr.findAllDOMElementsByControlSelector({
-            selector: oSelector
-          }).then(result => {
-            if (result.length > 1) {
-              throw new Error();
-            }
-            return;
-          });
-        case 'input':
-          return this.#rr.interactWithControl({
-            selector: oSelector,
-            interactionType: this.#rr.InteractionType.EnterText,
-            enterText: oItem.keys.reduce((a, b) => a + b.key_char, '')
-          })
-        default:
-          return Promise.reject('ActionType not defined');
-      }
-    }
-
-    #createSelectorFromItem(oItem) {
-      const oSelector = {};
-      if (oItem.control.controlId.use) {
-        oSelector['id'] = oItem.control.controlId.id;
-        return oSelector;
-      }
-      oSelector['controlType'] = oItem.control.type;
-      if (oItem.control.bindings) {
-        const bindings = oItem.control.bindings.filter(b => b.use);
-        if (bindings.length === 1) {
-          oSelector['bindingPath'] = {
-            path: bindings[0].modelPath,
-            propertyPath: bindings[0].propertyPath
-          }
-        }
-      }
-      if (oItem.control.i18nTexts) {
-        const i18ns = oItem.control.i18nTexts.filter(b => b.use);
-        if (i18ns.length === 1) {
-          oSelector['i18NText'] = {
-            key: i18ns[0].propertyPath,
-            propertyName: i18ns[0].propertyName
-          }
-        }
-      }
-      if (oItem.control.properties) {
-        const props = oItem.control.properties.filter(b => b.use);
-        if (props.length > 0 && !oSelector.properties) {
-          oSelector.properties = {}
-        }
-        props.forEach(property => {
-          oSelector.properties[property.name] = property.value;
-        })
-      }
-      //just a current workaround
-      if (oItem.recordReplaySelector.viewId) {
-        oSelector['viewId'] = oItem.recordReplaySelector.viewId;
-      }
-      return oSelector;
-    }
-
-    #executeByPure(oItem) {
-      let elements = this.#getUI5Elements();
-      if (oItem.control.controlId.use) {
-        elements = elements.filter(el => el.getId() === oItem.control.controlId);
-      } else {
-        elements = this.getElementsBySelectors(oItem.control);
-      }
-
-      if (elements.length !== 1) {
-        return Promise.reject();
-      }
-
-      switch (oItem.action_type) {
-        case "clicked":
-          this.#executeClick(elements[0].getDomRef());
-          return Promise.resolve();
-        case "validate":
-          return Promise.resolve();
-        case "input":
-          this.#executeTextInput(elements[0], oItem);
-          return Promise.resolve();
-        default:
-          return Promise.reject(`Action Type (${oItem.actionType}) not defined`);
-      }
+      return result;
     }
 
     showToast(sMessage, props) {
@@ -327,6 +159,98 @@
     //#endregion public access points
 
     //#region private
+    #mouseoverListener = e => {
+      var e = e || window.event;
+      var el = e.target || e.srcElement;
+      var ui5El = this.#getUI5Element(el);
+
+      if (ui5El && ui5El.addStyleClass) {
+        ui5El.addStyleClass('injectClass');
+      }
+
+      if (this.#lastDetectedElement && this.#lastDetectedElement.removeStyleClass && ui5El && this.#lastDetectedElement.getId() !== ui5El.getId()) {
+        this.#lastDetectedElement.removeStyleClass('injectClass');
+      }
+      this.#lastDetectedElement = ui5El;
+    }
+
+    #mouseoutListener = e => {
+      var e = e || window.event;
+      var el = e.target || e.srcElement;
+      var ui5El = this.#getUI5Element(el);
+
+      if (ui5El && ui5El.removeStyleClass) {
+        ui5El.removeStyleClass('injectClass');
+      }
+    };
+
+    #clickListener = (e) => {
+      if (!this.#clickListenerActive) {
+        return;
+      }
+      let event = e || window.event;
+      let el = event.target || event.srcElement;
+      let ui5El = this.#getUI5Element(el);
+
+      const webSocket = window?.ui5TestRecorder?.communication?.webSocket;
+      if (webSocket) {
+        const message = {
+          type: 'clicked',
+          control: {
+            id: ui5El.sId,
+            type: ui5El.getMetadata().getElementName(),
+            classes: ui5El.aCustomStyleClasses,
+            properties: this.#getUI5ElementProperties(ui5El),
+            bindings: this.#getUI5ElementBindings(ui5El),
+            view: this.#getViewProperties(ui5El),
+            events: {
+              press: ui5El.getMetadata().getEvent('press') !== undefined || ui5El.getMetadata().getEvent('click') !== undefined
+            }
+          },
+          location: window.location.href
+        }
+        this.#rr.findControlSelectorByDOMElement({ domElement: ui5El.getDomRef() }).then((c) => {
+          message.control.recordReplaySelector = c;
+          webSocket.send_record_step(message);
+        }).catch(err => { console.log(err.message) });
+
+        if (ui5El && ui5El.focus) {
+          ui5El.focus();
+          let childs = ui5El.getDomRef().querySelectorAll('input, select, textarea');
+          if (childs.length === 0 && ui5El.getDomRef().shadowRoot) {
+            childs = ui5El.getDomRef().shadowRoot.querySelectorAll('input, select, textarea');
+          }
+          for (let child of childs) {
+            child.onkeypress = (e) => {
+              const key_message = {
+                type: 'keypress',
+                key: e.key,
+                keyCode: e.keyCode,
+                control: {
+                  id: ui5El.sId,
+                  type: ui5El.getMetadata().getElementName(),
+                  classes: ui5El.aCustomStyleClasses,
+                  properties: this.#getUI5ElementProperties(ui5El),
+                  bindings: this.#getUI5ElementBindings(ui5El),
+                  view: this.#getViewProperties(ui5El),
+                  events: {
+                    press: ui5El.getMetadata().getEvent('press') !== undefined
+                  }
+                },
+                location: window.location.href
+              }
+              this.#rr.findControlSelectorByDOMElement({ domElement: ui5El.getDomRef() }).then((c) => {
+                key_message.control.recordReplaySelector = c;
+                webSocket.send_record_step(key_message);
+              }).catch(err => { console.log(err.message) });
+            }
+          }
+        }
+      } else {
+        console.error('UI5-Testrecorder: ', 'No communication websocket found!');
+      }
+    }
+
     #getUI5Element(el) {
       let UIElements = this.#getUI5Elements();
       var ui5El = UIElements[el.id];
@@ -451,6 +375,102 @@
       };
     }
 
+    #executeByRecordReplay(oItem, bUseSelectors) {
+      const oSelector = bUseSelectors ? this.#createSelectorFromItem(oItem) : oItem.recordReplaySelector;
+
+      switch (oItem.actionType) {
+        case "clicked":
+          return this.#rr.interactWithControl({
+            selector: oSelector,
+            interactionType: this.#rr.InteractionType.Press
+          })
+        case 'validate':
+          return this.#rr.findAllDOMElementsByControlSelector({
+            selector: oSelector
+          }).then(result => {
+            if (result.length > 1) {
+              throw new Error();
+            }
+            return;
+          });
+        case 'input':
+          return this.#rr.interactWithControl({
+            selector: oSelector,
+            interactionType: this.#rr.InteractionType.EnterText,
+            enterText: oItem.keys.reduce((a, b) => a + b.key_char, '')
+          })
+        default:
+          return Promise.reject('ActionType not defined');
+      }
+    }
+
+    #createSelectorFromItem(oItem) {
+      const oSelector = {};
+      if (oItem.control.controlId.use) {
+        oSelector['id'] = oItem.control.controlId.id;
+        return oSelector;
+      }
+      oSelector['controlType'] = oItem.control.type;
+      if (oItem.control.bindings) {
+        const bindings = oItem.control.bindings.filter(b => b.use);
+        if (bindings.length === 1) {
+          oSelector['bindingPath'] = {
+            path: bindings[0].modelPath,
+            propertyPath: bindings[0].propertyPath
+          }
+        }
+      }
+      if (oItem.control.i18nTexts) {
+        const i18ns = oItem.control.i18nTexts.filter(b => b.use);
+        if (i18ns.length === 1) {
+          oSelector['i18NText'] = {
+            key: i18ns[0].propertyPath,
+            propertyName: i18ns[0].propertyName
+          }
+        }
+      }
+      if (oItem.control.properties) {
+        const props = oItem.control.properties.filter(b => b.use);
+        if (props.length > 0 && !oSelector.properties) {
+          oSelector.properties = {}
+        }
+        props.forEach(property => {
+          oSelector.properties[property.name] = property.value;
+        })
+      }
+      //just a current workaround
+      if (oItem.recordReplaySelector.viewId) {
+        oSelector['viewId'] = oItem.recordReplaySelector.viewId;
+      }
+      return oSelector;
+    }
+
+    #executeByPure(oItem) {
+      let elements = this.#getUI5Elements();
+      if (oItem.control.controlId.use) {
+        elements = elements.filter(el => el.getId() === oItem.control.controlId);
+      } else {
+        elements = this.getElementsBySelectors(oItem.control);
+      }
+
+      if (elements.length !== 1) {
+        return Promise.reject();
+      }
+
+      switch (oItem.action_type) {
+        case "clicked":
+          this.#executeClick(elements[0].getDomRef());
+          return Promise.resolve();
+        case "validate":
+          return Promise.resolve();
+        case "input":
+          this.#executeTextInput(elements[0], oItem);
+          return Promise.resolve();
+        default:
+          return Promise.reject(`Action Type (${oItem.actionType}) not defined`);
+      }
+    }
+
     #executeClick(el) {
       const mouseDownEvent = new MouseEvent('mousedown', {
         view: window,
@@ -506,8 +526,9 @@
   }
 
   const recorderInstance = new RecorderInject(document, window);
-  recorderInstance.setupHoverSelectEffect();
-  recorderInstance.setupClickListener();
+  /* recorderInstance.setupHoverSelectEffect();
+  recorderInstance.setupClickListener(); */
+  recorderInstance.enableRecording();
   recorderInstance.showToast("UI5 Journey Recorder successfully injected", {
     duration: 2000,
     autoClose: true

@@ -21,14 +21,14 @@ import { TestFrameworks } from "../model/enum/TestFrameworks";
 import { downloadZip } from "client-zip";
 import { CodePage } from "../model/class/codeStrategies/CodePage.type";
 import { ChromeExtensionService } from "../service/ChromeExtension.service";
-import { RecordEvent, Step } from "../model/class/Step.class";
+import { RecordEvent, Step, UnknownStep } from "../model/class/Step.class";
 import { RequestBuilder, RequestMethod } from "../model/class/RequestBuilder.class";
 import VBox from "sap/m/VBox";
 import CheckBox, { CheckBox$SelectEvent } from "sap/m/CheckBox";
 import History from "sap/ui/core/routing/History";
 import { ValueState } from "sap/ui/core/library";
 import ChangeReason from "sap/ui/model/ChangeReason";
-import DropInfo from "sap/ui/core/dnd/DropInfo";
+import { StepType } from "../model/enum/StepType";
 
 type ReplayEnabledStep = Step & {
     state?: ValueState;
@@ -82,24 +82,6 @@ export default class JourneyPage extends BaseController {
         });
     }
 
-    async onConnect() {
-        BusyIndicator.show();
-        this.setConnecting();
-        const url = this.model.getProperty('/startUrl') as string;
-        await ChromeExtensionService.getInstance().reconnectToPage(url);
-        BusyIndicator.hide();
-        this.setConnected();
-        MessageToast.show('Connected', { duration: 500 });
-    }
-
-    onDisconnect() {
-        void ChromeExtensionService.getInstance().disconnect().then(() => {
-            this.setDisconnected();
-            MessageToast.show('Disconnected', { duration: 500 });
-        })
-    }
-
-
     onStepDelete(oEvent: Event) {
         const sPath = (oEvent.getSource()).getBindingContext('journey')?.sPath as string || '';
         if (sPath !== '') {
@@ -130,7 +112,27 @@ export default class JourneyPage extends BaseController {
     async onStartReplay() {
         this._replayDialog.close();
         const replaySettings = (this.getModel('journeyControl') as JSONModel).getProperty('/replaySettings') as { delay: number, manual: boolean, rrSelectorUse: boolean };
-        await this.onConnect();
+        if (!(this.model.getData() as Journey).startUrl) {
+            const unknownUrl = new Dialog({
+                state: ValueState.Error,
+                type: DialogType.Message,
+                title: 'Unknown Url!',
+                content: new Text({ text: "The current setup don't have a url to start from, this depends on the first step provided.\nRedefine your step setup and try again!" }),
+                beginButton: new Button({
+                    type: ButtonType.Critical,
+                    text: 'Ok',
+                    press: () => {
+                        unknownUrl.close();
+                        unknownUrl.destroy();
+                    }
+                })
+            });
+            unknownUrl.open();
+            return
+        }
+
+        const url = this.model.getProperty('/startUrl') as string;
+        await this.onConnect(url);
 
         (this.getModel('journeyControl') as JSONModel).setProperty('/replayEnabled', true);
         if (!replaySettings.manual) {
@@ -141,10 +143,10 @@ export default class JourneyPage extends BaseController {
         }
     }
 
-    onStopReplay() {
+    async onStopReplay() {
         (this.getModel('journeyControl') as JSONModel).setProperty('/replayEnabled', false);
         (this.getModel('journeyControl') as JSONModel).setProperty('/manualReplay', true);
-        this.onDisconnect();
+        await this.onDisconnect();
     }
     onChangeReplayDelay(oEvent: Event) {
         const index = oEvent.getParameter("selectedIndex" as never);
@@ -169,6 +171,12 @@ export default class JourneyPage extends BaseController {
         this._moveStep(movedId, droppedId);
     }
 
+    onAddStep() {
+        const steps = (this.model.getData() as Journey).steps;
+        steps.push(new UnknownStep());
+        this.model.setProperty('/steps', steps);
+    }
+
     private _moveStep(movedStepId: string, anchorStepId: string) {
         let steps = (this.model.getData() as Journey).steps;
         const movedIndex = steps.findIndex(s => s.id === movedStepId);
@@ -181,23 +189,22 @@ export default class JourneyPage extends BaseController {
         BusyIndicator.show(0);
         const journeySteps = (this.model.getData() as Journey).steps as ReplayEnabledStep[];
         for (let index = 0; index < journeySteps.length; index++) {
-            await this._delay(1000 * delay)
+            await Utils.delay(1000 * delay)
             const curStep = journeySteps[index];
             try {
                 this.model.setProperty(`/steps/${index}/state`, ValueState.Information);
                 await ChromeExtensionService.getInstance().performAction(curStep, rrSelectorUse);
                 this.model.setProperty(`/steps/${index}/state`, ValueState.Success);
             } catch (e) {
-                this.onDisconnect();
                 this.model.setProperty(`/steps/${index}/state`, ValueState.Error);
                 MessageToast.show('An Error happened during testing', { duration: 3000 });
                 BusyIndicator.hide();
-                this.onStopReplay();
+                await this.onStopReplay();
                 return;
             }
         }
         BusyIndicator.hide();
-        this.onStopReplay();
+        await this.onStopReplay();
         MessageToast.show('All tests executed successfully', { duration: 3000 });
     }
 
@@ -225,8 +232,31 @@ export default class JourneyPage extends BaseController {
             this.model.setProperty(`/steps/${index}/executable`, false);
 
             if (index === (journeySteps.length - 1)) {
-                this.onStopReplay();
+                await this.onStopReplay();
                 MessageToast.show('All tests executed successfully', { duration: 3000 });
+                return;
+            }
+
+            if (journeySteps[index + 1].actionType === StepType.UNKNOWN) {
+                this.model.setProperty(`/steps/${index + 1}/state`, ValueState.Error);
+                this.model.setProperty(`/steps/${index + 1}/executable`, false);
+                const unknownStepDialog = new Dialog({
+                    state: ValueState.Error,
+                    type: DialogType.Message,
+                    title: 'Unknown Step!',
+                    content: new Text({ text: "The next step defines an unknown action, please redefine the Step and retest again!" }),
+                    beginButton: new Button({
+                        type: ButtonType.Negative,
+                        text: 'Ok',
+                        press: () => {
+                            unknownStepDialog.close();
+                            unknownStepDialog.destroy();
+                            BusyIndicator.hide();
+                            void this.onStopReplay();
+                        }
+                    })
+                });
+                unknownStepDialog.open();
                 return;
             }
 
@@ -234,18 +264,13 @@ export default class JourneyPage extends BaseController {
                 this.model.setProperty(`/steps/${index + 1}/executable`, true);
             }
         } catch (e) {
-            this.onDisconnect();
             this.model.setProperty(`/steps/${index}/state`, ValueState.Error);
             this.model.setProperty(`/steps/${index}/executable`, false);
             MessageToast.show('An Error happened during testing', { duration: 3000 });
             BusyIndicator.hide();
-            this.onStopReplay();
+            await this.onStopReplay();
             return;
         }
-    }
-
-    private _delay(ms: number) {
-        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
     navigateToStep(oEvent: Event) {
@@ -253,7 +278,12 @@ export default class JourneyPage extends BaseController {
         const bindingCtx = source.getBindingContext('journey');
         const journeyId = ((bindingCtx.getModel() as JSONModel).getData() as Partial<Journey>).id;
         const stepId = bindingCtx.getProperty("id") as string;
-        this.getRouter().navTo('step', { id: journeyId, stepId: stepId });
+        const stepType = bindingCtx.getProperty("actionType") as StepType;
+        if (stepType === StepType.UNKNOWN) {
+            this.getRouter().navTo('step-define', { id: journeyId, stepId: stepId });
+        } else {
+            this.getRouter().navTo('step', { id: journeyId, stepId: stepId });
+        }
     }
 
     dateTimeFormatter(value: number) {

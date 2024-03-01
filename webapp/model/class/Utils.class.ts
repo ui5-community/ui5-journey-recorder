@@ -19,4 +19,8 @@ export default class Utils {
         array.splice(newIndex, 0, array.splice(oldIndex, 1)[0]);
         return array;
     }
+
+    public static delay(ms: number) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
 }

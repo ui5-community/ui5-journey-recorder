@@ -19,6 +19,9 @@ import { IconColor, ValueState } from "sap/ui/core/library";
 import { ButtonType, DialogType } from "sap/m/library";
 import Button from "sap/m/Button";
 import Text from "sap/m/Text";
+import BusyIndicator from "sap/ui/core/BusyIndicator";
+import { ChromeExtensionService } from "../service/ChromeExtension.service";
+import MessageToast from "sap/m/MessageToast";
 
 /**
  * @namespace com.ui5.journeyrecorder.controller
@@ -238,5 +241,27 @@ export default abstract class BaseController extends Controller {
 			}
 			this._unsafeDialog.open();
 		})
+	}
+
+	protected async onConnect(url: string) {
+		BusyIndicator.show();
+		this.setConnecting();
+		await ChromeExtensionService.getInstance().reconnectToPage(url);
+		BusyIndicator.hide();
+		this.setConnected();
+		MessageToast.show('Connected', { duration: 500 });
+	}
+
+	protected async onDisconnect() {
+		try {
+			await ChromeExtensionService.getInstance().disconnect();
+			this.setDisconnected();
+			MessageToast.show('Disconnected', { duration: 500 });
+		} catch (e) {
+			console.error(e);
+			this.setDisconnected();
+			ChromeExtensionService.getInstance().setCurrentTab();
+			MessageToast.show('Disconnected', { duration: 500 });
+		}
 	}
 }

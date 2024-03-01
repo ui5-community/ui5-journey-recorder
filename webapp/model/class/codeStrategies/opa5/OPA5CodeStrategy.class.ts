@@ -88,8 +88,8 @@ export default class OPA5CodeStrategy {
     public generatePagedStepCode(
         step: Step
     ): string {
-        if (!this._pages[step.viewInfos.relativeViewName]) {
-            this._pages[step.viewInfos.relativeViewName] = new ViewPageBuilder(step);
+        if (!this._pages[step.viewInfos?.relativeViewName]) {
+            this._pages[step.viewInfos?.relativeViewName] = new ViewPageBuilder(step);
         }
         switch (step.actionType) {
             case StepType.CLICK:

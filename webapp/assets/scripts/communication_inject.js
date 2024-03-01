@@ -278,7 +278,7 @@
     }
   });
 
-  communicationService.post('/pageInfo/disconnected', (req, res) => {
+  communicationService.post('/pageInfo/disconnected', (_, __) => {
     if (ui5TestRecorder.recorder) {
       ui5TestRecorder.recorder.showToast('UI5 Journey Recorder disconnected', {
         duration: 2000,
@@ -287,11 +287,11 @@
     }
   });
 
-  communicationService.get('/pageInfo/connected', (req, res) => {
+  communicationService.get('/pageInfo/connected', (_, res) => {
     res({ status: 200, message: 'Connected' });
   });
 
-  communicationService.get('/pageInfo/version', (req, res) => {
+  communicationService.get('/pageInfo/version', (_, res) => {
     const version = ui5TestRecorder?.recorder?.getUI5Version();
     if (version) {
       res({ status: 200, message: version });
@@ -299,6 +299,26 @@
       res({ status: 400, message: '' });
     }
   });
+
+  communicationService.post('/disableRecordListener', (_, res) => {
+    const recorderInstance = window.ui5TestRecorder?.recorder;
+    if (recorderInstance) {
+      recorderInstance.disableRecording();
+      res({ status: 200, message: 'executed' });
+    } else {
+      res({ status: 500, message: 'No recorder inject found!' });
+    }
+  });
+
+  communicationService.post('/enableRecordListener', (_, res) => {
+    const recorderInstance = window.ui5TestRecorder?.recorder;
+    if (recorderInstance) {
+      recorderInstance.enableRecording();
+      res({ status: 200, message: 'executed' });
+    } else {
+      res({ status: 500, message: 'No recorder inject found!' });
+    }
+  })
 
   communicationService.listen(ext_id);
 
