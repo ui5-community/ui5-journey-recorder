@@ -5,11 +5,15 @@ name: Create Nightly Release
 
 on:
   push:
-    branches: ["develop"]
+    branches: 
+      - develop
+    paths: 
+      - 'webapp/**'
   pull_request:
     branches: ["develop"]
 jobs:
-  build:
+  build-and-release:
+    if: "!startsWith(github.event.head_commit.message, 'chore') && !startsWith(github.event.head_commit.message, 'docs') && !startsWith(github.event.head_commit.message, 'ci')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -34,6 +38,8 @@ jobs:
         run: |
           echo "VERSION=$(cat package.json | grep -sw '"\bversion\b"' | cut -d '"' -f 4)" >> "$GITHUB_ENV"
           echo "FILE_VERSION=$(cat package.json | grep -sw '"\bversion\b"' | cut -d '"' -f 4 | sed "s/\./\-/g")" >> "$GITHUB_ENV"
+      - name: Push version and changlog 
+        run: git push --origin develop
       - name: Create Github Release
         id: create_release
         uses: actions/create-release@v1
