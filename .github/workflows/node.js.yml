@@ -9,8 +9,6 @@ on:
       - develop
     paths: 
       - 'webapp/**'
-  pull_request:
-    branches: ["develop"]
 jobs:
   build-and-release:
     if: "!startsWith(github.event.head_commit.message, 'chore') && !startsWith(github.event.head_commit.message, 'docs') && !startsWith(github.event.head_commit.message, 'ci')"
@@ -39,9 +37,7 @@ jobs:
           echo "VERSION=$(cat package.json | grep -sw '"\bversion\b"' | cut -d '"' -f 4)" >> "$GITHUB_ENV"
           echo "FILE_VERSION=$(cat package.json | grep -sw '"\bversion\b"' | cut -d '"' -f 4 | sed "s/\./\-/g")" >> "$GITHUB_ENV"
       - name: Push version and changlog 
-        run: |
-          git show-ref
-          git push --follow-tags origin develop
+        run: git push --follow-tags origin develop
       - name: Create Github Release
         id: create_release
         uses: actions/create-release@v1
