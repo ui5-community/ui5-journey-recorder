@@ -33,8 +33,8 @@ jobs:
         id: set_names
         run: |
           echo "version=$(cat package.json | grep -sw '"\bversion\b"' | cut -d '"' -f 4)" >> "$GITHUB_ENV"
-      - name: Create Pre Release
-        id: create_pre_release
+      - name: Create Release
+        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
@@ -45,4 +45,13 @@ jobs:
             Automatic generated nightly release with the latest features and bugfixes
           draft: false
           prerelease: true
-          path: format('deployments/journey_recorder_nightly_{0}.zip', $version)
+      - name: Upload release artifact
+        id: upload_release_artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: format('deployments/journey_recorder_nightly_{0}.zip', $version)
+          asset_name: format('journey_recorder_nightly_{0}.zip', $version)
+          asset_content_type: application/zip
