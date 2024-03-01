@@ -14,6 +14,8 @@ export interface Tab {
 export type Synchronizer = {
     success: (value: unknown) => void;
     error: (error: unknown) => void;
+    intervalID?: ReturnType<typeof setInterval>;
+    retryCount: number;
 };
 
 export interface RequestAnswer {
@@ -42,6 +44,10 @@ interface InjectionResult<T = unknown> {
 
 export class ChromeExtensionService {
     private static instance: ChromeExtensionService;
+    // for 30 sec timeout we try to reach the "backend"
+    // 10 times every 3 seconds
+    private static readonly INTERVAL_TIME = 3000;
+    private static readonly RETRY_COUNT = 10;
 
     private _currentTab: Tab | undefined;
     private _internalPort: chrome.runtime.Port | null = null;
@@ -292,9 +298,18 @@ export class ChromeExtensionService {
     public sendSyncMessage(msg: Request): Promise<unknown> {
         msg.message_id = ++this._messageId;
         return new Promise((resolve, reject) => {
-            const syncObject: Synchronizer = { success: resolve, error: reject };
+            const syncObject: Synchronizer = { success: resolve, error: reject, retryCount: 0 };
+
+            syncObject.intervalID = setInterval(() => {
+                if (syncObject.retryCount >= ChromeExtensionService.RETRY_COUNT) {
+                    clearInterval(syncObject.intervalID);
+                    reject({ status: 503, message: "Service doesn't respond" });
+                }
+                syncObject.retryCount++;
+                this._sendMessage(msg);
+            }, ChromeExtensionService.INTERVAL_TIME);
+
             this._messageMap[this._messageId] = syncObject;
-            this._sendMessage(msg);
         });
     }
 
@@ -335,6 +350,7 @@ export class ChromeExtensionService {
 
         this.setCurrentTab(fittingTab[0]);
         await this.connectToCurrentTab(true);
+        await this.disableRecording();
         await this.focusTab(fittingTab[0]);
     }
 
@@ -355,6 +371,26 @@ export class ChromeExtensionService {
             step: step.getObject(),
             useManualSelection: !useRRSelector,
         });
+        const result = await this.sendSyncMessage(rb.build()) as { status: number };
+        if (result.status !== 200) {
+            throw new Error();
+        }
+    }
+
+    public async disableRecording() {
+        const rb = new RequestBuilder();
+        rb.setMethod(RequestMethod.POST);
+        rb.setUrl('/disableRecordListener');
+        const result = await this.sendSyncMessage(rb.build()) as { status: number };
+        if (result.status !== 200) {
+            throw new Error();
+        }
+    }
+
+    public async enableRecording() {
+        const rb = new RequestBuilder();
+        rb.setMethod(RequestMethod.POST);
+        rb.setUrl('/enableRecordListener');
         const result = await this.sendSyncMessage(rb.build()) as { status: number };
         if (result.status !== 200) {
             throw new Error();
@@ -462,7 +498,8 @@ export class ChromeExtensionService {
             messageId &&
             this._messageMap[messageId]
         ) {
-            const { success, error } = this._messageMap[messageId];
+            const { success, error, intervalID } = this._messageMap[messageId];
+            clearInterval(intervalID);
             delete message.data.message_id;
             if (message.data.status >= 200 && message.data.status <= 299) {
                 success(message.data);
@@ -481,8 +518,9 @@ export class ChromeExtensionService {
     }
 
     private _onInstantMessage(msg: { message_id?: number, code: number, instantType: 'record-token', content?: unknown, data: unknown }): void {
-
         if (msg?.message_id && this._messageMap[msg.message_id]) {
+            const synchronizer = this._messageMap[msg.message_id];
+            clearInterval(synchronizer.intervalID);
             if (msg.code >= 200 && msg.code <= 299) {
                 this._messageMap[msg.message_id].success(msg.data);
             } else {
