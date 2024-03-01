@@ -29,7 +29,7 @@ jobs:
           git config user.name "UI5 journey recorder bot"
           git config user.email "ui5-journey-recorder-bot@users.noreply.github.com"
       - name: Create changelog and increase version
-        run: npm run changelog
+        run: npm run changelog -- --prerelease nightly
       - name: Build the extension for deploy
         run: npm run deployBuild -- --pre
         working-directory: ${{ github.workspace }}
@@ -41,7 +41,7 @@ jobs:
       - name: Push version and changlog 
         run: |
           git show-ref
-          git push --follow-tags origin HEAD:develop
+          git push --follow-tags origin HEAD
       - name: Create Github Release
         id: create_release
         uses: actions/create-release@v1
