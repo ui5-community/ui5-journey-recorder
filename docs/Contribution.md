@@ -13,12 +13,13 @@ Because the _UI5 Journey Recorder_ is a Chrome Extension the Chrome-Webbrowser i
 ##  set up the dev environment
 1. Clone the repo from [Github](https://github.com/ui5-community/ui5-journey-recorder.git)
 2. Navigate to the app folder of the repository and install the dependencies `npm install`
-3. Execute the watch-NPM-Script `npm run watch`
-4. Open Chrome and the [Chrome-Extension Page chrome://extensions](chrome://extensions)
-5. Choose the "Load unpacked" Button in the top left
+3. Execute the build:dev `npm run build:dev` to build
+   3.1. OR Execute the build:watch `npm run build:watch`
+5. Open Chrome and the [Chrome-Extension Page chrome://extensions](chrome://extensions)
+6. Choose the "Load unpacked" Button in the top left
   ![Load unpacked](./img/LoadUnpacked.png)
-6. Choose the dist-folder `<repository-path>\app\dist`
-7. Now open the *UI5 Journey Recorder* from the extension menu at the top right of Chrome
+7. Choose the dist-folder `<repository-path>\dist`
+8. Now open the *UI5 Journey Recorder* from the extension menu at the top right of Chrome
   <br>(Use the pin to make the extension always accessible)
   ![Extension Menu](./img/ExtensionMenu.png)
 
