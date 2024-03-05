@@ -34,6 +34,10 @@ export default class JourneyStorageService {
     }
 
     public static async isChanged(journey: Journey): Promise<boolean> {
+        // if the journey is unsuccessfull we can just return
+        if (!journey.id && !journey.startUrl) {
+            return false;
+        }
         const storageData: Record<string, string> = await chrome.storage.local.get(journey.id) as Record<string, string>;
         if (Object.keys(storageData).length === 0) {
             return true;

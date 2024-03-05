@@ -6,6 +6,7 @@
     xmlns:uxap="sap.uxap"
     xmlns:recorder="com.ui5.journeyrecorder.control"
     xmlns:mvc="sap.ui.core.mvc"
+    xmlns:dnd="sap.ui.core.dnd"
     core:require="{
 		formatter: 'com/ui5/journeyrecorder/model/formatter'
 	}"
@@ -102,9 +103,43 @@
                             <uxap:ObjectPageSubSection titleUppercase="false">
                                 <uxap:blocks>
                                     <List
+                                        id="stepList"
                                         items="{journey>/steps}"
                                         class="step-list"
                                     >
+                                        <dragDropConfig>
+                                            <dnd:DragDropInfo
+                                                sourceAggregation="items"
+                                                targetAggregation="items"
+                                                dropPosition="Between"
+                                                drop="onReorderItems"
+                                            />
+                                        </dragDropConfig>
+                                        <headerToolbar>
+                                            <Toolbar>
+                                                <ToolbarSpacer />
+                                                <Button
+                                                    icon="sap-icon://add"
+                                                    tooltip="Add Step"
+                                                    press="onAddStep"
+                                                />
+                                                <ToolbarSeparator />
+                                                <Button
+                                                    icon="sap-icon://restart"
+                                                    press="onReplay"
+                                                    text="Replay"
+                                                    tooltip="Execute all teststep on the page"
+                                                    visible="{= !${path: 'journeyControl>/replayEnabled'}}"
+                                                />
+                                                <Button
+                                                    icon="sap-icon://stop"
+                                                    press="onStopReplay"
+                                                    text="Stop Replay"
+                                                    tooltip="Stop execution"
+                                                    visible="{= ${path: 'journeyControl>/replayEnabled'}}"
+                                                />
+                                            </Toolbar>
+                                        </headerToolbar>
                                         <items>
                                             <CustomListItem
                                                 type="Navigation"
@@ -174,20 +209,7 @@
                                         </items>
                                     </List>
                                 </uxap:blocks>
-                                <uxap:actions>
-                                    <Button
-                                        icon="sap-icon://restart"
-                                        press="onReplay"
-                                        text="Replay"
-                                        visible="{= !${path: 'journeyControl>/replayEnabled'}}"
-                                    />
-                                    <Button
-                                        icon="sap-icon://stop"
-                                        press="onStopReplay"
-                                        text="Stop Replay"
-                                        visible="{= ${path: 'journeyControl>/replayEnabled'}}"
-                                    />
-                                </uxap:actions>
+                                <uxap:actions />
                             </uxap:ObjectPageSubSection>
                         </uxap:subSections>
                     </uxap:ObjectPageSection>

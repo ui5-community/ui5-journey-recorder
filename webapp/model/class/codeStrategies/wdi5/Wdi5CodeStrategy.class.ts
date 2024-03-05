@@ -16,7 +16,7 @@ export default class Wdi5CodeStrategy {
             case StepType.INPUT:
                 return Wdi5SingleStepStrategy.generateSingleInputStep(step as InputStep);
             default:
-                return 'Unknown StepType';
+                return '<Unknown StepType>';
         }
     }
 
@@ -26,6 +26,9 @@ export default class Wdi5CodeStrategy {
 
         // we treat each "page" as part of the entire journey and slice it up accordingly
         journey.steps.forEach((step: Step) => {
+            if (step.actionType === StepType.UNKNOWN) {
+                return;
+            }
             if (!pages[step.viewInfos.relativeViewName]) {
                 pages[step.viewInfos.relativeViewName] = new Wdi5PageBuilder(step.viewInfos.relativeViewName, `#/${step.viewInfos.relativeViewName}`);
             }

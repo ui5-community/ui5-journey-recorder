@@ -6,7 +6,7 @@ import Fragment from "sap/ui/core/Fragment";
 import Menu from "sap/m/Menu";
 import Button from "sap/m/Button";
 import MenuItem from "sap/m/MenuItem";
-import { Step } from "../model/class/Step.class";
+import { RecordEvent, Step } from "../model/class/Step.class";
 import { AppSettings } from "../service/SettingsStorage.service";
 import { TestFrameworks } from "../model/enum/TestFrameworks";
 import MessageToast from "sap/m/MessageToast";
@@ -14,6 +14,11 @@ import CodeGenerationService from "../service/CodeGeneration.service";
 import { Route$MatchedEvent } from "sap/ui/core/routing/Route";
 import BusyIndicator from "sap/ui/core/BusyIndicator";
 import { ChromeExtensionService } from "../service/ChromeExtension.service";
+import Utils from "../model/class/Utils.class";
+import Dialog from "sap/m/Dialog";
+import Text from "sap/m/Text";
+import { DialogType } from "sap/m/library";
+import { ValueState } from "sap/ui/core/library";
 
 /**
  * @namespace com.ui5.journeyrecorder.controller
@@ -27,7 +32,6 @@ export default class StepPage extends BaseController {
     onInit() {
         this.model = new JSONModel({});
         this.setModel(this.model, 'step');
-        this.model.attachPropertyChange(() => { this._propertyChanged(); });
         const settingsModel = (this.getOwnerComponent().getModel('settings') as JSONModel).getData() as AppSettings;
         this.setupModel = new JSONModel({
             codeStyle: 'javascript',
@@ -47,6 +51,9 @@ export default class StepPage extends BaseController {
         this.getRouter().getRoute("step").attachMatched((oEvent: Route$MatchedEvent) => {
             void this._loadStep(oEvent);
         });
+        this.getRouter().getRoute("step-define").attachMatched((oEvent: Route$MatchedEvent) => {
+            void this._startStepDefinition(oEvent);
+        });
     }
 
     async onSave() {
@@ -54,30 +61,7 @@ export default class StepPage extends BaseController {
         const step = Step.fromObject((this.getModel("step") as JSONModel).getData() as Partial<Step>);
         journey.updateStep(step);
         await JourneyStorageService.getInstance().save(journey);
-        (this.getModel('stepSetup') as JSONModel).setProperty('/propertyChanged', false);
         MessageToast.show('Step saved!');
-    }
-
-    public async onValidate() {
-        const step = Step.fromObject((this.getModel("step") as JSONModel).getData() as Partial<Step>);
-        BusyIndicator.show(0);
-        this.setConnecting()
-        const url = step.actionLocation;
-        try {
-            await ChromeExtensionService.getInstance().reconnectToPage(url);
-            this.setConnected();
-            await ChromeExtensionService.getInstance().performAction(step, false);
-            await ChromeExtensionService.getInstance().disconnect();
-            this.setDisconnected();
-            BusyIndicator.hide();
-            MessageToast.show('Step is valid and executable', { duration: 2000 });
-        } catch (e) {
-            await ChromeExtensionService.getInstance().disconnect();
-            this.setDisconnected();
-            BusyIndicator.hide();
-            MessageToast.show('An Error happened during validation', { duration: 2000 });
-        }
-
     }
 
     async typeChange($event: Event) {
@@ -141,16 +125,90 @@ export default class StepPage extends BaseController {
         MessageToast.show("Code copied");
     }
 
-    private _propertyChanged() {
-        (this.getModel('stepSetup') as JSONModel).setProperty('/propertyChanged', true);
+    async onReselect() {
+        await this._startRedefinition();
     }
 
     private async _loadStep(oEvent: Event) {
         const oArgs: { id: string; stepId: string } = oEvent.getParameter("arguments" as never);
         const step = await JourneyStorageService.getInstance().getStepById({ journeyId: oArgs.id, stepId: oArgs.stepId });
+        if (!step) {
+            this.onNavBack();
+            return;
+        }
         (this.getModel('stepSetup') as JSONModel).setProperty('/journeyId', oArgs.id);
         this.model.setData(step);
         this._generateStepCode();
+    }
+
+    private async _startStepDefinition(oEvent: Event) {
+        const oArgs: { id: string; stepId: string } = oEvent.getParameter("arguments" as never);
+        const step = await JourneyStorageService.getInstance().getStepById({ journeyId: oArgs.id, stepId: oArgs.stepId });
+        if (!step) {
+            this.onNavBack();
+            return;
+        }
+        (this.getModel('stepSetup') as JSONModel).setProperty('/journeyId', oArgs.id);
+        this.model.setData(step);
+
+        await this._startRedefinition();
+    }
+
+    private async _startRedefinition() {
+        BusyIndicator.show(0);
+        // 1. get all steps
+        const jour = await JourneyStorageService.getInstance().getById((this.getModel('stepSetup') as JSONModel).getProperty('/journeyId') as string);
+        const steps = jour.steps;
+        const selfIndex = steps.findIndex((s: Step) => s.id === (this.model.getData() as Step).id);
+        const settings = ((this.getModel('settings') as JSONModel).getData() as AppSettings);
+        await this.onConnect(jour.startUrl);
+        BusyIndicator.show(0);
+        for (let index = 0; index < steps.length; index++) {
+            await Utils.delay(1000 * settings.replayDelay)
+
+            if (index === selfIndex) {
+                //set "backend" to record mode
+                const selectElementDialog = new Dialog({
+                    state: ValueState.Information,
+                    type: DialogType.Message,
+                    title: 'Waiting for element select...',
+                    content: new Text({ text: "Please select an element at your UI5 application to redefine this step!" })
+                });
+
+                const onStepRerecord = (_1: string, _2: string, recordData: object) => {
+                    const newStep = Step.recordEventToStep(recordData as RecordEvent);
+                    jour.steps[selfIndex] = newStep;
+                    this.model.setData(newStep);
+                    ChromeExtensionService.getInstance().unregisterRecordingWebsocket(onStepRerecord, this);
+                    ChromeExtensionService.getInstance().disableRecording().then(() => { }).catch(() => { }).finally(() => {
+                        selectElementDialog.close();
+                        selectElementDialog.destroy();
+                        BusyIndicator.hide();
+                        this.onDisconnect().then(() => { }).catch(() => { });
+                    })
+
+                    //assume the journey is call by reference it should work
+                };
+
+                ChromeExtensionService.getInstance().registerRecordingWebsocket(onStepRerecord, this);
+                await ChromeExtensionService.getInstance().enableRecording();
+                selectElementDialog.open();
+                break;
+            } else {
+                const curStep = steps[index];
+                try {
+                    await ChromeExtensionService.getInstance().performAction(curStep, settings.useRRSelector);
+                } catch (e) {
+                    await this.onDisconnect();
+                    MessageToast.show('An Error happened during replay former steps', { duration: 3000 });
+                    BusyIndicator.hide();
+                    return;
+                }
+            }
+        }
+        // replay the steps before this step by connecting to the page. 
+        // after the first click take the found element and action as new step setting
+        // store and setup the step accordingly
     }
 
     private _generateStepCode(): void {

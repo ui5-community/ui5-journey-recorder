@@ -19,6 +19,9 @@ import { IconColor, ValueState } from "sap/ui/core/library";
 import { ButtonType, DialogType } from "sap/m/library";
 import Button from "sap/m/Button";
 import Text from "sap/m/Text";
+import BusyIndicator from "sap/ui/core/BusyIndicator";
+import { ChromeExtensionService } from "../service/ChromeExtension.service";
+import MessageToast from "sap/m/MessageToast";
 
 /**
  * @namespace com.ui5.journeyrecorder.controller
@@ -211,32 +214,56 @@ export default abstract class BaseController extends Controller {
 		}
 	}
 
-	protected _openUnsafedDialog() {
-		return new Promise<void>((resolve, reject) => {
-			if (!this._unsafeDialog) {
-				this._unsafeDialog = new Dialog({
-					type: DialogType.Message,
-					state: ValueState.Warning,
-					title: 'Unsafed Changes!',
-					content: new Text({ text: "You have unsafed changes, proceed?" }),
-					beginButton: new Button({
-						type: ButtonType.Attention,
-						text: 'Proceed',
-						press: () => {
-							resolve();
-							this._unsafeDialog.close();
+	protected _openUnsafedDialog(callbacks: { success?: () => void | Promise<void>; error?: () => void | Promise<void> }) {
+		if (!this._unsafeDialog) {
+			this._unsafeDialog = new Dialog({
+				type: DialogType.Message,
+				state: ValueState.Warning,
+				title: 'Unsafed Changes!',
+				content: new Text({ text: "You have unsafed changes, proceed?" }),
+				beginButton: new Button({
+					type: ButtonType.Attention,
+					text: 'Proceed',
+					press: () => {
+						if (callbacks.success) {
+							void callbacks.success();
 						}
-					}),
-					endButton: new Button({
-						text: 'Cancel',
-						press: () => {
-							reject();
-							this._unsafeDialog.close();
+						this._unsafeDialog.close();
+					}
+				}),
+				endButton: new Button({
+					text: 'Cancel',
+					press: () => {
+						if (callbacks.error) {
+							void callbacks.error();
 						}
-					})
+						this._unsafeDialog.close();
+					}
 				})
-			}
-			this._unsafeDialog.open();
-		})
+			})
+		}
+		this._unsafeDialog.open();
+	}
+
+	protected async onConnect(url: string) {
+		BusyIndicator.show();
+		this.setConnecting();
+		await ChromeExtensionService.getInstance().reconnectToPage(url);
+		BusyIndicator.hide();
+		this.setConnected();
+		MessageToast.show('Connected', { duration: 500 });
+	}
+
+	protected async onDisconnect() {
+		try {
+			await ChromeExtensionService.getInstance().disconnect();
+			this.setDisconnected();
+			MessageToast.show('Disconnected', { duration: 500 });
+		} catch (e) {
+			console.error(e);
+			this.setDisconnected();
+			ChromeExtensionService.getInstance().setCurrentTab();
+			MessageToast.show('Disconnected', { duration: 500 });
+		}
 	}
 }

@@ -332,11 +332,10 @@
                 </contentLeft>
                 <contentRight>
                     <Button
-                        icon="sap-icon://survey"
-                        text="Validate"
-                        type="Accept"
-                        press=".onValidate"
-                        tooltip="Validates your selection of properties and actions"
+                        icon="sap-icon://target-group"
+                        text="Reselect Step"
+                        press=".onReselect"
+                        tooltip="Reopens the page to test and enables the reselection of this step"
                     />
                     <Button
                         icon="sap-icon://delete"
