@@ -53,7 +53,7 @@ export default class JourneyPage extends BaseController {
     }
 
     onNavBack() {
-        void JourneyStorageService.isChanged((this.getModel('journey') as JSONModel).getData() as Journey).then((unsafed: boolean) => {
+        void JourneyStorageService.isChanged(Journey.fromObject((this.getModel('journey') as JSONModel).getData() as Partial<Journey>)).then((unsafed: boolean) => {
             if (unsafed) {
                 this._openUnsafedDialog({
                     success: () => {
@@ -172,6 +172,7 @@ export default class JourneyPage extends BaseController {
         const movedId = event.getParameter('draggedControl').getBindingContext('journey').getObject().id as string;
         const droppedId = event.getParameter('droppedControl').getBindingContext('journey').getObject().id as string;
         this._moveStep(movedId, droppedId);
+        this._generateCode(Journey.fromObject(this.model.getData() as Partial<Journey>));
     }
 
     onAddStep() {

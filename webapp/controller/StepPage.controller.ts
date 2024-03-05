@@ -32,7 +32,6 @@ export default class StepPage extends BaseController {
     onInit() {
         this.model = new JSONModel({});
         this.setModel(this.model, 'step');
-        this.model.attachPropertyChange(() => { this._propertyChanged(); });
         const settingsModel = (this.getOwnerComponent().getModel('settings') as JSONModel).getData() as AppSettings;
         this.setupModel = new JSONModel({
             codeStyle: 'javascript',
@@ -62,30 +61,7 @@ export default class StepPage extends BaseController {
         const step = Step.fromObject((this.getModel("step") as JSONModel).getData() as Partial<Step>);
         journey.updateStep(step);
         await JourneyStorageService.getInstance().save(journey);
-        (this.getModel('stepSetup') as JSONModel).setProperty('/propertyChanged', false);
         MessageToast.show('Step saved!');
-    }
-
-    public async onValidate() {
-        const step = Step.fromObject((this.getModel("step") as JSONModel).getData() as Partial<Step>);
-        BusyIndicator.show(0);
-        this.setConnecting()
-        const url = step.actionLocation;
-        try {
-            await ChromeExtensionService.getInstance().reconnectToPage(url);
-            this.setConnected();
-            await ChromeExtensionService.getInstance().performAction(step, false);
-            await ChromeExtensionService.getInstance().disconnect();
-            this.setDisconnected();
-            BusyIndicator.hide();
-            MessageToast.show('Step is valid and executable', { duration: 2000 });
-        } catch (e) {
-            await ChromeExtensionService.getInstance().disconnect();
-            this.setDisconnected();
-            BusyIndicator.hide();
-            MessageToast.show('An Error happened during validation', { duration: 2000 });
-        }
-
     }
 
     async typeChange($event: Event) {
@@ -149,8 +125,8 @@ export default class StepPage extends BaseController {
         MessageToast.show("Code copied");
     }
 
-    private _propertyChanged() {
-        (this.getModel('stepSetup') as JSONModel).setProperty('/propertyChanged', true);
+    async onReselect() {
+        await this._startRedefinition();
     }
 
     private async _loadStep(oEvent: Event) {
