@@ -55,19 +55,22 @@ export default class JourneyPage extends BaseController {
     onNavBack() {
         void JourneyStorageService.isChanged((this.getModel('journey') as JSONModel).getData() as Journey).then((unsafed: boolean) => {
             if (unsafed) {
-                this._openUnsafedDialog().then(() => {
-                    void ChromeExtensionService.getInstance().disconnect().then(() => {
-                        this.setDisconnected();
-                        const sPreviousHash = History.getInstance().getPreviousHash();
-                        if (sPreviousHash?.indexOf('recording') > -1) {
-                            this.getRouter().navTo("main");
-                        } else {
-                            super.onNavBack();
-                        }
-                    });
-                }).catch(() => {
-                    this.byId('saveBtn').focus();
-                })
+                this._openUnsafedDialog({
+                    success: () => {
+                        void ChromeExtensionService.getInstance().disconnect().then(() => {
+                            this.setDisconnected();
+                            const sPreviousHash = History.getInstance().getPreviousHash();
+                            if (sPreviousHash?.indexOf('recording') > -1) {
+                                this.getRouter().navTo("main");
+                            } else {
+                                super.onNavBack();
+                            }
+                        });
+                    },
+                    error: () => {
+                        this.byId('saveBtn').focus();
+                    }
+                });
             } else {
                 void ChromeExtensionService.getInstance().disconnect().then(() => {
                     this.setDisconnected();
@@ -299,15 +302,16 @@ export default class JourneyPage extends BaseController {
         const unsafed = (this.getModel('journeyControl') as JSONModel).getProperty('/unsafed') as boolean;
 
         if (unsafed) {
-            try {
-                await this._openUnsafedDialog()
-                await this._export();
-                BusyIndicator.hide();
-            }
-            catch (e) {
-                this.byId('saveBtn').focus();
-                BusyIndicator.hide();
-            }
+            this._openUnsafedDialog({
+                success: async () => {
+                    await this._export();
+                    BusyIndicator.hide();
+                },
+                error: () => {
+                    this.byId('saveBtn').focus();
+                    BusyIndicator.hide();
+                }
+            })
         } else {
             await this._export();
             BusyIndicator.hide();

@@ -214,33 +214,35 @@ export default abstract class BaseController extends Controller {
 		}
 	}
 
-	protected _openUnsafedDialog() {
-		return new Promise<void>((resolve, reject) => {
-			if (!this._unsafeDialog) {
-				this._unsafeDialog = new Dialog({
-					type: DialogType.Message,
-					state: ValueState.Warning,
-					title: 'Unsafed Changes!',
-					content: new Text({ text: "You have unsafed changes, proceed?" }),
-					beginButton: new Button({
-						type: ButtonType.Attention,
-						text: 'Proceed',
-						press: () => {
-							resolve();
-							this._unsafeDialog.close();
+	protected _openUnsafedDialog(callbacks: { success?: () => void | Promise<void>; error?: () => void | Promise<void> }) {
+		if (!this._unsafeDialog) {
+			this._unsafeDialog = new Dialog({
+				type: DialogType.Message,
+				state: ValueState.Warning,
+				title: 'Unsafed Changes!',
+				content: new Text({ text: "You have unsafed changes, proceed?" }),
+				beginButton: new Button({
+					type: ButtonType.Attention,
+					text: 'Proceed',
+					press: () => {
+						if (callbacks.success) {
+							void callbacks.success();
 						}
-					}),
-					endButton: new Button({
-						text: 'Cancel',
-						press: () => {
-							reject();
-							this._unsafeDialog.close();
+						this._unsafeDialog.close();
+					}
+				}),
+				endButton: new Button({
+					text: 'Cancel',
+					press: () => {
+						if (callbacks.error) {
+							void callbacks.error();
 						}
-					})
+						this._unsafeDialog.close();
+					}
 				})
-			}
-			this._unsafeDialog.open();
-		})
+			})
+		}
+		this._unsafeDialog.open();
 	}
 
 	protected async onConnect(url: string) {
