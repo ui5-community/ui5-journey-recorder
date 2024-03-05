@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.2](https://github.com/ui5-community/ui5-journey-recorder/compare/v0.3.1...v0.3.2) (2024-03-05)
+
+
+### Features
+
+* **journey:** added dnd for reordering journey steps ([319630f](https://github.com/ui5-community/ui5-journey-recorder/commit/319630ffddfb02534e2c07fb72fe7f9164a5093e))
+
 ### 0.3.1 (2024-02-28)
 
 ## 0.3.0 (2024-02-26)
