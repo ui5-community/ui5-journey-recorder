@@ -22,6 +22,7 @@ export default class JourneyStorageService {
         delete recording.steps;
         Object.assign(journey, recording)
 
+        //TODO(@tabris87): Issue #71 here we have to transform the click on an input followed by keypresses into an input step.
         const stepList = this._transformToList(
             this._reduceSteps(steps)
         );
