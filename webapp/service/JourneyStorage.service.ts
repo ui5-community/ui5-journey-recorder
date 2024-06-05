@@ -184,7 +184,7 @@ export default class JourneyStorageService {
                 if (!el) {
                     a.push([b]);
                 } else {
-                    if (el[0].equalsTo(b) && b.actionType === StepType.KEYPRESS) {
+                    if (el[0].control.controlId.id === b.control.controlId.id && b.actionType === StepType.KEYPRESS) {
                         el.push(b);
                         a.push(el);
                     } else {
