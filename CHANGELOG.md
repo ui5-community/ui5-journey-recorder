@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.3](https://github.com/ui5-community/ui5-journey-recorder/compare/v0.3.2...v0.3.3) (2024-06-05)
+
+
+### Bug Fixes
+
+* **project:** dependency update ([f261ac2](https://github.com/ui5-community/ui5-journey-recorder/commit/f261ac2abcb5d0bf59b18a9d7f7203064af0c878))
+* **StepConversion:** fixed the conversion to input steps ([ac1224a](https://github.com/ui5-community/ui5-journey-recorder/commit/ac1224aacf5267bdd58b7d61c1bea3c158321ca8))
+
 ### [0.3.2](https://github.com/ui5-community/ui5-journey-recorder/compare/v0.3.1...v0.3.2) (2024-03-05)
 
 
