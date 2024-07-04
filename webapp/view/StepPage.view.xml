@@ -198,9 +198,16 @@
                                                                 <Text
                                                                     text="{step>modelName}"
                                                                 />
-                                                                <Text
-                                                                    text="{step>propertyPath}"
-                                                                />
+                                                                <HBox>
+                                                                    <Text
+                                                                        text="{step>propertyPath}"
+                                                                        visible="{= !!${step>propertyPath}}"
+                                                                    />
+                                                                    <Text
+                                                                        text="{step>contextPath}"
+                                                                        visible="{= !!${step>contextPath}}"
+                                                                    />
+                                                                </HBox>
                                                                 <Text
                                                                     text="{step>bindingValue}"
                                                                 />

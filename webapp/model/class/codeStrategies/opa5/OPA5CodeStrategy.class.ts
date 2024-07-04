@@ -181,7 +181,7 @@ export default class OPA5CodeStrategy {
         }
 
         const elementMatcher = this._createObjectMatcherInfos(step, sb);
-        if (Object.keys(elementMatcher).length === 0) {
+        if (Object.keys(elementMatcher).length === 0 && step?.control?.controlId?.use) {
             sb.remove();
         }
         usedMatchers = {
@@ -206,13 +206,13 @@ export default class OPA5CodeStrategy {
         sb.addTab(2).add('When.on').add(viewName).add('.inputTextInto({');
 
         let usedMatchers: Record<string, unknown> = {};
-        if (step.control.controlId.use) {
+        if (step?.control?.controlId?.use) {
             sb.add(`id: {value: "${step.control.controlId.id}",isRegex: true}`).add(',');
             usedMatchers['enterText'] = true;
         }
 
         const elementMatcher = this._createObjectMatcherInfos(step, sb);
-        if (Object.keys(elementMatcher).length === 0) {
+        if (Object.keys(elementMatcher).length === 0 && step?.control?.controlId?.use) {
             sb.remove();
         }
         usedMatchers = {
@@ -381,14 +381,27 @@ export default class OPA5CodeStrategy {
     }
 
     private _createBindingValue(e: {
-        propertyName: string;
-        bindingValue: string | number | boolean;
-        modelPath: string;
-        propertyPath: string;
+        propertyName?: string;
+        bindingValue?: string | number | boolean;
+        modelPath?: string;
+        propertyPath?: string;
         modelName: string;
+        contextPath?: string;
         use: boolean;
     }): string {
-        return `{path: "${e.modelPath}", modelName: ${e.modelName}, propertyPath: "${e.propertyPath}}"`;
+        const sbBV = new StringBuilder('{');
+        sbBV.add(`modelName: "${e.modelName}"`);
+        if(e.propertyPath) {
+            sbBV.add(", ").add(`propertyPath: "${e.propertyPath}"`);
+        }
+        if(e.modelPath) {
+            sbBV.add(", ").add(`path: "${e.modelPath}"`);
+        }
+        if(e.contextPath) {
+            sbBV.add(", ").add(`contextPath: "${e.contextPath}"`);
+        }
+        sbBV.add('}');
+        return sbBV.toString();
     }
 
     private _createI18nValue(e: {
