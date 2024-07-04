@@ -29,6 +29,8 @@ import History from "sap/ui/core/routing/History";
 import { ValueState } from "sap/ui/core/library";
 import ChangeReason from "sap/ui/model/ChangeReason";
 import { StepType } from "../model/enum/StepType";
+import IconTabFilter from "sap/m/IconTabFilter";
+import IconTabBar from "sap/m/IconTabBar";
 
 type ReplayEnabledStep = Step & {
     state?: ValueState;
@@ -354,7 +356,9 @@ export default class JourneyPage extends BaseController {
     }
 
     async onCopyCode() {
-        await navigator.clipboard.writeText((this.getModel('journeyControl') as JSONModel).getProperty('/activeCode') as string);
+        const pageTitle = (this.byId("codePreviewTabs") as IconTabBar).getSelectedKey();
+        const codeContent = ((this.getModel("journeyControl") as JSONModel).getData() as {codes: Record<string, unknown>[]}).codes.find(c => c.title === pageTitle).code as string;
+        await navigator.clipboard.writeText(codeContent);
         MessageToast.show("Code copied");
     }
 
@@ -409,6 +413,7 @@ export default class JourneyPage extends BaseController {
             this._onStepRecord,
             this
         );
+        await ChromeExtensionService.getInstance().disableRecording();
         BusyIndicator.hide();
         this.model.setData(journey);
         (this.getModel('journeyControl') as JSONModel).setProperty('/unsafed', true);
@@ -560,6 +565,7 @@ export default class JourneyPage extends BaseController {
         }
         data.steps.push(newStep);
         this.model.setData(data);
+        console.log('wrote record step');
     }
 
     private async _requestUI5Version() {

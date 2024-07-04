@@ -30,6 +30,7 @@ export default class CodeViewerRenderer {
         rm.openStart("div", control);
         rm.class("code-viewer")
         rm.style("height", control.getHeight());
+        rm.style("overflow", "auto");
         rm.openEnd();
         rm.openStart("pre")
         switch (th) {

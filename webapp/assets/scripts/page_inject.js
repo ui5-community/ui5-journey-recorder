@@ -211,7 +211,7 @@
         }
         this.#rr.findControlSelectorByDOMElement({ domElement: ui5El.getDomRef() }).then((c) => {
           message.control.recordReplaySelector = c;
-          webSocket.send_record_step(message);
+          webSocket.send_record_step(JSON.parse(JSON.stringify(message)));
         }).catch(err => { console.log(err.message) });
 
         if (ui5El && ui5El.focus) {
@@ -241,7 +241,7 @@
               }
               this.#rr.findControlSelectorByDOMElement({ domElement: ui5El.getDomRef() }).then((c) => {
                 key_message.control.recordReplaySelector = c;
-                webSocket.send_record_step(key_message);
+                webSocket.send_record_step(JSON.parse(JSON.stringify(key_message)));
               }).catch(err => { console.log(err.message) });
             }
           }
@@ -303,27 +303,33 @@
 
     #getUI5ElementProperties(el) {
       // retrieve the direct public available methods
-      return el.getMetadata()._aPublicMethods
+      return el.getMetadata()._aAllPublicMethods
         // reduce them to the "getter" only
         .filter(m => m.startsWith("get"))
         // create the properties object by collect and execute all getter
         .reduce((a, b) => {
           const key = Utils.lowerCaseFirstLetter(b.replace('get', ''));
-          const value = el[b]();
-          if (typeof value !== 'object') {
-            a[key] = value;
-          } else {
-            try {
-              JSON.stringify(value);
+          try {
+            const value = (el[b])();
+            if (typeof value !== 'object') {
               a[key] = value;
-            } catch (e) { }
+            } else if (typeof value === 'function' || value.then) {
+              return a;
+            } else {
+              try {
+                JSON.stringify(value);
+                a[key] = value;
+              } catch (e) { }
+            }
+            return a;
+          } catch (_) {
+            return a;
           }
-          return a;
         }, {})
     }
 
     #getUI5ElementBindings(el) {
-      return Object.keys(el.mBindingInfos)
+      const byBindingInfos = Object.keys(el.mBindingInfos)
         .map(k => {
           let first = el.mBindingInfos[k].parts.map(b => {
             const c = {};
@@ -353,6 +359,16 @@
           return first;
         })
         .reduce((b, a) => [...a, ...b], []);
+      const bindingContexts = Object.keys(el.oPropagatedProperties.oModels).map(m => {
+        const bindingContext = el.getBindingContext(m);
+        if (bindingContext) {
+          return {
+            model: m,
+            contextPath: bindingContext.getPath()
+          }
+        }
+      }).filter(b => b);
+      return [...byBindingInfos, ...bindingContexts];
     }
 
     #getViewProperties(ui5El) {
@@ -397,7 +413,7 @@
           return this.#rr.interactWithControl({
             selector: oSelector,
             interactionType: this.#rr.InteractionType.EnterText,
-            enterText: oItem.keys.reduce((a, b) => a + b.key_char, '')
+            enterText: oItem.keys.reduce((a, b) => a + (b.key || ''), '')
           })
         default:
           return Promise.reject('ActionType not defined');

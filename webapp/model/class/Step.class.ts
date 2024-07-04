@@ -46,11 +46,12 @@ export type Control = {
         hideFromSelection?: boolean;
     }[];
     bindings?: {
-        propertyName: string;
-        bindingValue: string | number | boolean;
-        modelPath: string;
-        propertyPath: string;
+        propertyName?: string;
+        bindingValue?: string | number | boolean;
+        modelPath?: string;
+        propertyPath?: string;
         modelName: string;
+        contextPath?: string;
         use: boolean;
     }[];
     i18nTexts?: {
@@ -125,6 +126,7 @@ export abstract class Step {
                     stepControl.bindings = [];
                 }
                 stepControl.bindings.push({
+                    contextPath: binding.contextPath as string,
                     propertyName: binding.key as string,
                     bindingValue: binding.value as string | number | boolean,
                     modelPath: binding.modelPath as string,
@@ -400,7 +402,7 @@ export class KeyPressStep extends Step {
     getObject(): Record<string, unknown> {
         const original = super.getObject();
         original.keyCode = this.key_code;
-        original.keyChar = this.key_char;
+        original.key = this.key_char;
         return original;
     }
 }

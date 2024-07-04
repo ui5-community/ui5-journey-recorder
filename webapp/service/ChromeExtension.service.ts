@@ -58,6 +58,11 @@ export class ChromeExtensionService {
 
     private _eventBus: EventBus = EventBus.getInstance();
 
+    private _setupDisconnectListener: () => void;
+    private _setupOnMessageListener: (message: { data?: { message_id?: number, status: number, instantType: 'record-token', content?: unknown } }) => void;
+    private _setupInstantListener: (msg: { message_id?: number, code: number, instantType: 'record-token', content?: unknown, data: unknown }) => void;
+
+
     private constructor() { }
 
     public static getInstance(): ChromeExtensionService {
@@ -229,18 +234,21 @@ export class ChromeExtensionService {
             };
 
             const setupPort = (port: chrome.runtime.Port) => {
+                this._setupDisconnectListener = () => {
+                    this._onDisconnectListener();
+                };
+                this._setupOnMessageListener = (message: { data?: { message_id?: number, status: number, instantType: 'record-token', content?: unknown } }) => {
+                    this._onMessageListener(message);
+                };
+                this._setupInstantListener = (msg: { message_id?: number, code: number, instantType: 'record-token', content?: unknown, data: unknown }) => {
+                    this._onInstantMessage(msg);
+                };
                 // ignore if a connection is already active
                 if (port && port.name === 'ui5_tr') {
                     this._internalPort = port;
-                    this._internalPort.onDisconnect.addListener(
-                        this._onDisconnectListener.bind(this)
-                    );
-                    this._internalPort.onMessage.addListener(
-                        this._onMessageListener.bind(this)
-                    );
-                    chrome.runtime.onMessage.addListener(
-                        this._onInstantMessage.bind(this)
-                    );
+                    this._internalPort.onDisconnect.addListener(this._setupDisconnectListener);
+                    this._internalPort.onMessage.addListener(this._setupOnMessageListener);
+                    chrome.runtime.onMessage.addListener(this._setupInstantListener);
                     chrome.runtime.onConnect.removeListener(setupPort);
                     resolve();
                 } else {
@@ -469,15 +477,13 @@ export class ChromeExtensionService {
 
     private _resetConnection(): void {
         if (this._internalPort !== null) {
-            this._internalPort.onDisconnect.removeListener(
-                this._onDisconnectListener.bind(this)
-            );
-            this._internalPort.onMessage.removeListener(
-                this._onMessageListener.bind(this)
-            );
-            chrome.runtime.onMessage.removeListener(
-                this._onInstantMessage.bind(this)
-            );
+            this._internalPort.onDisconnect.removeListener(this._setupDisconnectListener);
+            this._internalPort.onMessage.removeListener(this._setupOnMessageListener);
+            chrome.runtime.onMessage.removeListener(this._setupInstantListener);
+            this._setupDisconnectListener = null;
+            this._setupOnMessageListener = null;
+            this._setupInstantListener = null;
+
             this._internalPort.disconnect();
             this._internalPort = null;
             this._injectAttempted = false;
@@ -508,6 +514,7 @@ export class ChromeExtensionService {
             }
         } else {
             if (message?.data?.instantType === 'record-token') {
+                console.log('got record token');
                 this._eventBus.publish(RECORD_TOKEN_CHANNEL, NEW_RECORD_TOKEN, message?.data?.content as Record<string, unknown>);
             }
         }
