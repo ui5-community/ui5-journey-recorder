@@ -18,4 +18,5 @@ module.exports = {
 	},
 	plugins: ["@typescript-eslint"],
 	ignorePatterns: [".eslintrc.js"],
+	ignores: ["blub/**"]
 };

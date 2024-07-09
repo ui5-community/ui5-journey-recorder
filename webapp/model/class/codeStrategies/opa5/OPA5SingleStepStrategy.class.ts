@@ -70,7 +70,7 @@ export default class OPA5SingleStepStrategy {
         click.addTab(1).add('},').addNewLine();
         click
             .addTab(1)
-            .add(`errorMessage: "Can not select "${step.control.type}".`)
+            .add(`errorMessage: "Can not select '${step.control.type}'"`)
             .addNewLine();
         click.add('});');
         return click.toString();
@@ -137,7 +137,7 @@ export default class OPA5SingleStepStrategy {
         enterText.addTab(1).add('},').addNewLine();
         enterText
             .addTab(1)
-            .add(`errorMessage: "Can not enter text into "${step.control.type}".`)
+            .add(`errorMessage: "Can not enter text into '${step.control.type}'"`)
             .addNewLine();
         enterText.add('});');
         return enterText.toString();
@@ -199,7 +199,7 @@ export default class OPA5SingleStepStrategy {
         click.addTab(1).add('},').addNewLine();
         click
             .addTab(1)
-            .add(`errorMessage: "Won't be able to find field at the view with requirements: " + JSON.stringify(oMatchProperties).`)
+            .add(`errorMessage: "Won't be able to find field at the view with requirements: " + JSON.stringify(oMatchProperties)`)
             .addNewLine();
         click.add('});');
         return click.toString();
