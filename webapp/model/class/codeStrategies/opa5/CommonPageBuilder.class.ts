@@ -49,12 +49,12 @@ export default class CommonPageBuilder extends PageBuilder {
         const oCode = new StringBuilder('sap.ui.define([').addNewLine();
         oCode.addBuilder(this._generateDependencies());
         oCode.addTab().add('"use strict";').addNewLine(2);
-        oCode.addBuilder(this._addWrapParametersFunction());
+        //oCode.addBuilder(this._addWrapParametersFunction());
 
-        oCode
+        /* oCode
             .addTab()
             .add(
-                'return Opa5.extend("' + this._namespace + '.<testPath>.CommonPage", {'
+                'return Opa5.extend("' + this._namespace + '.test/integration.CommonPage", {'
             )
             .addNewLine();
         oCode
@@ -78,7 +78,7 @@ export default class CommonPageBuilder extends PageBuilder {
         oCode.addTab(2).add('},').addNewLine(2);
         oCode.addTab(2).add('iTeardownTheApp: function() {').addNewLine();
         oCode.addTab(3).add('this.iTeardownMyUIComponent();').addNewLine();
-        oCode.addTab(2).add('}');
+        oCode.addTab(2).add('}'); */
 
         oCode.addBuilder(this._generateActionFunctions());
         oCode.addBuilder(this._generateAssertionFunctions());
@@ -210,7 +210,7 @@ export default class CommonPageBuilder extends PageBuilder {
             .addTab()
             .add('"')
             .add(this._namespace.replace(/\./g, '/'))
-            .add('/<testPath>/MockServer"');
+            .add('/test/integration/MockServer"');
 
         if (this._bindMatcher) {
             oDependencies.add(',').addNewLine();
@@ -252,7 +252,7 @@ export default class CommonPageBuilder extends PageBuilder {
                 .addTab()
                 .add('"')
                 .add(this._namespace.replace(/\./g, '/'))
-                .add('/<testPath>/customMatcher/ParentMatcher"');
+                .add('/test/integration/customMatcher/ParentMatcher"');
         }
 
         oDependencies.addNewLine();

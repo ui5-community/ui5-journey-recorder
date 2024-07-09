@@ -40,9 +40,10 @@
                         class="journey-page-header"
                     >
                         <uxap:heading>
-                            <recorder:EditableTitle
+                            <recorder:EditableText
                                 prefix="{i18n>journey}:"
                                 text="{journey>/name}"
+                                useAsTitle="true"
                             />
                         </uxap:heading>
                         <uxap:expandedContent>

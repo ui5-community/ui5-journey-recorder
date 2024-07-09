@@ -100,7 +100,7 @@
           "uri": "css/main.css"
         },
         {
-          "uri": "css/control/editableTitle.css"
+          "uri": "css/control/EditableText.css"
         },
         {
           "uri": "css/journeyPage.css"

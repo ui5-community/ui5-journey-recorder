@@ -124,17 +124,34 @@ export default class OPA5CodeStrategy {
             .add(journey.name)
             .add('", function(Given, When, Then) {')
             .addNewLine();
+
+        startStep.addTab(2).add('// Arrangements').addNewLine();
+        startStep
+            .addTab(2)
+            .add(`Given.iStartMyUIComponent({
+                    componentConfig: {
+                        name: "<namespace>",
+                        async: true
+                    }`);
+
         let sNavHash = '';
         if (journey.startUrl.indexOf('#') > -1) {
             sNavHash = journey.startUrl.substring(
                 journey.startUrl.indexOf('#') + 1
             );
         }
+
+        if(sNavHash) {
+            startStep.add(",")
+                .addNewLine()
+                .addTab(3)
+                .add(`hash: "${sNavHash}"`);
+        }
+
         startStep
+            .addNewLine()
             .addTab(2)
-            .add('Given.iStartTheAppByHash({hash: "')
-            .add(sNavHash)
-            .add('"});')
+            .add('});')
             .addNewLine(2);
 
         (journeyCode.code as StringBuilder).addBuilder(startStep);
@@ -158,7 +175,11 @@ export default class OPA5CodeStrategy {
         oCloseStep
             .addNewLine()
             .addTab(2)
-            .add('Given.iTeardownTheApp();')
+            /* .add('Given.iTeardownTheApp();') */
+            .add('// Cleanup')
+            .addNewLine()
+            .addTab(2)
+            .add('Then.iTeardownMyApp();')
             .addNewLine()
             .addTab()
             .add('});')
@@ -171,6 +192,11 @@ export default class OPA5CodeStrategy {
     ): string {
         const sb = new StringBuilder();
         const viewName = step.viewInfos.relativeViewName || '<view_name>';
+        if(step.comment) {
+            sb.addTab(2)
+                .add(`// Action: ${step.comment}`)
+                .addNewLine();
+        }
 
         sb.addTab(2).add('When.on').add(viewName).add('.pressOn({');
 
@@ -203,6 +229,13 @@ export default class OPA5CodeStrategy {
     ): string {
         const sb = new StringBuilder();
         const viewName = step.viewInfos.relativeViewName || '<view_name>';
+
+        if(step.comment) {
+            sb.addTab(2)
+                .add(`// Action: ${step.comment}`)
+                .addNewLine();
+        }
+
         sb.addTab(2).add('When.on').add(viewName).add('.inputTextInto({');
 
         let usedMatchers: Record<string, unknown> = {};
@@ -236,6 +269,13 @@ export default class OPA5CodeStrategy {
     ): string {
         const validate = new StringBuilder();
         const viewName = step.viewInfos.relativeViewName || '<view_name>';
+        
+        if(step.comment) {
+            validate.addTab(2)
+                .add(`// Validation: ${step.comment}`)
+                .addNewLine();
+        }
+
         validate.addTab(2).add('Then.on').add(viewName).add('.thereShouldBe({');
         let usedMatchers: Record<string, unknown> = {};
         if (step.control.controlId.use) {
