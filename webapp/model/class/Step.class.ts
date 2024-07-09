@@ -75,6 +75,7 @@ export abstract class Step {
     private _viewInfo: ViewInformation;
     private _control: Control;
     private _recordReplaySelector: Record<string, unknown>;
+    private _comment: string;
 
     public static recordEventToStep(event: RecordEvent): Step {
         let res: Step;
@@ -175,6 +176,7 @@ export abstract class Step {
         step.recordReplaySelector = object.recordReplaySelector;
         step.viewInfos = object.viewInfos;
         step.control = stepControl;
+        step.comment = object.comment || '';
         return step;
     }
 
@@ -246,6 +248,14 @@ export abstract class Step {
         this._recordReplaySelector = value;
     }
 
+    public get comment(): string {
+        return this._comment;
+    }
+
+    public set comment(comment: string) {
+        this._comment = comment;
+    }
+
     getObject(): Record<string, unknown> {
         return {
             id: this.id,
@@ -254,7 +264,8 @@ export abstract class Step {
             control: this.control,
             styleClasses: this.styleClasses,
             recordReplaySelector: this.recordReplaySelector,
-            viewInfos: this.viewInfos
+            viewInfos: this.viewInfos,
+            comment: this.comment
         }
     }
 
@@ -354,6 +365,13 @@ export abstract class Step {
         } else {
             return [];
         }
+    }
+
+    get namespace(): string {
+        return this.viewInfos?.absoluteViewName
+            .replace(`.${this.viewInfos?.relativeViewName}`, '')
+            .replace('.view', '')
+            .trim() || '';
     }
 }
 

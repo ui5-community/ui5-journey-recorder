@@ -1,6 +1,10 @@
-.editable-title{
+.editable-text{
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+}
+
+.editable-text > .title-use {
+    font-size: 1.1rem;
 }

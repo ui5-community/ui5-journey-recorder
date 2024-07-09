@@ -158,4 +158,8 @@ export default class Journey {
     public get startUrl(): string {
         return this.steps.length > 0 ? this.steps[0].actionLocation : '';
     }
+
+    public get namespace(): string {
+        return this.steps.length > 0 ? this.steps[0].namespace : '';
+    }
 }

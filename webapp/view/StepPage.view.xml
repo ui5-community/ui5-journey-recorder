@@ -48,9 +48,13 @@
                                     title="Step action"
                                     text="{path: 'step>/actionType', formatter: 'formatter.actionText'}"
                                     icon="{
-                                path: 'step>/actionType',
-                                formatter: 'formatter.actionIcon'
-                            }"
+                                        path: 'step>/actionType',
+                                        formatter: 'formatter.actionIcon'
+                                    }"
+                                />
+                                <recorder:EditableText
+                                    prefix="{i18n>comment}:"
+                                    text="{step>/comment}"
                                 />
                             </VBox>
                         </uxap:expandedContent>

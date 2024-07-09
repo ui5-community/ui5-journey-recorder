@@ -48,7 +48,7 @@ export default class ViewPageBuilder extends PageBuilder {
         this._namespace = posNamespace || this._namespace;
 
         this._dependencies.push({
-            asyncDep: `${this._namespace}/<testPath>/CommonPage`,
+            asyncDep: `${this._namespace}/test/integration/CommonPage`,
             paramDep: 'CommonPage',
         });
     }
