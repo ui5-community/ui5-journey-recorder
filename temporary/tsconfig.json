@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "target": "es2022",
+        "module": "es2022",
+        "moduleResolution": "node",
+        "skipLibCheck": true,
+        "allowJs": true,
+        "strict": true,
+        "strictNullChecks": false,
+        "strictPropertyInitialization": false,
+        "rootDir": "./interfacing",
+        "types": [
+            "@openui5/types",
+            "@types/qunit",
+            "@types/chrome",
+            "@types/node",
+            "chrome"
+        ]
+    },
+    "include": [
+        "./interfacing/**/*"
+    ],
+    "exclude": []
+}

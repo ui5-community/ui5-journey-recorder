@@ -5,9 +5,9 @@ import DetailPage from "./pages/DetailPage";
 const onTheOverviewPage = new OverviewPage();
 const onTheDetailPage = new DetailPage();
 
-QUnit.module("CoE Demo");
+QUnit.module("CodeGen-Demo");
 
-opaTest("Test CoE Demo", function() {
+opaTest("Test CodeGen-Demo", function() {
 
   // Arrangements
   onTheOverviewPage.iStartMyUIComponent({
