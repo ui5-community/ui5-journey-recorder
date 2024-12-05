@@ -1,3 +1,5 @@
+const JourneyTemplate = require("./JourneyTemplate");
+
 const fs = require('fs');
 
 const sJsonContent = fs.readFileSync('./Demo.json', { encoding: 'utf-8' });
@@ -8,6 +10,15 @@ class OPA5Journey {
     constructor(oJson: Record<string, unknown>) {
         this._oJson = oJson;
     }
+
+    //#region templateClass
+    public createByTemplateClass(bTS: boolean = false): string {
+        const oJourney = new JourneyTemplate().extractAppPrefix(this._oJson)
+            .extractJourneyName(this._oJson)
+            .extractSteps(this._oJson);
+        return oJourney.generate(bTS);
+    }
+    //#endregion
 
     //#region JS
     public createJSJourney(): { title: string, content: string }[] {
@@ -249,8 +260,6 @@ class OPA5Journey {
 }
 
 const oJourney = new OPA5Journey(oJsonContent);
-oJourney.createJSJourney().forEach((oElement) => {
-    fs.writeFileSync(`./js${oElement.title}.js`, oElement.content, { encoding: 'utf-8' });
-});
-fs.writeFileSync("./tsJourney.ts", oJourney.createTSJourney(), { encoding: 'utf-8' })
+fs.writeFileSync("../target/JS/JourneyT.js", oJourney.createByTemplateClass());
+fs.writeFileSync("../target/TS/JourneyT.ts", oJourney.createByTemplateClass(true));
 console.log("Finished");

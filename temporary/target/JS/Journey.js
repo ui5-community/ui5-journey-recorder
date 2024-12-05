@@ -6,9 +6,9 @@ sap.ui.define([
 ], function(opaTest) {
   "use strict";
 
-  QUnit.module("CoE Demo");
+  QUnit.module("CodeGen-Demo");
 
-  opaTest("Test CoE Demo", function(Given, When, Then) {
+  opaTest("Test CodeGen-Demo", function(Given, When, Then) {
       // Arrangements
       Given.iStartMyUIComponent({
          componentConfig: {
