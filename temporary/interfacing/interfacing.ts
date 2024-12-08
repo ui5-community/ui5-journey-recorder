@@ -7,16 +7,22 @@ const oJsonContent = JSON.parse(sJsonContent);
 
 class OPA5Journey {
     private _oJson: Record<string, unknown>;
+    private _oJourney: typeof JourneyTemplate;
     constructor(oJson: Record<string, unknown>) {
         this._oJson = oJson;
     }
 
     //#region templateClass
     public createByTemplateClass(bTS: boolean = false): string {
-        const oJourney = new JourneyTemplate().extractAppPrefix(this._oJson)
+        this._oJourney = new JourneyTemplate()
+            .extractAppPrefix(this._oJson)
             .extractJourneyName(this._oJson)
             .extractSteps(this._oJson);
-        return oJourney.generate(bTS);
+        return this._oJourney.generate(bTS);
+    }
+
+    public createByTemplatePages(bTS: boolean = false): string[] {
+        return this._oJourney ? this._oJourney.generatePages(bTS) : [];
     }
     //#endregion
 
@@ -262,4 +268,7 @@ class OPA5Journey {
 const oJourney = new OPA5Journey(oJsonContent);
 fs.writeFileSync("../target/JS/JourneyT.js", oJourney.createByTemplateClass());
 fs.writeFileSync("../target/TS/JourneyT.ts", oJourney.createByTemplateClass(true));
+oJourney.createByTemplatePages(true).forEach((sP, i) => {
+    fs.writeFileSync(`../target/TS/pages/p${i}T.ts`, sP);
+})
 console.log("Finished");
