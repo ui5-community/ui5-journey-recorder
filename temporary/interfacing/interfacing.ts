@@ -266,10 +266,13 @@ class OPA5Journey {
 }
 
 const oJourney = new OPA5Journey(oJsonContent);
-fs.writeFileSync("./target/JS/JourneyT.js", oJourney.createByTemplateClass());
-fs.writeFileSync("./target/TS/JourneyT.ts", oJourney.createByTemplateClass(true));
+fs.writeFileSync("./target/JS/Journey.js", oJourney.createByTemplateClass());
+oJourney.createByTemplatePages().forEach((oP) => {
+    fs.writeFileSync(`./target/JS/pages/${oP.pageName}Page.js`, oP.pageContent);
+});
+fs.writeFileSync("./target/TS/Journey.ts", oJourney.createByTemplateClass(true));
 oJourney.createByTemplatePages(true).forEach((oP) => {
     fs.writeFileSync(`./target/TS/pages/${oP.pageName}Page.ts`, oP.pageContent);
-})
+});
 const oDateTime = new Date();
 console.log(`${('' + oDateTime.getUTCDate()).padStart(2, '0')}-${('' + (oDateTime.getUTCMonth() + 1)).padStart(2, '0')}-${oDateTime.getUTCFullYear()} ${('' + oDateTime.getUTCHours()).padStart(2, '0')}:${('' + oDateTime.getUTCMinutes()).padStart(2, '0')}:${('' + oDateTime.getUTCSeconds()).padStart(2, '0')} - Finished`);

@@ -241,8 +241,11 @@ class OPA5Journey {
     }
 }
 const oJourney = new OPA5Journey(oJsonContent);
-fs.writeFileSync("./target/JS/JourneyT.js", oJourney.createByTemplateClass());
-fs.writeFileSync("./target/TS/JourneyT.ts", oJourney.createByTemplateClass(true));
+fs.writeFileSync("./target/JS/Journey.js", oJourney.createByTemplateClass());
+oJourney.createByTemplatePages().forEach((oP) => {
+    fs.writeFileSync(`./target/JS/pages/${oP.pageName}Page.js`, oP.pageContent);
+});
+fs.writeFileSync("./target/TS/Journey.ts", oJourney.createByTemplateClass(true));
 oJourney.createByTemplatePages(true).forEach((oP) => {
     fs.writeFileSync(`./target/TS/pages/${oP.pageName}Page.ts`, oP.pageContent);
 });
