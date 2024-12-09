@@ -1,0 +1,1189 @@
+{
+    "id": "498d28e5-11fb-4afd-8a01-01f18330b4ac",
+    "created": 1720033503204,
+    "edited": 1720033503204,
+    "steps": [
+        {
+            "id": "68aaae7c-fa78-4dc2-8efa-d49edb76f412",
+            "actionType": "input",
+            "actionLocation": "http://localhost:8080/test/mockServer.html#",
+            "control": {
+                "controlId": {
+                    "id": "__component0---overview--srchList",
+                    "use": true
+                },
+                "type": "sap.m.SearchField",
+                "properties": [
+                    {
+                        "name": "value",
+                        "value": "",
+                        "use": false
+                    },
+                    {
+                        "name": "width",
+                        "value": "50%",
+                        "use": false
+                    },
+                    {
+                        "name": "enabled",
+                        "value": true,
+                        "use": false
+                    },
+                    {
+                        "name": "visible",
+                        "value": true,
+                        "use": false
+                    },
+                    {
+                        "name": "maxLength",
+                        "value": 0,
+                        "use": false
+                    },
+                    {
+                        "name": "placeholder",
+                        "value": "",
+                        "use": false
+                    },
+                    {
+                        "name": "showMagnifier",
+                        "value": true,
+                        "use": false
+                    },
+                    {
+                        "name": "showRefreshButton",
+                        "value": false,
+                        "use": false
+                    },
+                    {
+                        "name": "refreshButtonTooltip",
+                        "value": "",
+                        "use": false
+                    },
+                    {
+                        "name": "showSearchButton",
+                        "value": true,
+                        "use": false
+                    },
+                    {
+                        "name": "enableSuggestions",
+                        "value": false,
+                        "use": false
+                    },
+                    {
+                        "name": "selectOnFocus",
+                        "value": true,
+                        "use": false
+                    },
+                    {
+                        "name": "suggestionItems",
+                        "value": [],
+                        "use": false
+                    },
+                    {
+                        "name": "ariaDescribedBy",
+                        "value": [],
+                        "use": false
+                    },
+                    {
+                        "name": "ariaLabelledBy",
+                        "value": [],
+                        "use": false
+                    }
+                ]
+            },
+            "styleClasses": [
+                "sapMBarChild",
+                "sapMTBShrinkItem",
+                "sapMFocus",
+                "injectClass"
+            ],
+            "recordReplaySelector": {
+                "id": "__component0---overview--srchList"
+            },
+            "viewInfos": {
+                "absoluteViewName": "de.passau.coedemo.view.Overview",
+                "relativeViewName": "Overview"
+            },
+            "comment": "Search for elements with ACME within it's name or supplier name",
+            "keys": [
+                {
+                    "id": "834bdd31-4512-45d3-a2c8-20407ba8ac7f",
+                    "actionType": "keypress",
+                    "actionLocation": "http://localhost:8080/test/mockServer.html#",
+                    "control": {
+                        "controlId": {
+                            "id": "__component0---overview--srchList",
+                            "use": true
+                        },
+                        "type": "sap.m.SearchField",
+                        "properties": [
+                            {
+                                "name": "value",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "width",
+                                "value": "50%",
+                                "use": false
+                            },
+                            {
+                                "name": "enabled",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "visible",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "maxLength",
+                                "value": 0,
+                                "use": false
+                            },
+                            {
+                                "name": "placeholder",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "showMagnifier",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "showRefreshButton",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "refreshButtonTooltip",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "showSearchButton",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "enableSuggestions",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "selectOnFocus",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "suggestionItems",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaDescribedBy",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaLabelledBy",
+                                "value": [],
+                                "use": false
+                            }
+                        ]
+                    },
+                    "styleClasses": [
+                        "sapMBarChild",
+                        "sapMTBShrinkItem",
+                        "sapMFocus",
+                        "injectClass"
+                    ],
+                    "recordReplaySelector": {
+                        "id": "__component0---overview--srchList"
+                    },
+                    "viewInfos": {
+                        "absoluteViewName": "de.passau.coedemo.view.Overview",
+                        "relativeViewName": "Overview"
+                    },
+                    "comment": "",
+                    "keyCode": 65,
+                    "key": "A"
+                },
+                {
+                    "id": "88e668d4-0776-4f8a-8cac-fdeb298cb326",
+                    "actionType": "keypress",
+                    "actionLocation": "http://localhost:8080/test/mockServer.html#",
+                    "control": {
+                        "controlId": {
+                            "id": "__component0---overview--srchList",
+                            "use": true
+                        },
+                        "type": "sap.m.SearchField",
+                        "properties": [
+                            {
+                                "name": "value",
+                                "value": "A",
+                                "use": false
+                            },
+                            {
+                                "name": "width",
+                                "value": "50%",
+                                "use": false
+                            },
+                            {
+                                "name": "enabled",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "visible",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "maxLength",
+                                "value": 0,
+                                "use": false
+                            },
+                            {
+                                "name": "placeholder",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "showMagnifier",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "showRefreshButton",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "refreshButtonTooltip",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "showSearchButton",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "enableSuggestions",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "selectOnFocus",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "suggestionItems",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaDescribedBy",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaLabelledBy",
+                                "value": [],
+                                "use": false
+                            }
+                        ]
+                    },
+                    "styleClasses": [
+                        "sapMBarChild",
+                        "sapMTBShrinkItem",
+                        "sapMFocus",
+                        "injectClass"
+                    ],
+                    "recordReplaySelector": {
+                        "id": "__component0---overview--srchList"
+                    },
+                    "viewInfos": {
+                        "absoluteViewName": "de.passau.coedemo.view.Overview",
+                        "relativeViewName": "Overview"
+                    },
+                    "comment": "",
+                    "keyCode": 67,
+                    "key": "C"
+                },
+                {
+                    "id": "396a30b1-c1eb-45b3-a5eb-653e294da5bd",
+                    "actionType": "keypress",
+                    "actionLocation": "http://localhost:8080/test/mockServer.html#",
+                    "control": {
+                        "controlId": {
+                            "id": "__component0---overview--srchList",
+                            "use": true
+                        },
+                        "type": "sap.m.SearchField",
+                        "properties": [
+                            {
+                                "name": "value",
+                                "value": "AC",
+                                "use": false
+                            },
+                            {
+                                "name": "width",
+                                "value": "50%",
+                                "use": false
+                            },
+                            {
+                                "name": "enabled",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "visible",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "maxLength",
+                                "value": 0,
+                                "use": false
+                            },
+                            {
+                                "name": "placeholder",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "showMagnifier",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "showRefreshButton",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "refreshButtonTooltip",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "showSearchButton",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "enableSuggestions",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "selectOnFocus",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "suggestionItems",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaDescribedBy",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaLabelledBy",
+                                "value": [],
+                                "use": false
+                            }
+                        ]
+                    },
+                    "styleClasses": [
+                        "sapMBarChild",
+                        "sapMTBShrinkItem",
+                        "sapMFocus",
+                        "injectClass"
+                    ],
+                    "recordReplaySelector": {
+                        "id": "__component0---overview--srchList"
+                    },
+                    "viewInfos": {
+                        "absoluteViewName": "de.passau.coedemo.view.Overview",
+                        "relativeViewName": "Overview"
+                    },
+                    "comment": "",
+                    "keyCode": 77,
+                    "key": "M"
+                },
+                {
+                    "id": "e0cf4370-b76f-46c2-a271-de7ba6798fa4",
+                    "actionType": "keypress",
+                    "actionLocation": "http://localhost:8080/test/mockServer.html#",
+                    "control": {
+                        "controlId": {
+                            "id": "__component0---overview--srchList",
+                            "use": true
+                        },
+                        "type": "sap.m.SearchField",
+                        "properties": [
+                            {
+                                "name": "value",
+                                "value": "ACM",
+                                "use": false
+                            },
+                            {
+                                "name": "width",
+                                "value": "50%",
+                                "use": false
+                            },
+                            {
+                                "name": "enabled",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "visible",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "maxLength",
+                                "value": 0,
+                                "use": false
+                            },
+                            {
+                                "name": "placeholder",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "showMagnifier",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "showRefreshButton",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "refreshButtonTooltip",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "showSearchButton",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "enableSuggestions",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "selectOnFocus",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "suggestionItems",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaDescribedBy",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaLabelledBy",
+                                "value": [],
+                                "use": false
+                            }
+                        ]
+                    },
+                    "styleClasses": [
+                        "sapMBarChild",
+                        "sapMTBShrinkItem",
+                        "sapMFocus",
+                        "injectClass"
+                    ],
+                    "recordReplaySelector": {
+                        "id": "__component0---overview--srchList"
+                    },
+                    "viewInfos": {
+                        "absoluteViewName": "de.passau.coedemo.view.Overview",
+                        "relativeViewName": "Overview"
+                    },
+                    "comment": "",
+                    "keyCode": 69,
+                    "key": "E"
+                }
+            ]
+        },
+        {
+            "id": "bb183413-8244-4abd-8cc2-69ef52cd8a60",
+            "actionType": "input",
+            "actionLocation": "http://localhost:8080/test/mockServer.html#",
+            "control": {
+                "controlId": {
+                    "id": "__component0---overview--srchList",
+                    "use": true
+                },
+                "type": "sap.m.SearchField",
+                "properties": [
+                    {
+                        "name": "value",
+                        "value": "",
+                        "use": false
+                    },
+                    {
+                        "name": "width",
+                        "value": "50%",
+                        "use": false
+                    },
+                    {
+                        "name": "enabled",
+                        "value": true,
+                        "use": false
+                    },
+                    {
+                        "name": "visible",
+                        "value": true,
+                        "use": false
+                    },
+                    {
+                        "name": "maxLength",
+                        "value": 0,
+                        "use": false
+                    },
+                    {
+                        "name": "placeholder",
+                        "value": "",
+                        "use": false
+                    },
+                    {
+                        "name": "showMagnifier",
+                        "value": true,
+                        "use": false
+                    },
+                    {
+                        "name": "showRefreshButton",
+                        "value": false,
+                        "use": false
+                    },
+                    {
+                        "name": "refreshButtonTooltip",
+                        "value": "",
+                        "use": false
+                    },
+                    {
+                        "name": "showSearchButton",
+                        "value": true,
+                        "use": false
+                    },
+                    {
+                        "name": "enableSuggestions",
+                        "value": false,
+                        "use": false
+                    },
+                    {
+                        "name": "selectOnFocus",
+                        "value": true,
+                        "use": false
+                    },
+                    {
+                        "name": "suggestionItems",
+                        "value": [],
+                        "use": false
+                    },
+                    {
+                        "name": "ariaDescribedBy",
+                        "value": [],
+                        "use": false
+                    },
+                    {
+                        "name": "ariaLabelledBy",
+                        "value": [],
+                        "use": false
+                    }
+                ]
+            },
+            "styleClasses": [
+                "sapMBarChild",
+                "sapMFocus",
+                "sapMTBShrinkItem",
+                "injectClass"
+            ],
+            "recordReplaySelector": {
+                "id": "__component0---overview--srchList"
+            },
+            "viewInfos": {
+                "absoluteViewName": "de.passau.coedemo.view.Overview",
+                "relativeViewName": "Overview"
+            },
+            "comment": "",
+            "keys": [
+                {
+                    "id": "db673fb7-7aba-453f-8f70-5f9f851fbc9e",
+                    "actionType": "keypress",
+                    "actionLocation": "http://localhost:8080/test/mockServer.html#",
+                    "control": {
+                        "controlId": {
+                            "id": "__component0---overview--srchList",
+                            "use": true
+                        },
+                        "type": "sap.m.SearchField",
+                        "properties": [
+                            {
+                                "name": "value",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "width",
+                                "value": "50%",
+                                "use": false
+                            },
+                            {
+                                "name": "enabled",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "visible",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "maxLength",
+                                "value": 0,
+                                "use": false
+                            },
+                            {
+                                "name": "placeholder",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "showMagnifier",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "showRefreshButton",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "refreshButtonTooltip",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "showSearchButton",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "enableSuggestions",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "selectOnFocus",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "suggestionItems",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaDescribedBy",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaLabelledBy",
+                                "value": [],
+                                "use": false
+                            }
+                        ]
+                    },
+                    "styleClasses": [
+                        "sapMBarChild",
+                        "sapMFocus",
+                        "sapMTBShrinkItem",
+                        "injectClass"
+                    ],
+                    "recordReplaySelector": {
+                        "id": "__component0---overview--srchList"
+                    },
+                    "viewInfos": {
+                        "absoluteViewName": "de.passau.coedemo.view.Overview",
+                        "relativeViewName": "Overview"
+                    },
+                    "comment": "",
+                    "keyCode": 77,
+                    "key": "M"
+                },
+                {
+                    "id": "e5d08fc1-c605-422d-ada0-38267b7516b4",
+                    "actionType": "keypress",
+                    "actionLocation": "http://localhost:8080/test/mockServer.html#",
+                    "control": {
+                        "controlId": {
+                            "id": "__component0---overview--srchList",
+                            "use": true
+                        },
+                        "type": "sap.m.SearchField",
+                        "properties": [
+                            {
+                                "name": "value",
+                                "value": "M",
+                                "use": false
+                            },
+                            {
+                                "name": "width",
+                                "value": "50%",
+                                "use": false
+                            },
+                            {
+                                "name": "enabled",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "visible",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "maxLength",
+                                "value": 0,
+                                "use": false
+                            },
+                            {
+                                "name": "placeholder",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "showMagnifier",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "showRefreshButton",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "refreshButtonTooltip",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "showSearchButton",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "enableSuggestions",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "selectOnFocus",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "suggestionItems",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaDescribedBy",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaLabelledBy",
+                                "value": [],
+                                "use": false
+                            }
+                        ]
+                    },
+                    "styleClasses": [
+                        "sapMBarChild",
+                        "sapMFocus",
+                        "sapMTBShrinkItem",
+                        "injectClass"
+                    ],
+                    "recordReplaySelector": {
+                        "id": "__component0---overview--srchList"
+                    },
+                    "viewInfos": {
+                        "absoluteViewName": "de.passau.coedemo.view.Overview",
+                        "relativeViewName": "Overview"
+                    },
+                    "comment": "",
+                    "keyCode": 105,
+                    "key": "i"
+                },
+                {
+                    "id": "34bdfbb7-c457-4791-b01a-8bdb2ad69c3b",
+                    "actionType": "keypress",
+                    "actionLocation": "http://localhost:8080/test/mockServer.html#",
+                    "control": {
+                        "controlId": {
+                            "id": "__component0---overview--srchList",
+                            "use": true
+                        },
+                        "type": "sap.m.SearchField",
+                        "properties": [
+                            {
+                                "name": "value",
+                                "value": "Mi",
+                                "use": false
+                            },
+                            {
+                                "name": "width",
+                                "value": "50%",
+                                "use": false
+                            },
+                            {
+                                "name": "enabled",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "visible",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "maxLength",
+                                "value": 0,
+                                "use": false
+                            },
+                            {
+                                "name": "placeholder",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "showMagnifier",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "showRefreshButton",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "refreshButtonTooltip",
+                                "value": "",
+                                "use": false
+                            },
+                            {
+                                "name": "showSearchButton",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "enableSuggestions",
+                                "value": false,
+                                "use": false
+                            },
+                            {
+                                "name": "selectOnFocus",
+                                "value": true,
+                                "use": false
+                            },
+                            {
+                                "name": "suggestionItems",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaDescribedBy",
+                                "value": [],
+                                "use": false
+                            },
+                            {
+                                "name": "ariaLabelledBy",
+                                "value": [],
+                                "use": false
+                            }
+                        ]
+                    },
+                    "styleClasses": [
+                        "sapMBarChild",
+                        "sapMFocus",
+                        "sapMTBShrinkItem",
+                        "injectClass"
+                    ],
+                    "recordReplaySelector": {
+                        "id": "__component0---overview--srchList"
+                    },
+                    "viewInfos": {
+                        "absoluteViewName": "de.passau.coedemo.view.Overview",
+                        "relativeViewName": "Overview"
+                    },
+                    "comment": "",
+                    "keyCode": 108,
+                    "key": "l"
+                }
+            ]
+        },
+        {
+            "id": "2f5a8541-c906-46fc-9ea9-5f84debcde1a",
+            "actionType": "clicked",
+            "actionLocation": "http://localhost:8080/test/mockServer.html#",
+            "control": {
+                "controlId": {
+                    "id": "__item0-__component0---overview--invoiceList-0",
+                    "use": false
+                },
+                "type": "sap.m.ColumnListItem",
+                "properties": [
+                    {
+                        "name": "vAlign",
+                        "value": "Inherit",
+                        "use": false
+                    }
+                ]
+            },
+            "styleClasses": [
+                "injectClass"
+            ],
+            "recordReplaySelector": {
+                "controlType": "sap.m.ColumnListItem",
+                "viewName": "de.passau.coedemo.view.Overview",
+                "viewId": "__component0---overview",
+                "properties": {
+                    "type": "Navigation"
+                }
+            },
+            "viewInfos": {
+                "absoluteViewName": "de.passau.coedemo.view.Overview",
+                "relativeViewName": "Overview"
+            },
+            "comment": ""
+        },
+        {
+            "id": "7f2b6fdc-21e3-49fb-baef-5b2daebf3c8f",
+            "actionType": "validate",
+            "actionLocation": "http://localhost:8080/test/mockServer.html#/detail/Invoices(ProductName%253D'Milk'%252CQuantity%253D4%252CShipperName%253D'ACME')",
+            "control": {
+                "controlId": {
+                    "id": "__indicator0",
+                    "use": false
+                },
+                "type": "sap.m.RatingIndicator",
+                "properties": [
+                    {
+                        "name": "enabled",
+                        "value": true,
+                        "use": false
+                    },
+                    {
+                        "name": "maxValue",
+                        "value": 5,
+                        "use": false
+                    },
+                    {
+                        "name": "value",
+                        "value": 4,
+                        "use": true
+                    },
+                    {
+                        "name": "iconSize",
+                        "value": "2rem",
+                        "use": false
+                    },
+                    {
+                        "name": "iconSelected",
+                        "value": "",
+                        "use": false
+                    },
+                    {
+                        "name": "iconUnselected",
+                        "value": "",
+                        "use": false
+                    },
+                    {
+                        "name": "iconHovered",
+                        "value": "",
+                        "use": false
+                    },
+                    {
+                        "name": "visualMode",
+                        "value": "Half",
+                        "use": false
+                    },
+                    {
+                        "name": "displayOnly",
+                        "value": false,
+                        "use": false
+                    },
+                    {
+                        "name": "editable",
+                        "value": true,
+                        "use": false
+                    },
+                    {
+                        "name": "required",
+                        "value": false,
+                        "use": false
+                    },
+                    {
+                        "name": "ariaDescribedBy",
+                        "value": [],
+                        "use": false
+                    },
+                    {
+                        "name": "ariaLabelledBy",
+                        "value": [],
+                        "use": false
+                    }
+                ]
+            },
+            "styleClasses": [
+                "injectClass"
+            ],
+            "recordReplaySelector": {
+                "controlType": "sap.m.RatingIndicator",
+                "viewName": "de.passau.coedemo.view.Detail",
+                "viewId": "__component0---detail",
+                "properties": {
+                    "value": 4
+                }
+            },
+            "viewInfos": {
+                "absoluteViewName": "de.passau.coedemo.view.Detail",
+                "relativeViewName": "Detail"
+            },
+            "comment": ""
+        },
+        {
+            "id": "5565b318-cd41-4daf-8aef-73242f7090a6",
+            "actionType": "clicked",
+            "actionLocation": "http://localhost:8080/test/mockServer.html#/detail/Invoices(ProductName%253D'Milk'%252CQuantity%253D4%252CShipperName%253D'ACME')",
+            "control": {
+                "controlId": {
+                    "id": "__button0",
+                    "use": false
+                },
+                "type": "sap.m.Button",
+                "properties": [
+                    {
+                        "name": "text",
+                        "value": "Rate",
+                        "use": false
+                    },
+                    {
+                        "name": "type",
+                        "value": "Default",
+                        "use": false
+                    },
+                    {
+                        "name": "width",
+                        "value": "",
+                        "use": false
+                    },
+                    {
+                        "name": "enabled",
+                        "value": true,
+                        "use": false
+                    },
+                    {
+                        "name": "icon",
+                        "value": "",
+                        "use": false
+                    },
+                    {
+                        "name": "iconFirst",
+                        "value": true,
+                        "use": false
+                    },
+                    {
+                        "name": "activeIcon",
+                        "value": "",
+                        "use": false
+                    },
+                    {
+                        "name": "iconDensityAware",
+                        "value": true,
+                        "use": false
+                    },
+                    {
+                        "name": "textDirection",
+                        "value": "Inherit",
+                        "use": false
+                    },
+                    {
+                        "name": "ariaHasPopup",
+                        "value": "None",
+                        "use": false
+                    },
+                    {
+                        "name": "accessibleRole",
+                        "value": "Default",
+                        "use": false
+                    },
+                    {
+                        "name": "ariaDescribedBy",
+                        "value": [],
+                        "use": false
+                    },
+                    {
+                        "name": "ariaLabelledBy",
+                        "value": [],
+                        "use": false
+                    }
+                ],
+                "i18nTexts": [
+                    {
+                        "propertyName": "text",
+                        "propertyPath": "productRatingButton",
+                        "bindingValue": "Rate",
+                        "use": true
+                    }
+                ]
+            },
+            "styleClasses": [
+                "sapUiTinyMarginTopBottom",
+                "injectClass"
+            ],
+            "recordReplaySelector": {
+                "controlType": "sap.m.Button",
+                "viewName": "de.passau.coedemo.view.Detail",
+                "viewId": "__component0---detail",
+                "i18NText": {
+                    "propertyName": "text",
+                    "key": "productRatingButton"
+                }
+            },
+            "viewInfos": {
+                "absoluteViewName": "de.passau.coedemo.view.Detail",
+                "relativeViewName": "Detail"
+            },
+            "comment": ""
+        }
+    ],
+    "name": "CodeGen-Demo",
+    "ui5Version": "1.125.0"
+}

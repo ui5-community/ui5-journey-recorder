@@ -17,6 +17,7 @@
             "chrome"
         ]
     },
+    "outDir": "./out",
     "include": [
         "./interfacing/**/*"
     ],
