@@ -1,4 +1,7 @@
 export default class RootTemplate {
+    _testName = "";
+    _steps = [];
+    _pages = {};
     _genMethodNameForStep(oStepJSON) {
         const sMethodName = [];
         const aClassSpecifier = oStepJSON.control.type.split('.');
@@ -25,6 +28,35 @@ export default class RootTemplate {
     }
     _replacePlaceholders(template, placeholders) {
         return Object.keys(placeholders).reduce((updatedTemplate, key) => updatedTemplate.replaceAll(`{{${key}}}`, placeholders[key]), template);
+    }
+    _extractJourneyName(oJourneyJSON) {
+        this._testName = oJourneyJSON["name"];
+    }
+    _extractSteps(oJourneyJSON) {
+        const aSteps = oJourneyJSON["steps"];
+        this._steps = aSteps.map((oStep) => {
+            const oViewInfos = oStep["viewInfos"];
+            const bAssertion = oStep["actionType"] === 'validate';
+            const sMethodName = this._genMethodNameForStep(oStep);
+            const sComment = (bAssertion ? ' Assertion' : ' Action') + (oStep.comment ? `: ${oStep.comment}` : '');
+            const sType = bAssertion ? 'Then' : 'When';
+            const sPageName = oViewInfos.relativeViewName;
+            let sStepSelector = JSON.stringify(oStep.recordReplaySelector, null, 2);
+            sStepSelector = sStepSelector.replaceAll(/\n/gm, '\n\t\t');
+            if (!this._pages[sPageName]) {
+                const oViewInfos = oStep["viewInfos"];
+                this._pages[sPageName] = this._getPageGenerator(oViewInfos.absoluteViewName);
+            }
+            this._pages[sPageName].addMethod(oStep);
+            return {
+                "step-comment": sComment,
+                "step-type": sType,
+                "step-selector": sStepSelector,
+                "page-name": sPageName,
+                "function-name": sMethodName,
+                "step": oStep
+            };
+        });
     }
     _capitalizeFirstLetter(sString) {
         const oNumberMap = {

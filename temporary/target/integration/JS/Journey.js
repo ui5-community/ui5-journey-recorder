@@ -18,19 +18,19 @@ sap.ui.define([
 		});
 		
 
-		// Action Search for elements with ACME within it's name or supplier name 
+		// Action: Search for elements with ACME within it's name or supplier name 
 		When.onTheOverview.iType_ACME_IntoTheSearchField({
 		  "id": "__component0---overview--srchList"
 		});
 
 
-		// Action  
+		// Action 
 		When.onTheOverview.iType_Mil_IntoTheSearchField({
 		  "id": "__component0---overview--srchList"
 		});
 
 
-		// Action  
+		// Action 
 		When.onTheOverview.iPressTheColumnListItem({
 		  "controlType": "sap.m.ColumnListItem",
 		  "viewName": "de.passau.coedemo.view.Overview",
@@ -41,7 +41,7 @@ sap.ui.define([
 		});
 
 
-		// Assertion  
+		// Assertion 
 		Then.onTheDetail.iShouldSeeTheRatingIndicator({
 		  "controlType": "sap.m.RatingIndicator",
 		  "viewName": "de.passau.coedemo.view.Detail",
@@ -52,7 +52,7 @@ sap.ui.define([
 		});
 
 
-		// Action  
+		// Action 
 		When.onTheDetail.iPressTheButton({
 		  "controlType": "sap.m.Button",
 		  "viewName": "de.passau.coedemo.view.Detail",
