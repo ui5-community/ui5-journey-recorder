@@ -3,18 +3,7 @@ import PageGenerator from './PageGenerator';
 import { JSTemplate, JSMethodTemplate, TSTemplate, TSMethodTemplate, JSImportTemplate, TSImportTemplate, TSPageConstantTemplate } from './JourneyTemplates';
 
 export default class JourneyGenerator extends AbstractGenerator {
-
-    private _testName: string;
     private _appPrefix: string;
-    private _steps: {
-        "step-comment": string,
-        "step-type": string,
-        "step-selector": string,
-        "page-name": string,
-        "function-name": string,
-        "step"?: Record<string, unknown>
-    }[];
-    private _pages: Record<string, PageGenerator> = {};
 
     setJourneyJSON(oJourneyJSON: Record<string, unknown>): JourneyGenerator {
         this._extractAppPrefix(oJourneyJSON);
@@ -29,42 +18,6 @@ export default class JourneyGenerator extends AbstractGenerator {
             const sFirstPageName = (aSteps[0]["viewInfos"] as { absoluteViewName: string, relativeViewName: string });
             this._appPrefix = sFirstPageName.absoluteViewName.replace('.' + sFirstPageName.relativeViewName, '');
         }
-        return this;
-    }
-
-    private _extractJourneyName(oJourneyJSON: Record<string, unknown>): JourneyGenerator {
-        this._testName = oJourneyJSON["name"] as string;
-        return this;
-    }
-
-    private _extractSteps(oJourneyJSON: Record<string, unknown>): JourneyGenerator {
-        const aSteps = oJourneyJSON["steps"] as Record<string, unknown>[];
-        this._steps = aSteps.map((oStep: Record<string, unknown>) => {
-            const oViewInfos = oStep["viewInfos"] as { absoluteViewName: string, relativeViewName: string };
-            const bAssertion = oStep["actionType"] === 'validate';
-            const sMethodName = this._genMethodNameForStep(oStep);
-            const sComment = (bAssertion ? ' Assertion ' : ' Action ') + oStep.comment || '';
-            const sType = bAssertion ? 'Then' : 'When';
-            const sPageName = oViewInfos.relativeViewName;
-            let sStepSelector = JSON.stringify(oStep.recordReplaySelector, null, 2);
-            sStepSelector = sStepSelector.replaceAll(/\n/gm, '\n\t\t');
-
-            if (!this._pages[sPageName]) {
-                const oViewInfos = oStep["viewInfos"] as { absoluteViewName: string, relativeViewName: string };
-                this._pages[sPageName] = new PageGenerator(oViewInfos.absoluteViewName);
-            }
-
-            this._pages[sPageName].addMethod((oStep as Record<string, unknown>));
-
-            return {
-                "step-comment": sComment,
-                "step-type": sType,
-                "step-selector": sStepSelector,
-                "page-name": sPageName,
-                "function-name": sMethodName,
-                "step": oStep
-            }
-        });
         return this;
     }
 
@@ -87,11 +40,14 @@ export default class JourneyGenerator extends AbstractGenerator {
             }).join('\n\n') + '\n'
         }
 
-        sGeneratedText = this._replacePlaceholders(sGeneratedText, placeholders);
-        return sGeneratedText;
+        return this._replacePlaceholders(sGeneratedText, placeholders);
     }
 
     generatePages(bTypeScript: boolean = false): { pageName: string, pageContent: string }[] {
-        return Object.entries(this._pages).map(eP => ({ pageName: eP[0], pageContent: eP[1].generate(bTypeScript) }));
+        return Object.entries(this._pages).map(eP => ({ pageName: eP[0], pageContent: (eP[1] as PageGenerator).generate(bTypeScript) }));
+    }
+
+    _getPageGenerator(sPageName: string): PageGenerator {
+        return new PageGenerator(sPageName);
     }
 }

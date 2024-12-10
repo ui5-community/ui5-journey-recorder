@@ -1,6 +1,6 @@
 import { JSMethodTemplate, JSPageTemplate, JSImportTemplate, TSMethodTemplate, TSPageTemplate, TSImportTemplate, ActionsTemplate } from './PageTemplates.mjs';
-import AbstractGenerator from './AbstractGenerator.mjs';
-export default class PageTemplate extends AbstractGenerator {
+import AbstractPageGenerator from './AbstractPageGenerator.mjs';
+export default class PageTemplate extends AbstractPageGenerator {
     _view_path = "";
     _actions = [];
     _assertions = [];
@@ -43,6 +43,9 @@ export default class PageTemplate extends AbstractGenerator {
             sGeneratedText = sGeneratedText.replace("{{assert-ref}}", "");
         }
         return sGeneratedText;
+    }
+    _getPageGenerator(sPageName) {
+        return new PageTemplate(sPageName);
     }
     _generateMethods(methods, template, bTS = false) {
         return methods

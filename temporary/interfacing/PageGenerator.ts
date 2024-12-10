@@ -1,9 +1,9 @@
 import { JSMethodTemplate, JSPageTemplate, JSImportTemplate, TSMethodTemplate, TSPageTemplate, TSImportTemplate, ActionsTemplate } from './PageTemplates';
-import AbstractGenerator from './AbstractGenerator';
+import AbstractPageGenerator from './AbstractPageGenerator';
 
 type MethodParameters = { "method-name": string, "success-message": string, "error-message": string, "action-type": string, "action-create"?: string };
 
-export default class PageTemplate extends AbstractGenerator {
+export default class PageTemplate extends AbstractPageGenerator {
     private _view_path: string = "";
     private _actions: MethodParameters[] = [];
     private _assertions: MethodParameters[] = [];
@@ -57,6 +57,10 @@ export default class PageTemplate extends AbstractGenerator {
         }
 
         return sGeneratedText;
+    }
+
+    _getPageGenerator(sPageName: string): AbstractPageGenerator {
+        return new PageTemplate(sPageName);
     }
 
     private _generateMethods(methods: Record<string, string>[], template: string, bTS: boolean = false): string {

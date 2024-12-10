@@ -1,4 +1,17 @@
+import AbstractPageGenerator from './AbstractPageGenerator';
+
 export default abstract class RootTemplate {
+    _testName = "";
+    _steps: {
+        "step-comment": string,
+        "step-type": string,
+        "step-selector": string,
+        "page-name": string,
+        "function-name": string,
+        "step"?: Record<string, unknown>
+    }[] = [];
+    _pages: Record<string, unknown> = {};
+
     _genMethodNameForStep(oStepJSON: Record<string, unknown>): string {
 
         const sMethodName: string[] = [];
@@ -32,6 +45,42 @@ export default abstract class RootTemplate {
             template
         );
     }
+
+    _extractJourneyName(oJourneyJSON: Record<string, unknown>): void {
+        this._testName = oJourneyJSON["name"] as string;
+    }
+
+    _extractSteps(oJourneyJSON: Record<string, unknown>): void {
+        const aSteps = oJourneyJSON["steps"] as Record<string, unknown>[];
+        this._steps = aSteps.map((oStep: Record<string, unknown>) => {
+            const oViewInfos = oStep["viewInfos"] as { absoluteViewName: string, relativeViewName: string };
+            const bAssertion = oStep["actionType"] === 'validate';
+            const sMethodName = this._genMethodNameForStep(oStep);
+            const sComment = (bAssertion ? ' Assertion' : ' Action') + (oStep.comment ? `: ${oStep.comment}` : '');
+            const sType = bAssertion ? 'Then' : 'When';
+            const sPageName = oViewInfos.relativeViewName;
+            let sStepSelector = JSON.stringify(oStep.recordReplaySelector, null, 2);
+            sStepSelector = sStepSelector.replaceAll(/\n/gm, '\n\t\t');
+
+            if (!this._pages[sPageName]) {
+                const oViewInfos = oStep["viewInfos"] as { absoluteViewName: string, relativeViewName: string };
+                this._pages[sPageName] = this._getPageGenerator(oViewInfos.absoluteViewName);
+            }
+
+            (this._pages[sPageName] as AbstractPageGenerator).addMethod((oStep as Record<string, unknown>));
+
+            return {
+                "step-comment": sComment,
+                "step-type": sType,
+                "step-selector": sStepSelector,
+                "page-name": sPageName,
+                "function-name": sMethodName,
+                "step": oStep
+            }
+        });
+    }
+
+    abstract _getPageGenerator(sPageName: string): AbstractPageGenerator;
 
     private _capitalizeFirstLetter(sString: string): string {
         const oNumberMap: Record<string, string> = {
