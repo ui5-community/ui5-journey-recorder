@@ -1,9 +1,10 @@
 # i can choose multiple folders with {} and random depth levels with **
 for file in ./out/*.js
 do 
-    sed -i "/import RootTemplate from '.\/RootTemplate';/c\import RootTemplate from '.\/RootTemplate.mjs';" "$file"
-    sed -i "/import PageTemplate from '.\/PageTemplate';/c\import PageTemplate from '.\/PageTemplate.mjs';" "$file"
-    sed -i "/import JourneyTemplate from '.\/JourneyTemplate';/c\import JourneyTemplate from '.\/JourneyTemplate.mjs';" "$file"
-    sed -i "/import \{ JSMethodTemplate\, JSPageTemplate\, TSMethodTemplate\, TSPageTemplate \} from '.\/Templates';/c\import \{ JSMethodTemplate\, JSPageTemplate\, TSMethodTemplate\, TSPageTemplate \} from '.\/Templates.mjs';" "$file"
+    sed -i "/import AbstractGenerator from '.\/AbstractGenerator';/c\import AbstractGenerator from '.\/AbstractGenerator.mjs';" "$file"
+    sed -i "/import PageGenerator from '.\/PageGenerator';/c\import PageGenerator from '.\/PageGenerator.mjs';" "$file"
+    sed -i "/import JourneyGenerator from '.\/JourneyGenerator';/c\import JourneyGenerator from '.\/JourneyGenerator.mjs';" "$file"
+    sed -i "/import { JSMethodTemplate, JSPageTemplate, JSImportTemplate, TSMethodTemplate, TSPageTemplate, TSImportTemplate, ActionsTemplate } from '.\/PageTemplates';/c\import { JSMethodTemplate, JSPageTemplate, JSImportTemplate, TSMethodTemplate, TSPageTemplate, TSImportTemplate, ActionsTemplate } from '.\/PageTemplates.mjs';" "$file"
+    sed -i "/import { JSTemplate, JSMethodTemplate, TSTemplate, TSMethodTemplate, JSImportTemplate, TSImportTemplate, TSPageConstantTemplate } from '.\/JourneyTemplates';/c\import { JSTemplate, JSMethodTemplate, TSTemplate, TSMethodTemplate, JSImportTemplate, TSImportTemplate, TSPageConstantTemplate } from '.\/JourneyTemplates.mjs';" "$file"
     mv "$file" "${file%.js}.mjs"
 done

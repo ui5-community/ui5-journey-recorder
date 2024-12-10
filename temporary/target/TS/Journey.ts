@@ -1,3 +1,4 @@
+
 import opaTest from "sap/ui/test/opaQunit";
 import OverviewPage from "./pages/OverviewPage";
 import DetailPage from "./pages/DetailPage";
@@ -8,25 +9,28 @@ const onTheDetailPage = new DetailPage();
 QUnit.module("CodeGen-Demo");
 
 opaTest("CodeGen-Demo", function () {
-    // Arrangements
-    onTheOverviewPage.iStartMyUIComponent({
+	// Arrangements
+	onTheOverviewPage.iStartMyUIComponent({
 		componentConfig: {
 			name: "de.passau.coedemo.view"
 		}
 	});
 	
-   // Action Search for elements with ACME within it's name or supplier name 
-    onTheOverviewPage.iType_ACME_IntoTheSearchField({
+
+	// Action Search for elements with ACME within it's name or supplier name 
+	onTheOverviewPage.iType_ACME_IntoTheSearchField({
 		  "id": "__component0---overview--srchList"
 		});
-    
-   // Action  
-    onTheOverviewPage.iType_Mil_IntoTheSearchField({
+
+
+	// Action  
+	onTheOverviewPage.iType_Mil_IntoTheSearchField({
 		  "id": "__component0---overview--srchList"
 		});
-    
-   // Action  
-    onTheOverviewPage.iPressTheColumnListItem({
+
+
+	// Action  
+	onTheOverviewPage.iPressTheColumnListItem({
 		  "controlType": "sap.m.ColumnListItem",
 		  "viewName": "de.passau.coedemo.view.Overview",
 		  "viewId": "__component0---overview",
@@ -34,9 +38,10 @@ opaTest("CodeGen-Demo", function () {
 		    "type": "Navigation"
 		  }
 		});
-    
-   // Assertion  
-    onTheDetailPage.iShouldSeeTheRatingIndicator({
+
+
+	// Assertion  
+	onTheDetailPage.iShouldSeeTheRatingIndicator({
 		  "controlType": "sap.m.RatingIndicator",
 		  "viewName": "de.passau.coedemo.view.Detail",
 		  "viewId": "__component0---detail",
@@ -44,9 +49,10 @@ opaTest("CodeGen-Demo", function () {
 		    "value": 4
 		  }
 		});
-    
-   // Action  
-    onTheDetailPage.iPressTheButton({
+
+
+	// Action  
+	onTheDetailPage.iPressTheButton({
 		  "controlType": "sap.m.Button",
 		  "viewName": "de.passau.coedemo.view.Detail",
 		  "viewId": "__component0---detail",
@@ -55,7 +61,7 @@ opaTest("CodeGen-Demo", function () {
 		    "key": "productRatingButton"
 		  }
 		});
-    
-    // Cleanup
+
+	// Cleanup
 	onTheOverviewPage.iTeardownMyApp();
 });

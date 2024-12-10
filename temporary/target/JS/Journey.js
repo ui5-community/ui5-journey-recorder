@@ -1,3 +1,4 @@
+
 /* global QUnit */
 sap.ui.define([
 	"sap/ui/test/opaQunit",
@@ -16,18 +17,21 @@ sap.ui.define([
 			}
 		});
 		
-       // Action Search for elements with ACME within it's name or supplier name 
-        When.onTheOverview.iType_ACME_IntoTheSearchField({
+
+		// Action Search for elements with ACME within it's name or supplier name 
+		When.onTheOverview.iType_ACME_IntoTheSearchField({
 		  "id": "__component0---overview--srchList"
 		});
-        
-       // Action  
-        When.onTheOverview.iType_Mil_IntoTheSearchField({
+
+
+		// Action  
+		When.onTheOverview.iType_Mil_IntoTheSearchField({
 		  "id": "__component0---overview--srchList"
 		});
-        
-       // Action  
-        When.onTheOverview.iPressTheColumnListItem({
+
+
+		// Action  
+		When.onTheOverview.iPressTheColumnListItem({
 		  "controlType": "sap.m.ColumnListItem",
 		  "viewName": "de.passau.coedemo.view.Overview",
 		  "viewId": "__component0---overview",
@@ -35,9 +39,10 @@ sap.ui.define([
 		    "type": "Navigation"
 		  }
 		});
-        
-       // Assertion  
-        Then.onTheDetail.iShouldSeeTheRatingIndicator({
+
+
+		// Assertion  
+		Then.onTheDetail.iShouldSeeTheRatingIndicator({
 		  "controlType": "sap.m.RatingIndicator",
 		  "viewName": "de.passau.coedemo.view.Detail",
 		  "viewId": "__component0---detail",
@@ -45,9 +50,10 @@ sap.ui.define([
 		    "value": 4
 		  }
 		});
-        
-       // Action  
-        When.onTheDetail.iPressTheButton({
+
+
+		// Action  
+		When.onTheDetail.iPressTheButton({
 		  "controlType": "sap.m.Button",
 		  "viewName": "de.passau.coedemo.view.Detail",
 		  "viewId": "__component0---detail",
@@ -56,7 +62,7 @@ sap.ui.define([
 		    "key": "productRatingButton"
 		  }
 		});
-        
+
 		// Cleanup
 		Then.iTeardownMyApp();
 	});
