@@ -1,4 +1,4 @@
-import JourneyTemplate from './JourneyTemplate';
+import JourneyGenerator from './JourneyGenerator';
 
 import * as fs from 'fs';
 
@@ -7,17 +7,14 @@ const oJsonContent = JSON.parse(sJsonContent);
 
 class OPA5Journey {
     private _oJson: Record<string, unknown>;
-    private _oJourney: JourneyTemplate;
+    private _oJourney: JourneyGenerator;
     constructor(oJson: Record<string, unknown>) {
         this._oJson = oJson;
     }
 
     //#region templateClass
     public createByTemplateClass(bTS: boolean = false): string {
-        this._oJourney = new JourneyTemplate()
-            .extractAppPrefix(this._oJson)
-            .extractJourneyName(this._oJson)
-            .extractSteps(this._oJson);
+        this._oJourney = new JourneyGenerator().setJourneyJSON(this._oJson);
         return this._oJourney.generate(bTS);
     }
 

@@ -1,4 +1,4 @@
-import JourneyTemplate from './JourneyTemplate.mjs';
+import JourneyGenerator from './JourneyGenerator.mjs';
 import * as fs from 'fs';
 const sJsonContent = fs.readFileSync('./out/Demo.json', { encoding: 'utf-8' });
 const oJsonContent = JSON.parse(sJsonContent);
@@ -10,10 +10,7 @@ class OPA5Journey {
     }
     //#region templateClass
     createByTemplateClass(bTS = false) {
-        this._oJourney = new JourneyTemplate()
-            .extractAppPrefix(this._oJson)
-            .extractJourneyName(this._oJson)
-            .extractSteps(this._oJson);
+        this._oJourney = new JourneyGenerator().setJourneyJSON(this._oJson);
         return this._oJourney.generate(bTS);
     }
     createByTemplatePages(bTS = false) {

@@ -1,60 +1,18 @@
-import RootTemplate from './RootTemplate.mjs';
-import PageTemplate from './PageTemplate.mjs';
-const JSTemplate = "" +
-    `/* global QUnit */
-sap.ui.define([
-	"sap/ui/test/opaQunit"{{page-import}}
-], function (opaTest) {
-	"use strict";
-
-	QUnit.module("{{journey-name}}");
-
-	opaTest("{{test-intention}}", function (Given, When, Then) {
-		// Arrangements
-		Given.iStartMyUIComponent({
-			componentConfig: {
-				name: "{{app-prefix}}"
-			}
-		});
-		{{step-insert}}
-		// Cleanup
-		Then.iTeardownMyApp();
-	});
-});`;
-const JSMethodTemplate = "\n" +
-    `       //{{step-comment}} 
-        {{step-type}}.onThe{{page-name}}.{{method-name}}({{selector-object}});
-        {{step-insert}}`;
-const TSTemplate = "" +
-    `import opaTest from "sap/ui/test/opaQunit";{{page-import}}
-{{page-user}}
-
-QUnit.module("{{journey-name}}");
-
-opaTest("{{test-intention}}", function () {
-    // Arrangements
-    {{page-user-first}}.iStartMyUIComponent({
-		componentConfig: {
-			name: "{{app-prefix}}"
-		}
-	});
-	{{step-insert}}
-    // Cleanup
-	{{page-user-first}}.iTeardownMyApp();
-});`;
-const TSMethodTemplate = "\n" +
-    `   //{{step-comment}} 
-    onThe{{page-name}}Page.{{method-name}}({{selector-object}});
-    {{step-insert}}`;
-export default class JourneyTemplate extends RootTemplate {
+import AbstractGenerator from './AbstractGenerator.mjs';
+import PageGenerator from './PageGenerator.mjs';
+import { JSTemplate, JSMethodTemplate, TSTemplate, TSMethodTemplate, JSImportTemplate, TSImportTemplate, TSPageConstantTemplate } from './JourneyTemplates.mjs';
+export default class JourneyGenerator extends AbstractGenerator {
     _testName;
     _appPrefix;
     _steps;
     _pages = {};
-    constructor() {
-        super();
+    setJourneyJSON(oJourneyJSON) {
+        this._extractAppPrefix(oJourneyJSON);
+        this._extractJourneyName(oJourneyJSON);
+        this._extractSteps(oJourneyJSON);
+        return this;
     }
-    extractAppPrefix(oJourneyJSON) {
+    _extractAppPrefix(oJourneyJSON) {
         const aSteps = oJourneyJSON["steps"];
         if (aSteps.length > 0) {
             const sFirstPageName = aSteps[0]["viewInfos"];
@@ -62,11 +20,11 @@ export default class JourneyTemplate extends RootTemplate {
         }
         return this;
     }
-    extractJourneyName(oJourneyJSON) {
+    _extractJourneyName(oJourneyJSON) {
         this._testName = oJourneyJSON["name"];
         return this;
     }
-    extractSteps(oJourneyJSON) {
+    _extractSteps(oJourneyJSON) {
         const aSteps = oJourneyJSON["steps"];
         this._steps = aSteps.map((oStep) => {
             const oViewInfos = oStep["viewInfos"];
@@ -79,27 +37,44 @@ export default class JourneyTemplate extends RootTemplate {
             sStepSelector = sStepSelector.replaceAll(/\n/gm, '\n\t\t');
             if (!this._pages[sPageName]) {
                 const oViewInfos = oStep["viewInfos"];
-                this._pages[sPageName] = new PageTemplate(oViewInfos.absoluteViewName);
+                this._pages[sPageName] = new PageGenerator(oViewInfos.absoluteViewName);
             }
             this._pages[sPageName].addMethod(oStep);
             return {
-                step_comment: sComment,
-                step_type: sType,
-                step_selector: sStepSelector,
-                page_name: sPageName,
-                function_name: sMethodName,
-                step: oStep
+                "step-comment": sComment,
+                "step-type": sType,
+                "step-selector": sStepSelector,
+                "page-name": sPageName,
+                "function-name": sMethodName,
+                "step": oStep
             };
         });
         return this;
     }
-    generate(bTypeScript = false) {
-        if (bTypeScript) {
+    generate(bTS = false) {
+        let sGeneratedText = bTS ? TSTemplate : JSTemplate;
+        const sMethodTemplate = bTS ? TSMethodTemplate : JSMethodTemplate;
+        const sImportTemplate = bTS ? TSImportTemplate : JSImportTemplate;
+        const placeholders = {
+            "journey-name": this._testName,
+            "test-intention": this._testName,
+            "app-prefix": this._appPrefix,
+            "page-user": '\n' + Object.keys(this._pages).map(sP => this._replacePlaceholders(TSPageConstantTemplate.slice(), { "page-name": sP })).join("\n"),
+            "page-user-first": Object.keys(this._pages).length > 0 ? Object.keys(this._pages)[0] : '<empty>',
+            "page-import": (bTS ? "\n" : ",\n") + Object.keys(this._pages).map(sP => this._replacePlaceholders(sImportTemplate.slice(), { "page-name": sP })).join(bTS ? "\n" : ",\n"),
+            "step-insert": '\n' + this._steps.map(oStep => {
+                const stepClone = { ...oStep };
+                delete stepClone.step;
+                return this._replacePlaceholders(sMethodTemplate.slice(), stepClone);
+            }).join('\n\n') + '\n'
+        };
+        sGeneratedText = this._replacePlaceholders(sGeneratedText, placeholders);
+        return sGeneratedText;
+        /* if (bTS) {
             return this._generateTSJourney();
-        }
-        else {
+        } else {
             return this._generateJSJourney();
-        }
+        } */
     }
     generatePages(bTypeScript = false) {
         return Object.entries(this._pages).map(eP => ({ pageName: eP[0], pageContent: eP[1].generate(bTypeScript) }));
@@ -112,11 +87,11 @@ export default class JourneyTemplate extends RootTemplate {
             resultingJourney = resultingJourney.replace("{{page-import}}", `,\n\t"./pages/${sPage}Page"{{page-import}}`);
         });
         this._steps.forEach((oStep) => {
-            resultingJourney = resultingJourney.replace("{{step-insert}}", JSMethodTemplate.replace("{{step-comment}}", oStep.step_comment)
-                .replace("{{step-type}}", oStep.step_type)
-                .replace("{{page-name}}", oStep.page_name)
-                .replace("{{method-name}}", oStep.function_name)
-                .replace("{{selector-object}}", oStep.step_selector));
+            resultingJourney = resultingJourney.replace("{{step-insert}}", JSMethodTemplate.replace("{{step-comment}}", oStep["step-comment"])
+                .replace("{{step-type}}", oStep["step-type"])
+                .replace("{{page-name}}", oStep["page-name"])
+                .replace("{{method-name}}", oStep["function-name"])
+                .replace("{{selector-object}}", oStep["step-selector"]));
         });
         resultingJourney = resultingJourney.replace("{{page-import}}", "")
             .replace("{{step-insert}}", "");
@@ -134,10 +109,10 @@ export default class JourneyTemplate extends RootTemplate {
             resultingJourney = resultingJourney.replaceAll("{{page-user-first}}", `onThe${Object.keys(this._pages)[0]}Page`);
         }
         this._steps.forEach((oStep) => {
-            resultingJourney = resultingJourney.replace("{{step-insert}}", TSMethodTemplate.replace("{{step-comment}}", oStep.step_comment)
-                .replace("{{page-name}}", oStep.page_name)
-                .replace("{{method-name}}", oStep.function_name)
-                .replace("{{selector-object}}", oStep.step_selector));
+            resultingJourney = resultingJourney.replace("{{step-insert}}", TSMethodTemplate.replace("{{step-comment}}", oStep["step-comment"])
+                .replace("{{page-name}}", oStep["page-name"])
+                .replace("{{method-name}}", oStep["function-name"])
+                .replace("{{selector-object}}", oStep["step-selector"]));
         });
         resultingJourney = resultingJourney
             .replace("{{page-import}}", "")
