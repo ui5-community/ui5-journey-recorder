@@ -18,7 +18,7 @@ export default class JourneyGenerator extends AbstractGenerator {
         return this;
     }
     generate(bTS = false) {
-        let sGeneratedText = bTS ? TSTemplate : JSTemplate;
+        const sJourneyTemplate = bTS ? TSTemplate : JSTemplate;
         const sMethodTemplate = bTS ? TSMethodTemplate : JSMethodTemplate;
         const sImportTemplate = bTS ? TSImportTemplate : JSImportTemplate;
         const placeholders = {
@@ -34,7 +34,7 @@ export default class JourneyGenerator extends AbstractGenerator {
                 return this._replacePlaceholders(sMethodTemplate.slice(), stepClone);
             }).join('\n\n') + '\n'
         };
-        return this._replacePlaceholders(sGeneratedText, placeholders);
+        return this._replacePlaceholders(sJourneyTemplate, placeholders);
     }
     generatePages(bTypeScript = false) {
         return Object.entries(this._pages).map(eP => ({ pageName: eP[0], pageContent: eP[1].generate(bTypeScript) }));

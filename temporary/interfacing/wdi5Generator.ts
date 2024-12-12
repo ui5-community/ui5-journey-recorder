@@ -10,7 +10,7 @@ export default class wdi5Generator extends AbstractGenerator {
     }
 
     generate(bTS: boolean = false): string {
-        let sGeneratedText = bTS ? TSTemplate : JSTemplate;
+        const sJourneyTemplate = bTS ? TSTemplate : JSTemplate;
         const sImportTemplate = bTS ? TSImportTemplate : JSImportTemplate;
 
         const placeholders = {
@@ -25,7 +25,7 @@ export default class wdi5Generator extends AbstractGenerator {
             }).join("\n")
         }
 
-        return this._replacePlaceholders(sGeneratedText, placeholders);
+        return this._replacePlaceholders(sJourneyTemplate, placeholders);
     }
 
     generatePages(bTS: boolean = false): { pageName: string, pageContent: string }[] {
