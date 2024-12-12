@@ -36,9 +36,9 @@ const oWdi5 = new wdi5Generator().setJourneyJSON(oJsonContent);
     fs.writeFileSync(sWdi5JourneyPath, oWdi5.generate(sType === 'TS'));
     Logger.log(sWdi5JourneyPath);
 
-    /*  oWdi5.generatePages(sType === 'TS').forEach((oP) => {
-         const sFilePath = `./target/e2e/${sType}/pages/${oP.pageName}Page.${sType.toLocaleLowerCase()}`;
-         fs.writeFileSync(sFilePath, oP.pageContent);
-         Logger.log(sFilePath);
-     }); */
+    oWdi5.generatePages(sType === 'TS').forEach((oP) => {
+        const sFilePath = `./target/e2e/${sType}/pages/${oP.pageName}Page.${sType.toLocaleLowerCase()}`;
+        fs.writeFileSync(sFilePath, oP.pageContent);
+        Logger.log(sFilePath);
+    });
 });

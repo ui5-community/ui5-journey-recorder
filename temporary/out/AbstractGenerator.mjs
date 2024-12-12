@@ -41,22 +41,25 @@ export default class RootTemplate {
             const sComment = (bAssertion ? ' Assertion' : ' Action') + (oStep.comment ? `: ${oStep.comment}` : '');
             const sType = bAssertion ? 'Then' : 'When';
             const sPageName = oViewInfos.relativeViewName;
-            let sStepSelector = JSON.stringify(oStep.recordReplaySelector, null, 2);
-            sStepSelector = sStepSelector.replaceAll(/\n/gm, '\n\t\t');
+            const sStepSelector = this._createStepSelector(oStep);
             if (!this._pages[sPageName]) {
                 const oViewInfos = oStep["viewInfos"];
-                this._pages[sPageName] = this._getPageGenerator(oViewInfos.absoluteViewName);
+                this._pages[sPageName] = this._getPageGenerator(oViewInfos.absoluteViewName, oStep.actionLocation);
             }
             this._pages[sPageName].addMethod(oStep);
             return {
                 "step-comment": sComment,
                 "step-type": sType,
-                "step-selector": sStepSelector,
+                //"step-selector": sStepSelector,
                 "page-name": sPageName,
                 "function-name": sMethodName,
                 "step": oStep
             };
         });
+    }
+    _createStepSelector(oStep) {
+        let sStepSelector = JSON.stringify(oStep.recordReplaySelector, null, 2);
+        return sStepSelector.replaceAll(/\n/gm, '\n\t\t\t\t\t');
     }
     _capitalizeFirstLetter(sString) {
         const oNumberMap = {

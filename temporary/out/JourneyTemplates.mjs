@@ -21,7 +21,7 @@ sap.ui.define([
 });`;
 export const JSMethodTemplate = `
 \t\t//{{step-comment}} 
-\t\t{{step-type}}.onThe{{page-name}}.{{function-name}}({{step-selector}});`;
+\t\t{{step-type}}.onThe{{page-name}}.{{function-name}}();`; //{{step-selector}}
 export const JSImportTemplate = `\t"./pages/{{page-name}}Page"`;
 export const TSTemplate = `
 import opaTest from "sap/ui/test/opaQunit";{{page-import}}
@@ -42,6 +42,6 @@ opaTest("{{test-intention}}", function () {
 });`;
 export const TSMethodTemplate = `
 \t//{{step-comment}} 
-\tonThe{{page-name}}Page.{{function-name}}({{step-selector}});`;
+\tonThe{{page-name}}Page.{{function-name}}();`; //{{step-selector}}
 export const TSImportTemplate = `import {{page-name}}Page from "./pages/{{page-name}}Page";`;
 export const TSPageConstantTemplate = `const onThe{{page-name}}Page = new {{page-name}}Page();`;

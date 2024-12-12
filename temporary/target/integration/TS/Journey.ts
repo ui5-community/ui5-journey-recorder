@@ -18,49 +18,23 @@ opaTest("CodeGen-Demo", function () {
 	
 
 	// Action: Search for elements with ACME within it's name or supplier name 
-	onTheOverviewPage.iType_ACME_IntoTheSearchField({
-		  "id": "__component0---overview--srchList"
-		});
+	onTheOverviewPage.iType_ACME_IntoTheSearchField();
 
 
 	// Action 
-	onTheOverviewPage.iType_Mil_IntoTheSearchField({
-		  "id": "__component0---overview--srchList"
-		});
+	onTheOverviewPage.iType_Mil_IntoTheSearchField();
 
 
 	// Action 
-	onTheOverviewPage.iPressTheColumnListItem({
-		  "controlType": "sap.m.ColumnListItem",
-		  "viewName": "de.passau.coedemo.view.Overview",
-		  "viewId": "__component0---overview",
-		  "properties": {
-		    "type": "Navigation"
-		  }
-		});
+	onTheOverviewPage.iPressTheColumnListItem();
 
 
 	// Assertion 
-	onTheDetailPage.iShouldSeeTheRatingIndicator({
-		  "controlType": "sap.m.RatingIndicator",
-		  "viewName": "de.passau.coedemo.view.Detail",
-		  "viewId": "__component0---detail",
-		  "properties": {
-		    "value": 4
-		  }
-		});
+	onTheDetailPage.iShouldSeeTheRatingIndicator();
 
 
 	// Action 
-	onTheDetailPage.iPressTheButton({
-		  "controlType": "sap.m.Button",
-		  "viewName": "de.passau.coedemo.view.Detail",
-		  "viewId": "__component0---detail",
-		  "i18NText": {
-		    "propertyName": "text",
-		    "key": "productRatingButton"
-		  }
-		});
+	onTheDetailPage.iPressTheButton();
 
 	// Cleanup
 	onTheOverviewPage.iTeardownMyApp();
