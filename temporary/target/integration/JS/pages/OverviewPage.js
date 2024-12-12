@@ -11,7 +11,7 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheOverviewPage: { 
 			actions: {
-				iType_ACME_IntoTheSearchField: function (oSelector) {
+				iType_ACME_IntoTheSearchField: function () {
 					return this.waitFor(Object.assign({ 
 						actions: new EnterText(),
 						viewName: theViewName,
@@ -19,10 +19,12 @@ sap.ui.define([
 							Opa5.assert.ok(true, "{{message-success}}");
 						},
 						errorMessage: "Failed to enter ACME into SearchField with id: '__component0---overview--srchList'"
-					}, oSelector));
+					}, {
+					  "id": "__component0---overview--srchList"
+					}));
 				},
 
-				iType_Mil_IntoTheSearchField: function (oSelector) {
+				iType_Mil_IntoTheSearchField: function () {
 					return this.waitFor(Object.assign({ 
 						actions: new EnterText(),
 						viewName: theViewName,
@@ -30,10 +32,12 @@ sap.ui.define([
 							Opa5.assert.ok(true, "{{message-success}}");
 						},
 						errorMessage: "Failed to enter Mil into SearchField with id: '__component0---overview--srchList'"
-					}, oSelector));
+					}, {
+					  "id": "__component0---overview--srchList"
+					}));
 				},
 
-				iPressTheColumnListItem: function (oSelector) {
+				iPressTheColumnListItem: function () {
 					return this.waitFor(Object.assign({ 
 						actions: new Press(),
 						viewName: theViewName,
@@ -41,7 +45,14 @@ sap.ui.define([
 							Opa5.assert.ok(true, "{{message-success}}");
 						},
 						errorMessage: "Failed to Press, ColumnListItem with id: '__item0-__component0---overview--invoiceList-0'"
-					}, oSelector));
+					}, {
+					  "controlType": "sap.m.ColumnListItem",
+					  "viewName": "de.passau.coedemo.view.Overview",
+					  "viewId": "__component0---overview",
+					  "properties": {
+					    "type": "Navigation"
+					  }
+					}));
 				}
 			}
 		}

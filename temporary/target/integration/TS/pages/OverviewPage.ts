@@ -15,7 +15,9 @@ export default class OverviewPage extends Opa5 {
 				Opa5.assert.ok(true, "{{message-success}}");
 			},
 			errorMessage: "{{message-error}}"
-		}, oSelector));
+		}, {
+					  "id": "__component0---overview--srchList"
+					}));
 	}
 
 	iType_Mil_IntoTheSearchField(oSelector: Record<string, unknown>) {
@@ -26,7 +28,9 @@ export default class OverviewPage extends Opa5 {
 				Opa5.assert.ok(true, "{{message-success}}");
 			},
 			errorMessage: "{{message-error}}"
-		}, oSelector));
+		}, {
+					  "id": "__component0---overview--srchList"
+					}));
 	}
 
 	iPressTheColumnListItem(oSelector: Record<string, unknown>) {
@@ -37,7 +41,14 @@ export default class OverviewPage extends Opa5 {
 				Opa5.assert.ok(true, "{{message-success}}");
 			},
 			errorMessage: "{{message-error}}"
-		}, oSelector));
+		}, {
+					  "controlType": "sap.m.ColumnListItem",
+					  "viewName": "de.passau.coedemo.view.Overview",
+					  "viewId": "__component0---overview",
+					  "properties": {
+					    "type": "Navigation"
+					  }
+					}));
 	}
 	
 }

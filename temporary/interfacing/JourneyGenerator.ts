@@ -47,7 +47,7 @@ export default class JourneyGenerator extends AbstractGenerator {
         return Object.entries(this._pages).map(eP => ({ pageName: eP[0], pageContent: (eP[1] as PageGenerator).generate(bTypeScript) }));
     }
 
-    _getPageGenerator(sPageName: string): PageGenerator {
-        return new PageGenerator(sPageName);
+    _getPageGenerator(sPageName: string, sPageHash: string): PageGenerator {
+        return new PageGenerator(sPageName, sPageHash);
     }
 }

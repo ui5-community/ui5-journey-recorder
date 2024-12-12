@@ -1,6 +1,6 @@
 import AbstractGenerator from './AbstractGenerator';
-import PageGenerator from './PageGenerator';
-import { TSTemplate, JSTemplate, TSImportTemplate, JSImportTemplate } from './wdi5Templates';
+import wdi5PageGenerator from './wdi5PageGenerator';
+import { TSTemplate, JSTemplate, TSImportTemplate, JSImportTemplate, TSGeneralPageTemplate } from './wdi5Templates';
 
 export default class wdi5Generator extends AbstractGenerator {
     setJourneyJSON(oJourneyJSON: Record<string, unknown>): wdi5Generator {
@@ -29,10 +29,12 @@ export default class wdi5Generator extends AbstractGenerator {
     }
 
     generatePages(bTS: boolean = false): { pageName: string, pageContent: string }[] {
-        return Object.entries(this._pages).map(eP => ({ pageName: eP[0], pageContent: '' }));
+        const pages = Object.entries(this._pages).map(eP => ({ pageName: eP[0], pageContent: eP[1].generate(bTS) }));
+        if (pages.length > 0) { pages.push({ pageName: '', pageContent: TSGeneralPageTemplate }) }
+        return pages;
     }
 
-    _getPageGenerator(sPageName: string): PageGenerator {
-        return new PageGenerator(sPageName);
+    _getPageGenerator(sPageName: string, sPageHash: string): wdi5PageGenerator {
+        return new wdi5PageGenerator(sPageName, sPageHash);
     }
 }

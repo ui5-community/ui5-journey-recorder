@@ -10,7 +10,7 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheDetailPage: { 
 			actions: {
-				iPressTheButton: function (oSelector) {
+				iPressTheButton: function () {
 					return this.waitFor(Object.assign({ 
 						actions: new Press(),
 						viewName: theViewName,
@@ -18,18 +18,33 @@ sap.ui.define([
 							Opa5.assert.ok(true, "{{message-success}}");
 						},
 						errorMessage: "Failed to Press, Button with id: '__button0'"
-					}, oSelector));
+					}, {
+					  "controlType": "sap.m.Button",
+					  "viewName": "de.passau.coedemo.view.Detail",
+					  "viewId": "__component0---detail",
+					  "i18NText": {
+					    "propertyName": "text",
+					    "key": "productRatingButton"
+					  }
+					}));
 				}
 			},
 			assertions: {
-				iShouldSeeTheRatingIndicator: function (oSelector) {
+				iShouldSeeTheRatingIndicator: function () {
 					return this.waitFor(Object.assign({ 
 						viewName: theViewName,
 						success: function () {
 							Opa5.assert.ok(true, "{{message-success}}");
 						},
 						errorMessage: "Failed to find RatingIndicator with id: '__indicator0'"
-					}, oSelector));
+					}, {
+					  "controlType": "sap.m.RatingIndicator",
+					  "viewName": "de.passau.coedemo.view.Detail",
+					  "viewId": "__component0---detail",
+					  "properties": {
+					    "value": 4
+					  }
+					}));
 				}
 			}
 		}

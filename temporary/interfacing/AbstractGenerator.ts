@@ -5,12 +5,11 @@ export default abstract class RootTemplate {
     _steps: {
         "step-comment": string,
         "step-type": string,
-        "step-selector": string,
         "page-name": string,
         "function-name": string,
         "step"?: Record<string, unknown>
     }[] = [];
-    _pages: Record<string, unknown> = {};
+    _pages: Record<string, AbstractPageGenerator> = {};
 
     _genMethodNameForStep(oStepJSON: Record<string, unknown>): string {
 
@@ -59,12 +58,11 @@ export default abstract class RootTemplate {
             const sComment = (bAssertion ? ' Assertion' : ' Action') + (oStep.comment ? `: ${oStep.comment}` : '');
             const sType = bAssertion ? 'Then' : 'When';
             const sPageName = oViewInfos.relativeViewName;
-            let sStepSelector = JSON.stringify(oStep.recordReplaySelector, null, 2);
-            sStepSelector = sStepSelector.replaceAll(/\n/gm, '\n\t\t');
+            const sStepSelector = this._createStepSelector(oStep);
 
             if (!this._pages[sPageName]) {
                 const oViewInfos = oStep["viewInfos"] as { absoluteViewName: string, relativeViewName: string };
-                this._pages[sPageName] = this._getPageGenerator(oViewInfos.absoluteViewName);
+                this._pages[sPageName] = this._getPageGenerator(oViewInfos.absoluteViewName, oStep.actionLocation as string);
             }
 
             (this._pages[sPageName] as AbstractPageGenerator).addMethod((oStep as Record<string, unknown>));
@@ -72,7 +70,7 @@ export default abstract class RootTemplate {
             return {
                 "step-comment": sComment,
                 "step-type": sType,
-                "step-selector": sStepSelector,
+                //"step-selector": sStepSelector,
                 "page-name": sPageName,
                 "function-name": sMethodName,
                 "step": oStep
@@ -80,7 +78,12 @@ export default abstract class RootTemplate {
         });
     }
 
-    abstract _getPageGenerator(sPageName: string): AbstractPageGenerator;
+    _createStepSelector(oStep: Record<string, unknown>): string {
+        let sStepSelector = JSON.stringify(oStep.recordReplaySelector, null, 2);
+        return sStepSelector.replaceAll(/\n/gm, '\n\t\t\t\t\t');
+    }
+
+    abstract _getPageGenerator(sPageName: string, sPageHash: string): AbstractPageGenerator;
 
     private _capitalizeFirstLetter(sString: string): string {
         const oNumberMap: Record<string, string> = {

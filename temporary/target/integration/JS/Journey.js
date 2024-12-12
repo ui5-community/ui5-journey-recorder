@@ -19,49 +19,23 @@ sap.ui.define([
 		
 
 		// Action: Search for elements with ACME within it's name or supplier name 
-		When.onTheOverview.iType_ACME_IntoTheSearchField({
-		  "id": "__component0---overview--srchList"
-		});
+		When.onTheOverview.iType_ACME_IntoTheSearchField();
 
 
 		// Action 
-		When.onTheOverview.iType_Mil_IntoTheSearchField({
-		  "id": "__component0---overview--srchList"
-		});
+		When.onTheOverview.iType_Mil_IntoTheSearchField();
 
 
 		// Action 
-		When.onTheOverview.iPressTheColumnListItem({
-		  "controlType": "sap.m.ColumnListItem",
-		  "viewName": "de.passau.coedemo.view.Overview",
-		  "viewId": "__component0---overview",
-		  "properties": {
-		    "type": "Navigation"
-		  }
-		});
+		When.onTheOverview.iPressTheColumnListItem();
 
 
 		// Assertion 
-		Then.onTheDetail.iShouldSeeTheRatingIndicator({
-		  "controlType": "sap.m.RatingIndicator",
-		  "viewName": "de.passau.coedemo.view.Detail",
-		  "viewId": "__component0---detail",
-		  "properties": {
-		    "value": 4
-		  }
-		});
+		Then.onTheDetail.iShouldSeeTheRatingIndicator();
 
 
 		// Action 
-		When.onTheDetail.iPressTheButton({
-		  "controlType": "sap.m.Button",
-		  "viewName": "de.passau.coedemo.view.Detail",
-		  "viewId": "__component0---detail",
-		  "i18NText": {
-		    "propertyName": "text",
-		    "key": "productRatingButton"
-		  }
-		});
+		When.onTheDetail.iPressTheButton();
 
 		// Cleanup
 		Then.iTeardownMyApp();

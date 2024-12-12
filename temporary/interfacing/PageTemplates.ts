@@ -1,13 +1,13 @@
 // sry for the exceptional amount of tabulator signs, we need them for formatting
 export const JSMethodTemplate = `
-\t\t\t\t{{method-name}}: function (oSelector) {
+\t\t\t\t{{method-name}}: function () {
 \t\t\t\t\treturn this.waitFor(Object.assign({ {{action-create}}
 \t\t\t\t\t\tviewName: theViewName,
 \t\t\t\t\t\tsuccess: function () {
 \t\t\t\t\t\t\tOpa5.assert.ok(true, "{{message-success}}");
 \t\t\t\t\t\t},
 \t\t\t\t\t\terrorMessage: "{{error-message}}"
-\t\t\t\t\t}, oSelector));
+\t\t\t\t\t}, {{step-selector}}));
 \t\t\t\t}`;
 
 export const JSPageTemplate = `
@@ -34,7 +34,7 @@ export const TSMethodTemplate = `
 \t\t\t\tOpa5.assert.ok(true, "{{message-success}}");
 \t\t\t},
 \t\t\terrorMessage: "{{message-error}}"
-\t\t}, oSelector));
+\t\t}, {{step-selector}}));
 \t}`;
 
 export const TSPageTemplate = `

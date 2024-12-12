@@ -2,12 +2,14 @@ import { JSMethodTemplate, JSPageTemplate, JSImportTemplate, TSMethodTemplate, T
 import AbstractPageGenerator from './AbstractPageGenerator.mjs';
 export default class PageTemplate extends AbstractPageGenerator {
     _view_path = "";
+    _view_hash = "";
     _actions = [];
     _assertions = [];
     _action_imports = [];
-    constructor(sViewName) {
+    constructor(sViewName, sPageHash) {
         super();
         this._view_path = sViewName;
+        this._view_hash = sPageHash;
     }
     addMethod(oStep) {
         this._addActionImport(oStep);
@@ -44,8 +46,8 @@ export default class PageTemplate extends AbstractPageGenerator {
         }
         return sGeneratedText;
     }
-    _getPageGenerator(sPageName) {
-        return new PageTemplate(sPageName);
+    _getPageGenerator(sPageName, sPageHash) {
+        return new PageTemplate(sPageName, sPageHash);
     }
     _generateMethods(methods, template, bTS = false) {
         return methods
@@ -65,7 +67,8 @@ export default class PageTemplate extends AbstractPageGenerator {
             "method-name": sMethodName,
             "success-message": "",
             "error-message": "",
-            "action-type": sActionClassName
+            "action-type": sActionClassName,
+            "step-selector": this._createStepSelector(oStep)
         };
         switch (oStep.actionType) {
             case "clicked":

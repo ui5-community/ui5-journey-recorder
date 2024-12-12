@@ -5,13 +5,15 @@ type MethodParameters = { "method-name": string, "success-message": string, "err
 
 export default class PageTemplate extends AbstractPageGenerator {
     private _view_path: string = "";
+    private _view_hash: string = "";
     private _actions: MethodParameters[] = [];
     private _assertions: MethodParameters[] = [];
     private _action_imports: string[] = [];
 
-    constructor(sViewName: string) {
+    constructor(sViewName: string, sPageHash: string) {
         super();
         this._view_path = sViewName;
+        this._view_hash = sPageHash;
     }
 
     addMethod(oStep: Record<string, unknown>) {
@@ -59,8 +61,8 @@ export default class PageTemplate extends AbstractPageGenerator {
         return sGeneratedText;
     }
 
-    _getPageGenerator(sPageName: string): AbstractPageGenerator {
-        return new PageTemplate(sPageName);
+    _getPageGenerator(sPageName: string, sPageHash: string): PageTemplate {
+        return new PageTemplate(sPageName, sPageHash);
     }
 
     private _generateMethods(methods: Record<string, string>[], template: string, bTS: boolean = false): string {
@@ -83,7 +85,8 @@ export default class PageTemplate extends AbstractPageGenerator {
             "method-name": sMethodName,
             "success-message": "",
             "error-message": "",
-            "action-type": sActionClassName
+            "action-type": sActionClassName,
+            "step-selector": this._createStepSelector(oStep)
         }
 
         switch (oStep.actionType) {

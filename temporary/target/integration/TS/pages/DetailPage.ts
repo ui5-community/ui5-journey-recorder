@@ -14,7 +14,15 @@ export default class DetailPage extends Opa5 {
 				Opa5.assert.ok(true, "{{message-success}}");
 			},
 			errorMessage: "{{message-error}}"
-		}, oSelector));
+		}, {
+					  "controlType": "sap.m.Button",
+					  "viewName": "de.passau.coedemo.view.Detail",
+					  "viewId": "__component0---detail",
+					  "i18NText": {
+					    "propertyName": "text",
+					    "key": "productRatingButton"
+					  }
+					}));
 	}
 	
 	iShouldSeeTheRatingIndicator(oSelector: Record<string, unknown>) {
@@ -24,6 +32,13 @@ export default class DetailPage extends Opa5 {
 				Opa5.assert.ok(true, "{{message-success}}");
 			},
 			errorMessage: "{{message-error}}"
-		}, oSelector));
+		}, {
+					  "controlType": "sap.m.RatingIndicator",
+					  "viewName": "de.passau.coedemo.view.Detail",
+					  "viewId": "__component0---detail",
+					  "properties": {
+					    "value": 4
+					  }
+					}));
 	}
 }
