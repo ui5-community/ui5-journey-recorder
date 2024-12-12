@@ -25,14 +25,30 @@ export default class wdi5PageGenerator extends AbstractPageGenerator {
             "page-name": this._view_path.slice(this._view_path.lastIndexOf(".") + 1),
             "page-path": this._view_path,
             "page-hash": this._view_hash.slice(this._view_hash.lastIndexOf("#")),
-            "actions-ref": this._actions.length > 0 ? "\n\n" + this._actions.map(oAction => this._replacePlaceholders(oMethodTemplates.actionMethod.slice(), oAction)).join("\n\n") + "\n" : "",
-            "assert-ref": this._validations.length > 0 ? "\n\n" + this._validations.map(oValidation => this._replacePlaceholders(oMethodTemplates.assertMethod.slice(), oValidation)).join("\n\n") + "\n" : "",
+            "actions-ref": this._generateActions(oMethodTemplates.actionMethod, bTS),
+            "assert-ref": this._generateValidations(oMethodTemplates.assertMethod, bTS),
         };
         return this._replacePlaceholders(sTemplate, oReplacements);
     }
     addMethod(oStep) {
         this._addControlImport(oStep);
         this._addMethodImplementation(oStep);
+    }
+    _generateValidations(sTemplate, bTS) {
+        if (this._validations.length > 0) {
+            return "\n\n" + this._validations.map(oValidation => this._replacePlaceholders(sTemplate.slice(), oValidation)).join("\n\n") + "\n";
+        }
+        else {
+            return "";
+        }
+    }
+    _generateActions(sTemplate, bTS) {
+        if (this._actions.length > 0) {
+            return "\n\n" + this._actions.map(oAction => this._replacePlaceholders(sTemplate.slice(), oAction)).join("\n\n") + "\n";
+        }
+        else {
+            return "";
+        }
     }
     _getPageGenerator(sPageName, sPageHash) {
         return this;

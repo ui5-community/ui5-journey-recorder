@@ -8,7 +8,7 @@ export default class wdi5Generator extends AbstractGenerator {
         return this;
     }
     generate(bTS = false) {
-        let sGeneratedText = bTS ? TSTemplate : JSTemplate;
+        const sJourneyTemplate = bTS ? TSTemplate : JSTemplate;
         const sImportTemplate = bTS ? TSImportTemplate : JSImportTemplate;
         const placeholders = {
             "journey-name": this._testName,
@@ -21,7 +21,7 @@ export default class wdi5Generator extends AbstractGenerator {
                 return this._replacePlaceholders("\n\t\t//{{step-comment}}\n\t\t{{page-name}}.{{function-name}}();", stepClone);
             }).join("\n")
         };
-        return this._replacePlaceholders(sGeneratedText, placeholders);
+        return this._replacePlaceholders(sJourneyTemplate, placeholders);
     }
     generatePages(bTS = false) {
         const pages = Object.entries(this._pages).map(eP => ({ pageName: eP[0], pageContent: eP[1].generate(bTS) }));

@@ -22,7 +22,7 @@ export default class JourneyGenerator extends AbstractGenerator {
     }
 
     generate(bTS: boolean = false): string {
-        let sGeneratedText = bTS ? TSTemplate : JSTemplate;
+        const sJourneyTemplate = bTS ? TSTemplate : JSTemplate;
         const sMethodTemplate = bTS ? TSMethodTemplate : JSMethodTemplate;
         const sImportTemplate = bTS ? TSImportTemplate : JSImportTemplate;
 
@@ -40,7 +40,7 @@ export default class JourneyGenerator extends AbstractGenerator {
             }).join('\n\n') + '\n'
         }
 
-        return this._replacePlaceholders(sGeneratedText, placeholders);
+        return this._replacePlaceholders(sJourneyTemplate, placeholders);
     }
 
     generatePages(bTypeScript: boolean = false): { pageName: string, pageContent: string }[] {
