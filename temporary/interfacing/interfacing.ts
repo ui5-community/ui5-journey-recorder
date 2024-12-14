@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
-import JourneyGenerator from './JourneyGenerator';
 import wdi5Generator from './wdi5Generator';
+import opa5Generator from './opa5Generator';
 
 const sJsonContent = fs.readFileSync('./out/Demo.json', { encoding: 'utf-8' });
 const oJsonContent = JSON.parse(sJsonContent);
@@ -17,7 +17,7 @@ class Logger {
     }
 }
 
-const oJourney = new JourneyGenerator().setJourneyJSON(oJsonContent);
+const oJourney = new opa5Generator().setJourneyJSON(oJsonContent);
 const oWdi5 = new wdi5Generator().setJourneyJSON(oJsonContent);
 
 ['JS', 'TS'].forEach(sType => {

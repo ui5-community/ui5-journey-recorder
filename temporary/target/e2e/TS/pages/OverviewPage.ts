@@ -1,5 +1,5 @@
 import { wdi5Selector } from "wdio-ui5-service";
-import Page from "./Page";
+import { wdi5 } from "wdio-ui5-service";
 import SearchField from "sap/m/SearchField";
 import ColumnListItem from "sap/m/ColumnListItem";
 
@@ -8,7 +8,7 @@ class Overview extends Page {
     _viewName = "de.passau.coedemo.view.Overview";
 
     async open() {
-        await super.open("#");
+        wdi5.goTo("#");
     }
 
 	async iType_ACME_IntoTheSearchField() {

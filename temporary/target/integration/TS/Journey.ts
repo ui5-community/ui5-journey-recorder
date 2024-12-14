@@ -16,26 +16,20 @@ opaTest("CodeGen-Demo", function () {
 		}
 	});
 	
-
 	// Action: Search for elements with ACME within it's name or supplier name 
 	onTheOverviewPage.iType_ACME_IntoTheSearchField();
-
 
 	// Action 
 	onTheOverviewPage.iType_Mil_IntoTheSearchField();
 
-
 	// Action 
 	onTheOverviewPage.iPressTheColumnListItem();
-
 
 	// Assertion 
 	onTheDetailPage.iShouldSeeTheRatingIndicator();
 
-
 	// Action 
 	onTheDetailPage.iPressTheButton();
-
 	// Cleanup
 	onTheOverviewPage.iTeardownMyApp();
 });
