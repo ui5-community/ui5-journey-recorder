@@ -1,36 +1,20 @@
-import AbstractGenerator from './AbstractGenerator.mjs';
+import JourneyGenerator from './JourneyGenerator.mjs';
 import wdi5PageGenerator from './wdi5PageGenerator.mjs';
-import { TSTemplate, JSTemplate, TSImportTemplate, JSImportTemplate, TSGeneralPageTemplate } from './wdi5Templates.mjs';
-export default class wdi5Generator extends AbstractGenerator {
-    setJourneyJSON(oJourneyJSON) {
-        this._extractJourneyName(oJourneyJSON);
-        this._extractSteps(oJourneyJSON);
-        return this;
-    }
-    generate(bTS = false) {
-        const sJourneyTemplate = bTS ? TSTemplate : JSTemplate;
-        const sImportTemplate = bTS ? TSImportTemplate : JSImportTemplate;
-        const placeholders = {
-            "journey-name": this._testName,
-            "test-intention": this._testName,
-            "page-first-name": Object.keys(this._pages).length > 0 ? Object.keys(this._pages)[0] : '<empty>',
-            "page-import": Object.keys(this._pages).map(sP => this._replacePlaceholders(sImportTemplate.slice(), { "page-name": sP })).join("\n"),
-            "step-insert": this._steps.map(oStep => {
-                const stepClone = { ...oStep };
-                delete stepClone.step;
-                return this._replacePlaceholders("\n\t\t//{{step-comment}}\n\t\t{{page-name}}.{{function-name}}();", stepClone);
-            }).join("\n")
-        };
-        return this._replacePlaceholders(sJourneyTemplate, placeholders);
-    }
-    generatePages(bTS = false) {
-        const pages = Object.entries(this._pages).map(eP => ({ pageName: eP[0], pageContent: eP[1].generate(bTS) }));
-        if (pages.length > 0) {
-            pages.push({ pageName: '', pageContent: TSGeneralPageTemplate });
-        }
-        return pages;
+import { TSTemplate, JSTemplate, TSImportTemplate, JSImportTemplate } from './wdi5Templates.mjs';
+export default class wdi5Generator extends JourneyGenerator {
+    _getPageImports(bTS) {
+        return Object.keys(this._pages).map(sP => this._replacePlaceholders(this._getImportTemplate(bTS).slice(), { "page-name": sP })).join("\n") + (Object.keys(this._pages).length > 0 ? "\n\n" : "");
     }
     _getPageGenerator(sPageName, sPageHash) {
         return new wdi5PageGenerator(sPageName, sPageHash);
+    }
+    _getJourneyTemplate(bTS) {
+        return bTS ? TSTemplate : JSTemplate;
+    }
+    _getMethodTemplate(bTS) {
+        return "\n\t\t//{{step-comment}}\n\t\t{{page-name}}.{{function-name}}();";
+    }
+    _getImportTemplate(bTS) {
+        return bTS ? TSImportTemplate : JSImportTemplate;
     }
 }

@@ -1,5 +1,5 @@
 import { wdi5Selector } from "wdio-ui5-service";
-import Page from "./Page";
+import { wdi5 } from "wdio-ui5-service";
 import RatingIndicator from "sap/m/RatingIndicator";
 import Button from "sap/m/Button";
 
@@ -8,7 +8,7 @@ class Detail extends Page {
     _viewName = "de.passau.coedemo.view.Detail";
 
     async open() {
-        await super.open("#/detail/Invoices(ProductName%253D'Milk'%252CQuantity%253D4%252CShipperName%253D'ACME')");
+        wdi5.goTo("#/detail/Invoices(ProductName%253D'Milk'%252CQuantity%253D4%252CShipperName%253D'ACME')");
     }
 
 	async iPressTheButton() {

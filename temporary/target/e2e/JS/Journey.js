@@ -1,6 +1,8 @@
 
 const Overview = require("./pages/Overview");
-const Detail = require("./pages/Detail");descripe("CodeGen-Demo", () => {
+const Detail = require("./pages/Detail");
+
+descripe("CodeGen-Demo", () => {
     before(async () => {
         await Overview.open();
     }); 

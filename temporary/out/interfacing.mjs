@@ -1,6 +1,6 @@
 import * as fs from 'fs';
-import JourneyGenerator from './JourneyGenerator.mjs';
 import wdi5Generator from './wdi5Generator.mjs';
+import opa5Generator from './opa5Generator.mjs';
 const sJsonContent = fs.readFileSync('./out/Demo.json', { encoding: 'utf-8' });
 const oJsonContent = JSON.parse(sJsonContent);
 class Logger {
@@ -12,7 +12,7 @@ class Logger {
         return `${('' + oDateTime.getUTCDate()).padStart(2, '0')}-${('' + (oDateTime.getUTCMonth() + 1)).padStart(2, '0')}-${oDateTime.getUTCFullYear()} ${('' + oDateTime.getUTCHours()).padStart(2, '0')}:${('' + oDateTime.getUTCMinutes()).padStart(2, '0')}:${('' + oDateTime.getUTCSeconds()).padStart(2, '0')} - `;
     }
 }
-const oJourney = new JourneyGenerator().setJourneyJSON(oJsonContent);
+const oJourney = new opa5Generator().setJourneyJSON(oJsonContent);
 const oWdi5 = new wdi5Generator().setJourneyJSON(oJsonContent);
 ['JS', 'TS'].forEach(sType => {
     const sOPAJourneyPath = `./target/integration/${sType}/Journey.${sType.toLocaleLowerCase()}`;

@@ -26,22 +26,14 @@ export const TSImportTemplate = `import {{page-name}} from "./pages/{{page-name}
 //#endregion
 //#region Page dependent templates
 //-- JS
-export const JSGeneralPageTemplate = `
-const { wdi5 } = require("wdio-ui5-service");
-
-module.exports = class Page {
-    async open(path) {
-        wdi5.goTo(path);
-    }
-}`;
 export const JSPageTemplate = `
-const Page = require("./Page");
+const { wdi5 } = require("wdio-ui5-service");
 
 class {{page-name}} extends Page {
     _viewName = "{{page-path}}";
     
     async open() {
-        await super.open("{{page-hash}}");
+        wdi5.goTo("{{page-hash}}");
     }{{actions-ref}}{{assert-ref}}
 }
     
@@ -56,21 +48,14 @@ export const JSAssertionMethodTemplate = `\tasync {{method-name}}() {
 \t\t expect(oControl).toBeTruthy();
 \t}`;
 //-- TS
-export const TSGeneralPageTemplate = `import { wdi5 } from "wdio-ui5-service"
-
-export default class Page {
-    async open(path) {
-        wdi5.goTo(path)
-    }
-}`;
 export const TSPageTemplate = `import { wdi5Selector } from "wdio-ui5-service";
-import Page from "./Page";{{control-imports}}
+import { wdi5 } from "wdio-ui5-service";{{control-imports}}
 
 class {{page-name}} extends Page {
     _viewName = "{{page-path}}";
 
     async open() {
-        await super.open("{{page-hash}}");
+        wdi5.goTo("{{page-hash}}");
     }{{actions-ref}}{{assert-ref}}
 }
 

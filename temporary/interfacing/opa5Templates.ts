@@ -14,7 +14,9 @@ sap.ui.define([
 \t\t\t\tname: "{{app-prefix}}"
 \t\t\t}
 \t\t});
+
 \t\t{{step-insert}}
+
 \t\t// Cleanup
 \t\tThen.iTeardownMyApp();
 \t});
@@ -22,7 +24,7 @@ sap.ui.define([
 
 export const JSMethodTemplate = `
 \t\t//{{step-comment}} 
-\t\t{{step-type}}.onThe{{page-name}}.{{function-name}}();`;//{{step-selector}}
+\t\t{{step-type}}.onThe{{page-name}}.{{function-name}}();`;
 
 export const JSImportTemplate = `\t"./pages/{{page-name}}Page"`;
 
@@ -46,7 +48,6 @@ opaTest("{{test-intention}}", function () {
 
 export const TSMethodTemplate = `
 \t//{{step-comment}} 
-\tonThe{{page-name}}Page.{{function-name}}();`;//{{step-selector}}
+\tonThe{{page-name}}Page.{{function-name}}();`;
 
 export const TSImportTemplate = `import {{page-name}}Page from "./pages/{{page-name}}Page";`;
-export const TSPageConstantTemplate = `const onThe{{page-name}}Page = new {{page-name}}Page();`;

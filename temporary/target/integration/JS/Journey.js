@@ -16,23 +16,19 @@ sap.ui.define([
 				name: "de.passau.coedemo.view"
 			}
 		});
-		
 
+		
 		// Action: Search for elements with ACME within it's name or supplier name 
 		When.onTheOverview.iType_ACME_IntoTheSearchField();
-
 
 		// Action 
 		When.onTheOverview.iType_Mil_IntoTheSearchField();
 
-
 		// Action 
 		When.onTheOverview.iPressTheColumnListItem();
 
-
 		// Assertion 
 		Then.onTheDetail.iShouldSeeTheRatingIndicator();
-
 
 		// Action 
 		When.onTheDetail.iPressTheButton();

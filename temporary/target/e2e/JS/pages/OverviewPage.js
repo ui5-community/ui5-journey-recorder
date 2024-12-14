@@ -1,11 +1,11 @@
 
-const Page = require("./Page");
+const { wdi5 } = require("wdio-ui5-service");
 
 class Overview extends Page {
     _viewName = "de.passau.coedemo.view.Overview";
     
     async open() {
-        await super.open("#");
+        wdi5.goTo("#");
     }
 
 	async iType_ACME_IntoTheSearchField() {

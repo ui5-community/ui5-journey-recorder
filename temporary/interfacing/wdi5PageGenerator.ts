@@ -1,4 +1,4 @@
-import AbstractPageGenerator from './AbstractPageGenerator';
+import PageGenerator from './PageGenerator';
 import { JSActionMethodTemplate, JSAssertionMethodTemplate, JSPageTemplate, TSActionMethodTemplate, TSAssertionMethodTemplate, TSControlImport, TSPageTemplate } from './wdi5Templates';
 
 type StepControl = {
@@ -18,7 +18,7 @@ type MethodReplacements = {
     "action-parameter": string
 }
 
-export default class wdi5PageGenerator extends AbstractPageGenerator {
+export default class wdi5PageGenerator extends PageGenerator {
     private _control_imports: string[] = [];
     private _actions: MethodReplacements[] = [];
     private _validations: MethodReplacements[] = [];

@@ -1,11 +1,11 @@
 
-const Page = require("./Page");
+const { wdi5 } = require("wdio-ui5-service");
 
 class Detail extends Page {
     _viewName = "de.passau.coedemo.view.Detail";
     
     async open() {
-        await super.open("#/detail/Invoices(ProductName%253D'Milk'%252CQuantity%253D4%252CShipperName%253D'ACME')");
+        wdi5.goTo("#/detail/Invoices(ProductName%253D'Milk'%252CQuantity%253D4%252CShipperName%253D'ACME')");
     }
 
 	async iPressTheButton() {

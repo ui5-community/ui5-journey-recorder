@@ -1,6 +1,6 @@
-import AbstractPageGenerator from './AbstractPageGenerator.mjs';
+import PageGenerator from './PageGenerator.mjs';
 import { JSActionMethodTemplate, JSAssertionMethodTemplate, JSPageTemplate, TSActionMethodTemplate, TSAssertionMethodTemplate, TSControlImport, TSPageTemplate } from './wdi5Templates.mjs';
-export default class wdi5PageGenerator extends AbstractPageGenerator {
+export default class wdi5PageGenerator extends PageGenerator {
     _control_imports = [];
     _actions = [];
     _validations = [];
