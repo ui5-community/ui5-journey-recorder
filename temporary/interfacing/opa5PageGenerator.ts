@@ -1,19 +1,23 @@
-import { JSMethodTemplate, JSPageTemplate, JSImportTemplate, TSMethodTemplate, TSPageTemplate, TSImportTemplate, ActionsTemplate } from './PageTemplates';
-import PageGenerator from './PageGenerator';
+import { JSMethodImplementationTemplate, JSPageTemplate, JSActionImportTemplate, TSMethodImplementationTemplate, TSPageTemplate, TSActionImportTemplate, ActionsTemplate } from './opa5Templates';
+import { PageGenerator } from './PageGenerator';
 
-type MethodParameters = { "method-name": string, "success-message": string, "error-message": string, "action-type": string, "action-create"?: string };
 
 export default class opa5PageTemplate extends PageGenerator {
-    private _view_path: string = "";
-    private _view_hash: string = "";
-    private _actions: MethodParameters[] = [];
-    private _assertions: MethodParameters[] = [];
-    private _action_imports: string[] = [];
 
     constructor(sViewName: string, sPageHash: string) {
-        super();
-        this._view_path = sViewName;
-        this._view_hash = sPageHash;
+        super(sViewName, sPageHash);
+    }
+
+    _getPageTemplate(bTS: boolean = false) {
+        return bTS ? TSPageTemplate : JSPageTemplate;
+    }
+
+    _getActionMethodTemplate(bTS: boolean = false) {
+        return bTS ? TSMethodImplementationTemplate : JSMethodImplementationTemplate;
+    }
+
+    _getValidationMethodTemplate(bTS: boolean = false) {
+        return bTS ? TSMethodImplementationTemplate : JSMethodImplementationTemplate;
     }
 
     addMethod(oStep: Record<string, unknown>) {
@@ -22,32 +26,33 @@ export default class opa5PageTemplate extends PageGenerator {
     }
 
     generate(bTS: boolean = false): string {
-        const sGeneratedText = bTS ? TSPageTemplate : JSPageTemplate;
-        const sMethodTemplate = bTS ? TSMethodTemplate : JSMethodTemplate;
-        const sImportTemplate = bTS ? TSImportTemplate : JSImportTemplate;
+        const sGeneratedText = this._getPageTemplate(bTS);
+        const sActionTemplate = this._getActionMethodTemplate(bTS);
+        const sAssertTemplate = this._getValidationMethodTemplate(bTS);
+        const sImportTemplate = bTS ? TSActionImportTemplate : JSActionImportTemplate;
 
         const placeholders = {
             "view-name": this._view_path,
             "page-name": this._view_path.substring(this._view_path.lastIndexOf(".") + 1),
             "action-import": (bTS ? "\n" : ",\n") + this._action_imports.map(cls => sImportTemplate.slice().replaceAll("{{action-class}}", cls)).join(bTS ? "\n" : ",\n"),
             "action-class": (this._action_imports.length > 0 ? ', ' : '') + this._action_imports.join(", "),
-            "actions-ref": this._generateActions(sMethodTemplate, bTS),
-            "assert-ref": this._generateValidations(sMethodTemplate, bTS)
+            "actions-ref": this._generateActions(sActionTemplate, bTS),
+            "assert-ref": this._generateValidations(sAssertTemplate, bTS)
 
         }
         return this._replacePlaceholders(sGeneratedText, placeholders);
     }
 
     _generateValidations(sTemplate: string, bTS: boolean): string {
-        if (this._assertions.length > 0) {
+        if (this._validations.length > 0) {
             let validationString = "";
             if (bTS) {
-                validationString += this._assertions.map(oAssert => this._generateMethod(oAssert, sTemplate, bTS)).join("\n");
+                validationString += this._validations.map(oAssert => this._generateMethod(oAssert, sTemplate, bTS)).join("\n");
             } else {
                 if (this._actions.length > 0) {
                     validationString += ",";
                 }
-                validationString += `\n\t\t\tassertions: {${this._assertions.map(oAssert => this._generateMethod(oAssert, sTemplate, bTS)).join(",\n")}\n\t\t\t}`;
+                validationString += `\n\t\t\tassertions: {${this._validations.map(oAssert => this._generateMethod(oAssert, sTemplate, bTS)).join(",\n")}\n\t\t\t}`;
             }
             return validationString;
         } else {
@@ -103,7 +108,7 @@ export default class opa5PageTemplate extends PageGenerator {
             case 'validate':
                 oMethodParameter["success-message"] = `Found ${sControlClass} with id: '${sControlId}'`;
                 oMethodParameter["error-message"] = `Failed to find ${sControlClass} with id: '${sControlId}'`
-                this._assertions.push(oMethodParameter);
+                this._validations.push(oMethodParameter);
                 break;
         }
     }

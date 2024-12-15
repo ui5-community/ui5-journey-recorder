@@ -39,6 +39,7 @@ opaTest("{{test-intention}}", function () {
 \t\t}
 \t});
 \t{{step-insert}}
+
 \t// Cleanup
 \tonThe{{page-user-first}}Page.iTeardownMyApp();
 });`;

@@ -7,7 +7,7 @@ const viewName = "de.passau.coedemo.view.Overview";
 
 export default class OverviewPage extends Opa5 {
 	
-	iType_ACME_IntoTheSearchField(oSelector: Record<string, unknown>) {
+	iType_ACME_IntoTheSearchField() {
 		this.waitFor(Object.assign({ 
 			actions: new EnterText(),
 			viewName,
@@ -20,7 +20,7 @@ export default class OverviewPage extends Opa5 {
 					}));
 	}
 
-	iType_Mil_IntoTheSearchField(oSelector: Record<string, unknown>) {
+	iType_Mil_IntoTheSearchField() {
 		this.waitFor(Object.assign({ 
 			actions: new EnterText(),
 			viewName,
@@ -33,7 +33,7 @@ export default class OverviewPage extends Opa5 {
 					}));
 	}
 
-	iPressTheColumnListItem(oSelector: Record<string, unknown>) {
+	iPressTheColumnListItem() {
 		this.waitFor(Object.assign({ 
 			actions: new Press(),
 			viewName,

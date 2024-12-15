@@ -1,4 +1,3 @@
-
 const { wdi5 } = require("wdio-ui5-service");
 
 class Overview extends Page {

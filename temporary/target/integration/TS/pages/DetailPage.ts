@@ -6,7 +6,7 @@ const viewName = "de.passau.coedemo.view.Detail";
 
 export default class DetailPage extends Opa5 {
 	
-	iPressTheButton(oSelector: Record<string, unknown>) {
+	iPressTheButton() {
 		this.waitFor(Object.assign({ 
 			actions: new Press(),
 			viewName,
@@ -25,7 +25,7 @@ export default class DetailPage extends Opa5 {
 					}));
 	}
 	
-	iShouldSeeTheRatingIndicator(oSelector: Record<string, unknown>) {
+	iShouldSeeTheRatingIndicator() {
 		this.waitFor(Object.assign({ 
 			viewName,
 			success: () => {

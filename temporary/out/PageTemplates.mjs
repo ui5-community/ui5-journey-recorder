@@ -24,7 +24,7 @@ sap.ui.define([
 });`;
 export const JSImportTemplate = `\t"sap/ui/test/actions/{{action-class}}"`;
 export const TSMethodTemplate = `
-\t{{method-name}}(oSelector: Record<string, unknown>) {
+\t{{method-name}}() {
 \t\tthis.waitFor(Object.assign({ {{action-create}}
 \t\t\tviewName,
 \t\t\tsuccess: () => {

@@ -1,7 +1,6 @@
 //#region Journey dependent templates
 //-- JS
-export const JSTemplate = `
-{{page-import}}descripe("{{journey-name}}", () => {
+export const JSTemplate = `{{page-import}}descripe("{{journey-name}}", () => {
     before(async () => {
         await {{page-first-name}}.open();
     }); 
@@ -13,8 +12,7 @@ export const JSTemplate = `
 
 export const JSImportTemplate = `const {{page-name}} = require("./pages/{{page-name}}");`;
 //-- TS
-export const TSTemplate = `
-{{page-import}}
+export const TSTemplate = `{{page-import}}
 describe("{{journey-name}}", () => {
     before(async () => {
         await {{page-first-name}}.open();
@@ -29,8 +27,7 @@ export const TSImportTemplate = `import {{page-name}} from "./pages/{{page-name}
 
 //#region Page dependent templates
 //-- JS
-export const JSPageTemplate = `
-const { wdi5 } = require("wdio-ui5-service");
+export const JSPageTemplate = `const { wdi5 } = require("wdio-ui5-service");
 
 class {{page-name}} extends Page {
     _viewName = "{{page-path}}";

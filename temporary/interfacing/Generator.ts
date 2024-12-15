@@ -1,5 +1,3 @@
-import AbstractPageGenerator from './PageGenerator';
-
 export default abstract class Generator {
 
     _genMethodNameForStep(oStepJSON: Record<string, unknown>): string {
