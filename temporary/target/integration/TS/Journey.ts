@@ -30,6 +30,7 @@ opaTest("CodeGen-Demo", function () {
 
 	// Action 
 	onTheDetailPage.iPressTheButton();
+
 	// Cleanup
 	onTheOverviewPage.iTeardownMyApp();
 });

@@ -1,4 +1,4 @@
-import PageGenerator from './PageGenerator';
+import { PageGenerator } from './PageGenerator';
 import { JSActionMethodTemplate, JSAssertionMethodTemplate, JSPageTemplate, TSActionMethodTemplate, TSAssertionMethodTemplate, TSControlImport, TSPageTemplate } from './wdi5Templates';
 
 type StepControl = {
@@ -19,42 +19,43 @@ type MethodReplacements = {
 }
 
 export default class wdi5PageGenerator extends PageGenerator {
-    private _control_imports: string[] = [];
-    private _actions: MethodReplacements[] = [];
-    private _validations: MethodReplacements[] = [];
-    private _view_path: string = "";
-    private _view_hash: string = "";
     constructor(sViewName: string, sPageHash: string) {
-        super();
-        this._view_path = sViewName;
-        this._view_hash = sPageHash;
+        super(sViewName, sPageHash);
+    }
+
+    _getPageTemplate(bTS: boolean = false) {
+        return bTS ? TSPageTemplate : JSPageTemplate;
+    }
+
+    _getActionMethodTemplate(bTS: boolean = false) {
+        return bTS ? TSActionMethodTemplate : JSActionMethodTemplate;
+    }
+
+    _getValidationMethodTemplate(bTS: boolean = false) {
+        return bTS ? TSAssertionMethodTemplate : JSAssertionMethodTemplate;
+    }
+
+
+    addMethod(oStep: Record<string, unknown>): void {
+        this._addControlImport(oStep);
+        this._addMethodImplementation(oStep);
     }
 
     generate(bTS: boolean): string {
-        const sTemplate = bTS ? TSPageTemplate : JSPageTemplate;
-        const oMethodTemplates = bTS ? {
-            actionMethod: TSActionMethodTemplate,
-            assertMethod: TSAssertionMethodTemplate
-        } : {
-            actionMethod: JSActionMethodTemplate,
-            assertMethod: JSAssertionMethodTemplate
-        };
+        const sTemplate = this._getPageTemplate(bTS);
+        const sActionTemplate = this._getActionMethodTemplate(bTS);
+        const sAssertTemplate = this._getValidationMethodTemplate(bTS);
 
         const oReplacements = {
             "control-imports": this._control_imports.length > 0 ? "\n" + this._control_imports.join("\n") + "\n" : "",
             "page-name": this._view_path.slice(this._view_path.lastIndexOf(".") + 1),
             "page-path": this._view_path,
             "page-hash": this._view_hash.slice(this._view_hash.lastIndexOf("#")),
-            "actions-ref": this._generateActions(oMethodTemplates.actionMethod, bTS),
-            "assert-ref": this._generateValidations(oMethodTemplates.assertMethod, bTS),
+            "actions-ref": this._generateActions(sActionTemplate, bTS),
+            "assert-ref": this._generateValidations(sAssertTemplate, bTS),
         }
 
         return this._replacePlaceholders(sTemplate, oReplacements);
-    }
-
-    addMethod(oStep: Record<string, unknown>): void {
-        this._addControlImport(oStep);
-        this._addMethodImplementation(oStep);
     }
 
     _generateValidations(sTemplate: string, bTS: boolean): string {

@@ -1,4 +1,3 @@
-
 const Overview = require("./pages/Overview");
 const Detail = require("./pages/Detail");
 
