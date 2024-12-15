@@ -19,6 +19,7 @@ export default class opa5PageTemplate extends PageGenerator {
     _getValidationMethodTemplate(bTS: boolean = false) {
         return bTS ? TSMethodImplementationTemplate : JSMethodImplementationTemplate;
     }
+    
 
     addMethod(oStep: Record<string, unknown>) {
         this._addActionImport(oStep);

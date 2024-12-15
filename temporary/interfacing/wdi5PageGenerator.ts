@@ -1,4 +1,4 @@
-import { PageGenerator } from './PageGenerator';
+import { MethodParameters, PageGenerator } from './PageGenerator';
 import { JSActionMethodTemplate, JSAssertionMethodTemplate, JSPageTemplate, TSActionMethodTemplate, TSAssertionMethodTemplate, TSControlImport, TSPageTemplate } from './wdi5Templates';
 
 type StepControl = {
@@ -10,28 +10,20 @@ type StepControl = {
     properties: { name: string, value: unknown, use: boolean }[]
 }
 
-type MethodReplacements = {
-    "method-name": string,
-    "step-selector": string,
-    "control-class": string,
-    "action-method": string,
-    "action-parameter": string
-}
-
 export default class wdi5PageGenerator extends PageGenerator {
     constructor(sViewName: string, sPageHash: string) {
         super(sViewName, sPageHash);
     }
 
-    _getPageTemplate(bTS: boolean = false) {
+    _getPageTemplate(bTS: boolean = false): string {
         return bTS ? TSPageTemplate : JSPageTemplate;
     }
 
-    _getActionMethodTemplate(bTS: boolean = false) {
+    _getActionMethodTemplate(bTS: boolean = false): string {
         return bTS ? TSActionMethodTemplate : JSActionMethodTemplate;
     }
 
-    _getValidationMethodTemplate(bTS: boolean = false) {
+    _getValidationMethodTemplate(bTS: boolean = false): string {
         return bTS ? TSAssertionMethodTemplate : JSAssertionMethodTemplate;
     }
 
@@ -79,7 +71,7 @@ export default class wdi5PageGenerator extends PageGenerator {
     }
 
     private _addMethodImplementation(oStep: Record<string, unknown>): void {
-        const oParameters: MethodReplacements = {
+        const oParameters: MethodParameters = {
             "method-name": this._genMethodNameForStep(oStep),
             "step-selector": this._createStepSelector(oStep),
             "control-class": this._getControlClassAndPath(oStep)["control-class"],
