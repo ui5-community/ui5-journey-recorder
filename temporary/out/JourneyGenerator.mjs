@@ -35,8 +35,8 @@ export default class JourneyGenerator extends Generator {
     _extractAppPrefix(oJourneyJSON) {
         const aSteps = oJourneyJSON["steps"];
         if (aSteps.length > 0) {
-            const sFirstPageName = aSteps[0]["viewInfos"];
-            this._appPrefix = sFirstPageName.absoluteViewName.replace('.' + sFirstPageName.relativeViewName, '');
+            const sFirstPageName = aSteps[0]["viewInfos"].absoluteViewName;
+            this._appPrefix = sFirstPageName.slice(0, sFirstPageName.lastIndexOf(".view"));
         }
         return this;
     }

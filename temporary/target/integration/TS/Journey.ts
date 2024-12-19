@@ -12,7 +12,7 @@ opaTest("CodeGen-Demo", function () {
 	// Arrangements
 	onTheOverviewPage.iStartMyUIComponent({
 		componentConfig: {
-			name: "de.passau.coedemo.view"
+			name: "de.passau.coedemo"
 		}
 	});
 	

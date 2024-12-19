@@ -13,10 +13,9 @@ sap.ui.define([
 		// Arrangements
 		Given.iStartMyUIComponent({
 			componentConfig: {
-				name: "de.passau.coedemo.view"
+				name: "de.passau.coedemo"
 			}
 		});
-
 		
 		// Action: Search for elements with ACME within it's name or supplier name 
 		When.onTheOverview.iType_ACME_IntoTheSearchField();

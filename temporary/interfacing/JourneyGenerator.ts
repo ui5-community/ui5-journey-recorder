@@ -1,5 +1,5 @@
 import Generator from './Generator';
-import PageGenerator from './PageGenerator';
+import { PageGenerator } from './PageGenerator';
 
 export default abstract class JourneyGenerator extends Generator {
     _appPrefix: string;
@@ -59,8 +59,8 @@ export default abstract class JourneyGenerator extends Generator {
     private _extractAppPrefix(oJourneyJSON: Record<string, unknown>): JourneyGenerator {
         const aSteps = oJourneyJSON["steps"] as Record<string, unknown>[];
         if (aSteps.length > 0) {
-            const sFirstPageName = (aSteps[0]["viewInfos"] as { absoluteViewName: string, relativeViewName: string });
-            this._appPrefix = sFirstPageName.absoluteViewName.replace('.' + sFirstPageName.relativeViewName, '');
+            const sFirstPageName = (aSteps[0]["viewInfos"] as { absoluteViewName: string, relativeViewName: string }).absoluteViewName;
+            this._appPrefix = sFirstPageName.slice(0, sFirstPageName.lastIndexOf(".view"));
         }
         return this;
     }

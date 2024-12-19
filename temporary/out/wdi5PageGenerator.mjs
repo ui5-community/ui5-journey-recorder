@@ -1,57 +1,25 @@
-import PageGenerator from './PageGenerator.mjs';
+import { PageGenerator } from './PageGenerator.mjs';
 import { JSActionMethodTemplate, JSAssertionMethodTemplate, JSPageTemplate, TSActionMethodTemplate, TSAssertionMethodTemplate, TSControlImport, TSPageTemplate } from './wdi5Templates.mjs';
 export default class wdi5PageGenerator extends PageGenerator {
-    _control_imports = [];
-    _actions = [];
-    _validations = [];
-    _view_path = "";
-    _view_hash = "";
     constructor(sViewName, sPageHash) {
-        super();
-        this._view_path = sViewName;
-        this._view_hash = sPageHash;
+        super(sViewName, sPageHash);
     }
-    generate(bTS) {
-        const sTemplate = bTS ? TSPageTemplate : JSPageTemplate;
-        const oMethodTemplates = bTS ? {
-            actionMethod: TSActionMethodTemplate,
-            assertMethod: TSAssertionMethodTemplate
-        } : {
-            actionMethod: JSActionMethodTemplate,
-            assertMethod: JSAssertionMethodTemplate
-        };
-        const oReplacements = {
-            "control-imports": this._control_imports.length > 0 ? "\n" + this._control_imports.join("\n") + "\n" : "",
-            "page-name": this._view_path.slice(this._view_path.lastIndexOf(".") + 1),
-            "page-path": this._view_path,
-            "page-hash": this._view_hash.slice(this._view_hash.lastIndexOf("#")),
-            "actions-ref": this._generateActions(oMethodTemplates.actionMethod, bTS),
-            "assert-ref": this._generateValidations(oMethodTemplates.assertMethod, bTS),
-        };
-        return this._replacePlaceholders(sTemplate, oReplacements);
+    _getPageTemplate(bTS = false) {
+        return bTS ? TSPageTemplate : JSPageTemplate;
     }
-    addMethod(oStep) {
-        this._addControlImport(oStep);
-        this._addMethodImplementation(oStep);
+    _getActionMethodTemplate(bTS = false) {
+        return bTS ? TSActionMethodTemplate : JSActionMethodTemplate;
     }
-    _generateValidations(sTemplate, bTS) {
-        if (this._validations.length > 0) {
-            return "\n\n" + this._validations.map(oValidation => this._replacePlaceholders(sTemplate.slice(), oValidation)).join("\n\n") + "\n";
-        }
-        else {
-            return "";
-        }
+    _getValidationMethodTemplate(bTS = false) {
+        return bTS ? TSAssertionMethodTemplate : JSAssertionMethodTemplate;
     }
-    _generateActions(sTemplate, bTS) {
-        if (this._actions.length > 0) {
-            return "\n\n" + this._actions.map(oAction => this._replacePlaceholders(sTemplate.slice(), oAction)).join("\n\n") + "\n";
-        }
-        else {
-            return "";
-        }
+    _generateValidations(bTS) {
+        const sOrgString = super._generateValidations(bTS);
+        return sOrgString !== "" ? `\n${sOrgString}\n` : "";
     }
-    _getPageGenerator(sPageName, sPageHash) {
-        return this;
+    _generateActions(bTS) {
+        const sOrgString = super._generateActions(bTS);
+        return sOrgString !== "" ? `\n${sOrgString}\n` : "";
     }
     _addMethodImplementation(oStep) {
         const oParameters = {
@@ -62,14 +30,14 @@ export default class wdi5PageGenerator extends PageGenerator {
             "action-parameter": ""
         };
         switch (oStep.actionType) {
+            case 'clicked':
+                oParameters["action-method"] = "press";
+                this._actions.push(oParameters);
+                break;
             case 'input':
                 oParameters["action-method"] = "enterText";
                 const sText = oStep.keys.reduce((sAgg, oKey) => `${sAgg}${oKey.key}`, "");
                 oParameters["action-parameter"] = `"${sText}"`;
-                this._actions.push(oParameters);
-                break;
-            case 'clicked':
-                oParameters["action-method"] = "press";
                 this._actions.push(oParameters);
                 break;
             case 'validate':
@@ -77,11 +45,22 @@ export default class wdi5PageGenerator extends PageGenerator {
                 break;
         }
     }
-    _addControlImport(oStep) {
-        const sImport = this._replacePlaceholders(TSControlImport, this._getControlClassAndPath(oStep));
-        if (!this._control_imports.includes(sImport)) {
-            this._control_imports.push(sImport);
+    _addAdditionalImport(oStep) {
+        const oControlInfo = this._getControlClassAndPath(oStep);
+        if (!this._additional_imports.find(oI => oI["control-class"] === oControlInfo["control-class"])) {
+            this._additional_imports.push(oControlInfo);
         }
+    }
+    generate(bTS) {
+        const sImportTemplate = this._getImportTemplate(bTS);
+        const sPage = super.generate(bTS);
+        const oAdditionalReplacements = {
+            "additional-imports": "\n" + this._additional_imports.map(oAI => this._replacePlaceholders(sImportTemplate, oAI)).filter(sI => sI !== "").join("\n") + "\n", //replace with additional-imports
+        };
+        return this._replacePlaceholders(sPage, oAdditionalReplacements);
+    }
+    _getImportTemplate(bTS = false) {
+        return bTS ? TSControlImport : "";
     }
     _getControlClassAndPath(oStep) {
         const sType = oStep["control"].type;
