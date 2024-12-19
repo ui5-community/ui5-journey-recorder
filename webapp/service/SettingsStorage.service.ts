@@ -1,8 +1,9 @@
-import { TestFrameworks } from "../model/enum/TestFrameworks";
+import { CodeStyles, TestFrameworks } from "../model/enum/TestFrameworks";
 import { Themes } from "../model/enum/Themes";
 
 export type AppSettings = {
     testFramework: TestFrameworks;
+    testStyle: CodeStyles;
     pagedDefault: boolean;
     reloadPageDefault: boolean;
     manualReplayMode: boolean;
@@ -17,6 +18,7 @@ export default class SettingsStorageService {
     public static getDefaults(): AppSettings {
         return {
             testFramework: TestFrameworks.OPA5,
+            testStyle: CodeStyles.ECMAScript,
             pagedDefault: false,
             reloadPageDefault: true,
             manualReplayMode: true,

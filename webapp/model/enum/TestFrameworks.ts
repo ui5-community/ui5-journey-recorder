@@ -3,3 +3,8 @@ export enum TestFrameworks {
     WDI5 = 'wdi5',
     UNDEFINED = 'undefined'
 }
+
+export enum CodeStyles {
+    TypeScript = 'TS',
+    ECMAScript = 'JS'
+}
