@@ -9,15 +9,15 @@ sap.ui.define([
 
 	Opa5.createPageObjects({
 		onTheDetailPage: { 
-			actions: {
+			actions: {			
 				iPressTheButton: function () {
 					return this.waitFor(Object.assign({ 
 						actions: new Press(),
 						viewName: theViewName,
 						success: function () {
-							Opa5.assert.ok(true, "{{message-success}}");
+							Opa5.assert.ok(true, "Successfull executed clicked on 'Button' with id: '__button0'");
 						},
-						errorMessage: "Failed to Press, Button with id: '__button0'"
+						errorMessage: "Failed to click, Button with id: '__button0'"
 					}, {
 					  "controlType": "sap.m.Button",
 					  "viewName": "de.passau.coedemo.view.Detail",
@@ -27,25 +27,25 @@ sap.ui.define([
 					    "key": "productRatingButton"
 					  }
 					}));
-				}
+				},
 			},
-			assertions: {
-				iShouldSeeTheRatingIndicator: function () {
-					return this.waitFor(Object.assign({ 
-						viewName: theViewName,
-						success: function () {
-							Opa5.assert.ok(true, "{{message-success}}");
-						},
-						errorMessage: "Failed to find RatingIndicator with id: '__indicator0'"
-					}, {
-					  "controlType": "sap.m.RatingIndicator",
-					  "viewName": "de.passau.coedemo.view.Detail",
-					  "viewId": "__component0---detail",
-					  "properties": {
-					    "value": 4
-					  }
-					}));
-				}
+			assertions: { 
+	iShouldSeeTheRatingIndicator: function () {
+		return this.waitFor(Object.assign({ 
+			viewName: theViewName,
+			success: function () {
+				Opa5.assert.ok(true, "Found RatingIndicator with id: '__indicator0'");
+			},
+			errorMessage: "Failed to find RatingIndicator with id: '__indicator0'"
+		}, {
+		  "controlType": "sap.m.RatingIndicator",
+		  "viewName": "de.passau.coedemo.view.Detail",
+		  "viewId": "__component0---detail",
+		  "properties": {
+		    "value": 4
+		  }
+		}));
+	}, 
 			}
 		}
 	});

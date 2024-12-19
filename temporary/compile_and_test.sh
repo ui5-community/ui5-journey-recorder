@@ -1,3 +1,8 @@
 #!/bin/bash
-
-npx tsc --outDir "./out" && ./rename.sh && clear && node ./out/interfacing.mjs
+echo "Compiling.."
+npx tsc --outDir "./out"
+echo "Rename imports.."
+./rename.sh 
+clear 
+echo "Running generation.."
+node ./out/interfacing.mjs

@@ -11,34 +11,34 @@ export default class DetailPage extends Opa5 {
 			actions: new Press(),
 			viewName,
 			success: () => {
-				Opa5.assert.ok(true, "{{message-success}}");
+				Opa5.assert.ok(true, "Successfull executed clicked on 'Button' with id: '__button0'");
 			},
-			errorMessage: "{{message-error}}"
+			errorMessage: "Failed to click, Button with id: '__button0'"
 		}, {
-					  "controlType": "sap.m.Button",
-					  "viewName": "de.passau.coedemo.view.Detail",
-					  "viewId": "__component0---detail",
-					  "i18NText": {
-					    "propertyName": "text",
-					    "key": "productRatingButton"
-					  }
-					}));
+		  "controlType": "sap.m.Button",
+		  "viewName": "de.passau.coedemo.view.Detail",
+		  "viewId": "__component0---detail",
+		  "i18NText": {
+		    "propertyName": "text",
+		    "key": "productRatingButton"
+		  }
+		}));
 	}
 	
 	iShouldSeeTheRatingIndicator() {
 		this.waitFor(Object.assign({ 
 			viewName,
 			success: () => {
-				Opa5.assert.ok(true, "{{message-success}}");
+				Opa5.assert.ok(true, "Found RatingIndicator with id: '__indicator0'");
 			},
-			errorMessage: "{{message-error}}"
+			errorMessage: "Failed to find RatingIndicator with id: '__indicator0'"
 		}, {
-					  "controlType": "sap.m.RatingIndicator",
-					  "viewName": "de.passau.coedemo.view.Detail",
-					  "viewId": "__component0---detail",
-					  "properties": {
-					    "value": 4
-					  }
-					}));
+		  "controlType": "sap.m.RatingIndicator",
+		  "viewName": "de.passau.coedemo.view.Detail",
+		  "viewId": "__component0---detail",
+		  "properties": {
+		    "value": 4
+		  }
+		}));
 	}
 }

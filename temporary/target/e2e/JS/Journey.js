@@ -1,5 +1,5 @@
-const Overview = require("./pages/Overview");
-const Detail = require("./pages/Detail");
+const Overview = require("./pages/OverviewPage");
+const Detail = require("./pages/DetailPage");
 
 descripe("CodeGen-Demo", () => {
     before(async () => {

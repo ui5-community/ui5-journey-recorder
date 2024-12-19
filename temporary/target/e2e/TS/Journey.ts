@@ -1,5 +1,5 @@
-import Overview from "./pages/Overview";
-import Detail from "./pages/Detail";
+import Overview from "./pages/OverviewPage";
+import Detail from "./pages/DetailPage";
 
 
 describe("CodeGen-Demo", () => {

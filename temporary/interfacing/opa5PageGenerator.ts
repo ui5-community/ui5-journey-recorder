@@ -1,9 +1,8 @@
 import { JSMethodImplementationTemplate, JSPageTemplate, JSActionImportTemplate, TSMethodImplementationTemplate, TSPageTemplate, TSActionImportTemplate, ActionsTemplate } from './opa5Templates';
-import { PageGenerator } from './PageGenerator';
+import { MethodParameters, PageGenerator } from './PageGenerator';
 
 
 export default class opa5PageTemplate extends PageGenerator {
-
     constructor(sViewName: string, sPageHash: string) {
         super(sViewName, sPageHash);
     }
@@ -19,91 +18,51 @@ export default class opa5PageTemplate extends PageGenerator {
     _getValidationMethodTemplate(bTS: boolean = false) {
         return bTS ? TSMethodImplementationTemplate : JSMethodImplementationTemplate;
     }
-    
 
-    addMethod(oStep: Record<string, unknown>) {
-        this._addActionImport(oStep);
-        this._addMethodImplementation(oStep);
+    _generateValidations(bTS: boolean): string {
+        const sOrgString = super._generateValidations(bTS);
+
+        return bTS ? sOrgString :
+            sOrgString !== "" ? (
+                (this._validations.length > 0 ? ',' : '') +
+                `\n\t\t\tassertions: { ${sOrgString} \n\t\t\t}`) : "";
     }
 
-    generate(bTS: boolean = false): string {
-        const sGeneratedText = this._getPageTemplate(bTS);
-        const sActionTemplate = this._getActionMethodTemplate(bTS);
-        const sAssertTemplate = this._getValidationMethodTemplate(bTS);
-        const sImportTemplate = bTS ? TSActionImportTemplate : JSActionImportTemplate;
-
-        const placeholders = {
-            "view-name": this._view_path,
-            "page-name": this._view_path.substring(this._view_path.lastIndexOf(".") + 1),
-            "action-import": (bTS ? "\n" : ",\n") + this._action_imports.map(cls => sImportTemplate.slice().replaceAll("{{action-class}}", cls)).join(bTS ? "\n" : ",\n"),
-            "action-class": (this._action_imports.length > 0 ? ', ' : '') + this._action_imports.join(", "),
-            "actions-ref": this._generateActions(sActionTemplate, bTS),
-            "assert-ref": this._generateValidations(sAssertTemplate, bTS)
-
-        }
-        return this._replacePlaceholders(sGeneratedText, placeholders);
-    }
-
-    _generateValidations(sTemplate: string, bTS: boolean): string {
-        if (this._validations.length > 0) {
-            let validationString = "";
-            if (bTS) {
-                validationString += this._validations.map(oAssert => this._generateMethod(oAssert, sTemplate, bTS)).join("\n");
-            } else {
-                if (this._actions.length > 0) {
-                    validationString += ",";
-                }
-                validationString += `\n\t\t\tassertions: {${this._validations.map(oAssert => this._generateMethod(oAssert, sTemplate, bTS)).join(",\n")}\n\t\t\t}`;
-            }
-            return validationString;
+    _generateActions(bTS: boolean): string {
+        let sOrgString = super._generateActions(bTS);
+        if (bTS) {
+            return sOrgString;
         } else {
-            return '';
+            sOrgString = sOrgString.split("\n").map(sPart => `\t\t\t${sPart}`).join('\n');
         }
+        return bTS ? sOrgString : (sOrgString !== "" ? `\n\t\t\tactions: {${sOrgString}\n\t\t\t}` : "");
     }
 
-    _generateActions(sTemplate: string, bTS: boolean): string {
-        if (this._actions.length > 0) {
-            return bTS ? this._actions.map(oAction => this._generateMethod(oAction, sTemplate, bTS)).join('\n')
-                : `\n\t\t\tactions: {${this._actions.map(oAction => this._generateMethod(oAction, sTemplate, bTS)).join(',\n')}\n\t\t\t}`;
-        } else {
-            return ""
-        }
-    }
-
-    _getPageGenerator(sPageName: string, sPageHash: string): opa5PageTemplate {
-        return new opa5PageTemplate(sPageName, sPageHash);
-    }
-
-    private _generateMethod(method: Record<string, string>, template: string, bTS: boolean = false): string {
-        method["action-create"] = method["action-type"] !== "" ? (bTS ? "\n" : "\n\t\t\t") + this._replacePlaceholders(ActionsTemplate, method) : "";
-        return this._replacePlaceholders(template, method)
-    }
-
-    private _addMethodImplementation(oStep: Record<string, unknown>) {
-        const sMethodName = this._genMethodNameForStep(oStep);
-        const sActionClassName = this._getActionClassByStep(oStep);
+    _addMethodImplementation(oStep: Record<string, unknown>) {
         const oControl = oStep.control as Record<string, unknown>;
         const sControlClass = (oControl.type as string).substring((oControl.type as string).lastIndexOf(".") + 1);
         const sControlId = (oControl.controlId as Record<string, unknown>).id as string;
 
-        const oMethodParameter = {
-            "method-name": sMethodName,
+        const oMethodParameter: MethodParameters = {
             "success-message": "",
             "error-message": "",
-            "action-type": sActionClassName,
+            "action-method": "",
+            "method-name": this._genMethodNameForStep(oStep),
             "step-selector": this._createStepSelector(oStep)
         }
 
         switch (oStep.actionType) {
             case "clicked":
-                oMethodParameter["success-message"] = `Successfull executed '${sActionClassName}' on '${sControlClass}' with id: '${sControlId}'`;
-                oMethodParameter["error-message"] = `Failed to ${sActionClassName}, ${sControlClass} with id: '${sControlId}'`;
+                oMethodParameter["success-message"] = `Successfull executed clicked on '${sControlClass}' with id: '${sControlId}'`;
+                oMethodParameter["error-message"] = `Failed to click, ${sControlClass} with id: '${sControlId}'`;
+                oMethodParameter["action-method"] = '\n' + this._replacePlaceholders(ActionsTemplate, { "action-method": "Press", "action-parameter": "" });
                 this._actions.push(oMethodParameter);
                 break;
             case "input":
                 const sText = (oStep.keys as Record<string, unknown>[]).reduce((sAgg: string, oKey: Record<string, unknown>) => `${sAgg}${oKey.key}`, "");
                 oMethodParameter["success-message"] = `Successfull executed entered text '${sText}' into '${sControlClass}' with id: '${sControlId}'`;
                 oMethodParameter["error-message"] = `Failed to enter ${sText} into ${sControlClass} with id: '${sControlId}'`;
+                oMethodParameter["action-method"] = '\n' + this._replacePlaceholders(ActionsTemplate, { "action-method": "EnterText", "action-parameter": `{text: "${sText}", pressEnterKey: true }` });
                 this._actions.push(oMethodParameter);
                 break;
             case 'validate':
@@ -114,21 +73,36 @@ export default class opa5PageTemplate extends PageGenerator {
         }
     }
 
-    private _addActionImport(oStep: Record<string, unknown>) {
-        const sActionClass = this._getActionClassByStep(oStep);
-        if (sActionClass !== "" && !this._action_imports.includes(sActionClass)) {
-            this._action_imports.push(sActionClass);
+    _addAdditionalImport(oStep: Record<string, unknown>) {
+        let sActionClass = "";
+        switch (oStep.actionType) {
+            case 'input':
+                sActionClass = "EnterText";
+                break;
+            case 'clicked':
+                sActionClass = "Press";
+                break;
+        }
+        if (sActionClass !== "" && !this._additional_imports.find(oAI => oAI["control-class"] === sActionClass)) {
+            this._additional_imports.push({
+                "control-class": `${sActionClass}`,
+                "control-lib-path": `sap/ui/test/actions/${sActionClass}`
+            })
         }
     }
 
-    private _getActionClassByStep(oStep: Record<string, unknown>): string {
-        switch (oStep.actionType) {
-            case 'input':
-                return "EnterText";
-            case 'clicked':
-                return "Press";
-            default:
-                return "";
+    generate(bTS: boolean = false): string {
+        const sImportTemplate = this._getImportTemplate(bTS);
+        const sPage = super.generate(bTS);
+        const oAdditionalReplacements = {
+            //replace with additional imports
+            "additional-imports": (bTS ? "\n" : ",\n") + this._additional_imports.map(cls => this._replacePlaceholders(sImportTemplate, cls)).join(bTS ? "\n" : ",\n"),
+            "additional-class": (this._additional_imports.length > 0 ? ', ' : '') + this._additional_imports.map(oAI => oAI["control-class"]).join(", ")
         }
+        return this._replacePlaceholders(sPage, oAdditionalReplacements);
+    }
+
+    private _getImportTemplate(bTS: boolean = false): string {
+        return bTS ? TSActionImportTemplate : JSActionImportTemplate;
     }
 }

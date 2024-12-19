@@ -1,4 +1,5 @@
-//#region --- JS ---
+//#region Journey dependent templates
+//-- JS
 export const JSTemplate = `
 /* global QUnit */
 sap.ui.define([
@@ -15,7 +16,6 @@ sap.ui.define([
 \t\t\t\tname: "{{app-prefix}}"
 \t\t\t}
 \t\t});
-
 \t\t{{step-insert}}
 
 \t\t// Cleanup
@@ -28,36 +28,7 @@ export const JSMethodTemplate = `
 \t\t{{step-type}}.onThe{{page-name}}.{{function-name}}();`;
 
 export const JSImportTemplate = `\t"./pages/{{page-name}}Page"`;
-
-// sry for the exceptional amount of tabulator signs, we need them for formatting
-export const JSMethodImplementationTemplate = `
-\t\t\t\t{{method-name}}: function () {
-\t\t\t\t\treturn this.waitFor(Object.assign({ {{action-create}}
-\t\t\t\t\t\tviewName: theViewName,
-\t\t\t\t\t\tsuccess: function () {
-\t\t\t\t\t\t\tOpa5.assert.ok(true, "{{message-success}}");
-\t\t\t\t\t\t},
-\t\t\t\t\t\terrorMessage: "{{error-message}}"
-\t\t\t\t\t}, {{step-selector}}));
-\t\t\t\t}`;
-
-export const JSPageTemplate = `
-sap.ui.define([
-\t"sap/ui/test/Opa5"{{action-import}}
-], function (Opa5{{action-class}}) {
-\t"use strict";
-
-\tconst theViewName = "{{view-name}}";
-
-\tOpa5.createPageObjects({
-\t\tonThe{{page-name}}Page: { {{actions-ref}}{{assert-ref}}
-\t\t}
-\t});
-});`;
-
-export const JSActionImportTemplate = `\t"sap/ui/test/actions/{{action-class}}"`;
-//#endregion
-//#region --- TS ---
+//-- TS
 export const TSTemplate = `
 import opaTest from "sap/ui/test/opaQunit";{{page-import}}
 {{page-user}}
@@ -80,31 +51,65 @@ opaTest("{{test-intention}}", function () {
 export const TSMethodTemplate = `
 \t//{{step-comment}} 
 \tonThe{{page-name}}Page.{{function-name}}();`;
-
 export const TSImportTemplate = `import {{page-name}}Page from "./pages/{{page-name}}Page";`;
+//#endregion
 
+
+//#region Page dependent templates
+//-- JS
+
+// sry for the exceptional amount of tabulator signs, we need them for formatting
+export const JSMethodImplementationTemplate = `
+\t{{method-name}}: function () {
+\t\treturn this.waitFor(Object.assign({ {{action-method}}
+\t\t\tviewName: theViewName,
+\t\t\tsuccess: function () {
+\t\t\t\tOpa5.assert.ok(true, "{{success-message}}");
+\t\t\t},
+\t\t\terrorMessage: "{{error-message}}"
+\t\t}, {{step-selector}}));
+\t},`;
+
+export const JSPageTemplate = `
+sap.ui.define([
+\t"sap/ui/test/Opa5"{{additional-imports}}
+], function (Opa5{{additional-class}}) {
+\t"use strict";
+
+\tconst theViewName = "{{page-path}}";
+
+\tOpa5.createPageObjects({
+\t\tonThe{{page-name}}Page: { {{actions-ref}}{{assert-ref}}
+\t\t}
+\t});
+});`;
+
+export const JSActionImportTemplate = `\t"sap/ui/test/actions/{{control-class}}"`;
+
+//-- TS
 export const TSMethodImplementationTemplate = `
 \t{{method-name}}() {
-\t\tthis.waitFor(Object.assign({ {{action-create}}
+\t\tthis.waitFor(Object.assign({ {{action-method}}
 \t\t\tviewName,
 \t\t\tsuccess: () => {
-\t\t\t\tOpa5.assert.ok(true, "{{message-success}}");
+\t\t\t\tOpa5.assert.ok(true, "{{success-message}}");
 \t\t\t},
-\t\t\terrorMessage: "{{message-error}}"
+\t\t\terrorMessage: "{{error-message}}"
 \t\t}, {{step-selector}}));
 \t}`;
 
 export const TSPageTemplate = `
-import Opa5 from "sap/ui/test/Opa5";{{action-import}}
+import Opa5 from "sap/ui/test/Opa5";{{additional-imports}}
 
-const viewName = "{{view-name}}";
+const viewName = "{{page-path}}";
 
 export default class {{page-name}}Page extends Opa5 {
 \t{{actions-ref}}
 \t{{assert-ref}}
 }`;
 
-export const TSActionImportTemplate = `import {{action-class}} from "sap/ui/test/actions/{{action-class}}";`;
+export const TSActionImportTemplate = `import {{control-class}} from "{{control-lib-path}}";`;
 
-export const ActionsTemplate = `\t\t\tactions: new {{action-type}}(),`;
+export const ActionsTemplate = `\t\t\tactions: new {{action-method}}({{action-parameter}}),`;
+
 //#endregion
