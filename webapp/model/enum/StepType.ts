@@ -5,3 +5,9 @@ export enum StepType {
     UNKNOWN = 'unknown',
     VALIDATION = 'validate',
 }
+
+export type CodePage = {
+    title: string;
+    code: string;
+    type: 'journey' | 'page';
+};

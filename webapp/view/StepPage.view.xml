@@ -294,16 +294,21 @@
                                             <headerToolbar>
                                                 <Toolbar>
                                                     <ToolbarSpacer />
-                                                    <Checkbox
-                                                        text="Paged Style"
-                                                        selected="{stepSetup>/paged}"
-                                                        select="_generateStepCode"
-                                                    />
-                                                    <Button
-                                                        icon="sap-icon://syntax"
-                                                        text="Test Framework"
-                                                        press="frameworkChange"
-                                                    />
+                                                    <SegmentedButton selectedKey="{stepSetup>/framework}"
+                                                        selectionChange="onCodeCriteriaChanged">
+                                                        <items>
+                                                            <SegmentedButtonItem key="OPA5" text="OPA5"></SegmentedButtonItem>
+                                                            <SegmentedButtonItem key="wdi5" text="wdi5"></SegmentedButtonItem>
+                                                        </items>
+                                                    </SegmentedButton>
+                                                    <SegmentedButton selectedKey="{stepSetup>/style}"
+                                                        selectionChange="onCodeCriteriaChanged"
+                                                        class="sapUiSmallMarginBegin">
+                                                        <items>
+                                                            <SegmentedButtonItem key="JS" text="JavaScript"></SegmentedButtonItem>
+                                                            <SegmentedButtonItem key="TS" text="TypeScript"></SegmentedButtonItem>
+                                                        </items>
+                                                    </SegmentedButton>
                                                 </Toolbar>
                                             </headerToolbar>
                                             <content>

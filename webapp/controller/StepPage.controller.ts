@@ -8,7 +8,7 @@ import Button from "sap/m/Button";
 import MenuItem from "sap/m/MenuItem";
 import { RecordEvent, Step } from "../model/class/Step.class";
 import { AppSettings } from "../service/SettingsStorage.service";
-import { TestFrameworks } from "../model/enum/TestFrameworks";
+import { CodeStyles, TestFrameworks } from "../model/enum/TestFrameworks";
 import MessageToast from "sap/m/MessageToast";
 import CodeGenerationService from "../service/CodeGeneration.service";
 import { Route$MatchedEvent } from "sap/ui/core/routing/Route";
@@ -106,9 +106,7 @@ export default class StepPage extends BaseController {
         (this.getModel('step') as JSONModel).setProperty('/actionType', oItem.getKey());
     }
 
-    onFrameworkChange(oEvent: Event) {
-        const oItem = oEvent.getParameter("item" as never) as MenuItem;
-        (this.getModel('stepSetup') as JSONModel).setProperty('/framework', oItem.getText());
+    onCodeCriteriaChanged() {
         this._generateStepCode();
     }
 
@@ -212,15 +210,12 @@ export default class StepPage extends BaseController {
     }
 
     private _generateStepCode(): void {
+        const oViewModel = this.getModel('stepSetup');
         const step = this.model.getData() as Step;
-        let code = '';
-        const paged = this.getModel('stepSetup').getProperty('/paged') as boolean;
-        const framework = this.getModel('stepSetup').getProperty('/framework') as TestFrameworks;
-        if (!paged) {
-            code = CodeGenerationService.generateStepCode(step, framework);
-        } else {
-            code = CodeGenerationService.generatePagedStepCode(step, framework);
-        }
-        (this.getModel('stepSetup') as JSONModel).setProperty('/code', code);
+        const framework = oViewModel.getProperty('/framework') as TestFrameworks;
+        const style = oViewModel.getProperty('/style') as CodeStyles;
+        CodeGenerationService.generateStepCode(step, { framework, style }).then((generatedCode) => {
+            (oViewModel as JSONModel).setProperty('/code', generatedCode);
+        });
     }
 }

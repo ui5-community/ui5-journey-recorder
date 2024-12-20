@@ -17,9 +17,8 @@ import Menu from "sap/m/Menu";
 import Fragment from "sap/ui/core/Fragment";
 import MenuItem from "sap/m/MenuItem";
 import SettingsStorageService, { AppSettings } from "../service/SettingsStorage.service";
-import { TestFrameworks } from "../model/enum/TestFrameworks";
+import { CodeStyles, TestFrameworks } from "../model/enum/TestFrameworks";
 import { downloadZip } from "client-zip";
-import { CodePage } from "../model/class/codeStrategies/CodePage.type";
 import { ChromeExtensionService } from "../service/ChromeExtension.service";
 import { RecordEvent, Step, UnknownStep } from "../model/class/Step.class";
 import { RequestBuilder, RequestMethod } from "../model/class/RequestBuilder.class";
@@ -28,9 +27,10 @@ import CheckBox, { CheckBox$SelectEvent } from "sap/m/CheckBox";
 import History from "sap/ui/core/routing/History";
 import { ValueState } from "sap/ui/core/library";
 import ChangeReason from "sap/ui/model/ChangeReason";
-import { StepType } from "../model/enum/StepType";
-import IconTabFilter from "sap/m/IconTabFilter";
+import { StepType, CodePage } from "../model/enum/StepType";
 import IconTabBar from "sap/m/IconTabBar";
+import ManagedObject from "sap/ui/base/ManagedObject";
+import Control from "sap/ui/core/Control";
 
 type ReplayEnabledStep = Step & {
     state?: ValueState;
@@ -88,7 +88,7 @@ export default class JourneyPage extends BaseController {
     }
 
     onStepDelete(oEvent: Event) {
-        const sPath = (oEvent.getSource()).getBindingContext('journey')?.sPath as string || '';
+        const sPath = (oEvent.getSource() as ManagedObject).getBindingContext('journey')?.getPath() || '';
         if (sPath !== '') {
             const index = Number(sPath.replace('/steps/', ''));
             const jour = this.model.getData() as Journey;
@@ -171,8 +171,8 @@ export default class JourneyPage extends BaseController {
     }
 
     onReorderItems(event: Event) {
-        const movedId = event.getParameter('draggedControl').getBindingContext('journey').getObject().id as string;
-        const droppedId = event.getParameter('droppedControl').getBindingContext('journey').getObject().id as string;
+        const movedId = (event.getParameter('draggedControl') as ManagedObject).getBindingContext('journey').getObject().id as string;
+        const droppedId = (event.getParameter('droppedControl') as ManagedObject).getBindingContext('journey').getObject().id as string;
         this._moveStep(movedId, droppedId);
         this._generateCode(Journey.fromObject(this.model.getData() as Partial<Journey>));
     }
@@ -340,9 +340,12 @@ export default class JourneyPage extends BaseController {
         this._frameworkMenu.openBy(button, false);
     }
 
-    onFrameworkChange(oEvent: Event) {
-        const oItem = oEvent.getParameter("item" as never) as MenuItem;
-        (this.getModel('journeyControl') as JSONModel).setProperty('/framework', oItem.getText());
+    onFrameworkChange() {
+        const journey = (this.getModel('journey') as JSONModel).getData() as Journey;
+        this._generateCode(journey);
+    }
+
+    onStyleChange() {
         const journey = (this.getModel('journey') as JSONModel).getData() as Journey;
         this._generateCode(journey);
     }
@@ -357,7 +360,7 @@ export default class JourneyPage extends BaseController {
 
     async onCopyCode() {
         const pageTitle = (this.byId("codePreviewTabs") as IconTabBar).getSelectedKey();
-        const codeContent = ((this.getModel("journeyControl") as JSONModel).getData() as {codes: Record<string, unknown>[]}).codes.find(c => c.title === pageTitle).code as string;
+        const codeContent = ((this.getModel("journeyControl") as JSONModel).getData() as { codes: Record<string, unknown>[] }).codes.find(c => c.title === pageTitle).code as string;
         await navigator.clipboard.writeText(codeContent);
         MessageToast.show("Code copied");
     }
@@ -369,27 +372,19 @@ export default class JourneyPage extends BaseController {
 
         const files = [];
         const framework = modelData.framework;
-        if (framework === TestFrameworks.OPA5) {
-            const journeyPage = generatedCode.find((p) => p.type === 'journey');
-            const viewPages = generatedCode.filter((p) => p.type === 'page');
+        const style = modelData.style;
 
-            const jourName = `${Utils.replaceUnsupportedFileSigns(journeyPage?.title || '', '_')}.js`;
-            files.push({ name: `integration/${jourName}`, input: (journeyPage?.code as string || '') });
+        const sTestFolder = framework === TestFrameworks.OPA5 ? 'integration' : 'e2e';
+        const journeyPage = generatedCode.find((p) => p.type === 'journey');
+        const viewPages = generatedCode.filter((p) => p.type === 'page');
 
-            viewPages.forEach((p) => {
-                const name = `${Utils.replaceUnsupportedFileSigns(p.title, '_')}.js`;
-                files.push({ name: `integration/pages/${name}`, input: (p.code as string || '') });
-            });
+        const jourName = `${Utils.replaceUnsupportedFileSigns(journeyPage?.title || '', '_')}.${(style === CodeStyles.TypeScript ? 'ts' : 'js')}`;
+        files.push({ name: `${sTestFolder}/${jourName}`, input: (journeyPage?.code as string || '') });
 
-        } else {
-            generatedCode.forEach((p) => {
-                const name = `${Utils.replaceUnsupportedFileSigns(p.title, '_')}.js`;
-                files.push({
-                    name: `wdi5_test/${name}`,
-                    input: p.code as string
-                });
-            });
-        }
+        viewPages.forEach((p) => {
+            const name = `${Utils.replaceUnsupportedFileSigns(p.title, '_')}.${(style === CodeStyles.TypeScript ? 'ts' : 'js')}`;
+            files.push({ name: `${sTestFolder}/pages/${name}`, input: (p.code as string || '') });
+        });
         // get the ZIP stream in a Blob
         const blob = await downloadZip(files).blob()
 
@@ -423,8 +418,10 @@ export default class JourneyPage extends BaseController {
     private _generateCode(journey: Journey) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         const framework = (this.getModel('journeyControl') as JSONModel).getProperty('/framework') as TestFrameworks;
-        const codes = CodeGenerationService.generateJourneyCode(journey, framework);
-        (this.getModel('journeyControl') as JSONModel).setProperty('/codes', codes);
+        const style = (this.getModel('journeyControl') as JSONModel).getProperty('/style') as CodeStyles;
+        CodeGenerationService.generateJourneyCode(journey, { framework, style }).then((codes) => {
+            (this.getModel('journeyControl') as JSONModel).setProperty('/codes', codes);
+        });
     }
 
     private async _export() {
@@ -522,7 +519,7 @@ export default class JourneyPage extends BaseController {
                 })
             });
         } else {
-            const dialogContent = this._approveConnectDialog.getAggregation('content') as sap.ui.core.Control[];
+            const dialogContent = this._approveConnectDialog.getAggregation('content') as Control[];
             ((dialogContent[0] as VBox).getItems()[0] as Text).setText(`Connect to the tab "${tab.title}" and inject analytic scripts?`);
             this._approveConnectDialog.getBeginButton().attachPress(connectFn);
         }
@@ -533,7 +530,8 @@ export default class JourneyPage extends BaseController {
     private async _setupJourneyControlModel() {
         this.setModel(new JSONModel({ titleVisible: true, titleInputVisible: false, replayEnabled: false }), 'journeyControl');
         const settings = (await SettingsStorageService.getSettings());
-        (this.getModel('journeyControl') as JSONModel).setProperty('/framework', settings.testFramework);
+        (this.getModel('journeyControl') as JSONModel).setProperty('/framework', settings.framework);
+        (this.getModel('journeyControl') as JSONModel).setProperty('/style', settings.style);
     }
 
     private async _openRecordingDialog() {

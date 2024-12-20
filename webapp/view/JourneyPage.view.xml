@@ -222,16 +222,21 @@
                         <uxap:subSections>
                             <uxap:ObjectPageSubSection titleUppercase="false">
                                 <uxap:actions>
-                                    <Button
-                                        icon="sap-icon://syntax"
-                                        text="Change Framework"
-                                        press="frameworkChange"
-                                    />
-                                    <Button
-                                        icon="sap-icon://download"
-                                        text="Download TestCode"
-                                        press="onCodeDownload"
-                                    />
+                                    <SegmentedButton selectedKey="{journeyControl>/framework}"
+                                        selectionChange="onFrameworkChange">
+                                        <items>
+                                            <SegmentedButtonItem key="OPA5" text="OPA5"></SegmentedButtonItem>
+                                            <SegmentedButtonItem key="wdi5" text="wdi5"></SegmentedButtonItem>
+                                        </items>
+                                    </SegmentedButton>
+                                    <SegmentedButton selectedKey="{journeyControl>/style}"
+                                        selectionChange="onStyleChange"
+                                        class="sapUiSmallMarginBegin">
+                                        <items>
+                                            <SegmentedButtonItem key="JS" text="JavaScript"></SegmentedButtonItem>
+                                            <SegmentedButtonItem key="TS" text="TypeScript"></SegmentedButtonItem>
+                                        </items>
+                                    </SegmentedButton>
                                 </uxap:actions>
                                 <uxap:blocks>
                                     <Panel
@@ -270,6 +275,11 @@
                                                 icon="sap-icon://copy"
                                                 press="onCopyCode"
                                                 tooltip="Copy current editor content"
+                                            />
+                                            <Button
+                                                icon="sap-icon://download"
+                                                tooltip="Download TestCode"
+                                                press="onCodeDownload"
                                             />
                                         </Toolbar>
                                     </Panel>

@@ -105,6 +105,41 @@ export default class OPA5Page extends PageGenerator {
         return this._replacePlaceholders(sPage, oAdditionalReplacements);
     }
 
+    generateStepOnly(oStep: Step, bTS?: boolean): string {
+        const sOrgString = super.generateStepOnly(oStep, bTS);
+        const oControl = oStep.control;
+        const sControlClass = oControl.type.substring(oControl.type.lastIndexOf(".") + 1);
+        const sControlId = oControl.controlId.id;
+        const oMethodParameter = {
+            "success-message": "",
+            "error-message": "",
+            "action-method": "",
+        }
+
+        switch (oStep.actionType) {
+            case "clicked":
+                oMethodParameter["success-message"] = `Successfull executed clicked on '${sControlClass}' with id: '${sControlId}'`;
+                oMethodParameter["error-message"] = `Failed to click, ${sControlClass} with id: '${sControlId}'`;
+                oMethodParameter["action-method"] = '\n' + this._replacePlaceholders(PageTemplates.NewAction, { "action-method": "Press", "action-parameter": "" });
+                this._actions.push(oMethodParameter);
+                break;
+            case "input":
+                const sText = (oStep as InputStep).getResultText();
+                oMethodParameter["success-message"] = `Successfull executed entered text '${sText}' into '${sControlClass}' with id: '${sControlId}'`;
+                oMethodParameter["error-message"] = `Failed to enter ${sText} into ${sControlClass} with id: '${sControlId}'`;
+                oMethodParameter["action-method"] = '\n' + this._replacePlaceholders(PageTemplates.NewAction, { "action-method": "EnterText", "action-parameter": `{text: "${sText}", pressEnterKey: true }` });
+                this._actions.push(oMethodParameter);
+                break;
+            case 'validate':
+                oMethodParameter["success-message"] = `Found ${sControlClass} with id: '${sControlId}'`;
+                oMethodParameter["error-message"] = `Failed to find ${sControlClass} with id: '${sControlId}'`
+                this._validations.push(oMethodParameter);
+                break;
+        }
+
+        return this._replacePlaceholders(sOrgString, oMethodParameter)
+    }
+
     private _getImportTemplate(bTS: boolean = false): string {
         return bTS ? PageTemplates.TS.ActionImport : PageTemplates.JS.ActionImport;
     }
