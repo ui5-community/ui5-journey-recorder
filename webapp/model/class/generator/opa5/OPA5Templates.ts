@@ -1,7 +1,6 @@
 export const JourneyTemplates = {
         JS: {
-                Journey: `
-/* global QUnit */
+                Journey: `/* global QUnit */
 sap.ui.define([
 \t"sap/ui/test/opaQunit"{{page-import}}
 ], function (opaTest) {
@@ -28,8 +27,7 @@ sap.ui.define([
                 PageImport: `\t"./pages/{{page-name}}Page"`
         },
         TS: {
-                Journey: `
-import opaTest from "sap/ui/test/opaQunit";{{page-import}}
+                Journey: `import opaTest from "sap/ui/test/opaQunit";{{page-import}}
 {{page-user}}
 
 QUnit.module("{{journey-name}}");
@@ -55,8 +53,7 @@ opaTest("{{test-intention}}", function () {
 
 export const PageTemplates = {
         JS: {
-                Page: `
-sap.ui.define([
+                Page: `sap.ui.define([
 \t"sap/ui/test/Opa5"{{additional-imports}}
 ], function (Opa5{{additional-class}}) {
 \t"use strict";
@@ -81,8 +78,7 @@ sap.ui.define([
                 ActionImport: `\t"sap/ui/test/actions/{{control-class}}"`
         },
         TS: {
-                Page: `
-import Opa5 from "sap/ui/test/Opa5";{{additional-imports}}
+                Page: `import Opa5 from "sap/ui/test/Opa5";{{additional-imports}}
 
 const viewName = "{{page-path}}";
 

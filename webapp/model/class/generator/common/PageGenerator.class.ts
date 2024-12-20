@@ -1,3 +1,4 @@
+import { StepType } from "../../../enum/StepType";
 import { Step } from "../../Step.class";
 import Generator from "./Generator.class";
 
@@ -51,6 +52,23 @@ export abstract class PageGenerator extends Generator {
             "assert-ref": this._generateValidations(bTS),
         }
         return this._replacePlaceholders(sTemplate, oReplacements);
+    }
+
+    generateStepOnly(oStep: Step, bTS: boolean = false): string {
+        const oMethodParameter: MethodParameters = {
+            "method-name": this._genMethodNameForStep(oStep),
+            "step-selector": this._createStepSelector(oStep)
+        }
+
+        switch (oStep.actionType) {
+            case StepType.CLICK:
+            case StepType.INPUT:
+                return this._replacePlaceholders(this._getActionMethodTemplate(bTS), oMethodParameter);
+            case StepType.VALIDATION:
+                return this._replacePlaceholders(this._getValidationMethodTemplate(bTS), oMethodParameter);
+            default:
+                return "";
+        }
     }
 
     _generateActions(bTS: boolean = false) {

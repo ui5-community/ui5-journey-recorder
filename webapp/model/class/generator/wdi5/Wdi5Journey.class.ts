@@ -1,5 +1,4 @@
 import JourneyGenerator from "../common/JourneyGenerator.class";
-import { PageGenerator } from "../common/PageGenerator.class";
 import Wdi5Page from "./Wdi5Page.class";
 import { JourneyTemplates } from "./Wdi5Templates";
 

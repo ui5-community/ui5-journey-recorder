@@ -6,6 +6,9 @@ import Journey from "../model/class/Journey.class";
 import { Step } from "../model/class/Step.class";
 import { TestFrameworks, CodeStyles } from "../model/enum/TestFrameworks";
 import SettingsStorageService from "./SettingsStorage.service";
+import OPA5Page from "../model/class/generator/opa5/OPA5Page.class";
+import Wdi5Page from "../model/class/generator/wdi5/Wdi5Page.class";
+import { PageGenerator } from "../model/class/generator/common/PageGenerator.class";
 
 export default class CodeGenerationService {
     private constructor() { }
@@ -40,33 +43,25 @@ export default class CodeGenerationService {
         return aContent;
     }
 
-    public static generateStepCode(
-        testStep: Step,
-        style?: TestFrameworks
-    ): string {
-        const framework = style || SettingsStorageService.getDefaults().testFramework;
+    public static async generateStepCode(testStep: Step, options?: {
+        framework: TestFrameworks,
+        style: CodeStyles
+    }): Promise<string> {
+        const framework = options?.framework || (await SettingsStorageService.getSettings()).testFramework;
+        const codeStyle = options?.style || (await SettingsStorageService.getSettings()).testStyle;
+        const oViewInfos = testStep.viewInfos;
+        let pageGenerator: PageGenerator;
         switch (framework) {
             case TestFrameworks.OPA5:
-                return OPA5CodeStrategy.generateStepCode(testStep);
+                pageGenerator = new OPA5Page(oViewInfos.absoluteViewName, testStep.actionLocation);
+                break;
             case TestFrameworks.WDI5:
-                return Wdi5CodeStrategy.generateStepCode(testStep);
+                pageGenerator = new Wdi5Page(oViewInfos.absoluteViewName, testStep.actionLocation);
+                break;
             default:
                 return '';
         }
-    }
 
-    public static generatePagedStepCode(
-        testStep: Step,
-        testFramework?: TestFrameworks
-    ) {
-        const framework = testFramework || SettingsStorageService.getDefaults().testFramework
-        switch (framework) {
-            case TestFrameworks.OPA5:
-                return new OPA5CodeStrategy().generatePagedStepCode(testStep);
-            case TestFrameworks.WDI5:
-                return new Wdi5CodeStrategy().generatePagedStepCode(testStep);
-            default:
-                return '';
-        }
+        return pageGenerator.generateStepOnly(testStep, codeStyle === CodeStyles.TypeScript);
     }
 }

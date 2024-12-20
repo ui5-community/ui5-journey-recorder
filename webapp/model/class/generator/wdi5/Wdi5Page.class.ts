@@ -72,6 +72,30 @@ export default class Wdi5Page extends PageGenerator {
         return this._replacePlaceholders(sPage, oAdditionalReplacements)
     }
 
+    generateStepOnly(oStep: Step, bTS?: boolean): string {
+        const sOrgString = super.generateStepOnly(oStep, bTS);
+        const oParameters = {
+            "control-class": this._getControlClassAndPath(oStep)["control-class"],
+            "action-method": "",
+            "action-parameter": ""
+        }
+        switch (oStep.actionType) {
+            case StepType.CLICK:
+                oParameters["action-method"] = "press";
+                this._actions.push(oParameters);
+                break;
+            case StepType.INPUT:
+                oParameters["action-method"] = "enterText";
+                oParameters["action-parameter"] = `"${(oStep as InputStep).getResultText()}"`;
+                this._actions.push(oParameters);
+                break;
+            case StepType.VALIDATION:
+                this._validations.push(oParameters);
+                break;
+        }
+        return this._replacePlaceholders(sOrgString, oParameters)
+    }
+
     private _getImportTemplate(bTS: boolean = false): string {
         return bTS ? PageTemplates.TS.ControlImport : "";
     }

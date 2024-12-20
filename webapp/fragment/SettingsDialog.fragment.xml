@@ -85,21 +85,22 @@
             <Panel headerText="Code">
                 <VBox>
                     <Label text="Framework:" />
-                    <RadioButtonGroup select="onFrameworkSelect">
-                        <RadioButton
-                            text="OPA5"
-                            selected="{= ${path: 'settings>/testFramework'} === 'OPA5'}"
-                        />
-                        <RadioButton
-                            text="Wdi5"
-                            selected="{= ${path: 'settings>/testFramework'} === 'wdi5'}"
-                        />
-                    </RadioButtonGroup>
+                    <SegmentedButton selectedKey="{settings>/framework}"
+                        selectionChange="onFrameworkChange">
+                        <items>
+                            <SegmentedButtonItem key="OPA5" text="OPA5"></SegmentedButtonItem>
+                            <SegmentedButtonItem key="wdi5" text="wdi5"></SegmentedButtonItem>
+                        </items>
+                    </SegmentedButton>
+                    <Label text="Code Style:" />
+                    <SegmentedButton selectedKey="{settings>/style}"
+                        selectionChange="onStyleChange">
+                        <items>
+                            <SegmentedButtonItem key="JS" text="JavaScript"></SegmentedButtonItem>
+                            <SegmentedButtonItem key="TS" text="TypeScript"></SegmentedButtonItem>
+                        </items>
+                    </SegmentedButton>
                 </VBox>
-                <Checkbox
-                    text="Code generation paged"
-                    selected="{settings>/pagedDefault}"
-                />
             </Panel>
         </content>
         <beginButton>
