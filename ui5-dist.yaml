@@ -1,4 +1,4 @@
-specVersion: "3.0"
+specVersion: "3.2"
 metadata:
   name: com.ui5.journeyrecorder
 type: application

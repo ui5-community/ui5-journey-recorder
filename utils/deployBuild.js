@@ -51,6 +51,7 @@ const CONFIG = {
         "resources/sap/ui/core/ComponentSupport.js",
         "resources/sap/ui/core/date/Gregorian.js",
         "resources/sap/ui/core/cldr/en.json",
+        "resources/sap/ui/core/boot/FieldHelpEndpoint.js",
         "resources/sap/ui/layout/library-preload-lazy.js",
         "resources/sap/ui/unified/library-preload-lazy.js",
         "resources/sap/m/messagebundle.properties",
@@ -128,7 +129,8 @@ async function buildFolderStructure() {
         fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, "/resources/sap/ui/core")).then(() => {
             return Promise.all([
                 fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, "/resources/sap/ui/core/date")),
-                fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, "/resources/sap/ui/core/cldr"))
+                fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, "/resources/sap/ui/core/cldr")),
+                fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, "/resources/sap/ui/core/boot"))
             ])
         }),
         fs.promises.mkdir(path.join(WORK_DIR, CONFIG.DEPLOY_BUILD, "/resources/sap/ui/layout")),
