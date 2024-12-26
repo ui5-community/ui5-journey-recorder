@@ -22,7 +22,7 @@ export default class Component extends UIComponent {
 		// create the application wide default model, only for setups
 		this.setModel(new JSONModel({ connectionStatus: ConnectionStatus.DISCONNECTED }));
 
-		const version = this.getManifestObject().getJson().version as string;
+		const version = (this.getManifestObject().getJson() as Record<string, unknown>).version as string;
 		(this.getModel() as JSONModel).setProperty('/appVersion', version);
 
 		// create the app settings model

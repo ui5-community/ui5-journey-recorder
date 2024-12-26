@@ -44,7 +44,7 @@ export default class StepPage extends BaseController {
                 });
             };`,
             paged: settingsModel.pagedDefault,
-            framework: settingsModel.testFramework,
+            framework: settingsModel.framework,
             propertyChanged: false
         });
         this.setModel(this.setupModel, 'stepSetup');
@@ -158,7 +158,7 @@ export default class StepPage extends BaseController {
         const jour = await JourneyStorageService.getInstance().getById((this.getModel('stepSetup') as JSONModel).getProperty('/journeyId') as string);
         const steps = jour.steps;
         const selfIndex = steps.findIndex((s: Step) => s.id === (this.model.getData() as Step).id);
-        const settings = ((this.getModel('settings') as JSONModel).getData() as AppSettings);
+        const settings = (this.getModel('settings') as JSONModel).getData() as AppSettings;
         await this.onConnect(jour.startUrl);
         BusyIndicator.show(0);
         for (let index = 0; index < steps.length; index++) {

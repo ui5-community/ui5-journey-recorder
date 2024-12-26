@@ -19,16 +19,16 @@
         </customHeader>
         <content>
             <Panel headerText="General">
-                <Vbox>
-                    <Checkbox
+                <VBox>
+                    <CheckBox
                         text="Show only UI5 running Tabs"
                         selected="{settings>/showUI5only}"
                     />
-                    <Checkbox
+                    <CheckBox
                         text="Page reload at inject"
                         selected="{settings>/reloadPageDefault}"
                     />
-                </Vbox>
+                </VBox>
                 <VBox>
                     <Label text="Theme:" />
                     <RadioButtonGroup select="onThemeSelect">
@@ -53,7 +53,7 @@
             </Panel>
             <Panel headerText="Replay">
                 <VBox>
-                    <Checkbox
+                    <CheckBox
                         text="Start in manual mode"
                         selected="{settings>/manualReplayMode}"
                     />
@@ -76,7 +76,7 @@
                         />
                     </RadioButtonGroup>
 
-                    <Checkbox
+                    <CheckBox
                         text="Use Record Replay Selector"
                         selected="{settings>/useRRSelector}"
                     />

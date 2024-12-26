@@ -15,7 +15,6 @@ import Journey from "../model/class/Journey.class";
 import CodeGenerationService from "../service/CodeGeneration.service";
 import Menu from "sap/m/Menu";
 import Fragment from "sap/ui/core/Fragment";
-import MenuItem from "sap/m/MenuItem";
 import SettingsStorageService, { AppSettings } from "../service/SettingsStorage.service";
 import { CodeStyles, TestFrameworks } from "../model/enum/TestFrameworks";
 import { downloadZip } from "client-zip";
@@ -104,7 +103,10 @@ export default class JourneyPage extends BaseController {
     }
 
     async onReplay() {
-        const settings = (this.getModel('settings') as JSONModel).getData() as AppSettings;
+        let settings = (this.getModel('settings') as JSONModel)?.getData() as AppSettings;
+        if (!settings) {
+            settings = await SettingsStorageService.getSettings();
+        }
         (this.getModel('journeyControl') as JSONModel).setProperty('/replaySettings', { delay: settings.replayDelay, manual: settings.manualReplayMode, rrSelectorUse: settings.useRRSelector });
         await this._openReplayDialog();
     }
@@ -462,8 +464,11 @@ export default class JourneyPage extends BaseController {
         this.model = new JSONModel({ name: tab.title });
         this.setModel(this.model, 'journey');
 
-        const settingsModel = (this.getModel('settings') as JSONModel).getData() as AppSettings;
-        let reload = settingsModel.reloadPageDefault;
+        let settings = (this.getModel('settings') as JSONModel)?.getData() as AppSettings;
+        if (!settings) {
+            settings = await SettingsStorageService.getSettings();
+        }
+        let reload = settings.reloadPageDefault;
         const connectFn = () => {
             BusyIndicator.show();
             this._approveConnectDialog.close();

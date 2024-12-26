@@ -97,7 +97,7 @@
                                                 title="Control ID"
                                                 text="{step>/control/controlId/id}"
                                             />
-                                            <Checkbox
+                                            <CheckBox
                                                 text="Use ID for identification"
                                                 selected="{step>/control/controlId/use}"
                                             />
@@ -151,7 +151,7 @@
                                                                 <Text
                                                                     text="{step>value}"
                                                                 />
-                                                                <Checkbox
+                                                                <CheckBox
                                                                     selected="{step>use}"
                                                                 />
                                                             </cells>
@@ -215,7 +215,7 @@
                                                                 <Text
                                                                     text="{step>bindingValue}"
                                                                 />
-                                                                <Checkbox
+                                                                <CheckBox
                                                                     selected="{step>use}"
                                                                 />
                                                             </cells>
@@ -264,7 +264,7 @@
                                                                 <Text
                                                                     text="{step>bindingValue}"
                                                                 />
-                                                                <Checkbox
+                                                                <CheckBox
                                                                     selected="{step>use}"
                                                                 />
                                                             </cells>

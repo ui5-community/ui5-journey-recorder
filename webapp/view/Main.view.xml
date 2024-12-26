@@ -46,7 +46,7 @@
                                         liveChange=".onSearch"
                                         width="100%"
                                     />
-                                    <Checkbox
+                                    <CheckBox
                                         text="Show only UI5 running Tabs"
                                         selected="{settings>/showUI5only}"
                                         select="._loadTabs"

@@ -16,8 +16,7 @@ import SearchField from "sap/m/SearchField";
 import Filter from "sap/ui/model/Filter";
 import FilterOperator from "sap/ui/model/FilterOperator";
 import { Tab } from "../service/ChromeExtension.service";
-import App from "./App.controller";
-import { AppSettings } from "../service/SettingsStorage.service";
+import SettingsStorageService, { AppSettings } from "../service/SettingsStorage.service";
 
 /**
  * @namespace com.ui5.journeyrecorder.controller
@@ -29,10 +28,10 @@ export default class Main extends BaseController {
 	onInit() {
 		const model = new JSONModel({});
 		this.setModel(model, 'main');
-		this.getRouter().getRoute("main").attachPatternMatched(() => {
-			this._loadTabs();
+		this.getRouter().getRoute("main").attachPatternMatched(async () => {
+			await this._loadTabs();
 			//the periodic load
-			this._timerIndex = setInterval(this._loadTabs.bind(this), 5000);
+			this._timerIndex = setInterval(async () => { await this._loadTabs(); }, 5000);
 		}, this);
 		// eslint-disable-next-line @typescript-eslint/unbound-method
 		this.getRouter().getRoute("main").attachPatternMatched(this._loadJourneys, this);
@@ -108,9 +107,12 @@ export default class Main extends BaseController {
 		}
 	}
 
-	private _loadTabs(): void {
+	private async _loadTabs(): Promise<void> {
 		//the initial load
-		const settings = (this.getModel('settings') as JSONModel).getData() as AppSettings;
+		let settings = (this.getModel('settings') as JSONModel)?.getData() as AppSettings;
+		if (!settings) {
+			settings = await SettingsStorageService.getSettings();
+		}
 		void ChromeExtensionService.getAllTabs(settings.showUI5only).then((aTabs) => {
 			(this.getModel('main') as JSONModel).setProperty("/tabs", aTabs);
 		});

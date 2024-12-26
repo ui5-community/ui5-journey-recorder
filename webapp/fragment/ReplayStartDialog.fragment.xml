@@ -1,15 +1,13 @@
 <core:FragmentDefinition
     xmlns="sap.m"
-    xmlns:core="sap.ui.core"
-    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
->
+    xmlns:core="sap.ui.core">
     <Dialog title="Replay">
         <content>
             <VBox
                 justifyContent="Start"
                 alignItems="Center"
             >
-                <Checkbox
+                <CheckBox
                     text="Start in manual mode"
                     selected="{journeyControl>/replaySettings/manual}"
                 />
@@ -31,7 +29,7 @@
                         selected="{= ${path: 'journeyControl>/replaySettings/delay'} === 2.0}"
                     />
                 </RadioButtonGroup>
-                <Checkbox
+                <CheckBox
                     text="Use Record Replay Selector"
                     selected="{journeyControl>/replaySettings/rrSelectorUse}"
                 />
