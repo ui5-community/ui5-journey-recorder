@@ -77,21 +77,23 @@ export default class OPA5Page extends PageGenerator {
     /** OVERRIDES **/
     _generateActions(bTS?: boolean): string {
         let sOrgString = super._generateActions(bTS);
-        if (bTS) {
+        if (bTS || sOrgString === "") {
             return sOrgString;
         } else {
             sOrgString = sOrgString.split("\n").map(sPart => `\t\t\t${sPart}`).join('\n');
+            return `\n\t\t\tactions: {${sOrgString}\n\t\t\t}`;
         }
-        return bTS ? sOrgString : (sOrgString !== "" ? `\n\t\t\tactions: {${sOrgString}\n\t\t\t}` : "");
     }
 
     _generateValidations(bTS?: boolean): string {
-        const sOrgString = super._generateValidations(bTS);
+        let sOrgString = super._generateValidations(bTS);
 
-        return bTS ? sOrgString :
-            sOrgString !== "" ? (
-                (this._validations.length > 0 ? ',' : '') +
-                `\n\t\t\tassertions: { ${sOrgString} \n\t\t\t}`) : "";
+        if (bTS || sOrgString === "") {
+            return sOrgString;
+        } else {
+            sOrgString = sOrgString.split("\n").map(sPart => `\t\t\t${sPart}`).join('\n');
+            return (this._validations.length > 0 ? ',' : '') + `\n\t\t\tassertions: { ${sOrgString} \n\t\t\t}`;
+        }
     }
 
     generate(bTS?: boolean): string {
