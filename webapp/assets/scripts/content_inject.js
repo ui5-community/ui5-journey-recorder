@@ -13,7 +13,6 @@
     console.log('--- Inject UI5 Journey Recorder JS ---');
     let script = document.createElement('script');
     script.id = `${TAG_ID_PREFIX}-js`;
-    script.type = 'source';
     script.src = chrome.runtime.getURL('/assets/scripts/page_inject.js');
     script.defer = "defer";
     document.head.prepend(script);
@@ -23,7 +22,6 @@
     console.log('--- Inject Communication JS ---');
     let script = document.createElement('script');
     script.id = `${TAG_ID_PREFIX}communication-js`;
-    script.type = 'source';
     script.src = chrome.runtime.getURL('/assets/scripts/communication_inject.js');
     script.setAttribute('data-id', EXT_ID);
     script.defer = "defer";
