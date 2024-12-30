@@ -34,7 +34,6 @@
     let style = document.createElement('style');
 
     style.id = "UI5TR--css";
-    style.type = "text/css";
     style.appendChild(document.createTextNode(css));
 
     head.prepend(style);
