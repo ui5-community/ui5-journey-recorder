@@ -8,6 +8,7 @@ import Router from "sap/ui/core/routing/Router";
 import History from "sap/ui/core/routing/History";
 import UI5Element from "sap/ui/core/Element";
 import Dialog from "sap/m/Dialog";
+import Fragment from "sap/ui/core/Fragment";
 import Event from "sap/ui/base/Event";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import SettingsStorageService, { AppSettings } from "../service/SettingsStorage.service";
@@ -22,6 +23,7 @@ import Text from "sap/m/Text";
 import BusyIndicator from "sap/ui/core/BusyIndicator";
 import { ChromeExtensionService } from "../service/ChromeExtension.service";
 import MessageToast from "sap/m/MessageToast";
+import XMLView from "sap/ui/core/mvc/XMLView";
 
 /**
  * @namespace com.ui5.journeyrecorder.controller
@@ -29,6 +31,14 @@ import MessageToast from "sap/m/MessageToast";
 export default abstract class BaseController extends Controller {
 	protected settingsDialog: UI5Element;
 	protected _unsafeDialog: Dialog;
+
+	private _dialogs: Record<string, {
+		dialog: Dialog,
+		view: XMLView,
+		controller: Controller & { settings?: { initialHeight?: string, initialWidth?: string } }
+	}>;
+
+	private _fragments: Record<string, Dialog>;
 
 	/**
 	 * Convenience method for accessing the component of the controller's view.
@@ -265,5 +275,86 @@ export default abstract class BaseController extends Controller {
 			ChromeExtensionService.getInstance().setCurrentTab();
 			MessageToast.show('Disconnected', { duration: 500 });
 		}
+	}
+
+	protected openDialog(sDialogName: string, oData: Record<string, unknown>): Promise<Record<string, unknown> | void> {
+		if (!this._dialogs) {
+			this._dialogs = {};
+		}
+
+		return new Promise(async (resolve, reject) => {
+			if (!this._dialogs[sDialogName]) {
+				const oDialog = new Dialog({
+					showHeader: false
+				});
+				this.getView().addDependent(oDialog);
+				const oView = await this.getOwnerComponent().runAsOwner(async () => {
+					return await XMLView.create({
+						viewName: `com.ui5.journeyrecorder.view.dialogs.${sDialogName}`
+					});
+				});
+				const oController = oView.getController();
+				oDialog.addContent(oView);
+
+				this._dialogs[sDialogName] = {
+					dialog: oDialog,
+					view: oView,
+					controller: oController
+				}
+			}
+			const oDialogCompound = this._dialogs[sDialogName];
+			if (oData) {
+				oDialogCompound.view.setModel(new JSONModel(oData), "importData");
+			}
+
+			if (oDialogCompound.controller.settings.initialHeight) {
+				oDialogCompound.dialog.setContentHeight(oDialogCompound.controller.settings.initialHeight);
+			}
+
+			if (oDialogCompound.controller.settings.initialWidth) {
+				oDialogCompound.dialog.setContentHeight(oDialogCompound.controller.settings.initialWidth);
+			}
+
+			const beforeClose = (oEvent: Event) => {
+				oDialogCompound.dialog.detachBeforeClose(beforeClose);
+				const pars = oEvent.getParameters() as Record<string, unknown>;
+				oDialogCompound.dialog.close();
+
+				if (pars.status === "Success") {
+					if (pars.data) {
+						resolve(pars.data as Record<string, unknown>);
+					} else {
+						resolve();
+					}
+				} else {
+					reject();
+				}
+			};
+
+			oDialogCompound.dialog.attachBeforeClose(beforeClose);
+
+			oDialogCompound.dialog.open();
+		})
+	}
+
+	protected async openFragment(sFragmentName: string, sFragmentId?: string): Promise<void> {
+		if (!sFragmentName) {
+			throw new Error("At least the Fragment-Name is needed!");
+		}
+
+		if (!this._fragments) {
+			this._fragments = {};
+		}
+
+		if (!this._fragments[sFragmentName]) {
+			const oFragmentDialog = await Fragment.load({
+				id: sFragmentId || `${sFragmentName}_id`,
+				name: `com.ui5.journeyrecorder.view.dialogs.${sFragmentName}`,
+				controller: this
+			})
+			this.getView().addDependent(oFragmentDialog as UI5Element);
+		}
+
+		this._fragments[sFragmentName].open();
 	}
 }
