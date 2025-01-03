@@ -111,13 +111,14 @@ export default abstract class BaseController extends Controller {
 	}
 
 	async onOpenSettingsDialog() {
-		if (!this.settingsDialog) {
+		await this.openDialog("Settings");
+		/* if (!this.settingsDialog) {
 			this.settingsDialog = await this.loadFragment({
 				name: "com.ui5.journeyrecorder.fragment.SettingsDialog"
 			}) as UI5Element;
 			this.getView().addDependent(this.settingsDialog);
 		}
-		(this.settingsDialog as Dialog).open();
+		(this.settingsDialog as Dialog).open(); */
 	}
 
 	onCloseDialog(oEvent: Event) {
@@ -277,7 +278,7 @@ export default abstract class BaseController extends Controller {
 		}
 	}
 
-	protected openDialog(sDialogName: string, oData: Record<string, unknown>): Promise<Record<string, unknown> | void> {
+	protected openDialog(sDialogName: string, oData?: Record<string, unknown>): Promise<Record<string, unknown> | void> {
 		if (!this._dialogs) {
 			this._dialogs = {};
 		}
