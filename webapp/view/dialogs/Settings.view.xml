@@ -1,4 +1,4 @@
-<mvc:View controllerName=""
+<mvc:View controllerName="com.ui5.journeyrecorder.controller.dialogs.Settings"
     xmlns="sap.m"
     xmlns:c="sap.ui.core"
     xmlns:mvc="sap.ui.core.mvc"
@@ -25,44 +25,48 @@
                 <form:SimpleForm id="Settings-Form-General"
                     title="General"
                     editable="true"
-                    layout="ColumnLayout"
+                    layout="ResponsiveGridLayout"
                     columnsM="2"
                     columnsXL="2"
                     backgroundDesign="Transparent"
                     class="dialog-form">
                     <!-- Section 1 -->
                     <c:Title text="Tab Handling"></c:Title>
-                    <CheckBox
-                        text="Show only UI5 running Tabs"
-                        selected="{settings>/showUI5only}"
-                    />
-                    <CheckBox
-                        text="Page reload at inject"
-                        selected="{settings>/reloadPageDefault}"
-                    />
-                    <Label text="Theme:" />
-                    <Select selectedKey="{settings>/theme}">
+                    <VBox>
+                        <CheckBox selected="{settings>/showUI5only}"
+                            text="Show only UI5 running Tabs"
+                            width="100%" useEntireWidth="true" />
+                        <CheckBox selected="{settings>/reloadPageDefault}"
+                            text="Page reload at inject"
+                            width="100%" useEntireWidth="true" />
+                    </VBox>
+                    <c:Title text="Theme" />
+                    <Select selectedKey="{settings>/theme}" change="onThemeSelect">
                         <items>
-                            <c:ListItem key="'sap_horizon'" text="Morning Horizon"></c:ListItem>
-                            <c:ListItem key="'sap_horizon_dark'" text="Evening Horizon"></c:ListItem>
-                            <c:ListItem key="'sap_fiori_3'" text="Quartz Light"></c:ListItem>
-                            <c:ListItem key="'sap_fiori_3_dark'" text="Quartz Dark"></c:ListItem>
+                            <c:ListItem key="sap_horizon" text="Morning Horizon"></c:ListItem>
+                            <c:ListItem key="sap_horizon_dark" text="Evening Horizon"></c:ListItem>
+                            <c:ListItem key="sap_fiori_3" text="Quartz Light"></c:ListItem>
+                            <c:ListItem key="sap_fiori_3_dark" text="Quartz Dark"></c:ListItem>
                         </items>
                     </Select>
                 </form:SimpleForm>
                 <form:SimpleForm id="Settings-Form-Replay"
                     title="Replay"
                     editable="true"
-                    layout="ColumnLayout"
+                    layout="ResponsiveGridLayout"
                     columnsM="2"
                     columnsXL="2"
                     backgroundDesign="Transparent"
                     class="dialog-form">
-                    <CheckBox
-                        text="Start in manual mode"
-                        selected="{settings>/manualReplayMode}"
-                    />
-                    <Label text="Automatic replay delay:" />
+                    <VBox>
+                        <CheckBox selected="{settings>/useRRSelector}"
+                            text="Use Record Replay Selector"
+                            width="100%" useEntireWidth="true" />
+                        <CheckBox selected="{settings>/manualReplayMode}"
+                            text="Start in manual mode"
+                            width="100%" useEntireWidth="true" />
+                    </VBox>
+                    <Label text="Automatic replay delay" />
                     <SegmentedButton selectedKey="{settings>/replayDelay}">
                         <items>
                             <SegmentedButtonItem
@@ -76,21 +80,16 @@
                                 key="2.0" />
                         </items>
                     </SegmentedButton>
-
-                    <CheckBox
-                        text="Use Record Replay Selector"
-                        selected="{settings>/useRRSelector}"
-                    />
                 </form:SimpleForm>
                 <form:SimpleForm id="Settings-Form-Code"
                     title="Code"
                     editable="true"
-                    layout="ColumnLayout"
+                    layout="ResponsiveGridLayout"
                     columnsM="2"
                     columnsXL="2"
                     backgroundDesign="Transparent"
                     class="dialog-form">
-                    <Label text="Framework:" />
+                    <Label text="Framework" />
                     <SegmentedButton selectedKey="{settings>/framework}"
                         selectionChange="onFrameworkChange">
                         <items>
@@ -98,7 +97,7 @@
                             <SegmentedButtonItem key="wdi5" text="wdi5"></SegmentedButtonItem>
                         </items>
                     </SegmentedButton>
-                    <Label text="Code Style:" />
+                    <Label text="Code Style" />
                     <SegmentedButton selectedKey="{settings>/style}"
                         selectionChange="onStyleChange">
                         <items>
@@ -114,14 +113,12 @@
                 <contentRight>
                     <Button
                         text="Save"
-                        press="onCloseDialog"
+                        press="onCloseDialog($event, true)"
                         type="Emphasized"
-                        app:settingsDialogClose="save"
                     />
                     <Button
                         text="Close"
-                        press="onCloseDialog"
-                        app:settingsDialogClose="ignore"
+                        press="onCloseDialog($event)"
                     />
                 </contentRight>
             </Bar>
