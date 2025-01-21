@@ -404,17 +404,23 @@ export default class JourneyPage extends BaseController {
         const ui5Version = await this._requestUI5Version();
         const data = this.model.getData() as Partial<Journey>;
         data.ui5Version = ui5Version;
-        const journey = JourneyStorageService.createJourneyFromRecording(data);
-        ChromeExtensionService.getInstance().unregisterRecordingWebsocket(
-            // eslint-disable-next-line @typescript-eslint/unbound-method
-            this._onStepRecord,
-            this
-        );
-        await ChromeExtensionService.getInstance().disableRecording();
-        BusyIndicator.hide();
-        this.model.setData(journey);
-        (this.getModel('journeyControl') as JSONModel).setProperty('/unsafed', true);
-        this._generateCode(journey);
+        if (data.steps && data.steps.length > 0) {
+            const journey = JourneyStorageService.createJourneyFromRecording(data);
+            ChromeExtensionService.getInstance().unregisterRecordingWebsocket(
+                // eslint-disable-next-line @typescript-eslint/unbound-method
+                this._onStepRecord,
+                this
+            );
+            await ChromeExtensionService.getInstance().disableRecording();
+            BusyIndicator.hide();
+            this.model.setData(journey);
+            (this.getModel('journeyControl') as JSONModel).setProperty('/unsafed', true);
+            this._generateCode(journey);
+        } else {
+            await ChromeExtensionService.getInstance().disableRecording();
+            BusyIndicator.hide();
+            this.getRouter().navTo("main");
+        }
     }
 
     private _generateCode(journey: Journey) {
@@ -483,8 +489,12 @@ export default class JourneyPage extends BaseController {
                 this.setConnected();
                 void ChromeExtensionService.getInstance().focusTab(tab);
                 BusyIndicator.hide();
-                await this._openRecordingDialog();
                 MessageToast.show('Connected');
+                try {
+                    await this._openRecordingDialog();
+                } catch (oError) {
+
+                }
             }).catch(() => {
                 BusyIndicator.hide();
             });

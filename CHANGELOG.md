@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.5](https://ui5-community///compare/v0.3.4...v0.3.5) (2025-01-21)
+
+
+### Features
+
+* **no-record:** automatic nav to main if no steps were recorded ([b433e54](https://ui5-community///commit/b433e54c47cef4aa758b907bdd13407d8653f02d))
+
+
+### Bug Fixes
+
+* **chrome-130:** fixed the issue with dynamically loaded scripts ([0a1c18b](https://ui5-community///commit/0a1c18b73f719d7ee49b1fab9e166520a456a3af))
+* **code-gen:** fixed wrong indentation within generated sources ([446f72c](https://ui5-community///commit/446f72c6b2c56b93cf56b38fc303c74c786f2bf7))
+* **content-inject:** fixed src type within content-inject ([76107ca](https://ui5-community///commit/76107cad4514df1ec3e494b878f6a8977cb26f71))
+* **settings:** changed structure of settings dialog ([d5d0c6f](https://ui5-community///commit/d5d0c6f59c0327e70ae2d305b0c61d049e0643c3))
+* **ui5:** fixed Typos and misspellings after version upgrade ([5f25d78](https://ui5-community///commit/5f25d788833c2dc6c3099f320824c679febf9d06))
+* **unnecessary:** removed unnecessary type from style ([9afb553](https://ui5-community///commit/9afb553d3f5919ddaf5c3d70f777040ec853a9e9))
+
 ### [0.3.4](https://ui5-community///compare/v0.3.1...v0.3.4) (2024-12-20)
 
 

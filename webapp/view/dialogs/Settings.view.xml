@@ -1,0 +1,127 @@
+<mvc:View controllerName="com.ui5.journeyrecorder.controller.dialogs.Settings"
+    xmlns="sap.m"
+    xmlns:c="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:form="sap.ui.layout.form"
+    busyIndicatorDelay="0"
+    displayBlock="true"
+    height="100%">
+    <Page>
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Title text="Settings" />
+                </contentLeft>
+                <contentRight>
+                    <ObjectStatus
+                        title="App Version"
+                        text="{/appVersion}"
+                    />
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <form:SimpleForm id="Settings-Form-General"
+                    title="General"
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    columnsM="2"
+                    columnsXL="2"
+                    backgroundDesign="Transparent"
+                    class="dialog-form">
+                    <!-- Section 1 -->
+                    <c:Title text="Tab Handling"></c:Title>
+                    <VBox>
+                        <CheckBox selected="{settings>/showUI5only}"
+                            text="Show only UI5 running Tabs"
+                            width="100%" useEntireWidth="true" />
+                        <CheckBox selected="{settings>/reloadPageDefault}"
+                            text="Page reload at inject"
+                            width="100%" useEntireWidth="true" />
+                    </VBox>
+                    <c:Title text="Theme" />
+                    <Select selectedKey="{settings>/theme}" change="onThemeSelect">
+                        <items>
+                            <c:ListItem key="sap_horizon" text="Morning Horizon"></c:ListItem>
+                            <c:ListItem key="sap_horizon_dark" text="Evening Horizon"></c:ListItem>
+                            <c:ListItem key="sap_fiori_3" text="Quartz Light"></c:ListItem>
+                            <c:ListItem key="sap_fiori_3_dark" text="Quartz Dark"></c:ListItem>
+                        </items>
+                    </Select>
+                </form:SimpleForm>
+                <form:SimpleForm id="Settings-Form-Replay"
+                    title="Replay"
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    columnsM="2"
+                    columnsXL="2"
+                    backgroundDesign="Transparent"
+                    class="dialog-form">
+                    <VBox>
+                        <CheckBox selected="{settings>/useRRSelector}"
+                            text="Use Record Replay Selector"
+                            width="100%" useEntireWidth="true" />
+                        <CheckBox selected="{settings>/manualReplayMode}"
+                            text="Start in manual mode"
+                            width="100%" useEntireWidth="true" />
+                    </VBox>
+                    <Label text="Automatic replay delay" />
+                    <SegmentedButton selectedKey="{settings>/replayDelay}">
+                        <items>
+                            <SegmentedButtonItem
+                                text="0.5 sec"
+                                key="0.5" />
+                            <SegmentedButtonItem
+                                text="1.0 sec"
+                                key="1.0" />
+                            <SegmentedButtonItem
+                                text="2.0 sec"
+                                key="2.0" />
+                        </items>
+                    </SegmentedButton>
+                </form:SimpleForm>
+                <form:SimpleForm id="Settings-Form-Code"
+                    title="Code"
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    columnsM="2"
+                    columnsXL="2"
+                    backgroundDesign="Transparent"
+                    class="dialog-form">
+                    <Label text="Framework" />
+                    <SegmentedButton selectedKey="{settings>/framework}"
+                        selectionChange="onFrameworkChange">
+                        <items>
+                            <SegmentedButtonItem key="OPA5" text="OPA5"></SegmentedButtonItem>
+                            <SegmentedButtonItem key="wdi5" text="wdi5"></SegmentedButtonItem>
+                        </items>
+                    </SegmentedButton>
+                    <Label text="Code Style" />
+                    <SegmentedButton selectedKey="{settings>/style}"
+                        selectionChange="onStyleChange">
+                        <items>
+                            <SegmentedButtonItem key="JS" text="JavaScript"></SegmentedButtonItem>
+                            <SegmentedButtonItem key="TS" text="TypeScript"></SegmentedButtonItem>
+                        </items>
+                    </SegmentedButton>
+                </form:SimpleForm>
+            </VBox>
+        </content>
+        <footer>
+            <Bar>
+                <contentRight>
+                    <Button
+                        text="Save"
+                        press="onCloseDialog($event, true)"
+                        type="Emphasized"
+                    />
+                    <Button
+                        text="Close"
+                        press="onCloseDialog($event)"
+                    />
+                </contentRight>
+            </Bar>
+        </footer>
+    </Page>
+</mvc:View>

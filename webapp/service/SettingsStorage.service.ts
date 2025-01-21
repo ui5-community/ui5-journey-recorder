@@ -30,8 +30,10 @@ export default class SettingsStorageService {
 
     public static async getSettings(): Promise<AppSettings> {
         const values = await chrome.storage.local.get('settings');
-        if (values['settings']) {
+        if (values['settings'] && typeof values['settings'] === 'string') {
             return JSON.parse(values.settings as string) as AppSettings;
+        } else if (values['settings'] && typeof values['settings'] === 'object') {
+            return values.settings as AppSettings;
         } else {
             return SettingsStorageService.getDefaults();
         }

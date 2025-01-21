@@ -8,12 +8,11 @@ import Router from "sap/ui/core/routing/Router";
 import History from "sap/ui/core/routing/History";
 import UI5Element from "sap/ui/core/Element";
 import Dialog from "sap/m/Dialog";
+import Fragment from "sap/ui/core/Fragment";
 import Event from "sap/ui/base/Event";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import SettingsStorageService, { AppSettings } from "../service/SettingsStorage.service";
 import { TestFrameworks } from "../model/enum/TestFrameworks";
-import { Themes } from "../model/enum/Themes";
-import Theming from "sap/ui/core/Theming";
 import { ConnectionStatus } from "../model/enum/ConnectionStatus";
 import { IconColor, ValueState } from "sap/ui/core/library";
 import { ButtonType, DialogType } from "sap/m/library";
@@ -22,6 +21,7 @@ import Text from "sap/m/Text";
 import BusyIndicator from "sap/ui/core/BusyIndicator";
 import { ChromeExtensionService } from "../service/ChromeExtension.service";
 import MessageToast from "sap/m/MessageToast";
+import XMLView from "sap/ui/core/mvc/XMLView";
 
 /**
  * @namespace com.ui5.journeyrecorder.controller
@@ -29,6 +29,14 @@ import MessageToast from "sap/m/MessageToast";
 export default abstract class BaseController extends Controller {
 	protected settingsDialog: UI5Element;
 	protected _unsafeDialog: Dialog;
+
+	private _dialogs: Record<string, {
+		dialog: Dialog,
+		view: XMLView,
+		controller: Controller & { settings?: { initialHeight?: string, initialWidth?: string } }
+	}>;
+
+	private _fragments: Record<string, Dialog>;
 
 	/**
 	 * Convenience method for accessing the component of the controller's view.
@@ -101,79 +109,7 @@ export default abstract class BaseController extends Controller {
 	}
 
 	async onOpenSettingsDialog() {
-		if (!this.settingsDialog) {
-			this.settingsDialog = await this.loadFragment({
-				name: "com.ui5.journeyrecorder.fragment.SettingsDialog"
-			}) as UI5Element;
-			this.getView().addDependent(this.settingsDialog);
-		}
-		(this.settingsDialog as Dialog).open();
-	}
-
-	onCloseDialog(oEvent: Event) {
-		const closeReason = (oEvent.getSource() as unknown as { data: (s: string) => string }).data("settingsDialogClose");
-		if (closeReason === 'save') {
-			(this.getModel("settings") as JSONModel).getData();
-			void SettingsStorageService.save((this.getModel("settings") as JSONModel).getData() as AppSettings);
-		} else {
-			void SettingsStorageService.getSettings().then((settings: AppSettings) => {
-				(this.getModel("settings") as JSONModel).setData(settings);
-			})
-		}
-		(this.settingsDialog as Dialog).close();
-	}
-
-	onDelaySelect(oEvent: Event) {
-		const index = oEvent.getParameter("selectedIndex" as never);
-		switch (index) {
-			case 0:
-				(this.getModel("settings") as JSONModel).setProperty('/replayDelay', 0.5);
-				break;
-			case 1:
-				(this.getModel("settings") as JSONModel).setProperty('/replayDelay', 1.0);
-				break;
-			case 2:
-				(this.getModel("settings") as JSONModel).setProperty('/replayDelay', 2.0);
-				break;
-			default:
-				(this.getModel("settings") as JSONModel).setProperty('/replayDelay', 0.5);
-		}
-	}
-
-	onFrameworkSelect(oEvent: Event) {
-		const index = oEvent.getParameter("selectedIndex" as never);
-		switch (index) {
-			case 0:
-				(this.getModel("settings") as JSONModel).setProperty('/testFramework', TestFrameworks.OPA5);
-				break;
-			case 1:
-				(this.getModel("settings") as JSONModel).setProperty('/testFramework', TestFrameworks.WDI5);
-				break;
-			default:
-				(this.getModel("settings") as JSONModel).setProperty('/testFramework', TestFrameworks.OPA5);
-		}
-	}
-
-	onThemeSelect(oEvent: Event) {
-		const index = oEvent.getParameter("selectedIndex" as never);
-		switch (index) {
-			case 1:
-				(this.getModel("settings") as JSONModel).setProperty('/theme', Themes.EVENING_HORIZON);
-				break;
-			case 2:
-				(this.getModel("settings") as JSONModel).setProperty('/theme', Themes.QUARTZ_LIGHT);
-				break;
-			case 3:
-				(this.getModel("settings") as JSONModel).setProperty('/theme', Themes.QUARTZ_DARK);
-				break;
-			default:
-				(this.getModel("settings") as JSONModel).setProperty('/theme', Themes.MORNING_HORIZON);
-		}
-		Theming.setTheme((this.getModel("settings") as JSONModel).getProperty('/theme') as string);
-	}
-
-	compareProps(args: unknown[]) {
-		return args[0] === args[1];
+		await this.openDialog("Settings");
 	}
 
 	setConnecting() {
@@ -265,5 +201,86 @@ export default abstract class BaseController extends Controller {
 			ChromeExtensionService.getInstance().setCurrentTab();
 			MessageToast.show('Disconnected', { duration: 500 });
 		}
+	}
+
+	protected openDialog(sDialogName: string, oData?: Record<string, unknown>): Promise<Record<string, unknown> | void> {
+		if (!this._dialogs) {
+			this._dialogs = {};
+		}
+
+		return new Promise(async (resolve, reject) => {
+			if (!this._dialogs[sDialogName]) {
+				const oDialog = new Dialog({
+					showHeader: false
+				});
+				this.getView().addDependent(oDialog);
+				const oView = await this.getOwnerComponent().runAsOwner(async () => {
+					return await XMLView.create({
+						viewName: `com.ui5.journeyrecorder.view.dialogs.${sDialogName}`
+					});
+				});
+				const oController = oView.getController();
+				oDialog.addContent(oView);
+
+				this._dialogs[sDialogName] = {
+					dialog: oDialog,
+					view: oView,
+					controller: oController
+				}
+			}
+			const oDialogCompound = this._dialogs[sDialogName];
+			if (oData) {
+				oDialogCompound.view.setModel(new JSONModel(oData), "importData");
+			}
+
+			if (oDialogCompound.controller.settings.initialHeight) {
+				oDialogCompound.dialog.setContentHeight(oDialogCompound.controller.settings.initialHeight);
+			}
+
+			if (oDialogCompound.controller.settings.initialWidth) {
+				oDialogCompound.dialog.setContentWidth(oDialogCompound.controller.settings.initialWidth);
+			}
+
+			const beforeClose = (oEvent: Event) => {
+				oDialogCompound.dialog.detachBeforeClose(beforeClose);
+				const pars = oEvent.getParameters() as Record<string, unknown>;
+				oDialogCompound.dialog.close();
+
+				if (pars.status === "Success") {
+					if (pars.data) {
+						resolve(pars.data as Record<string, unknown>);
+					} else {
+						resolve();
+					}
+				} else {
+					reject();
+				}
+			};
+
+			oDialogCompound.dialog.attachBeforeClose(beforeClose);
+
+			oDialogCompound.dialog.open();
+		})
+	}
+
+	protected async openFragment(sFragmentName: string, sFragmentId?: string): Promise<void> {
+		if (!sFragmentName) {
+			throw new Error("At least the Fragment-Name is needed!");
+		}
+
+		if (!this._fragments) {
+			this._fragments = {};
+		}
+
+		if (!this._fragments[sFragmentName]) {
+			const oFragmentDialog = await Fragment.load({
+				id: sFragmentId || `${sFragmentName}_id`,
+				name: `com.ui5.journeyrecorder.view.dialogs.${sFragmentName}`,
+				controller: this
+			})
+			this.getView().addDependent(oFragmentDialog as UI5Element);
+		}
+
+		this._fragments[sFragmentName].open();
 	}
 }
